@@ -38,6 +38,7 @@ group :development, :test do
   gem 'capybara'
   gem 'factory_girl_rails'
   gem 'pry-rails'
+  gem 'rspec_junit_formatter'
   gem 'rspec-rails'
 end
 
