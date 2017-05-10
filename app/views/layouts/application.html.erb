@@ -2,13 +2,19 @@
 <html>
   <head>
     <title>Clientcomm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
+    <%= content_for(:head) if content_for?(:head) %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="template--<%= content_for(:template_name) if content_for?(:template_name) %>">
+    <div class="page-wrapper">
+      <%= content_for?(:content) ? yield(:content) : yield %>
+    </div>
   </body>
 </html>
