@@ -9,114 +9,116 @@ describe GcfFormBuilder, type: :view do
   end
 
   describe "#gcf_textarea" do
-    it 'renders a text area' do
-      address = create :address
-      form_builder = GcfFormBuilder.new(:address, address, template, {})
+    it "renders a text area" do
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_textarea(:zip, "Enter your zip in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"])
+      output = form_builder.gcf_textarea(:first_name, "Enter your first name in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"])
 
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-         <label for="address_zip">
-           <p class="form-question">Enter your zip in this unnecessarily BIG box!</p>
-           <p class="text--help">This is a great note.</p>
-           <p class="text--help">Applause, please!</p>
-         </label>
-         <textarea class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="address[zip]" id="address_zip" > 94606</textarea>
-       </fieldset>
+          <label for="client_first_name">
+            <p class="form-question">Enter your first name in this unnecessarily BIG box!</p>
+            <p class="text--help">This is a great note.</p>
+            <p class="text--help">Applause, please!</p>
+          </label>
+          <textarea class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name">
+          </textarea>
+      </fieldset>
       HTML
     end
 
-    it 'renders with autofocus' do
-      address = create :address
-      form_builder = GcfFormBuilder.new(:address, address, template, {})
+    it "renders with autofocus" do
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_textarea(:zip, "Enter your zip in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
+      output = form_builder.gcf_textarea(:first_name, "Enter your first name in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
 
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-          <label for="address_zip">
-           <p class="form-question">Enter your zip in this unnecessarily BIG box!</p>
-           <p class="text--help">This is a great note.</p>
-           <p class="text--help">Applause, please!</p>
+          <label for="client_first_name">
+            <p class="form-question">Enter your first name in this unnecessarily BIG box!</p>
+            <p class="text--help">This is a great note.</p>
+            <p class="text--help">Applause, please!</p>
           </label>
-          <textarea autofocus="autofocus" class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="address[zip]" id="address_zip" > 94606</textarea>
-        </fieldset>
+          <textarea autofocus="autofocus" class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name">
+          </textarea>
+      </fieldset>
       HTML
     end
   end
 
   describe "#gcf_input_field" do
-    it "renders a input field" do
-      address = create :address
-      form_builder = GcfFormBuilder.new(:address, address, template, {})
+    it "renders an input field" do
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:zip, "Enter your zip", type: "number", notes: ["This is a great note.", "Applause, please!"])
+      output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: ["This is a great note.", "Applause, please!"])
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-         <label for="address_zip">
-           <p class="form-question">Enter your zip</p>
-           <p class="text--help">This is a great note.</p>
-           <p class="text--help">Applause, please!</p>
-         </label>
-         <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="94606" name="address[zip]" id="address_zip" />
-       </fieldset>
+          <label for="client_first_name">
+            <p class="form-question">Enter your first name</p>
+            <p class="text--help">This is a great note.</p>
+            <p class="text--help">Applause, please!</p>
+          </label>
+          <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name" />
+        </fieldset>
       HTML
     end
 
     it "renders with autofocus" do
-      address = create :address
-      form_builder = GcfFormBuilder.new(:address, address, template, {})
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:zip, "Enter your zip", type: "number", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
+      output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-         <label for="address_zip">
-           <p class="form-question">Enter your zip</p>
-           <p class="text--help">This is a great note.</p>
-           <p class="text--help">Applause, please!</p>
-         </label>
-         <input autofocus="autofocus" type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="94606" name="address[zip]" id="address_zip" />
-       </fieldset>
+          <label for="client_first_name">
+            <p class="form-question">Enter your first name</p>
+            <p class="text--help">This is a great note.</p>
+            <p class="text--help">Applause, please!</p>
+          </label>
+          <input autofocus="autofocus" type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name" />
+        </fieldset>
       HTML
     end
 
     context 'with no note' do
-      it "renders a input field" do
-        address = create :address
-        form_builder = GcfFormBuilder.new(:address, address, template, {})
+      it "renders an input field" do
+        client = Client.create()
+        form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:zip, "Enter your zip", type: "number", notes: nil)
+        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: nil)
         expect(output).to be_html_safe
         expect(output).to match_html <<-HTML
           <fieldset class="form-group">
-            <label for="address_zip">
-             <p class="form-question">Enter your zip</p>
+            <label for="client_first_name">
+              <p class="form-question">Enter your first name</p>
             </label>
-            <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="94606" name="address[zip]" id="address_zip" />
+            <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name" />
           </fieldset>
         HTML
       end
     end
 
     context 'with a string supplied as a note' do
-      it "renders a input field" do
-        address = create :address
-        form_builder = GcfFormBuilder.new(:address, address, template, {})
+      it "renders an input field" do
+        client = Client.create()
+        form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:zip, "Enter your zip", type: "number", notes: "This is a great note.")
+        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: "This is a great note.")
         expect(output).to be_html_safe
         expect(output).to match_html <<-HTML
           <fieldset class="form-group">
-            <label for="address_zip">
-              <p class="form-question">Enter your zip</p>
+            <label for="client_first_name">
+              <p class="form-question">Enter your first name</p>
               <p class="text--help">This is a great note.</p>
             </label>
-            <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="94606" name="address[zip]" id="address_zip" />
+            <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name" />
           </fieldset>
         HTML
       end
@@ -124,19 +126,19 @@ describe GcfFormBuilder, type: :view do
 
     context 'with a $ prefix' do
       it "renders the input prefix" do
-        eligibility_check = create :eligibility_check
-        form_builder = GcfFormBuilder.new(:eligibility_check, eligibility_check, template, {})
+        client = Client.create()
+        form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:monthly_gross_income, "MONEY", type: "number", notes: nil, prefix: "$")
+        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: nil, prefix: "$")
         expect(output).to be_html_safe
         expect(output).to match_html <<-HTML
           <fieldset class="form-group">
-            <label for="eligibility_check_monthly_gross_income">
-              <p class="form-question">MONEY</p>
+            <label for="client_first_name">
+              <p class="form-question">Enter your first name</p>
             </label>
             <div class="text-input-group">
               <div class="text-input-group__prefix">$</div>
-              <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="1" name="eligibility_check[monthly_gross_income]" id="eligibility_check_monthly_gross_income" />
+              <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name" />
             </div>
           </fieldset>
         HTML
@@ -144,128 +146,157 @@ describe GcfFormBuilder, type: :view do
     end
 
     it "renders errors" do
-      address = build :address, zip: "BOGUS"
-      address.valid?
-      form_builder = GcfFormBuilder.new(:address, address, template, {})
+      # client = build :client, phone_number: "BOGUS"
+      client = Client.create(phone_number: "BOGUS")
+      client.valid?
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:zip, "Enter your zip", type: "number")
+      output = form_builder.gcf_input_field(:phone_number, "Enter your phone number", type: "number")
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group form-group--error">
-         <label for="address_zip">
-           <p class="form-question">Enter your zip</p>
-         </label>
-         <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="BOGUS" name="address[zip]" id="address_zip" />
-         <div class="text--error"><i class="icon-warning"></i> Make sure your ZIP code is 5 digits. </div>
-       </fieldset>
+          <div class="field_with_errors">
+            <label for="client_phone_number">
+              <p class="form-question">Enter your phone number</p>
+            </label>
+          </div>
+          <div class="field_with_errors">
+            <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="BOGUS" name="client[phone_number]" id="client_phone_number" />
+          </div>
+          <div class="text--error">
+            <i class="icon-warning"></i> Make sure the phone number is 10 digits.
+          </div>
+        </fieldset>
       HTML
     end
   end
 
   describe "#gcf_select_field" do
     it "renders a select field" do
-      member = create :member, language: 'English'
-      form_builder = GcfFormBuilder.new(:member, member, template, {})
+      client = Client.create(active: true)
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_select(:language, "Enter your language", %w(English Spanish))
+      output = form_builder.gcf_select(:active, "Is this client active?", %w(Yes No))
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-         <label for="member_language">
-           <p class="form-question">Enter your language</p>
-         </label>
-         <div class="select">
-           <select class="select__element" name="member[language]" id="member_language">
-             <option selected="selected" value="English">English</option>
-             <option value="Spanish">Spanish</option>
-           </select>
-         </div>
-       </fieldset>
+          <label for="client_active">
+            <p class="form-question">Is this client active?</p>
+          </label>
+          <div class="select">
+            <select class="select__element" name="client[active]" id="client_active">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </fieldset>
       HTML
     end
   end
 
   describe "#gcf_checkbox_set" do
-    let!(:subscription_preference) { build :subscription_preference }
+    it "renders a check box set" do
+      client = Client.create(active: true)
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-    specify do
-      form_builder = GcfFormBuilder.new(:subscription_preference, subscription_preference, template, {})
-      output = form_builder.gcf_checkbox_set([{ label: "Email me", method: :email_consent }, { label: "Text message me", method: :sms_consent }], label_text: "TEST LABEL")
-
+      output = form_builder.gcf_checkbox_set([{ label: "Active", method: :active }, { label: "Still Active", method: :active }], label_text: "TEST LABEL")
+      expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <p class="form-question">TEST LABEL</p>
         <fieldset class="input-group--block">
-          <label class="checkbox"><input name="subscription_preference[email_consent]" type="hidden" value="0" /><input type="checkbox" value="1" checked="checked" name="subscription_preference[email_consent]" id="subscription_preference_email_consent" /> Email me </label>
-          <label class="checkbox"><input name="subscription_preference[sms_consent]" type="hidden" value="0" /><input type="checkbox" value="1" checked="checked" name="subscription_preference[sms_consent]" id="subscription_preference_sms_consent" /> Text message me </label>
+          <label class="checkbox">
+            <input name="client[active]" type="hidden" value="0" />
+            <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Active
+          </label>
+          <label class="checkbox">
+            <input name="client[active]" type="hidden" value="0" />
+            <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Still Active
+          </label>
         </fieldset>
       HTML
     end
   end
 
   describe "#gcf_checkbox" do
-    let!(:subscription_preference) { build :subscription_preference }
+    it "renders a check box that is not checked if the preference is false" do
+      client = Client.create(active: false)
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-    it 'renders a check box that is not checked if the preference is false' do
-      subscription_preference.update_attribute(:sms_consent, false)
-      form_builder = GcfFormBuilder.new(:subscription_preference, subscription_preference, template, {})
-      output = form_builder.gcf_checkbox(:sms_consent, "Text message me")
+      output = form_builder.gcf_checkbox(:active, "Active")
 
+      expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
-        <label class="checkbox"><input name="subscription_preference[sms_consent]" type="hidden" value="0" /><input type="checkbox" value="1" name="subscription_preference[sms_consent]" id="subscription_preference_sms_consent" /> Text message me </label>
+        <label class="checkbox">
+          <input name="client[active]" type="hidden" value="0" />
+          <input type="checkbox" value="1" name="client[active]" id="client_active" /> Active
+        </label>
       HTML
     end
 
     it "renders a check box that is checked when the subscription preference is true" do
-      subscription_preference.update_attribute(:sms_consent, true)
-      form_builder = GcfFormBuilder.new(:subscription_preference, subscription_preference, template, {})
-      output = form_builder.gcf_checkbox(:sms_consent, "Text message me")
+      client = Client.create(active: true)
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
+
+      output = form_builder.gcf_checkbox(:active, "Active")
 
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
-        <label class="checkbox"><input name="subscription_preference[sms_consent]" type="hidden" value="0" /><input type="checkbox" value="1" checked="checked" name="subscription_preference[sms_consent]" id="subscription_preference_sms_consent" /> Text message me </label>
+        <label class="checkbox">
+          <input name="client[active]" type="hidden" value="0" />
+          <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Active
+        </label>
       HTML
     end
   end
 
   describe "#gcf_radio_set" do
     it "render a set of radio buttons" do
-      eligibility_check = build :eligibility_check, household_size: 2
-      form_builder = GcfFormBuilder.new(:eligibility_check, eligibility_check, template, {})
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_radio_set(:household_size, "How many people live in your address?", 1..2)
+      output = form_builder.gcf_radio_set(:last_name, "If your last name were a single digit, what would it be?", 1..2)
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-          <p class="form-question">How many people live in your address?</p>
+          <p class="form-question">If your last name were a single digit, what would it be?</p>
           <radiogroup class="input-group--block">
-            <label class="radio-button"><input type="radio" value="1" name="eligibility_check[household_size]" id="eligibility_check_household_size_1" /> 1 </label>
-            <label class="radio-button"><input type="radio" value="2" checked="checked" name="eligibility_check[household_size]" id="eligibility_check_household_size_2" /> 2 </label>
+            <label class="radio-button">
+              <input type="radio" value="1" name="client[last_name]" id="client_last_name_1" /> 1
+            </label>
+            <label class="radio-button">
+              <input type="radio" value="2" name="client[last_name]" id="client_last_name_2" /> 2
+            </label>
           </radiogroup>
         </fieldset>
       HTML
     end
 
-    it "render a set of radio buttons with labels that differ from values" do
-      eligibility_check = build :eligibility_check, household_size: 2
-      form_builder = GcfFormBuilder.new(:eligibility_check, eligibility_check, template, {})
+    it "renders a set of radio buttons with labels that differ from values" do
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_radio_set(:household_size, "How many people live in your address?", [{ value: 1, label: "One" }, { value: 2, label: "Two" }])
+      output = form_builder.gcf_radio_set(:last_name, "What's your last name?", [{ value: 1, label: "Gutierrez" }, { value: 2, label: "Livingston" }])
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
         <fieldset class="form-group">
-         <p class="form-question">How many people live in your address?</p>
-         <radiogroup class="input-group--block">
-           <label class="radio-button"><input type="radio" value="1" name="eligibility_check[household_size]" id="eligibility_check_household_size_1" /> One </label>
-           <label class="radio-button"><input type="radio" value="2" checked="checked" name="eligibility_check[household_size]" id="eligibility_check_household_size_2" /> Two </label>
-         </radiogroup>
-       </fieldset>
+          <p class="form-question">What's your last name?</p>
+          <radiogroup class="input-group--block">
+            <label class="radio-button">
+              <input type="radio" value="1" name="client[last_name]" id="client_last_name_1" /> Gutierrez
+            </label>
+            <label class="radio-button">
+              <input type="radio" value="2" name="client[last_name]" id="client_last_name_2" /> Livingston
+            </label>
+          </radiogroup>
+        </fieldset>
       HTML
     end
   end
 
   describe "#continue" do
-    specify do
-      form_builder = GcfFormBuilder.new(:eligibility_check, Object.new, template, {})
+    it "renders a continue button" do
+      client = Client.create()
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
       output = form_builder.continue "Let's Go!"
       expect(output).to be_html_safe
       expect(output).to match_html <<-HTML
