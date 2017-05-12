@@ -4,7 +4,7 @@
     top: 1em;
     bottom: 1em;
   }
-  
+  background: $color-header;
   border-bottom: 1px solid $color-tan;
 }
 
@@ -13,7 +13,12 @@
   line-height: $line-height-normal;
   margin-bottom: 0;
   font-weight: 500;
-  color: #000;
+  color: #666;
+  .main-header__site-title {
+    color: #666;    
+    font-size: $font-size-normal;
+    text-decoration: none;
+  }
   .main-header__cbo-title {
     display: inline-block;
     @include media($tablet-up) {
@@ -31,7 +36,7 @@
     position: relative;
     text-decoration: none;
     display: inline-block;
-    color: #000;
+    color: #666;
     padding-left: 1.8em;
 
     &:before {

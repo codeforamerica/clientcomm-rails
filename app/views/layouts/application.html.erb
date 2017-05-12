@@ -4,7 +4,6 @@
     <title>Clientcomm</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all' %>
@@ -14,6 +13,17 @@
 
   <body class="template--<%= content_for(:template_name) if content_for?(:template_name) %>">
     <div class="page-wrapper">
+      <header class="main-header">
+        <div class="toolbar">
+          <div class="toolbar__left">
+            <h1 class="toolbar__item main-header__title"><a class="main-header__site-title" href="/">ClientComm</a></h1>
+          </div>
+          <div class="toolbar__right text--small">
+            <span class="toolbar__item">Case Manager</span>
+          </div>
+        </div>
+      </header>
+
       <%= content_for?(:content) ? yield(:content) : yield %>
     </div>
   </body>

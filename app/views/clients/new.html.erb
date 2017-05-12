@@ -15,7 +15,9 @@
 
           <div class="form-card__footer">
             <%= f.submit "Save new client", class: 'button button--cta', role: 'button' %>
-            <a href="#" class="button" style="outline: none;">Cancel</a>
+            <%= link_to clients_path, class: "button" do %>
+            Cancel
+            <% end %>
           </div>
         <% end %>
         </div>

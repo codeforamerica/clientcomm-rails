@@ -1,11 +1,21 @@
-<h1>Clients</h1>
-
-<%= link_to new_client_path, class: "button button--small button--cta" do %>
-<i class="button__icon--left icon-add"></i> New client
-<% end %>
-
-<ul class="clients">
-  <% @clients.each do |client| %>
-  <li><%= client.first_name %> <%= client.last_name %></li>
-  <% end %>
-</ul>
+<section class="slab slab--white slab--padded" id="scroller-target">
+  <div class="grid">
+    <div class="grid__item">
+      <div class="media-box--bleed media-box">
+        <div class="media-box__content">
+          <h1>Clients</h1>
+  
+          <%= link_to new_client_path, class: "button button--small button--cta" do %>
+          <i class="button__icon--left icon-add"></i> New client
+          <% end %>
+  
+          <ul class="clients">
+            <% @clients.each do |client| %>
+            <li><%= client.first_name %> <%= client.last_name %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
