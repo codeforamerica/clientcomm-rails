@@ -1,5 +1,5 @@
 .input-group--block {
-  .radio-button, .checkbox {
+  .radio-button, .checkbox, .text-input {
       display: block;
       width: 100%;
       max-width: $width-form-long;
@@ -7,7 +7,7 @@
 }
 
 .input-group--inline {
-    .radio-button, .checkbox {
+    .radio-button, .checkbox, .text-input {
         display: inline-block;
         margin-right: .3em;
     }
