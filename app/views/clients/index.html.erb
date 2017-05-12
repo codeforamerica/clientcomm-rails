@@ -1,3 +1,11 @@
 <h1>Clients</h1>
 
-<%= link_to "Add New Client", new_client_path %>
+<%= link_to new_client_path, class: "button button--small button--cta" do %>
+<i class="button__icon--left icon-add"></i> New client
+<% end %>
+
+<ul class="clients">
+  <% @clients.each do |client| %>
+  <li><%= client.first_name %> <%= client.last_name %></li>
+  <% end %>
+</ul>
