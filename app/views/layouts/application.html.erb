@@ -10,6 +10,23 @@
     <%= javascript_include_tag 'application' %>
     <%= content_for(:head) if content_for?(:head) %>
   </head>
+  <% if notice %>
+  <div class="flash-container" id="dismiss-notice">
+    <div class="flash">
+      <p class="flash__message"><%= notice %></p>
+      <a href="#dismiss-notice" class="flash__dismiss"><span class="icon icon-close"></span></a>
+    </div>
+  </div>
+  <% end %>
+
+  <% if alert %>
+  <div class="flash-container" id="dismiss-notice">
+    <div class="flash flash--error">
+      <p class="flash__message"><%= alert %></p>
+      <a href="#dismiss-notice" class="flash__dismiss"><span class="icon icon-close"></span></a>
+    </div>
+  </div>
+  <% end %>
 
   <body class="template--<%= content_for(:template_name) if content_for?(:template_name) %>">
     <div class="page-wrapper">
