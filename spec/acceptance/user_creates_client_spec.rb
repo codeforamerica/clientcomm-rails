@@ -11,6 +11,6 @@ feature "User creates client" do
     select "1982", from: "client_birth_date_1i"
     fill_in "Phone number", with: "2435551212"
     click_on "Save new client"
-    expect(page).to have_css '.clients li', text: "Colby Rucker"
+    expect(page).to have_css '.data-table td', text: "Colby Rucker"
   end
 end
