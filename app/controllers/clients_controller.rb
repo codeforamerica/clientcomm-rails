@@ -1,4 +1,6 @@
 class ClientsController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     @clients = Client.order('updated_at DESC').all
   end
