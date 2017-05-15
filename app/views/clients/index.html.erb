@@ -6,34 +6,34 @@
 
           <div class="toolbar">
               <div class="toolbar__left">
-                  <h2>My clients</h2>
+                <h2>My clients</h2>
               </div>
               <div class="toolbar__right">
-                  <%= link_to new_client_path, class: "button button--small button--cta" do %>
-                      <i class="button__icon--left icon-add"></i> New client
-                      <% end %>
+                <%= link_to new_client_path, class: "button button--small button--cta" do %>
+                  <i class="button__icon--left icon-add"></i> New client
+                <% end %>
               </div>
           </div>
 
           <div class="grid__item">
-              <table class="data-table">
-                  <thead>
-                      <tr>
-                          <th>Name</th>
-                          <th>Unread</th>
-                          <th>Last contact</th>
-                      </tr>
-                  </thead>
-                  <% @clients.each do |client| %>
-                  <tbody>
-                      <tr>
-                          <td><%= client.first_name %> <%= client.last_name %></td>
-                          <td></td>
-                          <td><%= time_ago_in_words(client.updated_at) %></td>
-                      </tr>
-                  </tbody>
-                  <% end %>
-              </table>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Unread</th>
+                  <th>Last contact</th>
+                </tr>
+              </thead>
+              <% @clients.each do |client| %>
+              <tbody>
+                <tr>
+                  <td><%= client.first_name %> <%= client.last_name %></td>
+                  <td></td>
+                  <td><%= time_ago_in_words(client.updated_at) %></td>
+                </tr>
+              </tbody>
+              <% end %>
+            </table>
           </div>
 
         </div>
