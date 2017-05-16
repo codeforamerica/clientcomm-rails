@@ -1,4 +1,4 @@
-module FeatureHelper
+module Features
   def xstep(title)
     puts "PENDING STEP SKIPPED: #{title}" if ENV["LOUD_TESTS"]
   end
