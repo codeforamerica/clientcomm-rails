@@ -12,11 +12,6 @@ end
 feature "logged-in user visits clients page" do
   scenario "successfully" do
     myuser = create :user
-    visit root_path
-    fill_in "Email", with: myuser.email
-    fill_in "Password", with: myuser.password
-    click_on "Sign in"
-    expect(page).to have_text "My clients"
-    expect(page).to have_current_path(root_path)
+    login(myuser)
   end
 end

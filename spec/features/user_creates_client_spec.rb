@@ -11,19 +11,14 @@ end
 feature "User creates client" do
   scenario "successfully" do
     # log in with a fake user
-    user = FactoryGirl.create(:user)
-    login_as(user, :scope => :user)
+    myuser = create :user
+    login_as(myuser, :scope => :user)
     visit root_path
     click_on "New client"
-    fill_in "First name", with: "Colby"
-    fill_in "Last name", with: "Rucker"
-    select "November", from: "client_birth_date_2i"
-    select "7", from: "client_birth_date_3i"
-    select "1982", from: "client_birth_date_1i"
-    fill_in "Phone number", with: "2435551212"
     expect(page).to have_current_path(new_client_path)
-    click_on "Save new client"
-    expect(page).to have_css '.data-table td', text: "Colby Rucker"
+    myclient = build :client
+    add_client(myclient)
+    expect(page).to have_css '.data-table td', text: myclient.first_name + " " + myclient.last_name
     expect(page).to have_current_path(clients_path)
   end
 end
