@@ -6,8 +6,7 @@ A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm
 
 ## Installation
 ### Requirements
-1. Install Ruby with your ruby version manager of choice:
-  - Using [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
+1. Install Ruby with your ruby version manager of choice, using [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
 1. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.0`
 1. Install postgres - [howto](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md). If setting up Postgres.app, you will also need to add the binary to your path. e.g. Add to your `~/.bashrc`:
 `export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"`
