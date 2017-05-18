@@ -1,2 +1,6 @@
 #!/bin/bash
-kill $(lsof -t -i:80)
+TARGETS=$(lsof -t -i:80)
+if [[ ${TARGETS:+1} ]]
+then
+  kill TARGETS
+fi
