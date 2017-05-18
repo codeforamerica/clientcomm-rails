@@ -4,7 +4,7 @@ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB8
 curl -L get.rvm.io | bash -s stable
 source /etc/profile.d/rvm.sh
 rvm requirements
-rvm install 2.4.0
+rvm install $(cat .ruby-version)
 gem install rails
 bundle install
 bundle exec passenger start -p 80 -a 0.0.0.0 -d
