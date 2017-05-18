@@ -2,5 +2,10 @@
 TARGETS=$(lsof -t -i:80)
 if [[ ${TARGETS:+1} ]]
 then
-  kill TARGETS
+  {
+    kill TARGETS &&
+    echo "success"
+  } || {
+    echo "failure"
+  }
 fi
