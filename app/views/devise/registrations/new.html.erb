@@ -17,6 +17,8 @@
         </div>
 
         <div class="form-card__content">
+        <label class="form-question" for="example_text">Full name</label>
+        <input type="text" class="text-input form-width--long" name="example_text">
         <%= form_for resource, as: resource_name, url: registration_path(resource_name), builder: GcfFormBuilder do |f| %>
           <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
 
