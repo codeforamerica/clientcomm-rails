@@ -33,11 +33,11 @@
       <header class="main-header">
         <div class="toolbar">
           <div class="toolbar__left">
-            <h1 class="toolbar__item main-header__title"><a class="main-header__site-title" href="/">ClientComm</a></h1>
+            <h1 class="toolbar__item main-header__title"><a class="main-header__site-title" href="/">ClientComm</a><span class="label label--magenta">Beta</span></h1> 
           </div>
           <div class="toolbar__right text--small">
             <% if user_signed_in? %>
-            <span class="toolbar__item"><%= current_user.email %></span>
+            <span class="toolbar__item is-mobile-hidden--inline"><%= current_user.email %></span>
             <span class="toolbar__item"><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></span>
             <% end %>
           </div>
