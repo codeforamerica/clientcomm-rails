@@ -17,11 +17,9 @@
         </div>
 
         <div class="form-card__content">
-        <label class="form-question" for="example_text">Full name</label>
-        <input type="text" class="text-input form-width--long" name="example_text">
         <%= form_for resource, as: resource_name, url: registration_path(resource_name), builder: GcfFormBuilder do |f| %>
-          <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
-
+          <%= f.gcf_input_field :full_name, "Full name", autofocus: true, classes: ['form-width--long'] %>
+          <%= f.gcf_input_field :email, "Email", classes: ['form-width--long'] %>
           <%= f.gcf_input_field :password, "Password", type: "password", classes: ['form-width--long'], notes: ['(' + @minimum_password_length.to_s + ' characters minimum)'] %>
           <%= f.gcf_input_field :password_confirmation, "Confirm password", type: "password", classes: ['form-width--long'] %>
 
