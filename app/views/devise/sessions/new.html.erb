@@ -32,12 +32,14 @@
                 <div class="toolbar__item">
                   <%= f.continue "Sign in" %>
                 </div>
+                <% if devise_mapping.rememberable? -%>
                 <div class="toolbar__item nudge--med">
                   <p class="text--help">
                     <%= f.check_box :remember_me %>
                     <%= f.label "Remember me" %>
                   </p>
                 </div>
+                <% end -%>
               </div>
             </div>
           </div>
