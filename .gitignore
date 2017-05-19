@@ -17,4 +17,5 @@
 .byebug_history
 
 # Ignore private keys
-.env
+.env*
+*.pem
