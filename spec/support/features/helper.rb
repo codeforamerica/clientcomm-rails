@@ -1,4 +1,25 @@
 module Features
+  def login(the_user)
+    visit new_user_session_path
+    fill_in "Email", with: the_user.email
+    fill_in "Password", with: the_user.password
+    click_on "Sign in"
+    expect(page).to have_text "My clients"
+    expect(page).to have_current_path(root_path)
+  end
+
+  def add_client(the_client)
+    visit new_client_path
+    fill_in "First name", with: the_client.first_name
+    fill_in "Last name", with: the_client.last_name
+    select Date::MONTHNAMES[the_client.birth_date.month], from: "client_birth_date_2i"
+    select the_client.birth_date.day.to_s, from: "client_birth_date_3i"
+    select the_client.birth_date.year.to_s, from: "client_birth_date_1i"
+    fill_in "Phone number", with: the_client.phone_number
+    click_on "Save new client"
+    expect(page).to have_current_path(clients_path)
+  end
+
   def xstep(title)
     puts "PENDING STEP SKIPPED: #{title}" if ENV["LOUD_TESTS"]
   end

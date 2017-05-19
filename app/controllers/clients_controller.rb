@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = Client.order('updated_at DESC').all
+    @clients = current_user.clients.order('updated_at DESC')
   end
 
   def new
@@ -10,7 +10,7 @@ class ClientsController < ApplicationController
   end
 
   def create
-    Client.create(client_params)
+    current_user.clients.create(client_params)
 
     redirect_to clients_path
   end

@@ -25,6 +25,9 @@ RSpec.configure do |config|
     stub_request(:post, /api.mixpanel.com/)
       .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
       .to_return(status: 200, body: "stubbed response", headers: {})
+
+    # reset the fake Twilio client message queue
+    FakeTwilioClient.messages = []
   end
 
   config.after(:each) do
