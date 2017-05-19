@@ -16,23 +16,22 @@
           </div>
 
           <div class="grid__item">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Last contact</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @clients.each do |client| %>
-                    <tr data-href= "#">
-                      <td><%= client.first_name %> <%= client.last_name %></td>
-                      <td><%= time_ago_in_words(client.updated_at) %></td>
-                    </tr>
-                  <% end %>
-                </tbody>       
-              </table>            
-            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Last contact</th>
+                </tr>
+              </thead>
+              <tbody>
+              <% @clients.each do |client| %>
+                <tr data-href= "#">
+                  <td><%= client.first_name %> <%= client.last_name %></td>
+                  <td><%= time_ago_in_words(client.updated_at) %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
           </div>
 
         </div>
