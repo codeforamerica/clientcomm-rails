@@ -9,7 +9,7 @@
               <h1 class="form-card__title">Sign up</h1>
             </div>
             <div class="toolbar__right">
-              <%= link_to new_session_path(resource_name), class: "button button--small button--primary" do %>
+              <%= link_to new_session_path(resource_name), class: "button button--small" do %>
                 Log in
               <% end %>
             </div>
@@ -18,10 +18,10 @@
 
         <div class="form-card__content">
         <%= form_for resource, as: resource_name, url: registration_path(resource_name), builder: GcfFormBuilder do |f| %>
-          <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--name'] %>
-
-          <%= f.gcf_input_field :password, "Password", type: "password", classes: ['form-width--name'], notes: ['(' + @minimum_password_length.to_s + ' characters minimum)'] %>
-          <%= f.gcf_input_field :password_confirmation, "Confirm password", type: "password", classes: ['form-width--name'] %>
+          <%= f.gcf_input_field :full_name, "Full name", autofocus: true, classes: ['form-width--long'] %>
+          <%= f.gcf_input_field :email, "Email", classes: ['form-width--long'] %>
+          <%= f.gcf_input_field :password, "Password", type: "password", classes: ['form-width--long'], notes: ['(' + @minimum_password_length.to_s + ' characters minimum)'] %>
+          <%= f.gcf_input_field :password_confirmation, "Confirm password", type: "password", classes: ['form-width--long'] %>
 
           <div class="form-card__footer">
             <div class="toolbar">

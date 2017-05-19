@@ -58,12 +58,12 @@
   tr {
     &:nth-child(2n) {
       td {
-        background-color: $color-background;
+        background-color: #FFFFFF;
       }
     }
     &:nth-child(2n-1) {
       td {
-        background-color: #FFFFFF;
+        background-color: $color-light-grey;
       }
     }
 
@@ -78,9 +78,6 @@
 
   td {
     border-bottom: 1px solid $color-tan;
-    &:first-child {
-      font-weight: 700;
-    }
   }
 
   .status {
