@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519034001) do
+ActiveRecord::Schema.define(version: 20170519215508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,21 @@ ActiveRecord::Schema.define(version: 20170519034001) do
     t.datetime "updated_at",                  null: false
     t.integer  "user_id"
     t.index ["user_id"], name: "index_clients_on_user_id", using: :btree
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.integer  "client_id"
+    t.integer  "user_id"
+    t.string   "body",          default: ""
+    t.string   "number_from",                   null: false
+    t.string   "number_to",                     null: false
+    t.boolean  "inbound",       default: false, null: false
+    t.string   "twilio_sid"
+    t.string   "twilio_status"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.index ["client_id"], name: "index_messages_on_client_id", using: :btree
+    t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
@@ -46,4 +61,6 @@ ActiveRecord::Schema.define(version: 20170519034001) do
   end
 
   add_foreign_key "clients", "users"
+  add_foreign_key "messages", "clients"
+  add_foreign_key "messages", "users"
 end
