@@ -7,7 +7,7 @@ FactoryGirl.define do
       to = 20.years.ago.to_f
       Time.at(from + rand * (to - from))
     end
-    sequence(:phone_number) { |n| "243" + (10**6 + n).to_s[0..6] }
+    sequence(:phone_number) { |n| "243" + (n.to_s + (1000000 + Random.rand(10000000 - 1000000)).to_s)[0..6] }
     active true
   end
 end
