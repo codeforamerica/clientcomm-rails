@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :user
+  has_many :messages
 
   PHONE_NUMBER_REGEX = /\A\d{10}\z/
 

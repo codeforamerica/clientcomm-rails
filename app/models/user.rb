@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :clients, dependent: :destroy
+  has_many :messages
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
