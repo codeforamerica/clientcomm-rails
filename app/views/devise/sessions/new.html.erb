@@ -34,9 +34,8 @@
                 </div>
                 <div class="toolbar__item nudge--med">
                   <p class="text--help">
-                    <input name="user[remember_me]" type="hidden" value="0">
-                    <input type="checkbox" value="1" name="user[remember_me]" id="user_remember_me">
-                    <label for="user_Remember me">Remember me</label>
+                    <%= f.check_box :remember_me %>
+                    <%= f.label "Remember me" %>
                   </p>
                 </div>
               </div>
