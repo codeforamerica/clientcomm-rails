@@ -18,7 +18,7 @@ feature "User creates client" do
     expect(page).to have_current_path(new_client_path)
     myclient = build :client
     add_client(myclient)
-    expect(page).to have_css '.data-table td', text: myclient.first_name + " " + myclient.last_name
+    expect(page).to have_css '.data-table td', text: myclient.full_name
     expect(page).to have_current_path(clients_path)
   end
 end

@@ -5,4 +5,9 @@ class Client < ApplicationRecord
 
   validates :phone_number,
     format: { with: PHONE_NUMBER_REGEX, message: "Make sure the phone number is 10 digits." }
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
 end

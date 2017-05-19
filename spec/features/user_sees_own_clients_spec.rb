@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "logged-out user visits clients page" do
+feature "logged-in user visits clients page" do
   scenario "and sees only clients they have created" do
     # login as a user
     user1 = create :user
@@ -19,8 +19,8 @@ feature "logged-out user visits clients page" do
     # we're on the clients page
     expect(page).to have_current_path(clients_path)
     # the client I just created should be in the list
-    expect(page).to have_css '.data-table td', text: client2.first_name + " " + client2.last_name
+    expect(page).to have_css '.data-table td', text: client2.full_name
     # but the client user1 created shouldn't be
-    expect(page).not_to have_css '.data-table td', text: client1.first_name + " " + client1.last_name
+    expect(page).not_to have_css '.data-table td', text: client1.full_name
   end
 end
