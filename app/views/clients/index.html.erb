@@ -16,7 +16,7 @@
           </div>
 
           <div class="grid__item">
-            <table class="data-table">
+            <table class="data-table data-table--selectable">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -25,9 +25,9 @@
               </thead>
               <tbody>
               <% @clients.each do |client| %>
-                <tr data-href= "#">
-                  <td><%= client.first_name %> <%= client.last_name %></td>
-                  <td><%= time_ago_in_words(client.updated_at) %></td>
+                <tr>
+                  <td><%= link_to client.full_name, client_messages_path(client.id) %></td>
+                  <td><%= link_to time_ago_in_words(client.updated_at), client_messages_path(client.id) %></td>
                 </tr>
               <% end %>
               </tbody>
