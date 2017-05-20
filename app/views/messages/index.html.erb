@@ -1,2 +1,39 @@
-<h1>Messages#index</h1>
-<p>Find me in app/views/messages/index.html.erb</p>
+<div class="toolbar with-padding-med">
+  <div class="toolbar__left">
+    <h2><%= @client.full_name %></h2>
+  </div>
+  <div class="toolbar__right">
+    (415) 555-1212
+  </div>
+</div>
+
+<section class="slab slab--padded" id="scroller-target">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+      <div class="media-box--bleed media-box">
+        <div class="media-box__content">
+
+
+          <div class="grid__item">
+            <table class="data-table data-table--selectable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Last contact</th>
+                </tr>
+              </thead>
+              <tbody>
+              <% @messages.each do |message| %>
+                <tr>
+                  <td><%= message.body %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
