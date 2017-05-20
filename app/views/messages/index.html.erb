@@ -1,39 +1,40 @@
-<div class="toolbar with-padding-med">
-  <div class="toolbar__left">
-    <h2><%= @client.full_name %></h2>
+<% content_for(:template_name) { "messages" }  %>
+
+<section class="slab slab--header">
+  <div class="grid">
+    <div class="grid__item width-one-third">
+      &lt; <%= link_to "Clients", clients_path %>
+    </div>
+    <div class="grid__item width-one-third">
+      <strong><%= @client.full_name %></strong>
+    </div>
+    <div class="grid__item width-one-third text--right">
+      <%= @client.phone_number_display %>
+    </div>
   </div>
-  <div class="toolbar__right">
-    (415) 555-1212
-  </div>
-</div>
+</section>
 
 <section class="slab slab--padded" id="scroller-target">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
-      <div class="media-box--bleed media-box">
-        <div class="media-box__content">
-
-
-          <div class="grid__item">
-            <table class="data-table data-table--selectable">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Last contact</th>
-                </tr>
-              </thead>
-              <tbody>
-              <% @messages.each do |message| %>
-                <tr>
-                  <td><%= message.body %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-
+      <% @messages.each do |message| %>
+        <div class="card">
+          <p><%= message.body %></p>
         </div>
-      </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<section class="slab slab--padded" id="scroller-target">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+    <%= form_for @message, builder: GcfFormBuilder do |f| %>
+      <%= f.gcf_textarea :body, "Send a text message", autofocus: true, classes: ['form-width--name'] %>
+        <div class="toolbar">
+          <div class="toolbar__right"><%= f.submit "Send", class: 'button button--cta', role: 'button' %></div>
+        </div>
+    <% end %>
     </div>
   </div>
 </section>

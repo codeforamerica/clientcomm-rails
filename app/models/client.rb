@@ -11,4 +11,12 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def phone_number_display
+    stripped = phone_number.to_s.gsub(/\D+/, "")
+    if (stripped.length == 11) && (stripped[0] == '1')
+      stripped = stripped[1..-1]
+    end
+    "(#{stripped[0..2]}) #{stripped[3..5]}-#{stripped[6..-1]}"
+  end
+
 end
