@@ -1,14 +1,20 @@
+require 'singleton'
+
 class SMSService
+  include Singleton
+
   def initialize
-    @client = Twilio::REST::Client.new(
-      ENV['TWILIO_ACCOUNT_SID'] 
-      ENV['TWILIO_AUTH_TOKEN']
-    )
+    sid = ENV['TWILIO_ACCOUNT_SID']
+    token = ENV['TWILIO_AUTH_TOKEN']
+    @client = Twilio::REST::Client.new sid, token
   end
 
   def send_message(from:, to:, body:)
-    clean_to = clean_phone_number(to)
-    @client.messages.create(from: from, to: clean_to, body: body)
+    to_clean = clean_phone_number(to)
+    # use the from in the ENV if one wasn't sent
+    from ||= ENV['TWILIO_PHONE_NUMBER']
+    from_clean = clean_phone_number(from)
+    @client.messages.create(from: from_clean, to: to_clean, body: body)
   end
 
   private
