@@ -1,7 +1,7 @@
 require "rails_helper"
 
 feature "User enters a message and submits it" do
-  scenario "and sees the message on the client's messages page" do
+  scenario "then sees the message on the client's messages page" do
     # log in with a fake user
     myuser = create :user
     login_as(myuser, :scope => :user)
@@ -15,7 +15,7 @@ feature "User enters a message and submits it" do
     # enter a message in the form
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
-    click_on "Send"
+    click_on "send_message"
     # look for the message on the page
     expect(page).to have_css '.card p', text: message_body
   end

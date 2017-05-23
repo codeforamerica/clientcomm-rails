@@ -37,6 +37,7 @@
     <div class="grid__item width-two-thirds shift-one-sixth">
     <%= form_for @message, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
       <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
+      <input name="client_id" type="hidden" value="<%= @client.id %>">
     <% end %>
     </div>
   </div>
