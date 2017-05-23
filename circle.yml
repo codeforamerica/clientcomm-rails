@@ -1,4 +1,4 @@
-machine
+machine:
   environment:
     TWILIO_PHONE_NUMBER: +12435551212
 
