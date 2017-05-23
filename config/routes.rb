@@ -18,4 +18,5 @@ Rails.application.routes.draw do
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'
   post '/incoming/voice', to: 'twilio#incoming_voice'
+  post '/incoming/sms/status', to: 'twilio#incoming_sms_status'
 end

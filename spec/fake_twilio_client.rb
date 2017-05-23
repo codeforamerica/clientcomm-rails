@@ -1,6 +1,7 @@
 class FakeTwilioClient
   # source: https://robots.thoughtbot.com/testing-sms-interactions
   FakeMessage = Struct.new(:from, :to, :body)
+  FakeResponse = Struct.new(:sid, :status)
 
   cattr_accessor :messages
   self.messages = []
@@ -16,7 +17,8 @@ class FakeTwilioClient
     self
   end
 
-  def create(from:, to:, body:)
+  def create(from:, to:, body:, statusCallback:)
     self.class.messages << FakeMessage.new(from, to, body)
+    FakeResponse.new(SecureRandom.hex(17), ["queued", "sending", "sent", "failed", "received"].sample)
   end
 end

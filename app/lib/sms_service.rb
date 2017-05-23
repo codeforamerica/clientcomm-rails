@@ -9,12 +9,12 @@ class SMSService
     @client = Twilio::REST::Client.new sid, token
   end
 
-  def send_message(from: nil, to:, body:)
+  def send_message(from: nil, to:, body:, callback_url:)
     to_clean = clean_phone_number(to)
     # use the from in the ENV if one wasn't sent
     from ||= ENV['TWILIO_PHONE_NUMBER']
     from_clean = clean_phone_number(from)
-    @client.account.messages.create(from: from_clean, to: to_clean, body: body)
+    @client.account.messages.create(from: from_clean, to: to_clean, body: body, statusCallback: callback_url)
   end
 
   private
