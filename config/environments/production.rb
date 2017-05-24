@@ -83,9 +83,4 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  # validate Twilio POSTs
-  # see https://www.twilio.com/blog/2014/09/securing-your-ruby-webhooks-with-rack-middleware.html
-  # see https://github.com/twilio/twilio-ruby/blob/master/lib/rack/twilio_webhook_authentication.rb
-  config.middleware.use Rack::TwilioWebhookAuthentication, ENV['TWILIO_AUTH_TOKEN'], "/incoming"
 end

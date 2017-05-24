@@ -21,5 +21,10 @@ module Clientcomm
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+
+    # validate Twilio POSTs
+    # see https://www.twilio.com/blog/2014/09/securing-your-ruby-webhooks-with-rack-middleware.html
+    # see https://github.com/twilio/twilio-ruby/blob/master/lib/rack/twilio_webhook_authentication.rb
+    config.middleware.use Rack::TwilioWebhookAuthentication, ENV['TWILIO_AUTH_TOKEN'], "/incoming"
   end
 end

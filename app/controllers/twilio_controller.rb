@@ -8,7 +8,8 @@ class TwilioController < ApplicationController
     # create a new message
     new_message_params = {client: client, user_id: client.user_id, number_to: ENV['TWILIO_PHONE_NUMBER'], number_from: params[:From], inbound: true, twilio_sid: params[:SmsSid], twilio_status: params[:SmsStatus], body: params[:Body]}
     Message.create(new_message_params)
-    # TODO: return 200
+
+    head :no_content
   end
 
   def incoming_sms_status
@@ -16,6 +17,8 @@ class TwilioController < ApplicationController
     # update the status of the corresponding message in the database
     message = Message.find_by twilio_sid: params[:SmsSid]
     message.update(twilio_status: params[:SmsStatus])
+
+    head :no_content
   end
 
   def incoming_voice
