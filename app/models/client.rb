@@ -6,8 +6,9 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def phone_number_display
-    PhoneNumberParser.format_for_display(phone_number)
+  # override default accessors
+  def phone_number=(number_input)
+    self[:phone_number] = PhoneNumberParser.normalize(number_input)
   end
 
 end

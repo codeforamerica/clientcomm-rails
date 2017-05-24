@@ -10,11 +10,7 @@ class ClientsController < ApplicationController
   end
 
   def create
-    # normalize the client's phone number
-    params = client_params
-    params[:phone_number] = PhoneNumberParser.normalize(params[:phone_number])
-    # create the client
-    current_user.clients.create(params)
+    current_user.clients.create(client_params)
 
     redirect_to clients_path
   end

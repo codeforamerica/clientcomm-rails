@@ -9,7 +9,7 @@
       <strong><%= @client.full_name %></strong>
     </div>
     <div class="grid__item width-one-third text--right is-mobile-hidden--inline">
-      <%= @client.phone_number_display %>
+      <%= phone_number_display(@client.phone_number) %>
     </div>
   </div>
 </section>
