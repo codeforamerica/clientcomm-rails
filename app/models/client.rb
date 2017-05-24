@@ -6,8 +6,4 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def phone_number_display
-    PhoneNumberParser.format_for_display(phone_number)
-  end
-
 end

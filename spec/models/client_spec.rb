@@ -21,14 +21,6 @@ RSpec.describe Client, type: :model do
     it 'formats full name' do
       expect(client.full_name).to eq(client.first_name + " " + client.last_name)
     end
-
-    it 'formats phone number' do
-      area_code = "243"
-      prefix = "555"
-      suffix = "1212"
-      client.phone_number = area_code + prefix + suffix
-      expect(client.phone_number_display).to eq("(" + area_code + ") " + prefix + "-" + suffix)
-    end
   end
 
 end
