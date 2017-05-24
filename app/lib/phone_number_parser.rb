@@ -1,22 +1,21 @@
 class PhoneNumberParser
   # NOTE: assumes US numbers
 
-  def self.normalize(phone_number)
-    # add the US country code if necessary
+  def self.make_bare(phone_number)
+    # return the phone number without country code or non-numeric characters
     stripped = phone_number.to_s.gsub(/\D+/, "")
-    if (stripped.length == 11) && (stripped[0] == '1')
-      "+" + stripped
-    elsif (stripped.length == 10)
-      "+1" + stripped
-    end
+    stripped[[-10, -1 * stripped.length].max..-1]
+  end
+
+  def self.normalize(phone_number)
+    # prepend the US country code if necessary
+    bare = self.make_bare(phone_number)
+    "+1#{bare}"
   end
 
   def self.format_for_display(phone_number)
     # format for display, like: "(243) 555-1212"
-    stripped = phone_number.to_s.gsub(/\D+/, "")
-    if (stripped.length == 11) && (stripped[0] == '1')
-      stripped = stripped[1..-1]
-    end
-    "(#{stripped[0..2]}) #{stripped[3..5]}-#{stripped[6..-1]}"
+    bare = self.make_bare(phone_number)
+    "(#{bare[0..2]}) #{bare[3..5]}-#{bare[6..-1]}"
   end
 end
