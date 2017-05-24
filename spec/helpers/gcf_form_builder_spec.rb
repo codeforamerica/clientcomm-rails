@@ -152,7 +152,7 @@ describe GcfFormBuilder, type: :view do
       end
     end
 
-    it "renders errors" do
+    it "renders errors", :skip => "skipping until we have a model that validates a parameter" do
       user = create :user
       client = build :client, phone_number: "BOGUS", :user => user
       client.valid?

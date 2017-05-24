@@ -10,7 +10,7 @@ feature "User enters a message and submits it" do
     myclient = build :client
     add_client(myclient)
     # go to messages page
-    myclient_id = Client.find_by(phone_number: myclient.phone_number).id
+    myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myclient.phone_number)).id
     visit client_messages_path(client_id: myclient_id)
     # enter a message in the form
     message_body = "You have an appointment tomorrow at 10am"

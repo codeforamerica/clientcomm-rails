@@ -19,6 +19,7 @@ class FakeTwilioClient
 
   def create(from:, to:, body:, statusCallback:)
     self.class.messages << FakeMessage.new(from, to, body)
+    # return a fake response
     FakeResponse.new(SecureRandom.hex(17), ["queued", "sending", "sent", "failed", "received"].sample)
   end
 end
