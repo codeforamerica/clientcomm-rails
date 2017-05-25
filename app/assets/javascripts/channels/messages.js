@@ -2,9 +2,6 @@
 //= require_self
 //= require_tree .
 
-this.App = {};
-
-App.cable = ActionCable.createConsumer();
 
 const match = window.location.pathname.match(/\/clients\/(\d)+\/messages/);
 const clientId = match && match[1];
