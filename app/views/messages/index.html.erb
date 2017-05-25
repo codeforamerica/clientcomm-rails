@@ -16,7 +16,7 @@
 
 <section class="slab slab--padded" id="scroller-target">
   <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
+    <div id="message-list" class="grid__item width-two-thirds shift-one-sixth">
       <% @messages.each do |message| %>
         <div class="card">
           <p><%= message.body %></p>

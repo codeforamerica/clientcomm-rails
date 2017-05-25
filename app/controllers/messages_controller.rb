@@ -19,7 +19,11 @@ class MessagesController < ApplicationController
 
     # save the message
     new_message_params = message_params.merge({user: current_user, client: client, number_to: client.phone_number, number_from: ENV['TWILIO_PHONE_NUMBER'], inbound: false, twilio_sid: response.sid, twilio_status: response.status})
-    Message.create(new_message_params)
+
+    message = Message.create(new_message_params)
+
+    ActionCable.server.broadcast "messages_#{message.client_id}",
+      message: message
 
     # reload the index
     redirect_to client_messages_path(client.id)
