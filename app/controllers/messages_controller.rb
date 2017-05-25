@@ -1,4 +1,6 @@
 class MessagesController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     # the client being messaged
     @client = Client.find params[:client_id]
@@ -27,6 +29,11 @@ class MessagesController < ApplicationController
 
     # reload the index
     redirect_to client_messages_path(client.id)
+  end
+
+  def show
+    message = Message.find params[:id]
+    render partial: 'messages/message', locals: {message: message}
   end
 
   def message_params

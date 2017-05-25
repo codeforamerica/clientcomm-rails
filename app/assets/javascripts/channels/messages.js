@@ -12,13 +12,14 @@ const clientId = match && match[1];
 if (clientId) {
   App.messages = App.cable.subscriptions.create({ channel: 'MessagesChannel', client_id: clientId }, {
     received: function(data) {
-      return $('#message-list').append(this.renderMessage(data.message));
+      return this.renderMessage(data.message);
     },
 
     renderMessage: function(message) {
-      return `<div class='card'>
-        <p>${message.body}</p>
-      </div>`;
+      $.ajax(`/messages/${message.id}`)
+        .done(function (data) {
+          $('#message-list').append(data);
+        });
     }
   });
 }
