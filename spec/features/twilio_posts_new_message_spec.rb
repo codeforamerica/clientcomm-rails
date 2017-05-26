@@ -6,7 +6,7 @@ feature 'Twilio' do
     create :client, user: user, phone_number: params['From']
   end
 
-  after :each do
+  after do
     page.driver.header 'X-Twilio-Signature', nil
   end
 

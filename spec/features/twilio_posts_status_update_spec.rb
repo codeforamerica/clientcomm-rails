@@ -7,7 +7,7 @@ feature 'Twilio' do
     create :message, user: user, client: client, twilio_sid: '49a5057738d311581dd5d005e97c2b5d0b', twilio_status: 'queued'
   end
 
-  after :each do
+  after do
     page.driver.header 'X-Twilio-Signature', nil
   end
 
