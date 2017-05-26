@@ -1,5 +1,4 @@
 class MessagesController < ApplicationController
-  before_action :authenticate_user!
 
   def index
     # the client being messaged
@@ -24,16 +23,13 @@ class MessagesController < ApplicationController
 
     message = Message.create(new_message_params)
 
+    # broadcast the message on ActionCable
+    message_html = render_to_string partial: 'messages/message', locals: {message: message}
     ActionCable.server.broadcast "messages_#{message.client_id}",
-      message: message
+      message_html: message_html
 
     # reload the index
     redirect_to client_messages_path(client.id)
-  end
-
-  def show
-    message = Message.find params[:id]
-    render partial: 'messages/message', locals: {message: message}
   end
 
   def message_params

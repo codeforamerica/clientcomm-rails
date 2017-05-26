@@ -10,7 +10,10 @@ class TwilioController < ApplicationController
 
     message = Message.create(new_message_params)
 
-    ActionCable.server.broadcast "messages_#{message.client_id}", message: message
+    # broadcast the message on ActionCable
+    message_html = render_to_string partial: 'messages/message', locals: {message: message}
+    ActionCable.server.broadcast "messages_#{message.client_id}",
+      message_html: message_html
 
     head :no_content
   end

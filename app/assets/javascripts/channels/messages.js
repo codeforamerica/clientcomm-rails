@@ -3,6 +3,7 @@
 //= require_tree .
 
 $(document).ready(function() {
+  var messages, messages_to_bottom;
   messages = $('#message-list');
   clientId = messages.data('client-id');
   messages_to_bottom = function() {
@@ -13,14 +14,8 @@ $(document).ready(function() {
     { channel: 'MessagesChannel', client_id: clientId },
     {
       received: function(data) {
-        return this.renderMessage(data.message);
-      },
-
-      renderMessage: function(message) {
-        $.ajax(`/messages/${message.id}`).done(function(data) {
-          $('#message-list').append(data);
-          messages_to_bottom();
-        });
+        messages.append(data.message_html);
+        return messages_to_bottom();
       }
     }
   );

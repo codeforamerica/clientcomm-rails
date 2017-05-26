@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   resources :clients do
     resources :messages, only: [:index]
   end
-  resources :messages, only: [:create, :show]
+  resources :messages, only: [:create]
 
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'
