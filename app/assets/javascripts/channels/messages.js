@@ -2,20 +2,25 @@
 //= require_self
 //= require_tree .
 
+const Messages = {
+  init: function(id_selector) {
+    this.msgs = $('#message-list');
+    this.clientId = this.msgs.data('client-id');
+  },
+  messagesToBottom: function() {
+    $(document).scrollTop(this.msgs.prop('scrollHeight'));
+  }
+};
+
 $(document).ready(function() {
-  var messages, messages_to_bottom;
-  messages = $('#message-list');
-  clientId = messages.data('client-id');
-  messages_to_bottom = function() {
-    return $(document).scrollTop(messages.prop('scrollHeight'));
-  };
+  Messages.init('#message-list');
 
   App.messages = App.cable.subscriptions.create(
-    { channel: 'MessagesChannel', client_id: clientId },
+    { channel: 'MessagesChannel', client_id: Messages.clientId },
     {
       received: function(data) {
-        messages.append(data.message_html);
-        return messages_to_bottom();
+        Messages.msgs.append(data.message_html);
+        Messages.messagesToBottom();
       }
     }
   );
