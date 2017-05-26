@@ -6,14 +6,17 @@ class TwilioController < ApplicationController
     # get the client based on the phone number
     client = Client.find_by(phone_number: params[:From])
     # create a new message
-    new_message_params = {client: client, user_id: client.user_id, number_to: ENV['TWILIO_PHONE_NUMBER'], number_from: params[:From], inbound: true, twilio_sid: params[:SmsSid], twilio_status: params[:SmsStatus], body: params[:Body]}
-
-    message = Message.create(new_message_params)
-
-    # broadcast the message on ActionCable
-    message_html = render_to_string partial: 'messages/message', locals: {message: message}
-    ActionCable.server.broadcast "messages_#{message.client_id}",
-      message_html: message_html
+    new_message_params = {
+             client: client,
+            user_id: client.user_id,
+          number_to: ENV['TWILIO_PHONE_NUMBER'],
+        number_from: params[:From],
+            inbound: true,
+         twilio_sid: params[:SmsSid],
+      twilio_status: params[:SmsStatus],
+               body: params[:Body]
+    }
+    Message.create(new_message_params)
 
     head :no_content
   end
