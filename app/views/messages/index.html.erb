@@ -2,21 +2,34 @@
 
 <section class="slab slab--header">
   <div class="grid">
-    <div class="grid__item width-one-third">
-      &lt; <%= link_to "Clients", clients_path %>
-    </div>
-    <div class="grid__item width-one-third">
-      <strong><%= @client.full_name %></strong>
-    </div>
-    <div class="grid__item width-one-third text--right is-mobile-hidden--inline">
-      <%= phone_number_display(@client.phone_number) %>
+    <div class="grid__item width-one-half">
+      <h2><%= @client.full_name %></h2>
+      <p class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></p>
     </div>
   </div>
 </section>
 
 <section class="slab slab--padded" id="scroller-target">
+  <div class="message--container grid">
+    <div class="message--outbound">
+      <p class="message__content">Howdy Manya</p>
+      <p class="message__label">Sent 5/24/17 at 8:17pm</p>    
+    </div>  
+    <div class="message--inbound">
+      <p class="message__content">Hi thanks for reaching out everything is going great and this is a really long message that I'm sending to you, my case manager.</p>
+      <p class="message__label">Received 5/24/17 at 8:20pm</p>   
+    </div>  
+    <div class="message--outbound">
+      <p class="message__content">That sounds great!</p>
+      <p class="message__label">Sent 5/24/17 at 8:17pm</p> 
+    </div>    
+    <div class="message--outbound">
+      <p class="message__content">Don't forget that you have court on Monday at 9AM.</p>
+      <p class="message__label">Sent 5/24/17 at 8:17pm</p>   
+    </div>  
+  </div>
   <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
+    <div class="grid__item"> 
       <% @messages.each do |message| %>
         <div class="card">
           <p><%= message.body %></p>
@@ -32,13 +45,13 @@
   </div>
 </section>
 
-<section class="slab slab--padded" id="scroller-target">
+<section class="message--create" id="scroller-target">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
-    <%= form_for @message, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
-      <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
-      <input name="client_id" type="hidden" value="<%= @client.id %>">
-    <% end %>
+      <%= form_for @message, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
+        <%= f.gcf_send_message_field :body, "Send", placeholder: "Send a text message" %>
+        <input name="client_id" type="hidden" value="<%= @client.id %>">
+      <% end %>
     </div>
   </div>
 </section>

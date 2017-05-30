@@ -7,7 +7,8 @@
 .sendbar__input {
   display: table-cell;
   width: 100%;
-  border: 2px solid $color-teal;
+  border: 2px solid $color-grey;
+  border-right: none;
   padding: .5em .7em .5em .7em;
   margin: 0;
   outline: 0;
@@ -28,11 +29,13 @@
   vertical-align: middle;
   appearance: none;
   width: 1%;
-  border: 2px solid $color-teal;
+  border: none;
   background-color: $color-teal;
   color: #FFFFFF;
   text-align: center;
   margin: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 
   &:hover {
     color: #FFFFFF;
