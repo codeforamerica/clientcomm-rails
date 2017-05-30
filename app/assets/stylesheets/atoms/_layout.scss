@@ -38,6 +38,10 @@
   overflow: hidden;
 }
 
+.slab--borderless {
+  border-bottom: none;
+}
+
 .card {
     border: 2px solid $color-tan;
     padding: 1.5em $site-margins/2;
