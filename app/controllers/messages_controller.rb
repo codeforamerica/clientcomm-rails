@@ -16,8 +16,8 @@ class MessagesController < ApplicationController
 
     # send the message via Twilio
     response = SMSService.instance.send_message(
-                to: client.phone_number,
-              body: params[:message][:body],
+      to: client.phone_number,
+      body: params[:message][:body],
       callback_url: incoming_sms_status_url
     )
 
@@ -25,12 +25,12 @@ class MessagesController < ApplicationController
 
     # save the message
     new_message_params = message_params.merge({
-             client: client,
-               user: current_user,
-          number_to: client.phone_number,
-        number_from: ENV['TWILIO_PHONE_NUMBER'],
-            inbound: false,
-         twilio_sid: response.sid,
+      client: client,
+      user: current_user,
+      number_to: client.phone_number,
+      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      inbound: false,
+      twilio_sid: response.sid,
       twilio_status: response.status
     })
     Message.create(new_message_params)
