@@ -19,4 +19,7 @@ Rails.application.routes.draw do
   post '/incoming/sms', to: 'twilio#incoming_sms'
   post '/incoming/voice', to: 'twilio#incoming_voice'
   post '/incoming/sms/status', to: 'twilio#incoming_sms_status'
+
+  # WEBSOCKETS
+  mount ActionCable.server => '/cable'
 end
