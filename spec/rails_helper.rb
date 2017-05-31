@@ -19,10 +19,12 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
   config.include Features, type: :feature
-
+  # FactoryGirl methods
   config.include FactoryGirl::Syntax::Methods
   # Devise setup
   config.include Warden::Test::Helpers
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
+  # So we can use dom_id
+  config.include ActionView::RecordIdentifier
 end
