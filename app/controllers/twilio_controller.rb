@@ -1,4 +1,5 @@
 class TwilioController < ApplicationController
+  include ActionView::RecordIdentifier
   skip_before_action :verify_authenticity_token
 
   def incoming_sms
@@ -19,7 +20,7 @@ class TwilioController < ApplicationController
     new_message = Message.create(new_message_params)
 
     # put the message broadcast in the queue
-    NewMessageBroadcastJob.perform_later new_message
+    MessageBroadcastJob.perform_later(new_message, dom_id(new_message))
 
     head :no_content
   end
@@ -29,6 +30,9 @@ class TwilioController < ApplicationController
     # update the status of the corresponding message in the database
     message = Message.find_by twilio_sid: params[:SmsSid]
     message.update(twilio_status: params[:SmsStatus])
+
+    # put the message broadcast in the queue
+    MessageBroadcastJob.perform_later(message, dom_id(message))
 
     head :no_content
   end

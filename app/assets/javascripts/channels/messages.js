@@ -7,6 +7,15 @@ const Messages = {
     this.msgs = $('#message-list');
     this.clientId = this.msgs.data('client-id');
   },
+  appendOrReplace: function(dom_id, message_html) {
+    var msgElement = $("#" + dom_id);
+    if (!msgElement.length) {
+        this.msgs.append(message_html);
+        this.messagesToBottom();
+    } else {
+        msgElement.replaceWith(message_html);
+    }
+  },
   messagesToBottom: function() {
     $(document).scrollTop(this.msgs.prop('scrollHeight'));
   }
@@ -19,8 +28,7 @@ $(document).ready(function() {
     { channel: 'MessagesChannel', client_id: Messages.clientId },
     {
       received: function(data) {
-        Messages.msgs.append(data.message_html);
-        Messages.messagesToBottom();
+        Messages.appendOrReplace(data.message_dom_id, data.message_html);
       }
     }
   );
