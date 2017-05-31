@@ -16,7 +16,10 @@ class TwilioController < ApplicationController
       twilio_status: params[:SmsStatus],
       body: params[:Body]
     }
-    Message.create(new_message_params)
+    new_message = Message.create(new_message_params)
+
+    # put the message broadcast in the queue
+    NewMessageBroadcastJob.perform_later new_message
 
     head :no_content
   end

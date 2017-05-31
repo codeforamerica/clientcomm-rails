@@ -33,7 +33,11 @@ class MessagesController < ApplicationController
       twilio_sid: response.sid,
       twilio_status: response.status
     })
-    Message.create(new_message_params)
+    new_message = Message.create(new_message_params)
+
+    # put the message broadcast in the queue
+    NewMessageBroadcastJob.perform_later new_message
+
 
     # reload the index
     redirect_to client_messages_path(client.id)
