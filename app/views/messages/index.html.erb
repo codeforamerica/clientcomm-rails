@@ -29,18 +29,8 @@
     </div>  
   </div>
   <div class="grid">
-    <div class="grid__item"> 
-      <% @messages.each do |message| %>
-        <div class="card">
-          <p><%= message.body %></p>
-          <p class="label"><b>number_from:</b> <%= message.number_from %> /
-          <b>number_to:</b> <%= message.number_to %> /
-          <b>inbound:</b> <%= message.inbound %> /
-          <b>twilio_sid:</b> <%= message.twilio_sid %> /
-          <b>twilio_status:</b> <%= message.twilio_status %> /
-          <b>created_at:</b> <%= message.created_at %></p>
-        </div>
-      <% end %>
+    <div id="message-list" class="grid__item width-two-thirds shift-one-sixth" data-client-id="<%= @client.id %>">
+      <%= render @messages %>
     </div>
   </div>
 </section>
@@ -48,10 +38,10 @@
 <section class="message--create" id="scroller-target">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
-      <%= form_for @message, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
-        <%= f.gcf_send_message_field :body, "Send", placeholder: "Send a text message" %>
-        <input name="client_id" type="hidden" value="<%= @client.id %>">
-      <% end %>
+    <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
+      <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
+      <input name="client_id" type="hidden" value="<%= @client.id %>">
+    <% end %>
     </div>
   </div>
 </section>

@@ -13,9 +13,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     classes = classes.append(%w[sendbar__input])
     <<-HTML.html_safe
       #{text_field(method, { autofocus: autofocus, type: "text", class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false', placeholder: placeholder }.merge(options))}
-      <label class="sendbar__button">#{button_text}
-        <button id="send_message" type="submit"></button>
-      </label>
+      <button id="send_message" class="sendbar__button" type="submit" data-disable-with="Sending...">#{button_text}</button>
     HTML
   end
 
