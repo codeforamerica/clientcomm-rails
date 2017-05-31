@@ -15,10 +15,11 @@
   	justify-content: space-between;
   	max-width: 750px;
   	margin-bottom: 1em;
-	.message--outbound {
+	
+  .message--outbound {
 		   margin-left: auto;
 		   flex-basis: 55%;
-		p.message__content {
+		.message__content {
 			background: $color-teal;
 			text-align: right;
 			color: $color-background;
@@ -30,7 +31,7 @@
 			}
 			margin-bottom: 10px;
 		}
-		p.message__label {
+		.message__label {
 			text-align: right;
 			background-color: $color-background;
 			color: $color-grey;
@@ -43,10 +44,11 @@
   			margin-top: -.5em;
 		}
 	}
-	.message--inbound {
+	
+  .message--inbound {
 		    align-self: flex-start;
 		    flex-basis: 55%;
-		p.message__content {
+		.message__content {
 			border-radius: 6px;
 			background: $color-light-grey;
 			margin-bottom: 10px;
@@ -57,7 +59,7 @@
 				bottom: .5em;
 			}
 		}
-		p.message__label {
+		.message__label {
 			background-color: $color-background;
 			color: $color-grey;
   			font-size: $font-size-smallest;
@@ -70,7 +72,8 @@
 		}
 	}
 }
-	.message--create {
+	
+  .message--create {
     	height: 80px;
     	line-height: 1;
     	position: fixed;
