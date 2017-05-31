@@ -164,7 +164,7 @@ var followUpQuestion = (function() {
 
 $(document).ready(function() {
   // incrementer.init();
-  radioSelector.init();
-  checkboxSelector.init();
-  followUpQuestion.init();
+  // radioSelector.init();
+  // checkboxSelector.init();
+  // followUpQuestion.init();
 });
