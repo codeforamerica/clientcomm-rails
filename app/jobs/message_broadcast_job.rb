@@ -1,10 +1,16 @@
 class MessageBroadcastJob < ApplicationJob
+  include ActionView::RecordIdentifier
   queue_as :default
 
-  def perform(message, dom_id)
+  def perform(message)
     channel = "messages_#{message.client_id}"
     content = render_message_partial(message)
-    ActionCable.server.broadcast channel, message_html: content, message_dom_id: dom_id
+    message_dom_id = dom_id(message)
+    ActionCable.server.broadcast(
+      channel,
+      message_html: content,
+      message_dom_id: message_dom_id
+    )
   end
 
   def render_message_partial(message)

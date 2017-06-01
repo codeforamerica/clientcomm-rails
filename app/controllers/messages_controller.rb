@@ -1,5 +1,4 @@
 class MessagesController < ApplicationController
-  include ActionView::RecordIdentifier
   before_action :authenticate_user!
 
   def index
@@ -37,7 +36,7 @@ class MessagesController < ApplicationController
     new_message = Message.create(new_message_params)
 
     # put the message broadcast in the queue
-    MessageBroadcastJob.perform_later(new_message, dom_id(new_message))
+    MessageBroadcastJob.perform_later(new_message)
 
     # reload the index
     redirect_to client_messages_path(client.id)
