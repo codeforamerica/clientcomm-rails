@@ -19,16 +19,19 @@ class TwilioController < ApplicationController
     new_message = Message.create(new_message_params)
 
     # put the message broadcast in the queue
-    NewMessageBroadcastJob.perform_later new_message
+    MessageBroadcastJob.perform_later(message: new_message, is_update: false)
 
     head :no_content
   end
 
   def incoming_sms_status
-    # TODO: error handling
+    # TODO: error handling (i.e. message doesn't exist)
     # update the status of the corresponding message in the database
     message = Message.find_by twilio_sid: params[:SmsSid]
     message.update(twilio_status: params[:SmsStatus])
+
+    # put the message broadcast in the queue
+    MessageBroadcastJob.perform_later(message: message, is_update: true)
 
     head :no_content
   end

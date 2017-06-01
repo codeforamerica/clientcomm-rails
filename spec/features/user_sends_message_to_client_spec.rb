@@ -16,7 +16,10 @@ feature "User enters a message and submits it" do
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
     click_on "send_message"
-    # look for the message on the page
+    # find the message on the page
     expect(page).to have_css '.card p', text: message_body
+    # get the message object and find the dom_id
+    mymessage = Message.find_by(user: myuser, client_id: myclient_id, body: message_body)
+    expect(page).to have_css '.card', id: dom_id(mymessage)
   end
 end
