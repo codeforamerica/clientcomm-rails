@@ -36,8 +36,7 @@ class MessagesController < ApplicationController
     new_message = Message.create(new_message_params)
 
     # put the message broadcast in the queue
-    NewMessageBroadcastJob.perform_later new_message
-
+    MessageBroadcastJob.perform_later(message: new_message, is_update: false)
 
     # reload the index
     redirect_to client_messages_path(client.id)
