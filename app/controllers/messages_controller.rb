@@ -1,5 +1,6 @@
 class MessagesController < ApplicationController
   before_action :authenticate_user!
+  skip_after_action :intercom_rails_auto_include
 
   def index
     # the client being messaged
