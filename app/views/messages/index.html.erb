@@ -10,28 +10,8 @@
 </section>
 
 <section class="slab slab--padded slab--borderless" id="scroller-target">
-  <div class="message--container grid">
-    <div class="message--outbound">
-      <p class="message__content">Howdy Manya</p>
-      <p class="message__label">Sent 5/24/17 at 8:17pm</p>    
-    </div>  
-    <div class="message--inbound">
-      <p class="message__content">Hi thanks for reaching out everything is going great and this is a really long message that I'm sending to you, my case manager.</p>
-      <p class="message__label">Received 5/24/17 at 8:20pm</p>   
-    </div>  
-    <div class="message--outbound">
-      <p class="message__content">That sounds great!</p>
-      <p class="message__label">Sent 5/24/17 at 8:17pm</p> 
-    </div>    
-    <div class="message--outbound">
-      <p class="message__content">Don't forget that you have court on Monday at 9AM.</p>
-      <p class="message__label">Sent 5/24/17 at 8:17pm</p>   
-    </div>  
-  </div>
-  <div class="grid">
-    <div id="message-list" class="grid__item width-two-thirds shift-one-sixth" data-client-id="<%= @client.id %>">
-      <%= render @messages %>
-    </div>
+  <div id="message-list" class="message--container grid" data-client-id="<%= @client.id %>">
+    <%= render @messages %>
   </div>
 </section>
 

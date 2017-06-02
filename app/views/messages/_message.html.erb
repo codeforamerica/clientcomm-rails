@@ -1,9 +1,4 @@
-<div class="card" id="<%= dom_id(message) %>">
-  <p><%= message.body %></p>
-  <p class="label"><b>number_from:</b> <%= message.number_from %> /
-  <b>number_to:</b> <%= message.number_to %> /
-  <b>inbound:</b> <%= message.inbound %> /
-  <b>twilio_sid:</b> <%= message.twilio_sid %> /
-  <b>twilio_status:</b> <%= message.twilio_status %> /
-  <b>created_at:</b> <%= message.created_at %></p>
-</div>
+<div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
+  <p class="message__content"><%= message.body %></p>
+  <p class="message__label"><%= message.twilio_status %> <%= message.created_at.to_s(:message_timestamp) %></p>    
+</div>  
