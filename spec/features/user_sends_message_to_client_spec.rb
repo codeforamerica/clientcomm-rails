@@ -1,7 +1,7 @@
 require "rails_helper"
 
 feature "User enters a message and submits it" do
-  scenario "then sees the message on the client's messages page" do
+  scenario "then sees the message on the client's messages page", :js do
     # log in with a fake user
     myuser = create :user
     login_as(myuser, :scope => :user)

@@ -35,6 +35,7 @@ module Features
   end
 
   def wut
+    # if you want to see CSS with this command, see file_previews_controller.rb
     save_and_open_preview
   end
 
