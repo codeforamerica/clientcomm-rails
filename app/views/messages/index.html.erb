@@ -2,30 +2,23 @@
 
 <section class="slab slab--header">
   <div class="grid">
-    <div class="grid__item width-one-third">
-      &lt; <%= link_to "Clients", clients_path %>
-    </div>
-    <div class="grid__item width-one-third">
-      <strong><%= @client.full_name %></strong>
-    </div>
-    <div class="grid__item width-one-third text--right is-mobile-hidden--inline">
-      <%= phone_number_display(@client.phone_number) %>
+    <div class="grid__item width-one-half">
+      <h2><%= @client.full_name %></h2>
+      <p class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></p>
     </div>
   </div>
 </section>
 
-<section class="slab slab--padded" id="scroller-target">
-  <div class="grid">
-    <div id="message-list" class="grid__item width-two-thirds shift-one-sixth" data-client-id="<%= @client.id %>">
-      <%= render @messages %>
-    </div>
+<section class="slab slab--padded slab--borderless" id="scroller-target">
+  <div id="message-list" class="message--container grid" data-client-id="<%= @client.id %>">
+    <%= render @messages %>
   </div>
 </section>
 
-<section class="slab slab--padded" id="scroller-target">
+<section class="message--create">
   <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
-    <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
+    <div class="grid__item">
+    <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--searchbar"}, builder: GcfFormBuilder do |f| %>
       <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
       <input name="client_id" type="hidden" value="<%= @client.id %>">
     <% end %>
