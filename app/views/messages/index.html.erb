@@ -17,8 +17,8 @@
 
 <section class="message--create" id="scroller-target">
   <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
-    <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--sendbar toolbar__item"}, builder: GcfFormBuilder do |f| %>
+    <div class="grid__item">
+    <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--searchbar"}, builder: GcfFormBuilder do |f| %>
       <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
       <input name="client_id" type="hidden" value="<%= @client.id %>">
     <% end %>

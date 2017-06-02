@@ -8,7 +8,6 @@
   display: table-cell;
   width: 100%;
   border: 2px solid $color-grey;
-  border-right: none;
   padding: .5em .7em .5em .7em;
   margin: 0;
   outline: 0;
@@ -29,8 +28,10 @@
   vertical-align: middle;
   appearance: none;
   width: 1%;
-  border: none;
+  border: 2px solid $color-teal;
   background-color: $color-teal;
+  vertical-align: top;
+  width: 5em;
   color: #FFFFFF;
   text-align: center;
   margin: 0;

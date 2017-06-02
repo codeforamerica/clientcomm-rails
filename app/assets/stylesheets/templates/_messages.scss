@@ -28,6 +28,7 @@
         border-radius: 8px;
         padding: {
           right: $padding-small;
+          left: $padding-small;
           top: $padding-small;
           bottom: .5em;
         }
@@ -80,7 +81,6 @@
 
   .message--create {
     height: 80px;
-    line-height: 1;
     position: fixed;
     width: 100%;
     bottom: 0;
