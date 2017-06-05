@@ -27,6 +27,11 @@ const Messages = {
 $(document).ready(function() {
   Messages.init('#message-list');
 
+  // only subscribe if we're on a message page
+  if (!Messages.clientId) {
+    return;
+  }
+
   App.messages = App.cable.subscriptions.create(
     { channel: 'MessagesChannel', client_id: Messages.clientId },
     {
