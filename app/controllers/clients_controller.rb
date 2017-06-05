@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = current_user.clients.order('updated_at DESC')
+    @clients = current_user.clients.all.sort_by(&:contacted_at).reverse
   end
 
   def new

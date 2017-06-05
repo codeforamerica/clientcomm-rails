@@ -1,7 +1,7 @@
 require "rails_helper"
 
 feature "User enters a message and submits it" do
-  scenario "then sees the message on the client's messages page" do
+  scenario "then sees the clients sorted by most recent contact" do
     myuser = nil
     myfirstclient = nil
     mysecondclient = nil
@@ -28,7 +28,7 @@ feature "User enters a message and submits it" do
     visit clients_path
     savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(myfirstclient.phone_number))
     savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(mysecondclient.phone_number))
-    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: '7 days'
-    expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: 'less than a minute'
+    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute'
+    expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
   end
 end
