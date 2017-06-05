@@ -39,6 +39,7 @@ WebMock.disable_net_connect!(allow_localhost: true)
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.infer_spec_type_from_file_location!
+  config.include ActiveSupport::Testing::TimeHelpers
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
