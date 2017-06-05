@@ -1,6 +1,6 @@
 <div class="flash-container" id="dismiss-notice">
   <div class="<%= classes.join ' ' %>">
-    <p class="flash__message"><%= body %></p>
+    <p class="flash__message"><% if local_assigns[:link_to] %><a href="<%= link_to %>"><%= body %></a><% else %><%= body %><% end %></p>
     <a href="#dismiss-notice" class="flash__dismiss"><span class="icon icon-close"></span></a>
   </div>
 </div>
