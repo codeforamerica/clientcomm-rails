@@ -22,4 +22,7 @@ Rails.application.routes.draw do
 
   # WEBSOCKETS
   mount ActionCable.server => '/cable'
+
+  # TESTS
+  resource :file_preview, only: %i[show] if Rails.env.test? || Rails.env.development?
 end

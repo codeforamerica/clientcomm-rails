@@ -25,9 +25,9 @@
               </thead>
               <tbody>
               <% @clients.each do |client| %>
-                <tr>
+                <tr id="<%= dom_id(client) %>">
                   <td><%= link_to client.full_name, client_messages_path(client.id) %></td>
-                  <td><%= link_to time_ago_in_words(client.updated_at), client_messages_path(client.id) %></td>
+                  <td><%= link_to time_ago_in_words(client.contacted_at), client_messages_path(client.id) %></td>
                 </tr>
               <% end %>
               </tbody>

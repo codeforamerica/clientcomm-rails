@@ -48,9 +48,11 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'dotenv-rails'
   gem 'factory_girl_rails'
+  gem 'poltergeist'
   gem 'pry-rails'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails'
+  gem 'selenium-webdriver'
   gem 'webmock'
 end
 

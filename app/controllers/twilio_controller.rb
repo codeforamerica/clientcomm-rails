@@ -18,8 +18,13 @@ class TwilioController < ApplicationController
     }
     new_message = Message.create(new_message_params)
 
-    # put the message broadcast in the queue
+    # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message, is_update: false)
+    NotificationBroadcastJob.perform_later(
+      text: "You have a new message from #{client.full_name}",
+      link_to: client_messages_path(client.id),
+      client: client
+    )
 
     head :no_content
   end

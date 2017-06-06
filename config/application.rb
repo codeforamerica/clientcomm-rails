@@ -26,5 +26,8 @@ module Clientcomm
     # see https://www.twilio.com/blog/2014/09/securing-your-ruby-webhooks-with-rack-middleware.html
     # see https://github.com/twilio/twilio-ruby/blob/master/lib/rack/twilio_webhook_authentication.rb
     config.middleware.use Rack::TwilioWebhookAuthentication, ENV['TWILIO_AUTH_TOKEN'], "/incoming"
+
+    # Set the time zone from ENV, or default to UTC
+    config.time_zone = ENV['TIME_ZONE'] || 'UTC'
   end
 end
