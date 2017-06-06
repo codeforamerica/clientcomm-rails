@@ -32,7 +32,7 @@ $(document).ready(function() {
       received: function(data) {
         // only update if the client id doesn't match
         // (meaning we're not on that client's messages page)
-        if (data.client_id != Notifications.clientId) {
+        if (data.client_id !== Notifications.clientId) {
           Notifications.updateNotification(data.notification_html);
         }
       }
