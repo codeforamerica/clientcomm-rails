@@ -1,4 +1,4 @@
-module Features
+module FeatureHelper
   def login(the_user)
     visit new_user_session_path
     fill_in "Email", with: the_user.email

@@ -43,7 +43,8 @@ RSpec.configure do |config|
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
-  config.include Features, type: :feature
+  config.include FeatureHelper, type: :feature
+  config.include TwilioHelper, type: :feature
   # FactoryGirl methods
   config.include FactoryGirl::Syntax::Methods
   # Devise setup
