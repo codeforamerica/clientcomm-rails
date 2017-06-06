@@ -1,3 +1,11 @@
+require 'simplecov'
+
+# Run code coverage and save to CircleCI's artifacts directory if we're on CircleCI
+if ENV['CIRCLE_ARTIFACTS']
+  SimpleCov.coverage_dir(File.join(ENV['CIRCLE_ARTIFACTS'], "coverage"))
+end
+SimpleCov.start 'rails'
+
 RSpec.configure do |config|
   unless ENV['CI']
     config.run_all_when_everything_filtered = true
