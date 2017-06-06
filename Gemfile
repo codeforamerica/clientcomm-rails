@@ -15,6 +15,9 @@ gem 'neat', '~> 1.8.0'
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
+# Use Delayed Job for background tasks
+gem 'delayed_job_active_record'
+gem 'delayed_job_web'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 gem 'mixpanel-ruby'
