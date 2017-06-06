@@ -26,6 +26,7 @@ const Messages = {
 
 $(document).ready(function() {
   Messages.init('#message-list');
+  Messages.messagesToBottom();
 
   // only subscribe if we're on a message page
   if (!Messages.clientId) {
