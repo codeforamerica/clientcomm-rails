@@ -48,6 +48,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'poltergeist'
   gem 'pry-rails'
+  gem 'rails-controller-testing'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
