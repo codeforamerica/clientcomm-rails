@@ -3,8 +3,8 @@
 //= require_tree .
 
 const Messages = {
-  init: function(id_selector) {
-    this.msgs = $('#message-list');
+  init: function(client_id_selector) {
+    this.msgs = $(client_id_selector);
     this.clientId = this.msgs.data('client-id');
   },
   appendMessage: function(message_html) {
