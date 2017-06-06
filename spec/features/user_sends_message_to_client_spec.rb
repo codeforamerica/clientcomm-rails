@@ -15,7 +15,7 @@ feature "User enters a message and submits it" do
     # enter a message in the form
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
-    click_on "send_message"
+    find('#message_body').native.send_keys :enter
     # find the message on the page
     expect(page).to have_css '.message--outbound p', text: message_body
     # get the message object and find the dom_id
