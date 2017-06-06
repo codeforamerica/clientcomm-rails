@@ -86,7 +86,6 @@
     bottom: 0;
     left: 0;
     padding: 0 5px;
-    display: flex;
     align-items: center;
     white-space: nowrap;
     color: #999;
@@ -100,6 +99,10 @@
     padding: {
       padding-left: 0;
       padding-right: 0;
+    }
+
+    .sendbar {
+      margin-top: .5em;
     }
   }
 
