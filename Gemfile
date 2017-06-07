@@ -49,7 +49,6 @@ group :development, :test do
   gem 'faraday'
   gem 'poltergeist'
   gem 'pry-rails'
-  gem 'rails-controller-testing'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
