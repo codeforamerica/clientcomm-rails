@@ -20,6 +20,18 @@ module FeatureHelper
     expect(page).to have_current_path(clients_path)
   end
 
+  def wait_for(reason, timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      loop do
+        return_value = yield
+        break return_value if return_value
+        sleep 0.1
+      end
+    end
+  rescue Timeout::Error
+    fail "Timed out waiting for #{reason}"
+  end
+
   def xstep(title)
     puts "PENDING STEP SKIPPED: #{title}" if ENV["LOUD_TESTS"]
   end
@@ -40,7 +52,7 @@ module FeatureHelper
   end
 
   def flash
-    find(".flash").text
+    all(".flash").first&.text
   end
 
   def table_contents(selector, header: true)
