@@ -30,6 +30,12 @@ RSpec.describe ClientsController, type: :controller do
       expect(response.code).to eq '200'
       # should only see the first user's clients
       expect(assigns[:clients].map(&:first_name)).to match_array %w[Elísa Helena]
+      sign_out userone
+      sign_in usertwo
+      get :index
+      expect(response.code).to eq '200'
+      # should only see the second user's clients
+      expect(assigns[:clients].map(&:first_name)).to match_array %w[Unnsteinn]
     end
 
   end
