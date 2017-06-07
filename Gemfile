@@ -46,6 +46,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'dotenv-rails'
   gem 'factory_girl_rails'
+  gem 'faraday'
   gem 'poltergeist'
   gem 'pry-rails'
   gem 'rails-controller-testing'

@@ -20,7 +20,7 @@ feature 'Twilio' do
 
     context 'with correct signature' do
       it 'returns a no content response' do
-        post_incoming_sms
+        twilio_post_sms
         expect(page).to have_http_status(:no_content)
       end
     end
