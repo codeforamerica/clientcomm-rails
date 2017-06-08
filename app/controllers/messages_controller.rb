@@ -27,12 +27,13 @@ class MessagesController < ApplicationController
     # save the message
     new_message_params = message_params.merge({
       client: client,
-      user: current_user,
-      number_to: client.phone_number,
-      number_from: ENV['TWILIO_PHONE_NUMBER'],
       inbound: false,
+      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      number_to: client.phone_number,
+      read: true,
       twilio_sid: response.sid,
-      twilio_status: response.status
+      twilio_status: response.status,
+      user: current_user
     })
     new_message = Message.create(new_message_params)
 
