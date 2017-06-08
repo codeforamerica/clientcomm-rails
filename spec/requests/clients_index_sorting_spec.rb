@@ -9,13 +9,13 @@ describe 'Clients sorting order', type: :request do
       clienttwo = nil
       clientthree = nil
       travel_to 3.hours.ago do
-        clientone = build :client, user: user
+        clientone = create :client, user: user
       end
       travel_to 2.hours.ago do
-        clienttwo = build :client, user: user
+        clienttwo = create :client, user: user
       end
       travel_to 1.hours.ago do
-        clientthree = build :client, user: user
+        clientthree = create :client, user: user
       end
       get clients_path
       expect(response.code).to eq '200'
@@ -31,13 +31,13 @@ describe 'Clients sorting order', type: :request do
       clienttwo = nil
       clientthree = nil
       travel_to 3.hours.ago do
-        clientone = build :client, user: user
+        clientone = create :client, user: user
       end
       travel_to 2.hours.ago do
-        clienttwo = build :client, user: user
+        clienttwo = create :client, user: user
       end
       travel_to 1.hours.ago do
-        clientthree = build :client, user: user
+        clientthree = create :client, user: user
       end
 
       # receive a message from clientthree 30 minutes ago
