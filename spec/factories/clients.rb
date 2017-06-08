@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :client do
+    user { create :user }
     sequence(:first_name) { |n| "Elsie#{n}" }
     sequence(:last_name) { |n| "Muller#{n}" }
     birth_date do
