@@ -4,4 +4,6 @@ class Message < ApplicationRecord
 
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'
+  READ = 'read'
+  UNREAD = 'unread'
 end

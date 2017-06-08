@@ -11,4 +11,8 @@ module ApplicationHelper
     Message::OUTBOUND
   end
 
+  def client_messages_read_or_unread(client)
+    # return a string indicating whether the client has read or unread messages
+    client.unread_message_count == 0 ? Message::READ : Message::UNREAD
+  end
 end

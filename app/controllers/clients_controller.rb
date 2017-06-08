@@ -2,7 +2,11 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = current_user.clients.all.sort_by(&:contacted_at).reverse
+    # sort clients with unread messages to the top,
+    # no matter when they were last contacted
+    @clients = current_user.clients.all.sort{
+      |c1, c2| [c2.unread_message_count, c2.contacted_at] <=> [c1.unread_message_count, c1.contacted_at]
+    }
   end
 
   def new
