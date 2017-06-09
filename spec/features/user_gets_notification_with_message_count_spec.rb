@@ -22,7 +22,7 @@ feature "User receives messages from clients" do
       twilio_post_sms(twilio_new_message_params(clientone.phone_number))
       twilio_post_sms(twilio_new_message_params(clientone.phone_number))
       # there's a flash with the correct contents
-      expect(page).to have_css '.flash p', text: "You have 3 new messages from #{clientone.full_name}"
+      expect(page).to have_css '.flash p', text: "You have 3 unread messages from #{clientone.full_name}"
     end
 
     it "sees a notification for new messages from two clients", :js do
@@ -38,7 +38,7 @@ feature "User receives messages from clients" do
       twilio_post_sms(twilio_new_message_params(clientone.phone_number))
       twilio_post_sms(twilio_new_message_params(clienttwo.phone_number))
       # there's a flash with the correct contents
-      expect(page).to have_css '.flash p', text: "You have 5 new messages"
+      expect(page).to have_css '.flash p', text: "You have 5 unread messages"
     end
   end
 end

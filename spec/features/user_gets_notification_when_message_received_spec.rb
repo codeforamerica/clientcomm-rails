@@ -19,7 +19,7 @@ feature "User receives a message from a client" do
       # post a message to the twilio endpoint from the user
       twilio_post_sms()
       # there's a flash with the correct contents
-      expect(page).to have_css '.flash p', text: "You have 1 new message from #{myclient.full_name}"
+      expect(page).to have_css '.flash p', text: "You have 1 unread message from #{myclient.full_name}"
     end
   end
 
