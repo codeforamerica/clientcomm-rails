@@ -1,9 +1,8 @@
+include Rails.application.routes.url_helpers
+include ActionView::Helpers::TextHelper
 
-class MessageAlertBuilder
-  include Rails.application.routes.url_helpers
-  include ActionView::Helpers::TextHelper
-
-  def build(user:)
+module MessageAlertBuilder
+  def self.build_alert(user:)
     # return an alert appropriate for the state of unread messages
     unread_messages = user.messages.where(read: false)
     if unread_messages.length == 0
