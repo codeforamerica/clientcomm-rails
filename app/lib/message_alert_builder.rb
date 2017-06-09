@@ -5,7 +5,6 @@ class MessageAlertBuilder
 
   def build(user:)
     # return an alert appropriate for the state of unread messages
-    # messages where read = false and user = current_user
     unread_messages = user.messages.where(read: false)
     if unread_messages.length == 0
       nil
