@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "User receives messages from clients" do
+feature "User receives messages from a client" do
   let(:clientone) { build :client, phone_number: '+12431551212' }
 
   before do
