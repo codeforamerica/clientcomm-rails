@@ -8,7 +8,7 @@ module MessageAlertBuilder
     if unread_messages.length == 0
       nil
     else
-      lookup = user.messages.group(:client).count
+      lookup = unread_messages.group(:client).count
       if lookup.length == 1
         client = lookup.keys.first
         message_count = lookup.values.first
