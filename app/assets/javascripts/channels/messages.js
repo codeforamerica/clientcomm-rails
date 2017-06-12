@@ -3,8 +3,8 @@
 //= require_tree .
 
 const Messages = {
-  init: function(client_id_selector) {
-    this.msgs = $(client_id_selector);
+  init: function() {
+    this.msgs = $('#message-list');
     this.clientId = this.msgs.data('client-id');
   },
   appendMessage: function(message_html) {
@@ -25,7 +25,7 @@ const Messages = {
 };
 
 $(document).ready(function() {
-  Messages.init('#message-list');
+  Messages.init();
   Messages.messagesToBottom();
 
   // only subscribe if we're on a message page
