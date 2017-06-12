@@ -18,9 +18,10 @@ module TwilioHelper
     "This is a test message."
   end
 
-  def twilio_new_message_params(from_number = nil, sms_sid = nil)
+  def twilio_new_message_params(from_number = nil, sms_sid = nil, msg_txt = nil)
     from_number ||= '+12425551212'
     sms_sid ||= SecureRandom.hex(17)
+    msg_txt ||= twilio_message_text
     {
       "ToCountry"=>"US",
       "ToState"=>"CA",
@@ -32,7 +33,7 @@ module TwilioHelper
       "FromState"=>"CA",
       "SmsStatus"=>"received",
       "FromCity"=>"SAN FRANCISCO",
-      "Body"=>twilio_message_text,
+      "Body"=>msg_txt,
       "FromCountry"=>"US",
       "To"=>"+12435551212",
       "ToZip"=>"",
