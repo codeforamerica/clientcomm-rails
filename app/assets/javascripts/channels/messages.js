@@ -19,6 +19,19 @@ const Messages = {
         msgElement.replaceWith(message_html);
     }
   },
+  markMessageRead: function(id) {
+    // tell the server to mark this message read
+    $.ajax({
+      type: "PATCH",
+      url: "/messages/" + id.toString() + "/read",
+      id: id,
+      data: {
+        message: {
+          read: true
+        }
+      }
+    });
+  },
   messagesToBottom: function() {
     $(document).scrollTop(this.msgs.prop('scrollHeight'));
   }
@@ -41,6 +54,7 @@ $(document).ready(function() {
           Messages.updateMessage(data.message_dom_id, data.message_html);
         } else {
           Messages.appendMessage(data.message_html);
+          Messages.markMessageRead(data.message_id);
         }
       }
     }

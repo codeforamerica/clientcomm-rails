@@ -45,8 +45,19 @@ class MessagesController < ApplicationController
     redirect_to client_messages_path(client.id)
   end
 
+  def read
+    # change the read status of the message
+    message = Message.find params[:message_id]
+    success = message.update_attributes read: message_params[:read]
+    if success
+      head :no_content
+    else
+      head :bad_request
+    end
+  end
+
   def message_params
     params.fetch(:message, {})
-      .permit(:body)
+      .permit(:body, :read)
   end
 end
