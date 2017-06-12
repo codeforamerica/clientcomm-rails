@@ -8,7 +8,7 @@ class Client < ApplicationRecord
 
   def contacted_at
     # the date of the most recent message sent to or received from this client
-    last_message = Message.where(client: self).order(:created_at).last
+    last_message = messages.order(:created_at).last
     if last_message
       return last_message.created_at
     end
@@ -17,10 +17,7 @@ class Client < ApplicationRecord
 
   def received_message_at
     # the date of the most recent message received from this client
-    last_received_message = Message
-      .where(client: self, inbound: true)
-      .order(:created_at)
-      .last
+    last_received_message = messages.inbound.order(:created_at).last
 
     if last_received_message
       return last_received_message.created_at
@@ -30,7 +27,7 @@ class Client < ApplicationRecord
 
   def unread_message_count
     # the number of messages received that are unread
-    Message.where(read: false, client: self).count
+    messages.unread.count
   end
 
   # override default accessors
