@@ -17,7 +17,11 @@ class Client < ApplicationRecord
 
   def received_message_at
     # the date of the most recent message received from this client
-    last_received_message = Message.where(client: self, inbound: true).order(:created_at).last
+    last_received_message = Message
+      .where(client: self, inbound: true)
+      .order(:created_at)
+      .last
+
     if last_received_message
       return last_received_message.created_at
     end
