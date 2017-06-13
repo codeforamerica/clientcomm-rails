@@ -30,6 +30,11 @@ class Client < ApplicationRecord
     messages.unread.count
   end
 
+  def unread_message_sort
+    # return a 0 or 1 to sort clients with unread messages on
+    [self.unread_message_count, 1].min
+  end
+
   # override default accessors
   def phone_number=(number_input)
     self[:phone_number] = PhoneNumberParser.normalize(number_input)
