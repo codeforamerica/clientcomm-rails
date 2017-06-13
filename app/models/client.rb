@@ -15,16 +15,6 @@ class Client < ApplicationRecord
     self.updated_at
   end
 
-  def received_message_at
-    # the date of the most recent message received from this client
-    last_received_message = messages.inbound.order(:created_at).last
-
-    if last_received_message
-      return last_received_message.created_at
-    end
-    self.updated_at
-  end
-
   def unread_message_count
     # the number of messages received that are unread
     messages.unread.count
