@@ -7,6 +7,7 @@ class MessagesController < ApplicationController
     @client = Client.find params[:client_id]
     # the list of past messages
     @messages = current_user.messages.where(client_id: params["client_id"]).order('created_at ASC')
+    @messages.update_all(read: true)
     # a new message for the form
     @message = Message.new
   end
@@ -27,12 +28,13 @@ class MessagesController < ApplicationController
     # save the message
     new_message_params = message_params.merge({
       client: client,
-      user: current_user,
-      number_to: client.phone_number,
-      number_from: ENV['TWILIO_PHONE_NUMBER'],
       inbound: false,
+      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      number_to: client.phone_number,
+      read: true,
       twilio_sid: response.sid,
-      twilio_status: response.status
+      twilio_status: response.status,
+      user: current_user
     })
     new_message = Message.create(new_message_params)
 
@@ -43,8 +45,19 @@ class MessagesController < ApplicationController
     redirect_to client_messages_path(client.id)
   end
 
+  def read
+    # change the read status of the message
+    message = Message.find params[:message_id]
+    success = message.update_attributes read: message_params[:read]
+    if success
+      head :no_content
+    else
+      head :bad_request
+    end
+  end
+
   def message_params
     params.fetch(:message, {})
-      .permit(:body)
+      .permit(:body, :read)
   end
 end

@@ -3,8 +3,8 @@
 //= require_tree .
 
 const Messages = {
-  init: function(client_id_selector) {
-    this.msgs = $(client_id_selector);
+  init: function() {
+    this.msgs = $('#message-list');
     this.clientId = this.msgs.data('client-id');
   },
   appendMessage: function(message_html) {
@@ -19,13 +19,26 @@ const Messages = {
         msgElement.replaceWith(message_html);
     }
   },
+  markMessageRead: function(id) {
+    // tell the server to mark this message read
+    $.ajax({
+      type: "PATCH",
+      url: "/messages/" + id.toString() + "/read",
+      id: id,
+      data: {
+        message: {
+          read: true
+        }
+      }
+    });
+  },
   messagesToBottom: function() {
     $(document).scrollTop(this.msgs.prop('scrollHeight'));
   }
 };
 
 $(document).ready(function() {
-  Messages.init('#message-list');
+  Messages.init();
   Messages.messagesToBottom();
 
   // only subscribe if we're on a message page
@@ -40,6 +53,7 @@ $(document).ready(function() {
         if (data.is_update) {
           Messages.updateMessage(data.message_dom_id, data.message_html);
         } else {
+          Messages.markMessageRead(data.message_id);
           Messages.appendMessage(data.message_html);
         }
       }

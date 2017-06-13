@@ -15,6 +15,13 @@ const Notifications = {
     } else {
         $(document.body).prepend(notification_html);
     }
+  },
+  refreshClientList: function() {
+    // update the client list
+    $.ajax({
+      type: "GET",
+      dataType: "script"
+    });
   }
 };
 
@@ -34,6 +41,10 @@ $(document).ready(function() {
         // (meaning we're not on that client's messages page)
         if (data.client_id !== Notifications.clientId) {
           Notifications.updateNotification(data.notification_html);
+          // and refresh the client list if it's on the page
+          if ($("#client-list").length) {
+            Notifications.refreshClientList();
+          }
         }
       }
     }

@@ -17,9 +17,10 @@ ActiveRecord::Migration.maintain_test_schema!
 # For ApplicationJob testing
 ActiveJob::Base.queue_adapter = :test
 
+# Capybara settings
 headless_capybara = true
-
 Capybara.server = :puma
+Capybara.default_max_wait_time = 5
 
 if headless_capybara
   Capybara.javascript_driver = :poltergeist
@@ -43,7 +44,9 @@ RSpec.configure do |config|
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
-  config.include Features, type: :feature
+  config.include FeatureHelper, type: :feature
+  config.include TwilioHelper, type: :feature
+  config.include RequestHelper, type: :request
   # FactoryGirl methods
   config.include FactoryGirl::Syntax::Methods
   # Devise setup

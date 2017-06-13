@@ -1,4 +1,4 @@
-module Features
+module FeatureHelper
   def login(the_user)
     visit new_user_session_path
     fill_in "Email", with: the_user.email
@@ -20,6 +20,18 @@ module Features
     expect(page).to have_current_path(clients_path)
   end
 
+  def wait_for(reason, timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      loop do
+        return_value = yield
+        break return_value if return_value
+        sleep 0.1
+      end
+    end
+  rescue Timeout::Error
+    fail "Timed out waiting for #{reason}"
+  end
+
   def xstep(title)
     puts "PENDING STEP SKIPPED: #{title}" if ENV["LOUD_TESTS"]
   end
@@ -37,10 +49,6 @@ module Features
   def wut
     # if you want to see CSS with this command, see file_previews_controller.rb
     save_and_open_preview
-  end
-
-  def flash
-    find(".flash").text
   end
 
   def table_contents(selector, header: true)

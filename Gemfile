@@ -40,6 +40,8 @@ gem 'jbuilder', '~> 2.5'
 
 group :test do
   gem 'launchy', require: false
+  gem 'simplecov', require: false
+  gem 'codeclimate-test-reporter', require: false
 end
 
 group :development, :test do
@@ -49,6 +51,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'dotenv-rails'
   gem 'factory_girl_rails'
+  gem 'faraday'
   gem 'poltergeist'
   gem 'pry-rails'
   gem 'rspec_junit_formatter'
