@@ -13,7 +13,7 @@ describe 'Access to clients methods', type: :request do
       sign_in user
       get clients_path
       expect(response.code).to eq '200'
-      expect(@mixpanel_event_names).to eq ['client_list_view']
+      expect_analytics_events 'client_list_view'
     end
   end
 
