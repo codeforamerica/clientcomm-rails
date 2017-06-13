@@ -18,14 +18,7 @@ feature "User receives a message from a client" do
       twilio_post_sms(twilio_new_message_params(clientone.phone_number))
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound p', text: twilio_message_text
-      # send a message back
-      message_body = "Hello from your case manager"
-      fill_in "Send a text message", with: message_body
-      # NOTE: hitting the enter key in the body field because
-      # the submit button is hidden
-      find('#message_body').native.send_keys :enter
-      # find the message on the page
-      expect(page).to have_css '.message--outbound p', text: message_body
+      wait_for_ajax
       # now load the message index
       visit clients_path
       # the client isn't marked as having unread messages
