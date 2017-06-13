@@ -22,7 +22,7 @@ feature "User receives a message from a client" do
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(clientone.phone_number))
       # there's a flash with the correct contents
-      expect(page).to have_css '.flash p', text: "You have 1 unread message from #{clientone.full_name}"
+      expect(flash).to eq("You have 1 unread message from #{clientone.full_name}")
     end
 
     it "and sees a refreshed client list", :js do
@@ -36,7 +36,7 @@ feature "User receives a message from a client" do
       expect(page.body.index(clientone.full_name)).to be < page.body.index(clienttwo.full_name)
       # send a message from client two and check the new order
       twilio_post_sms(twilio_new_message_params(clienttwo.phone_number))
-      expect(page).to have_css '.flash p', text: "You have 2 unread messages"
+      expect(flash).to eq("You have 2 unread messages")
       expect(page).to have_css '.unread td', text: clienttwo.full_name
       expect(page.body.index(clienttwo.full_name)).to be < page.body.index(clientone.full_name)
     end
@@ -52,7 +52,7 @@ feature "User receives a message from a client" do
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound p', text: twilio_message_text
       # there's no flash notification
-      expect(page).to have_no_css '.flash'
+      expect(flash).to eq(nil)
     end
   end
 end

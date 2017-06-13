@@ -32,7 +32,7 @@ feature "User receives messages from a client" do
       twilio_post_sms(twilio_new_message_params(clientone_record.phone_number))
       # we should see the same flash message, because the first
       # message was marked read
-      expect(page).to have_css '.flash p', text: flash_text
+      expect(flash).to eq(flash_text)
     end
   end
 end
