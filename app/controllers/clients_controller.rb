@@ -4,7 +4,10 @@ class ClientsController < ApplicationController
   def index
     @clients = sorted_clients
 
-    analytics_track(label: 'client_list_view')
+    analytics_track(
+      label: 'client_list_view',
+      data: current_user.analytics_tracker_data
+    )
 
     respond_to do |format|
       format.html
