@@ -4,6 +4,8 @@ class ClientsController < ApplicationController
   def index
     @clients = sorted_clients
 
+    analytics_track(label: 'client_list_view')
+
     respond_to do |format|
       format.html
       format.js

@@ -36,7 +36,6 @@ class AnalyticsService
       end
 
       data[:locale] = I18n.locale
-
       @tracker.track(distinct_id, label, data)
     end
   rescue => err
