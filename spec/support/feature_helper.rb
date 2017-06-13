@@ -51,10 +51,6 @@ module FeatureHelper
     save_and_open_preview
   end
 
-  def flash
-    all(".flash").first&.text
-  end
-
   def table_contents(selector, header: true)
     [].tap do |contents|
       within(selector) do
