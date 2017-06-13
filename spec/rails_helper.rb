@@ -17,9 +17,10 @@ ActiveRecord::Migration.maintain_test_schema!
 # For ApplicationJob testing
 ActiveJob::Base.queue_adapter = :test
 
+# Capybara settings
 headless_capybara = true
-
 Capybara.server = :puma
+Capybara.default_max_wait_time = 5
 
 if headless_capybara
   Capybara.javascript_driver = :poltergeist
