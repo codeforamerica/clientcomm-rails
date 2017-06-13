@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
 
   def index
     # the client being messaged
-    @client = Client.find params[:client_id]
+    @client = current_user.clients.find params[:client_id]
     # the list of past messages
     @messages = current_user.messages.where(client_id: params["client_id"]).order('created_at ASC')
     @messages.update_all(read: true)
@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
 
   def create
     # the client being messaged
-    client = Client.find params[:client_id]
+    client = current_user.clients.find params[:client_id]
 
     # send the message via Twilio
     response = SMSService.instance.send_message(
@@ -47,7 +47,7 @@ class MessagesController < ApplicationController
 
   def read
     # change the read status of the message
-    message = Message.find params[:message_id]
+    message = current_user.messages.find params[:message_id]
     success = message.update_attributes read: message_params[:read]
     if success
       head :no_content
