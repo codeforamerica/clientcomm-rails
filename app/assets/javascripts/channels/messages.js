@@ -53,8 +53,8 @@ $(document).ready(function() {
         if (data.is_update) {
           Messages.updateMessage(data.message_dom_id, data.message_html);
         } else {
-          Messages.appendMessage(data.message_html);
           Messages.markMessageRead(data.message_id);
+          Messages.appendMessage(data.message_html);
         }
       }
     }
