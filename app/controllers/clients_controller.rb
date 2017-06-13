@@ -2,7 +2,12 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = current_user.clients.all.sort_by(&:contacted_at).reverse
+    @clients = sorted_clients
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def new
@@ -21,4 +26,11 @@ class ClientsController < ApplicationController
     params.fetch(:client, {})
       .permit(:first_name, :last_name, :birth_date, :phone_number, :active)
   end
+
+  def sorted_clients
+    # sort clients with unread messages to the top,
+    # no matter when they were last contacted
+    current_user.clients.all.sort_by { |c| [c.unread_message_count, c.contacted_at] }.reverse
+  end
+
 end

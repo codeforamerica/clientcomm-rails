@@ -1,4 +1,4 @@
-class PhoneNumberParser
+module PhoneNumberParser
   # NOTE: assumes US numbers
 
   def self.make_bare(phone_number)

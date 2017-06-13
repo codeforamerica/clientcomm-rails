@@ -10,7 +10,8 @@ class MessageBroadcastJob < ApplicationJob
       channel,
       message_html: content,
       message_dom_id: message_dom_id,
-      is_update: is_update
+      is_update: is_update,
+      message_id: message.id
     )
   end
 

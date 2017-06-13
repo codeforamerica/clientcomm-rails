@@ -1,3 +1,5 @@
+<% content_for(:template_name) { "clients" }  %>
+
 <section class="slab slab--padded" id="scroller-target">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
@@ -23,14 +25,7 @@
                   <th>Last contact</th>
                 </tr>
               </thead>
-              <tbody>
-              <% @clients.each do |client| %>
-                <tr id="<%= dom_id(client) %>">
-                  <td><%= link_to client.full_name, client_messages_path(client.id) %></td>
-                  <td><%= link_to time_ago_in_words(client.contacted_at), client_messages_path(client.id) %></td>
-                </tr>
-              <% end %>
-              </tbody>
+              <%= render "clients/clients" %>
             </table>
           </div>
 
@@ -39,3 +34,4 @@
     </div>
   </div>
 </section>
+

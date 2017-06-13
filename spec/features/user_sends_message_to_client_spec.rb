@@ -15,6 +15,8 @@ feature "User enters a message and submits it" do
     # enter a message in the form
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
+    # NOTE: hitting the enter key in the body field because
+    # the submit button is hidden
     find('#message_body').native.send_keys :enter
     # find the message on the page
     expect(page).to have_css '.message--outbound p', text: message_body
