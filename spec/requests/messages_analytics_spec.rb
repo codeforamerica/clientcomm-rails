@@ -29,4 +29,26 @@ describe 'Tracking of message analytics events', type: :request do
       })
     end
   end
+
+  context 'POST#create' do
+    it 'tracks a new message submission' do
+      user = create :user
+      sign_in user
+      clientone = create_client build(:client)
+      messageone = create(
+        :message,
+        user: user,
+        client: clientone,
+        inbound: true
+      )
+
+      expect_analytics_events({
+        'message_send' => {
+          'client_id' => clientone.id,
+          'message_id' => messageone.id,
+          'message_length' => messageone.body.length
+        }
+      })
+    end
+  end
 end
