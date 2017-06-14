@@ -9,14 +9,21 @@ class User < ApplicationRecord
 
   def analytics_tracker_data
     {
-      unread_messages: unread_message_count > 0,
-      unread_messages_count: unread_message_count
+      clients_count: clients_count,
+      unread_messages: unread_messages_count > 0,
+      unread_messages_count: unread_messages_count
     }
   end
 
-  def unread_message_count
+  def unread_messages_count
     # the number of messages received that are unread
     messages.unread.count
   end
+
+  def clients_count
+    # the number of associated clients
+    clients.count
+  end
+
 
 end

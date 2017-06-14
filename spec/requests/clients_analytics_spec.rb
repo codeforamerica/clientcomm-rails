@@ -10,7 +10,8 @@ describe 'Tracking of analytics events', type: :request do
       expect_analytics_events({
         'client_list_view' => {
           'unread_messages' => false,
-          'unread_messages_count' => 0
+          'unread_messages_count' => 0,
+          'clients_count' => 0
         }
       })
     end

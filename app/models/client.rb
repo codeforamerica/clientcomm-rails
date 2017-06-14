@@ -15,14 +15,14 @@ class Client < ApplicationRecord
     self.updated_at
   end
 
-  def unread_message_count
+  def unread_messages_count
     # the number of messages received that are unread
     messages.unread.count
   end
 
-  def unread_message_sort
+  def unread_messages_sort
     # return a 0 or 1 to sort clients with unread messages on
-    [self.unread_message_count, 1].min
+    [self.unread_messages_count, 1].min
   end
 
   # override default accessors
