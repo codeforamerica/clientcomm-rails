@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Tracking of analytics events', type: :request do
+describe 'Tracking of client analytics events', type: :request do
   context 'GET#index' do
     it 'tracks a visit to the client index with no clients or messages' do
       user = create :user
