@@ -20,8 +20,8 @@ describe 'Tracking of analytics events', type: :request do
     it 'tracks a visit to the client index with clients and messages' do
       user = create :user
       sign_in user
-      clientone = create_client build(:client, user: user)
-      clienttwo = create_client build(:client, user: user)
+      clientone = create_client build(:client)
+      clienttwo = create_client build(:client)
       create :message, user: user, client: clientone, inbound: true
       create :message, user: user, client: clientone, inbound: true
       create :message, user: user, client: clienttwo, inbound: true
@@ -35,7 +35,30 @@ describe 'Tracking of analytics events', type: :request do
         }
       })
     end
-  
-  
+  end
+
+  context 'GET#new' do
+    it 'tracks a visit to the create client form' do
+      user = create :user
+      sign_in user
+      get new_client_path
+      expect(response.code).to eq '200'
+      expect_analytics_events('client_create_view')
+    end
+  end
+
+  context 'POST#new' do
+    it 'tracks the creation of a new client' do
+      user = create :user
+      sign_in user
+      clientone = create_client build(:client)
+      expect(response.code).to eq '302'
+      expect_analytics_events({
+        'client_create_success' => {
+          'clients_id' => clientone.id,
+          'clients_dob' => true
+        }
+      })
+    end
   end
 end
