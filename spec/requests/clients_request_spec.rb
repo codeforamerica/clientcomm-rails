@@ -33,8 +33,7 @@ describe 'Access to clients methods', type: :request do
 
   context 'POST#create' do
     it 'rejects unauthenticated user' do
-      client = build :client
-      create_client client
+      create_client build(:client)
       expect(response.code).to eq '302'
       expect(response).to redirect_to new_user_session_path
       expect(Client.count()).to eq 0
@@ -43,8 +42,7 @@ describe 'Access to clients methods', type: :request do
     it 'allows authenticated user' do
       user = create :user
       sign_in user
-      client = build :client
-      create_client client
+      create_client build(:client)
       expect(response.code).to eq '302'
       expect(response).to redirect_to clients_path
       expect(Client.count()).to eq 1
