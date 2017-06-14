@@ -29,6 +29,11 @@ class TwilioController < ApplicationController
       client: client
     )
 
+    analytics_track(
+      label: 'message_receive',
+      data: new_message.analytics_tracker_data
+    )
+
     head :no_content
   end
 

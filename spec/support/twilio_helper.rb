@@ -1,6 +1,6 @@
 module TwilioHelper
   def twilio_post_sms(tw_params = nil)
-    tw_params ||= twilio_new_message_params()
+    tw_params ||= twilio_new_message_params
     post_sig = correct_signature(tw_params)
     post_url = '/incoming/sms'
     post_header_name = 'X-Twilio-Signature'
@@ -63,7 +63,7 @@ module TwilioHelper
   end
 
   def correct_signature(tw_params = nil)
-    tw_params ||= twilio_new_message_params()
+    tw_params ||= twilio_new_message_params
     Twilio::Util::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
       .build_signature_for("#{myhost}/incoming/sms", tw_params)
   end

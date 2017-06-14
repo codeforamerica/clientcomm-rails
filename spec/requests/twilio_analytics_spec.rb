@@ -8,18 +8,15 @@ describe 'Tracking of twilio analytics events', type: :request do
       clientone = create_client build(:client)
       # post a new message
       message_text = 'Hello, this is a new message from a client!'
-      twilio_post_sms(
-        twilio_new_message_params(
-          from_number: clientone.phone_number,
-          msg_txt: message_text
-        )
+      message_params = twilio_new_message_params(
+        clientone.phone_number, nil, message_text
       )
+      twilio_post_sms message_params
       # validate the analytics event
       expect_analytics_events({
         'message_receive' => {
           'client_id' => clientone.id,
-          'message_length' => message_text.length,
-          'client_existed' => true
+          'message_length' => message_text.length
         }
       })
     end
