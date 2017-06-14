@@ -1,16 +1,21 @@
 module TwilioHelper
   def twilio_post_sms(tw_params = nil)
     tw_params ||= twilio_new_message_params()
+    post_sig = correct_signature(tw_params)
+    post_url = '/incoming/sms'
+    post_header_name = 'X-Twilio-Signature'
     if Capybara.current_session.server
       conn = Faraday.new("#{myhost}")
       conn.post do |req|
-        req.url '/incoming/sms'
-        req.headers['X-Twilio-Signature'] = correct_signature(tw_params)
+        req.url post_url
+        req.headers[post_header_name] = post_sig
         req.body = tw_params
       end
+    elsif defined?(page)
+      page.driver.header post_header_name, post_sig
+      page.driver.post post_url, tw_params
     else
-      page.driver.header 'X-Twilio-Signature', correct_signature(tw_params)
-      page.driver.post '/incoming/sms', tw_params
+      post post_url, params: tw_params, headers: {post_header_name => post_sig}
     end
   end
 

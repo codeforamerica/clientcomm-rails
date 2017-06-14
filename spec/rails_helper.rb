@@ -20,7 +20,7 @@ ActiveJob::Base.queue_adapter = :test
 # Capybara settings
 headless_capybara = true
 Capybara.server = :puma
-Capybara.default_max_wait_time = 5
+Capybara.default_max_wait_time = 10
 
 if headless_capybara
   Capybara.javascript_driver = :poltergeist
@@ -45,8 +45,8 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
   config.include AnalyticsHelper
+  config.include TwilioHelper
   config.include FeatureHelper, type: :feature
-  config.include TwilioHelper, type: :feature
   config.include RequestHelper, type: :request
   # FactoryGirl methods
   config.include FactoryGirl::Syntax::Methods
