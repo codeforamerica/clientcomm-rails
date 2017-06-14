@@ -50,6 +50,11 @@ class MessagesController < ApplicationController
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: new_message, is_update: false)
 
+    analytics_track(
+      label: 'message_send',
+      data: new_message.analytics_tracker_data
+    )
+
     # reload the index
     redirect_to client_messages_path(client.id)
   end

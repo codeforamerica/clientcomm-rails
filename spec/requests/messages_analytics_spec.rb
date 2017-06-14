@@ -35,11 +35,14 @@ describe 'Tracking of message analytics events', type: :request do
       user = create :user
       sign_in user
       clientone = create_client build(:client)
-      messageone = create(
-        :message,
-        user: user,
-        client: clientone,
-        inbound: true
+      messageone = create_message(
+        build(
+          :message,
+          user: user,
+          client: clientone,
+          inbound: true,
+          body: "hello #{SecureRandom.hex(4)}"
+        )
       )
 
       expect_analytics_events({
