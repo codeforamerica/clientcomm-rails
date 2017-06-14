@@ -21,7 +21,7 @@ describe 'Tracking of message analytics events', type: :request do
         'client_messages_view' => {
           'client_id' => clientone.id,
           'has_unread_messages' => true,
-          'hours_since_message' => 3,
+          'hours_since_contact' => 3,
           'messages_all_count' => 5,
           'messages_received_count' => 4,
           'messages_sent_count' => 1

@@ -5,7 +5,12 @@ class Client < ApplicationRecord
   def analytics_tracker_data
     {
       client_id: self.id,
-      has_client_dob: !self.birth_date.nil?
+      has_client_dob: !self.birth_date.nil?,
+      has_unread_messages: (unread_messages_count > 0),
+      hours_since_contact: hours_since_contact,
+      messages_all_count: messages.count,
+      messages_received_count: inbound_messages_count,
+      messages_sent_count: outbound_messages_count
     }
   end
 
@@ -22,9 +27,23 @@ class Client < ApplicationRecord
     self.updated_at
   end
 
+  def hours_since_contact
+    ((Time.now - contacted_at) / 3600).round
+  end
+
   def unread_messages_count
     # the number of messages received that are unread
     messages.unread.count
+  end
+
+  def inbound_messages_count
+    # the number of messages received
+    messages.inbound.count
+  end
+
+  def outbound_messages_count
+    # the number of messages sent
+    messages.outbound.count
   end
 
   def unread_messages_sort

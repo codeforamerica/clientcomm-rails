@@ -5,8 +5,16 @@ class MessagesController < ApplicationController
   def index
     # the client being messaged
     @client = current_user.clients.find params[:client_id]
+
+    analytics_track(
+      label: 'client_messages_view',
+      data: @client.analytics_tracker_data
+    )
+
     # the list of past messages
-    @messages = current_user.messages.where(client_id: params["client_id"]).order('created_at ASC')
+    @messages = current_user.messages
+      .where(client_id: params["client_id"])
+      .order('created_at ASC')
     @messages.update_all(read: true)
     # a new message for the form
     @message = Message.new
@@ -23,7 +31,8 @@ class MessagesController < ApplicationController
       callback_url: incoming_sms_status_url
     )
 
-    # TODO: catch, handle, log errors with response.error_code, response.error_message
+    # TODO: catch, handle, log errors with
+    #       response.error_code, response.error_message
 
     # save the message
     new_message_params = message_params.merge({
