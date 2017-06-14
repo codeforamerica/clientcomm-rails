@@ -10,7 +10,7 @@ describe 'Tracking of analytics events', type: :request do
 
       expect_analytics_events({
         'client_list_view' => {
-          'unread_messages' => false,
+          'has_unread_messages' => false,
           'unread_messages_count' => 0,
           'clients_count' => 0
         }
@@ -29,7 +29,7 @@ describe 'Tracking of analytics events', type: :request do
       expect(response.code).to eq '200'
       expect_analytics_events({
         'client_list_view' => {
-          'unread_messages' => true,
+          'has_unread_messages' => true,
           'unread_messages_count' => 3,
           'clients_count' => 2
         }
@@ -55,8 +55,8 @@ describe 'Tracking of analytics events', type: :request do
       expect(response.code).to eq '302'
       expect_analytics_events({
         'client_create_success' => {
-          'clients_id' => clientone.id,
-          'clients_dob' => true
+          'client_id' => clientone.id,
+          'has_client_dob' => true
         }
       })
     end

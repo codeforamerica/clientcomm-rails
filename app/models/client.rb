@@ -2,6 +2,13 @@ class Client < ApplicationRecord
   belongs_to :user
   has_many :messages
 
+  def analytics_tracker_data
+    {
+      client_id: self.id,
+      has_client_dob: !self.birth_date.nil?
+    }
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end

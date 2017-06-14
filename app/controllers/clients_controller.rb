@@ -17,11 +17,19 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new
+
+    analytics_track(
+      label: 'client_create_view'
+    )
   end
 
   def create
-    current_user.clients.create(client_params)
+    client = current_user.clients.create(client_params)
 
+    analytics_track(
+      label: 'client_create_success',
+      data: client.analytics_tracker_data
+    )
     redirect_to clients_path
   end
 
