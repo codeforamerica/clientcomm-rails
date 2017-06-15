@@ -12,7 +12,7 @@ module AnalyticsHelper
     )
 
     # prefer current_user_id if it was included in the data
-    tracking_id = distinct_id tracking_data.slice(:current_user_id)
+    tracking_id = distinct_id tracking_data.slice(:current_user_id).values.first
     # but don't leave it in
     tracking_data = tracking_data.except(:current_user_id)
 
