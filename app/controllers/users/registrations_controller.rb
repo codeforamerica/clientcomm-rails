@@ -3,14 +3,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_account_update_params, only: [:update]
 
   # GET /resource/sign_up
-  # def new
-  #   super
-  # end
+  def new
+    super
+
+    analytics_track(label: 'signup_view')
+  end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super
+
+    has_errors = resource.errors.messages.keys.length > 0
+    if not has_errors
+      analytics_track(label: 'signup_complete')
+    else
+      analytics_track(label: 'signup_error')
+    end
+  end
 
   # GET /resource/edit
   # def edit
