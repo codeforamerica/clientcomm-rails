@@ -45,7 +45,7 @@ class MessagesController < ApplicationController
     new_message = Message.create(new_message_params)
 
     # put the message broadcast in the queue
-    MessageBroadcastJob.perform_later(message: new_message, is_update: false)
+    MessageBroadcastJob.perform_now(message: new_message, is_update: false)
 
     analytics_track(
       label: 'message_send',

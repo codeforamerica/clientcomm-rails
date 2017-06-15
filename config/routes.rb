@@ -28,6 +28,11 @@ Rails.application.routes.draw do
   # WEBSOCKETS
   mount ActionCable.server => '/cable'
 
+  # DELAYED JOB WEB
+  authenticated :user do
+    match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
+  end
+
   # TESTS
   resource :file_preview, only: %i[show] if Rails.env.test? || Rails.env.development?
 end
