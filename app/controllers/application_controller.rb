@@ -16,16 +16,6 @@ class ApplicationController < ActionController::Base
 
   # ANALYTICS
 
-  def track_page_view
-    analytics_track(
-      label: 'page_view',
-      data: {
-        method: request.method,
-        path: request.path
-      }
-    )
-  end
-
   def set_visitor_id
     session[:visitor_id] ||= SecureRandom.hex(4)
   end
