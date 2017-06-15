@@ -8,6 +8,7 @@ module AnalyticsHelper
 
     tracking_data = data.merge(
       ip: visitor_ip,
+      deploy: deploy_prefix,
       visitor_id: session[:visitor_id]
     )
 
@@ -32,10 +33,10 @@ module AnalyticsHelper
 
   def distinct_id(user_id = nil)
     user_id ||= !current_user.nil? ? current_user.id : session[:visitor_id]
-    "#{id_prefix}-#{user_id}"
+    "#{deploy_prefix}-#{user_id}"
   end
 
-  def id_prefix
+  def deploy_prefix
     URI.parse(id_base).hostname.split(".")[0..1].join("_")
   end
 
