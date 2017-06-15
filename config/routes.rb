@@ -2,8 +2,10 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file,
   # see http://guides.rubyonrails.org/routing.html
 
-  # USERS
-  devise_for :users
+  # USERS / DEVISE
+  devise_for :users, controllers: {
+    registrations: 'users/registrations'
+  }
 
   # CLIENTS
   root to: "clients#index"
