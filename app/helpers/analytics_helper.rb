@@ -10,10 +10,16 @@ module AnalyticsHelper
       ip: visitor_ip,
       visitor_id: session[:visitor_id]
     )
+
+    # prefer current_user_id if it was included in the data
+    tracking_id = distinct_id tracking_data.slice(:current_user_id)
+    # but don't leave it in
+    tracking_data = tracking_data.except(:current_user_id)
+
     user_agent = request.env['HTTP_USER_AGENT']
 
     AnalyticsService.instance.track(
-      distinct_id: distinct_id,
+      distinct_id: tracking_id,
       label: label,
       user_agent: user_agent,
       data: tracking_data
@@ -24,7 +30,8 @@ module AnalyticsHelper
     request.remote_ip || request.env['HTTP_X_FORWARDED_FOR']
   end
 
-  def distinct_id
+  def distinct_id(current_user_id = nil)
+    current_user_id ||= current_user.id
     distinct = !current_user.nil? ? current_user.id : session[:visitor_id]
     "#{id_prefix}-#{distinct}"
   end

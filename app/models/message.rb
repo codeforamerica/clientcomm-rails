@@ -15,7 +15,8 @@ class Message < ApplicationRecord
     {
       client_id: self.client.id,
       message_id: self.id,
-      message_length: self.body.length
+      message_length: self.body.length,
+      current_user_id: self.user.id
     }
   end
 
