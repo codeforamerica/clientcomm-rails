@@ -30,10 +30,9 @@ module AnalyticsHelper
     request.remote_ip || request.env['HTTP_X_FORWARDED_FOR']
   end
 
-  def distinct_id(current_user_id = nil)
-    current_user_id ||= current_user.id
-    distinct = !current_user.nil? ? current_user.id : session[:visitor_id]
-    "#{id_prefix}-#{distinct}"
+  def distinct_id(user_id = nil)
+    user_id ||= !current_user.nil? ? current_user.id : session[:visitor_id]
+    "#{id_prefix}-#{user_id}"
   end
 
   def id_prefix
