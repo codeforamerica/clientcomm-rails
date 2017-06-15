@@ -30,6 +30,8 @@ module AnalyticsHelper
   end
 
   def id_prefix
-    URI.parse(request.base_url).hostname.split(".")[0..1].join("_")
+    # NOTE: DEPLOY_BASE_URL is set by heroku
+    base = request.base_url || ENV['DEPLOY_BASE_URL']
+    URI.parse(base).hostname.split(".")[0..1].join("_")
   end
 end
