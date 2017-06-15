@@ -15,7 +15,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     has_errors = resource.errors.messages.keys.length > 0
     if not has_errors
-      analytics_track(label: 'signup_complete')
+      analytics_track(label: 'signup_success')
     else
       analytics_track(label: 'signup_error')
     end

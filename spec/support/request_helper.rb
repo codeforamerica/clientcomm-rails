@@ -32,6 +32,7 @@ module RequestHelper
     }
     post clients_path, params: post_params
     # return the saved client record
+    # NOTE: send a unique phone number to ensure the correct client is returned
     Client.find_by(phone_number: client.phone_number)
   end
 

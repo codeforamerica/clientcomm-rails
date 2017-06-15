@@ -43,7 +43,7 @@ describe 'Tracking of client analytics events', type: :request do
       sign_in user
       get new_client_path
       expect(response.code).to eq '200'
-      expect_analytics_events('client_create_view')
+      expect_analytics_events_happened('client_create_view')
     end
   end
 
