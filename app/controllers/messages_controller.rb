@@ -31,9 +31,6 @@ class MessagesController < ApplicationController
       callback_url: incoming_sms_status_url
     )
 
-    # TODO: catch, handle, log errors with
-    #       response.error_code, response.error_message
-
     # save the message
     new_message_params = message_params.merge({
       client: client,
