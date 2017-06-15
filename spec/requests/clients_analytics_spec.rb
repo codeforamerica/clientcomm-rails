@@ -9,7 +9,7 @@ describe 'Tracking of client analytics events', type: :request do
       expect(response.code).to eq '200'
 
       expect_analytics_events({
-        'client_list_view' => {
+        'clients_view' => {
           'has_unread_messages' => false,
           'unread_messages_count' => 0,
           'clients_count' => 0
@@ -28,7 +28,7 @@ describe 'Tracking of client analytics events', type: :request do
       get clients_path
       expect(response.code).to eq '200'
       expect_analytics_events({
-        'client_list_view' => {
+        'clients_view' => {
           'has_unread_messages' => true,
           'unread_messages_count' => 3,
           'clients_count' => 2

@@ -5,7 +5,7 @@ class ClientsController < ApplicationController
     @clients = sorted_clients
 
     analytics_track(
-      label: 'client_list_view',
+      label: 'clients_view',
       data: current_user.analytics_tracker_data
     )
 
