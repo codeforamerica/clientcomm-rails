@@ -4,6 +4,21 @@ module RequestHelper
     post user_session_path, params: post_params
   end
 
+  def create_user(user)
+    post_params = {
+      user: {
+        full_name: user.full_name,
+        email: user.email,
+        password: user.password,
+        password_confirmation: user.password
+      }
+    }
+    post user_registration_path, params: post_params
+    # return the saved user record
+    # NOTE: send a unique email to ensure the correct user is returned
+    User.find_by(email: user.email)
+  end
+
   def create_client(client)
     post_params = {
       client: {
