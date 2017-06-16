@@ -1,6 +1,5 @@
 module TwilioHelper
-  def twilio_post_sms(tw_params = nil)
-    tw_params ||= twilio_new_message_params
+  def twilio_post_sms(tw_params = twilio_new_message_params)
     post_sig = correct_signature(tw_params)
     post_url = '/incoming/sms'
     post_header_name = 'X-Twilio-Signature'
@@ -23,10 +22,11 @@ module TwilioHelper
     "This is a test message."
   end
 
-  def twilio_new_message_params(from_number = nil, sms_sid = nil, msg_txt = nil)
-    from_number ||= '+12425551212'
-    sms_sid ||= SecureRandom.hex(17)
-    msg_txt ||= twilio_message_text
+  def twilio_new_message_params(
+    from_number = '+12425551212',
+    sms_sid = SecureRandom.hex(17),
+    msg_txt = twilio_message_text
+  )
     {
       "ToCountry"=>"US",
       "ToState"=>"CA",
@@ -62,8 +62,7 @@ module TwilioHelper
     Capybara.current_host || Capybara.default_host
   end
 
-  def correct_signature(tw_params = nil)
-    tw_params ||= twilio_new_message_params
+  def correct_signature(tw_params = twilio_new_message_params)
     Twilio::Util::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
       .build_signature_for("#{myhost}/incoming/sms", tw_params)
   end

@@ -12,7 +12,7 @@ module AnalyticsHelper
   end
 
   def expect_analytics_events(*event_hashes)
-    # all the passed events happened, indpendent of order
+    # all the passed events happened, independent of order
     # and all the tracker data parameters and values match
     event_hashes.each do |event_description|
       event_name = event_description.keys.first
