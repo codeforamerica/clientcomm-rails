@@ -20,7 +20,6 @@ ActiveJob::Base.queue_adapter = :test
 # Capybara settings
 headless_capybara = true
 Capybara.server = :puma
-Capybara.default_max_wait_time = 10
 
 if headless_capybara
   Capybara.javascript_driver = :poltergeist
