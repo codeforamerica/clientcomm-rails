@@ -28,7 +28,7 @@ module AnalyticsHelper
   end
 
   def visitor_ip
-    request.remote_ip || request.env['HTTP_X_FORWARDED_FOR']
+    request.remote_ip
   end
 
   def distinct_id(user_id = nil)
