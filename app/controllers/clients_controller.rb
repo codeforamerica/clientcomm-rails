@@ -4,6 +4,11 @@ class ClientsController < ApplicationController
   def index
     @clients = sorted_clients
 
+    analytics_track(
+      label: 'clients_view',
+      data: current_user.analytics_tracker_data
+    )
+
     respond_to do |format|
       format.html
       format.js
@@ -12,11 +17,19 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new
+
+    analytics_track(
+      label: 'client_create_view'
+    )
   end
 
   def create
-    current_user.clients.create(client_params)
+    client = current_user.clients.create(client_params)
 
+    analytics_track(
+      label: 'client_create_success',
+      data: client.analytics_tracker_data
+    )
     redirect_to clients_path
   end
 
@@ -30,7 +43,7 @@ class ClientsController < ApplicationController
   def sorted_clients
     # sort clients with unread messages to the top,
     # no matter when they were last contacted
-    current_user.clients.all.sort_by { |c| [c.unread_message_sort, c.contacted_at] }.reverse
+    current_user.clients.all.sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
   end
 
 end

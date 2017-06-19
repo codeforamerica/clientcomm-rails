@@ -284,6 +284,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   bourbon (~> 4.2.0)
   byebug
   capybara

@@ -5,8 +5,7 @@ describe 'Messages', type: :request do
     it 'marks all messages read when index loaded' do
       user = create :user
       sign_in user
-      client = build :client, user: user
-      create_client client
+      client = create_client build(:client, user: user)
       message = create :message, user: user, client: client, inbound: true
 
       # when we visit the messages path, it should mark the message read

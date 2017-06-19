@@ -4,9 +4,17 @@ class MessagesController < ApplicationController
 
   def index
     # the client being messaged
-    @client = Client.find params[:client_id]
+    @client = current_user.clients.find params[:client_id]
+
+    analytics_track(
+      label: 'client_messages_view',
+      data: @client.analytics_tracker_data
+    )
+
     # the list of past messages
-    @messages = current_user.messages.where(client_id: params["client_id"]).order('created_at ASC')
+    @messages = current_user.messages
+      .where(client_id: params["client_id"])
+      .order('created_at ASC')
     @messages.update_all(read: true)
     # a new message for the form
     @message = Message.new
@@ -14,7 +22,7 @@ class MessagesController < ApplicationController
 
   def create
     # the client being messaged
-    client = Client.find params[:client_id]
+    client = current_user.clients.find params[:client_id]
 
     # send the message via Twilio
     response = SMSService.instance.send_message(
@@ -22,8 +30,6 @@ class MessagesController < ApplicationController
       body: params[:message][:body],
       callback_url: incoming_sms_status_url
     )
-
-    # TODO: catch, handle, log errors with response.error_code, response.error_message
 
     # save the message
     new_message_params = message_params.merge({
@@ -41,13 +47,20 @@ class MessagesController < ApplicationController
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_now(message: new_message, is_update: false)
 
-    # reload the index
-    redirect_to client_messages_path(client.id)
+    analytics_track(
+      label: 'message_send',
+      data: new_message.analytics_tracker_data
+    )
+
+    respond_to do |format|
+      format.html { redirect_to client_messages_path(client.id) }
+      format.js { head :no_content }
+    end
   end
 
   def read
     # change the read status of the message
-    message = Message.find params[:message_id]
+    message = current_user.messages.find params[:message_id]
     success = message.update_attributes read: message_params[:read]
     if success
       head :no_content

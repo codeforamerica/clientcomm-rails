@@ -2,7 +2,6 @@ class TwilioController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def incoming_sms
-    # TODO: error handling
     # get the client based on the phone number
     client = Client.find_by(phone_number: params[:From])
     # create a new message
@@ -29,11 +28,15 @@ class TwilioController < ApplicationController
       client: client
     )
 
+    analytics_track(
+      label: 'message_receive',
+      data: new_message.analytics_tracker_data
+    )
+
     head :no_content
   end
 
   def incoming_sms_status
-    # TODO: error handling (i.e. message doesn't exist)
     # update the status of the corresponding message in the database
     message = Message.find_by twilio_sid: params[:SmsSid]
     message.update(twilio_status: params[:SmsStatus])

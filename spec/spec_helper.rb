@@ -33,6 +33,18 @@ RSpec.configure do |config|
     stub_request(:post, /api.mixpanel.com/)
       .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
       .to_return(status: 200, body: "stubbed response", headers: {})
+    
+    @mixpanel_requests = []
+    @mixpanel_event_names = []
+    WebMock.after_request do |request_signature|
+      if request_signature.uri.host == "api.mixpanel.com"
+        parsed = JSON.parse(
+          Base64.decode64(CGI::parse(request_signature.body)['data'][0])
+        )
+        @mixpanel_requests << { parsed['event'] => parsed['properties'] }
+        @mixpanel_event_names << parsed['event']
+      end
+    end
 
     # reset the fake Twilio client message queue
     FakeTwilioClient.messages = []
