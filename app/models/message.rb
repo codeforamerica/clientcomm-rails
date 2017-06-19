@@ -1,6 +1,7 @@
 class Message < ApplicationRecord
   belongs_to :client
   belongs_to :user
+  has_many :attachments
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
