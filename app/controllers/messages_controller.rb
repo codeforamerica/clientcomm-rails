@@ -52,8 +52,10 @@ class MessagesController < ApplicationController
       data: new_message.analytics_tracker_data
     )
 
-    # reload the index
-    redirect_to client_messages_path(client.id)
+    respond_to do |format|
+      format.html { redirect_to client_messages_path(client.id) }
+      format.js { head :no_content }
+    end
   end
 
   def read
