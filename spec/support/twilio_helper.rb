@@ -31,7 +31,7 @@ module TwilioHelper
     msg_txt = twilio_message_text,
     media_count = 0
   )
-    {
+    HashWithIndifferentAccess.new({
       "ToCountry"=>"US",
       "ToState"=>"CA",
       "SmsMessageSid"=>sms_sid,
@@ -54,7 +54,7 @@ module TwilioHelper
       "ApiVersion"=>"2010-04-01",
       "controller"=>"twilio",
       "action"=>"incoming_sms"
-    }.merge(generate_media_parameters(media_count))
+    }.merge(generate_media_parameters(media_count)))
   end
 
   def generate_media_parameters(count)

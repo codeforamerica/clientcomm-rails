@@ -16,23 +16,6 @@ describe 'Twilio controller', type: :request do
       expect(msg).not_to eq nil
       expect(msg.body).to eq message_text
     end
-
-    it 'receives an incoming sms message with an attachment' do
-      user = create :user
-      sign_in user
-      clientone = create_client build(:client)
-      # post a new message
-      message_text = 'Hello, this is a new message from a client!'
-      message_params = twilio_new_message_params(
-        clientone.phone_number, nil, message_text, 2
-      )
-      twilio_post_sms message_params
-      msg = user.messages.last
-      expect(msg).not_to eq nil
-      expect(msg.body).to eq message_text
-      atts = msg.attachments.all
-      expect(atts.length).to eq 2
-    end
   end
 end
 
