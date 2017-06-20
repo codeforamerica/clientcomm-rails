@@ -58,7 +58,7 @@ module TwilioHelper
   end
 
   def generate_media_parameters(count)
-    params = count > 0 ? {"NumMedia": count.to_s} : {}
+    params = count > 0 ? {"NumMedia" => count.to_s} : {}
     (1..count).each do |i|
       num = (i - 1).to_s
       content_type = ["image/jpeg", "image/png", "image/gif"].sample
@@ -66,7 +66,7 @@ module TwilioHelper
         "/Messages/" + SecureRandom.hex(17) +
         "/Media/" + SecureRandom.hex(17)
       params = params.merge(
-        {"MediaContentType#{num}": content_type, "MediaUrl#{num}": url}
+        {"MediaContentType#{num}" => content_type, "MediaUrl#{num}" => url}
       )
     end
     params
