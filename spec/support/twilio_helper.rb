@@ -1,8 +1,13 @@
 module TwilioHelper
   def twilio_post_sms(tw_params = twilio_new_message_params)
-    post_sig = correct_signature(tw_params)
-    post_url = '/incoming/sms'
-    post_header_name = 'X-Twilio-Signature'
+    twilio_post tw_params, correct_signature(tw_params), '/incoming/sms'
+  end
+
+  def twilio_post_sms_status(tw_params = twilio_status_update_params)
+    twilio_post tw_params, correct_signature(tw_params), '/incoming/sms/status'
+  end
+
+  def twilio_post(tw_params, post_sig, post_url)
     if Capybara.current_session.server
       conn = Faraday.new("#{myhost}")
       conn.post do |req|
@@ -16,6 +21,16 @@ module TwilioHelper
     else
       post post_url, params: tw_params, headers: {post_header_name => post_sig}
     end
+  end
+
+  def twilio_clear_after
+    if defined?(page)
+      page.driver.header post_header_name, nil
+    end
+  end
+
+  def post_header_name
+    'X-Twilio-Signature'
   end
 
   def twilio_message_text
@@ -50,6 +65,25 @@ module TwilioHelper
       "ApiVersion"=>"2010-04-01",
       "controller"=>"twilio",
       "action"=>"incoming_sms"
+    }
+  end
+
+  def twilio_status_update_params(
+    from_number = '+12425551212',
+    sms_sid = SecureRandom.hex(17),
+    sms_status = 'delivered'
+  )
+    {
+      "SmsSid"=>sms_sid,
+      "SmsStatus"=>sms_status,
+      "MessageStatus"=>sms_status,
+      "To"=>"+12435551212",
+      "MessageSid"=>sms_sid,
+      "AccountSid"=>"077541f41cce52ea6c4944fa6823a4a277",
+      "From"=>from_number,
+      "ApiVersion"=>"2010-04-01",
+      "controller"=>"twilio",
+      "action"=>"incoming_sms_status"
     }
   end
 
