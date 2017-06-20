@@ -1,26 +1,14 @@
 module TwilioHelper
-  def twilio_post_sms(tw_params = twilio_new_message_params)
-    twilio_post tw_params, correct_signature(tw_params), '/incoming/sms'
+  def twilio_post_sms(tw_params = twilio_new_message_params, use_correct_signature = true)
+    post_path = '/incoming/sms'
+    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    twilio_post tw_params, post_sig, post_path
   end
 
-  def twilio_post_sms_status(tw_params = twilio_status_update_params)
-    twilio_post tw_params, correct_signature(tw_params), '/incoming/sms/status'
-  end
-
-  def twilio_post(tw_params, post_sig, post_url)
-    if Capybara.current_session.server
-      conn = Faraday.new("#{myhost}")
-      conn.post do |req|
-        req.url post_url
-        req.headers[post_header_name] = post_sig
-        req.body = tw_params
-      end
-    elsif defined?(page)
-      page.driver.header post_header_name, post_sig
-      page.driver.post post_url, tw_params
-    else
-      post post_url, params: tw_params, headers: {post_header_name => post_sig}
-    end
+  def twilio_post_sms_status(tw_params = twilio_status_update_params, use_correct_signature = true)
+    post_path = '/incoming/sms/status'
+    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    twilio_post tw_params, post_sig, post_path
   end
 
   def twilio_clear_after
@@ -89,6 +77,22 @@ module TwilioHelper
 
   private
 
+  def twilio_post(tw_params, post_sig, post_url)
+    if Capybara.current_session.server
+      conn = Faraday.new("#{myhost}")
+      conn.post do |req|
+        req.url post_url
+        req.headers[post_header_name] = post_sig
+        req.body = tw_params
+      end
+    elsif defined?(page)
+      page.driver.header post_header_name, post_sig
+      page.driver.post post_url, tw_params
+    else
+      post post_url, params: tw_params, headers: {post_header_name => post_sig}
+    end
+  end
+
   def myhost
     if Capybara.current_session.server
       return "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}"
@@ -96,8 +100,8 @@ module TwilioHelper
     Capybara.current_host || Capybara.default_host
   end
 
-  def correct_signature(tw_params = twilio_new_message_params)
+  def correct_signature(tw_params = twilio_new_message_params, post_path = '')
     Twilio::Util::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
-      .build_signature_for("#{myhost}/incoming/sms", tw_params)
+      .build_signature_for("#{myhost}#{post_path}", tw_params)
   end
 end
