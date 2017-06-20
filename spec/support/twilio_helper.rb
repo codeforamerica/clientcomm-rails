@@ -28,7 +28,8 @@ module TwilioHelper
   def twilio_new_message_params(
     from_number = '+12425551212',
     sms_sid = SecureRandom.hex(17),
-    msg_txt = twilio_message_text
+    msg_txt = twilio_message_text,
+    media_count = 0
   )
     {
       "ToCountry"=>"US",
@@ -53,7 +54,22 @@ module TwilioHelper
       "ApiVersion"=>"2010-04-01",
       "controller"=>"twilio",
       "action"=>"incoming_sms"
-    }
+    }.merge(generate_media_parameters(media_count))
+  end
+
+  def generate_media_parameters(count)
+    params = count > 0 ? {"NumMedia": count.to_s} : {}
+    (1..count).each do |i|
+      num = (i - 1).to_s
+      content_type = ["image/jpeg", "image/png", "image/gif"].sample
+      url = "https://api.twilio.com/2010-04-01/Accounts/" + SecureRandom.hex(17) +
+        "/Messages/" + SecureRandom.hex(17) +
+        "/Media/" + SecureRandom.hex(17)
+      params = params.merge(
+        {"MediaContentType#{num}": content_type, "MediaUrl#{num}": url}
+      )
+    end
+    params
   end
 
   def twilio_status_update_params(
