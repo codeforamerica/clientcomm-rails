@@ -3,7 +3,7 @@ class TwilioController < ApplicationController
 
   def incoming_sms
     # get the client based on the phone number
-    client = Client.find_by(phone_number: params[:From])
+    client = Client.find_by!(phone_number: params[:From])
     # create a new message
     new_message_params = {
       client: client,
@@ -15,7 +15,7 @@ class TwilioController < ApplicationController
       twilio_status: params[:SmsStatus],
       body: params[:Body]
     }
-    new_message = Message.create(new_message_params)
+    new_message = Message.create!(new_message_params)
 
     # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message, is_update: false)
