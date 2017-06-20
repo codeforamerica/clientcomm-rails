@@ -17,6 +17,13 @@ class TwilioController < ApplicationController
     }
     new_message = Message.create!(new_message_params)
 
+    params[:NumMedia].to_i.times.each do |i|
+      new_message.attachments.create!({
+        url: params["MediaUrl#{i}"],
+        content_type: params["MediaContentType#{i}"]
+      })
+    end
+
     # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message, is_update: false)
 
