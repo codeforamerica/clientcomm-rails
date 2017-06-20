@@ -25,6 +25,7 @@ gem 'device_detector'
 gem 'twilio-ruby'
 gem 'intercom-rails'
 gem 'devise'
+gem 'aws-sdk'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
