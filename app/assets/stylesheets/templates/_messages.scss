@@ -28,7 +28,7 @@
       flex-basis: 55%;
       margin-left: auto;
 
-      .message__content {
+      .message--content {
         background: $color-teal;
         border-radius: 8px;
         color: $color-background;
@@ -42,7 +42,7 @@
         text-align: right;
       }
 
-      .message__label {
+      .message--label {
         background-color: $color-background;
         color: $color-grey;
         font-size: $font-size-smallest;
@@ -60,7 +60,7 @@
       align-self: flex-start;
       flex-basis: 55%;
 
-      .message__content {
+      .message--content {
         background: $color-light-grey;
         border-radius: 6px;
         margin-bottom: 10px;
@@ -72,7 +72,7 @@
         }
       }
 
-      .message__label {
+      .message--label {
         background-color: $color-background;
         color: $color-grey;
         font-size: $font-size-smallest;
