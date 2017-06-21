@@ -30,7 +30,7 @@ rails db:schema:load RAILS_ENV=test
 ## Setting Up Twilio
 
 1. Buy an SMS-capable phone number on [Twilio](https://www.twilio.com/). You can use [the web interface](https://www.twilio.com/console/phone-numbers/search), or [this script](https://gist.github.com/cweems/e3fb8ab69c6e0776e492d88672a4ded9).
-2. Install [ngrok](https://ngrok.com/). You can use `npm install -g ngrok` if you are running npm on your machine, or [download the binary](https://ngrok.com/download) and [create a symlink](https://gist.github.com/wosephjeber/aa174fb851dfe87e644e#creating-a-symlink-to-ngrok).
+2. Install [ngrok](https://ngrok.com/). If you are running [npm](https://www.npmjs.com/), install with `npm install -g ngrok`. Otherwise [download the binary](https://ngrok.com/download) and [create a symlink](https://gist.github.com/wosephjeber/aa174fb851dfe87e644e#creating-a-symlink-to-ngrok).
 3. Start ngrok by entering `ngrok http 3000` in the terminal to start a tunnel (replace `3000` with the port your application is running on if necessary). You should see an ngrok url displayed, e.g. `https://e595b046.ngrok.io`.
 4. When your Twilio number receives an sms message, it needs to know where to send it. The application has an endpoint to receive Twilio webhooks at, for example, `https://e595b046.ngrok.io/incoming/sms/`. Click on your phone number in [the Twilio web interface](https://www.twilio.com/console/phone-numbers/incoming) and enter this URL (with your unique ngrok hostname) in the *A MESSAGE COMES IN* field, under *Messaging*.
   
