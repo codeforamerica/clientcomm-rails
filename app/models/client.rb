@@ -1,6 +1,7 @@
 class Client < ApplicationRecord
   belongs_to :user
   has_many :messages
+  has_many :attachments, through: :messages
 
   def analytics_tracker_data
     {
@@ -10,7 +11,8 @@ class Client < ApplicationRecord
       hours_since_contact: hours_since_contact,
       messages_all_count: messages.count,
       messages_received_count: inbound_messages_count,
-      messages_sent_count: outbound_messages_count
+      messages_sent_count: outbound_messages_count,
+      messages_attachments_count: attachments.count
     }
   end
 

@@ -43,7 +43,8 @@ class Message < ApplicationRecord
       client_id: self.client.id,
       message_id: self.id,
       message_length: self.body.length,
-      current_user_id: self.user.id
+      current_user_id: self.user.id,
+      attachments_count: self.attachments.count
     }
   end
 
