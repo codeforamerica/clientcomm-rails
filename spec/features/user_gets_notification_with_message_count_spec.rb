@@ -18,9 +18,9 @@ feature "User receives messages from clients" do
   context "while on the clients page" do
     it "sees a notification for new messages from one client", :js do
       # post messages to the twilio endpoint from a user
-      twilio_post_sms(twilio_new_message_params(clientone.phone_number))
-      twilio_post_sms(twilio_new_message_params(clientone.phone_number))
-      twilio_post_sms(twilio_new_message_params(clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
       # there's a flash with the correct contents
       expect(page).to have_css '.flash p', text: "You have 3 unread messages from #{clientone.full_name}"
     end
@@ -32,11 +32,11 @@ feature "User receives messages from clients" do
       add_client(clienttwo)
       # end up on the clients page
       expect(current_path).to eq clients_path
-      twilio_post_sms(twilio_new_message_params(clientone.phone_number))
-      twilio_post_sms(twilio_new_message_params(clienttwo.phone_number))
-      twilio_post_sms(twilio_new_message_params(clienttwo.phone_number))
-      twilio_post_sms(twilio_new_message_params(clientone.phone_number))
-      twilio_post_sms(twilio_new_message_params(clienttwo.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
       # there's a flash with the correct contents
       expect(page).to have_css '.flash p', text: "You have 5 unread messages"
     end

@@ -26,10 +26,10 @@ module TwilioHelper
   end
 
   def twilio_new_message_params(
-    from_number = '+12425551212',
-    sms_sid = SecureRandom.hex(17),
-    msg_txt = twilio_message_text,
-    media_count = 0
+    from_number: '+12425551212',
+    sms_sid: SecureRandom.hex(17),
+    msg_txt: twilio_message_text,
+    media_count: 0
   )
     HashWithIndifferentAccess.new({
       "ToCountry"=>"US",

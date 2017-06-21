@@ -19,21 +19,21 @@ RSpec.describe Message, type: :model do
 
   describe '#create_from_twilio' do
     it 'errors if no client matches the passed phone number' do
-      params = twilio_new_message_params '+99999999999'
+      params = twilio_new_message_params from_number: '+99999999999'
       expect {
         Message.create_from_twilio!(params)
       }.to raise_exception ActiveRecord::RecordNotFound
     end
 
     it 'creates a message if proper params are sent' do
-      params = twilio_new_message_params client.phone_number
+      params = twilio_new_message_params from_number: client.phone_number
       msg = Message.create_from_twilio!(params)
       expect(client.messages.last).to eq msg
     end
 
     it 'creates a message with attachments' do
       params = twilio_new_message_params(
-        client.phone_number, nil, nil, 2
+        from_number: client.phone_number, media_count: 2
       )
       msg = Message.create_from_twilio!(params)
       expect(msg).not_to eq nil
