@@ -4,19 +4,22 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-# Ignore bundler config.
+# no bundler config
 /.bundle
 
-# Ignore all logfiles and tempfiles.
+# no logfiles or tempfiles
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
 /coverage/*
 
-# Ignore Byebug command history file.
+# no byebug command history file
 .byebug_history
 
-# Ignore private keys
+# no private environment variables
 .env
+.env-*
+
+# no private keys
 *.pem
