@@ -8,7 +8,7 @@ A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm
 
 ## Installation
 ### Requirements
-1. Install Ruby with your ruby version manager of choice, using [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
+1. Install Ruby with your ruby version manager of choice, like [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
 2. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.0`
 3. [Install Postgres](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md). If setting up Postgres.app, you will also need to add the binary to your path. e.g. Add to your `~/.bashrc`:
 `export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"`
@@ -38,9 +38,9 @@ rails db:schema:load RAILS_ENV=test
 
 ## Testing
 
+- [Phantom](http://phantomjs.org/) is required to run some of the feature tests. [Download](http://phantomjs.org/download.html) or install with [Homebrew](https://brew.sh/): `brew install phantom`
 - Test suite: `bin/rspec`. For more detailed logging use `bin/rspec LOUD_TESTS=true`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
-- Phantom is required to run tests: `brew install phantom`
 
 ## Contact
 
