@@ -19,6 +19,16 @@
     margin-bottom: 1em;
     max-width: 750px;
 
+    img {
+      height: auto;
+      max-width: 100%;
+    }
+
+    figure {
+      padding: 0;
+      margin: 1em 0;
+    }
+
     .message--outbound {
       flex-basis: 55%;
       margin-left: auto;
