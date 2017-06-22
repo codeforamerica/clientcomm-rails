@@ -1,21 +1,24 @@
 module TwilioHelper
-  def twilio_post_sms(tw_params = twilio_new_message_params)
-    post_sig = correct_signature(tw_params)
-    post_url = '/incoming/sms'
-    post_header_name = 'X-Twilio-Signature'
-    if Capybara.current_session.server
-      conn = Faraday.new("#{myhost}")
-      conn.post do |req|
-        req.url post_url
-        req.headers[post_header_name] = post_sig
-        req.body = tw_params
-      end
-    elsif defined?(page)
-      page.driver.header post_header_name, post_sig
-      page.driver.post post_url, tw_params
-    else
-      post post_url, params: tw_params, headers: {post_header_name => post_sig}
+  def twilio_post_sms(tw_params = twilio_new_message_params, use_correct_signature = true)
+    post_path = '/incoming/sms'
+    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    twilio_post tw_params, post_sig, post_path
+  end
+
+  def twilio_post_sms_status(tw_params = twilio_status_update_params, use_correct_signature = true)
+    post_path = '/incoming/sms/status'
+    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    twilio_post tw_params, post_sig, post_path
+  end
+
+  def twilio_clear_after
+    if defined?(page)
+      page.driver.header post_header_name, nil
     end
+  end
+
+  def post_header_name
+    'X-Twilio-Signature'
   end
 
   def twilio_message_text
@@ -23,11 +26,12 @@ module TwilioHelper
   end
 
   def twilio_new_message_params(
-    from_number = '+12425551212',
-    sms_sid = SecureRandom.hex(17),
-    msg_txt = twilio_message_text
+    from_number: '+12425551212',
+    sms_sid: SecureRandom.hex(17),
+    msg_txt: twilio_message_text,
+    media_count: 0
   )
-    {
+    HashWithIndifferentAccess.new({
       "ToCountry"=>"US",
       "ToState"=>"CA",
       "SmsMessageSid"=>sms_sid,
@@ -50,10 +54,59 @@ module TwilioHelper
       "ApiVersion"=>"2010-04-01",
       "controller"=>"twilio",
       "action"=>"incoming_sms"
+    }.merge(generate_media_parameters(media_count)))
+  end
+
+  def generate_media_parameters(count)
+    params = count > 0 ? {"NumMedia" => count.to_s} : {}
+    count.times.each do |i|
+      content_type = ["image/jpeg", "image/png", "image/gif"].sample
+      url = "https://api.twilio.com/2010-04-01/Accounts/" + SecureRandom.hex(17) +
+        "/Messages/" + SecureRandom.hex(17) +
+        "/Media/" + SecureRandom.hex(17)
+      params = params.merge(
+        {"MediaContentType#{i}" => content_type, "MediaUrl#{i}" => url}
+      )
+    end
+    params
+  end
+
+  def twilio_status_update_params(
+    from_number = '+12425551212',
+    sms_sid = SecureRandom.hex(17),
+    sms_status = 'delivered'
+  )
+    {
+      "SmsSid"=>sms_sid,
+      "SmsStatus"=>sms_status,
+      "MessageStatus"=>sms_status,
+      "To"=>"+12435551212",
+      "MessageSid"=>sms_sid,
+      "AccountSid"=>"077541f41cce52ea6c4944fa6823a4a277",
+      "From"=>from_number,
+      "ApiVersion"=>"2010-04-01",
+      "controller"=>"twilio",
+      "action"=>"incoming_sms_status"
     }
   end
 
   private
+
+  def twilio_post(tw_params, post_sig, post_url)
+    if Capybara.current_session.server
+      conn = Faraday.new("#{myhost}")
+      conn.post do |req|
+        req.url post_url
+        req.headers[post_header_name] = post_sig
+        req.body = tw_params
+      end
+    elsif defined?(page)
+      page.driver.header post_header_name, post_sig
+      page.driver.post post_url, tw_params
+    else
+      post post_url, params: tw_params, headers: {post_header_name => post_sig}
+    end
+  end
 
   def myhost
     if Capybara.current_session.server
@@ -62,8 +115,8 @@ module TwilioHelper
     Capybara.current_host || Capybara.default_host
   end
 
-  def correct_signature(tw_params = twilio_new_message_params)
+  def correct_signature(tw_params = twilio_new_message_params, post_path = '')
     Twilio::Util::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
-      .build_signature_for("#{myhost}/incoming/sms", tw_params)
+      .build_signature_for("#{myhost}#{post_path}", tw_params)
   end
 end

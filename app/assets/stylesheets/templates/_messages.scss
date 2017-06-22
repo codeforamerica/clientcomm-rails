@@ -2,10 +2,12 @@
 
   .slab--header {
     padding: {
-      top: 1em;
       bottom: .5em;
+      top: 1em;
     }
-    h2, p {
+
+    h2,
+    p {
       margin-bottom: 0;
     }
   }
@@ -14,92 +16,89 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    max-width: 750px;
     margin-bottom: 1em;
-    
+    max-width: 750px;
+
+    img {
+      height: auto;
+      max-width: 100%;
+    }
+
     .message--outbound {
-      margin-left: auto;
       flex-basis: 55%;
-    
-      .message__content {
+      margin-left: auto;
+
+      .message--content {
         background: $color-teal;
-        text-align: right;
-        color: $color-background;
         border-radius: 8px;
-        padding: {
-          right: $padding-small;
-          left: $padding-small;
-          top: $padding-small;
-          bottom: .5em;
-        }
+        color: $color-background;
         margin-bottom: 10px;
+        padding: {
+          bottom: .5em;
+          left: $padding-small;
+          right: $padding-small;
+          top: $padding-small;
+        }
+        text-align: right;
       }
 
-      .message__label {
-        text-align: right;
+      .message--label {
         background-color: $color-background;
         color: $color-grey;
         font-size: $font-size-smallest;
         font-weight: 500;
-        padding: .5em;
         line-height: 1.4em;
-        top: -.1em;
         margin-left: .2em;
         margin-top: -.5em;
+        padding: .5em;
+        text-align: right;
+        top: -.1em;
       }
     }
-    
+
     .message--inbound {
       align-self: flex-start;
       flex-basis: 55%;
 
-      .message__content {
-        border-radius: 6px;
+      .message--content {
         background: $color-light-grey;
+        border-radius: 6px;
         margin-bottom: 10px;
         padding: {
+          bottom: .5em;
           left: $padding-small;
           right: $padding-small;
           top: $padding-small;
-          bottom: .5em;
         }
       }
 
-      .message__label {
+      .message--label {
         background-color: $color-background;
         color: $color-grey;
         font-size: $font-size-smallest;
         font-weight: 500;
-        padding: .5em;
         line-height: 1.4em;
-        top: -.1em;
         margin-left: .2em;
         margin-top: -.5em;
+        padding: .5em;
+        top: -.1em;
       }
     }
   }
 
   .message--create {
-    height: 80px;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-    padding: 0 5px;
     align-items: center;
-    white-space: nowrap;
-    color: #999;
     background: $color-background;
     border-top: 2px solid $color-light-grey;
+    bottom: 0;
+    color: #999;
+    height: 80px;
+    left: 0;
+    padding: 0 5px;
+    position: fixed;
+    white-space: nowrap;
+    width: 100%;
     z-index: 10;
-    margin: {
-      margin-left: 0;
-      margin-right: 0;
-    }
-    padding: {
-      padding-left: 0;
-      padding-right: 0;
-    }
 
     .sendbar {
       margin-top: .5em;

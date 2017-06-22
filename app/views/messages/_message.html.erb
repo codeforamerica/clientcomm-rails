@@ -1,4 +1,6 @@
 <div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
-  <p class="message__content"><%= message.body %></p>
-  <p class="message__label"><%= message.twilio_status %> <%= message.created_at.to_s(:message_timestamp) %></p>    
+  <div class="message--content"><%= message.body %>
+  <%= render message.attachments %>
+  </div>
+  <p class="message--label"><%= message.twilio_status %> <%= message.created_at.to_s(:message_timestamp) %></p>    
 </div>  
