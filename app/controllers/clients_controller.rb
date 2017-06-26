@@ -50,7 +50,7 @@ class ClientsController < ApplicationController
   private
 
   def client_params
-    params.fetch(:client)
+    params.fetch(:client, {})
       .permit(:first_name, :last_name, :birth_date, :phone_number, :active)
   end
 
