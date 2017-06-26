@@ -23,7 +23,11 @@
       <header class="main-header">
         <div class="toolbar">
           <div class="toolbar__left">
-            <h1 class="toolbar__item main-header__title"><a class="main-header__site-title" href="/">ClientComm</a><span class="label label--magenta">Beta</span></h1> 
+            <h1 class="toolbar__item main-header__title">
+              <a class="main-header__site-title" href="/">ClientComm</a>
+              <span class="label label--magenta">Beta</span>
+              <span class="user-phone-number is-mobile-hidden--inline"><%= @clientcomm_phone_number %></span>
+            </h1>
           </div>
           <div class="toolbar__right text--small">
             <% if user_signed_in? %>
