@@ -6,9 +6,6 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_filter :set_phone_number
 
-  def set_phone_number
-    @user_phone_number = PhoneNumberParser.format_for_display(ENV['TWILIO_PHONE_NUMBER'])
-  end
 
   private
 
@@ -24,5 +21,12 @@ class ApplicationController < ActionController::Base
 
   def set_visitor_id
     session[:visitor_id] ||= SecureRandom.hex(4)
+  end
+
+
+  # COMMON
+
+  def set_phone_number
+    @clientcomm_phone_number ||= PhoneNumberParser.format_for_display(ENV['TWILIO_PHONE_NUMBER'])
   end
 end
