@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(version: 20170619175734) do
   end
 
   create_table "clients", force: :cascade do |t|
-    t.string   "first_name"
-    t.string   "last_name"
-    t.datetime "birth_date"
-    t.string   "phone_number"
+    t.string   "first_name",
+    t.string   "last_name",    null: false
+    t.datetime "birth_date",   null: false
+    t.string   "phone_number", null: false
     t.boolean  "active",       default: true, null: false
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false

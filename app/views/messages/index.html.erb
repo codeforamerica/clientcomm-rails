@@ -4,7 +4,7 @@
   <div class="grid">
     <div class="grid__item width-one-half">
       <h2><%= @client.full_name %></h2>
-      <p class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></p>
+      <span class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %> <%= link_to "Edit Client", edit_client_path(@client) %></span>
     </div>
   </div>
 </section>
