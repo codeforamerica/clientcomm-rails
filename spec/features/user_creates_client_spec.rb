@@ -22,3 +22,31 @@ feature "User creates client" do
     expect(page).to have_current_path(clients_path)
   end
 end
+
+feature "User edits client" do
+  scenario "unsuccessfully" do
+    myuser = create :user
+    login_as(myuser, :scope => :user)
+
+    myclient = create(:client, user: myuser)
+
+    visit root_path
+
+    within("#client_#{myclient.id}") do
+      click_on 'Edit'
+    end
+
+    expect(page).to have_current_path(edit_client_path(myclient))
+    fill_in 'Last name', with: ''
+    click_on 'Save Changes'
+
+    expect(page).to have_content 'Edit Client'
+    expect(page).to have_content "Last name can't be blank"
+
+    fill_in 'Last name', with: 'Lastname'
+    click_on 'Save Changes'
+
+    expect(page).to have_current_path(clients_path)
+    expect(page).to have_content "#{myclient.first_name} Lastname"
+  end
+end

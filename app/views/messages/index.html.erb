@@ -2,9 +2,11 @@
 
 <section class="slab slab--header">
   <div class="grid">
-    <div class="grid__item width-one-half">
-      <h2><%= @client.full_name %></h2>
-      <span class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %> <%= link_to "Edit Client", edit_client_path(@client) %></span>
+      <div class="grid">
+          <h2 style="float: left" class="client-name"><%= @client.full_name %>&nbsp</h2>
+          <%= link_to "Edit Client", edit_client_path(@client), {class: 'button button--small' } %>
+      </div>
+      <span class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></span>
     </div>
   </div>
 </section>
