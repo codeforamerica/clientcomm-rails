@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_filter :set_phone_number
 
-
   private
 
   # DEVISE
@@ -16,13 +15,11 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:full_name])
   end
 
-
   # ANALYTICS
 
   def set_visitor_id
     session[:visitor_id] ||= SecureRandom.hex(4)
   end
-
 
   # COMMON
 
