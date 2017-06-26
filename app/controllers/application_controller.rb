@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_visitor_id
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_filter :set_phone_number
+  before_action :set_phone_number
 
   private
 
