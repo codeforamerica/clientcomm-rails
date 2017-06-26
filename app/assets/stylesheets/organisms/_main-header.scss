@@ -14,12 +14,18 @@
   margin-bottom: 0;
   font-weight: 500;
   color: #666;
+
   .main-header__site-title {
     color: #666;    
     font-size: $font-size-normal;
     text-decoration: none;
     margin-right: .3em;
   }
+
+  .user-phone-number {
+    padding-left: .3em;
+  }
+
   .main-header__cbo-title {
     display: inline-block;
     @include media($tablet-up) {
