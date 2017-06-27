@@ -25,7 +25,7 @@ feature "user edits client" do
     new_last_name = 'Lima'
     fill_in 'First name', with: new_first_name
     fill_in 'Last name', with: new_last_name
-    click_on 'Save Changes'
+    click_on 'Save changes'
     expect(page).to have_current_path(clients_path)
     expect(page).to have_content "#{new_first_name} #{new_last_name}"
   end
@@ -42,8 +42,8 @@ feature "user edits client" do
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     fill_in 'Last name', with: ''
-    click_on 'Save Changes'
-    expect(page).to have_content 'Edit Client'
+    click_on 'Save changes'
+    expect(page).to have_content 'Edit client'
     expect(page).to have_content "Last name can't be blank"
   end
 end
