@@ -37,4 +37,17 @@ RSpec.describe Client, type: :model do
     end
   end
 
+  describe 'validations' do
+    it {
+      should validate_presence_of(:last_name)
+      should validate_presence_of(:birth_date)
+    }
+
+    it 'validates presence of phone_number' do
+      client = Client.new(last_name: 'Last', birth_date: DateTime.now)
+      expect(client.valid?).to be_falsey
+      expect([:phone_number]).to eql client.errors.keys
+    end
+  end
+
 end

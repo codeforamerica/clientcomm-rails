@@ -62,3 +62,10 @@ RSpec.configure do |config|
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = false
   end
 end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end

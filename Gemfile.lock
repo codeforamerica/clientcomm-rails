@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/thoughtbot/shoulda-matchers.git
+  revision: ead87017a6c15adce66a87dce8ee2ece91d0d27c
+  branch: rails-5
+  specs:
+    shoulda-matchers (3.1.2)
+      activesupport (>= 4.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -324,6 +332,7 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 5.0)
   selenium-webdriver
+  shoulda-matchers!
   simplecov
   spring
   spring-commands-rspec

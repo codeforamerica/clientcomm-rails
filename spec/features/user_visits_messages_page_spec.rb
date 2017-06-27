@@ -16,8 +16,8 @@ feature "User clicks on client in list" do
     expect(page).to have_current_path(clients_path)
     # click on the client
     click_on myclient_fullname
-    expect(page).to have_css '.grid__item', text: myclient_fullname
-    expect(page).to have_css '.grid__item', text: PhoneNumberParser.format_for_display(myclient.phone_number)
+    expect(page).to have_content myclient_fullname
+    expect(page).to have_content PhoneNumberParser.format_for_display(myclient.phone_number)
     # get the id from the saved client record
     myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myclient.phone_number)).id
     expect(page).to have_current_path(client_messages_path(client_id: myclient_id))

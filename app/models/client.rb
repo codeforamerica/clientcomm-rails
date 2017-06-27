@@ -3,6 +3,10 @@ class Client < ApplicationRecord
   has_many :messages
   has_many :attachments, through: :messages
 
+  validates :last_name, :presence => true
+  validates :birth_date, :presence => true
+  validates :phone_number, :presence => true
+
   def analytics_tracker_data
     {
       client_id: self.id,

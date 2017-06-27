@@ -61,4 +61,33 @@ describe 'Tracking of client analytics events', type: :request do
       })
     end
   end
+
+  context 'GET#edit' do
+    it 'tracks a visit to the edit client form' do
+      userone = create :user
+      clientone = create :client, user: userone
+      sign_in userone
+      get edit_client_path(clientone.id)
+      expect(response.code).to eq '200'
+      expect_analytics_events_happened('client_edit_view')
+    end
+  end
+
+  context 'PATCH#update' do
+    it 'tracks the updating of a client' do
+      userone = create :user
+      clientone = create :client, user: userone
+      sign_in userone
+      # we'll patch clientone to match clientedit
+      clientedit = build :client, user: userone
+      edit_client clientone.id, clientedit
+      expect(response.code).to eq '302'
+      expect_analytics_events({
+        'client_edit_success' => {
+          'client_id' => clientone.id,
+          'has_client_dob' => true
+        }
+      })
+    end
+  end
 end

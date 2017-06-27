@@ -43,6 +43,7 @@ group :test do
   gem 'launchy', require: false
   gem 'simplecov', require: false
   gem 'codeclimate-test-reporter', require: false
+  gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'
 end
 
 group :development, :test do

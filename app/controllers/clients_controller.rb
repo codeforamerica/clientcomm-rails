@@ -33,6 +33,31 @@ class ClientsController < ApplicationController
     redirect_to clients_path
   end
 
+  def edit
+    @client = current_user.clients.find(params[:id])
+
+    analytics_track(
+      label: 'client_edit_view',
+      data: @client.analytics_tracker_data
+    )
+  end
+
+  def update
+    @client = current_user.clients.find(params[:id])
+    if @client.update_attributes(client_params)
+      flash[:notice] = "Client updated"
+
+      analytics_track(
+        label: 'client_edit_success',
+        data: @client.analytics_tracker_data
+      )
+
+      redirect_to clients_path
+    else
+      render 'edit'
+    end
+  end
+
   private
 
   def client_params

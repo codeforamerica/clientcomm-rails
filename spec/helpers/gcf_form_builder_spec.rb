@@ -152,27 +152,25 @@ describe GcfFormBuilder, type: :view do
       end
     end
 
-    it "renders errors", :skip => "skipping until we have a model that validates a parameter" do
+    it "renders errors" do
       user = create :user
-      client = build :client, phone_number: "BOGUS", :user => user
+      client = build :client, last_name: '', :user => user
       client.valid?
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:phone_number, "Enter your phone number", type: "number")
+      output = form_builder.gcf_input_field(:last_name, "Enter your last name", type: "text")
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group form-group--error">
           <div class="field_with_errors">
-            <label for="client_phone_number">
-              <p class="form-question">Enter your phone number</p>
+            <label for="client_last_name">
+              <p class="form-question">Enter your last name</p>
             </label>
           </div>
           <div class="field_with_errors">
-            <input type="number" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="BOGUS" name="client[phone_number]" id="client_phone_number" />
+            <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="" name="client[last_name]" id="client_last_name" />
           </div>
-          <div class="text--error">
-            <i class="icon-warning"></i> Make sure the phone number is 10 digits.
-          </div>
+          <div class="text--error"><i class="icon-warning"></i> can't be blank </div>
         </fieldset>
       HTML
     end
