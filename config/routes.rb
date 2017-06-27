@@ -8,14 +8,12 @@ Rails.application.routes.draw do
     sessions: 'users/sessions'
   }
 
-  # CLIENTS
+  # CLIENTS and MESSAGES
   root to: "clients#index"
-  resources :clients, only: [:index, :new, :create]
-
-  # MESSAGES
-  resources :clients do
+  resources :clients, only: [:index, :new, :create, :edit, :update] do
     resources :messages, only: [:index]
   end
+
   resources :messages, only: [:create] do
     patch :read
   end
