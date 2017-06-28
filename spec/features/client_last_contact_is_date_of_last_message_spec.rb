@@ -1,7 +1,7 @@
 require "rails_helper"
 
 feature "User enters a message and submits it" do
-  scenario "then sees the clients sorted by most recent contact" do
+  scenario "then sees the clients sorted by most recent contact", :js do
     myuser = nil
     myfirstclient = nil
     mysecondclient = nil
