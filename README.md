@@ -39,7 +39,7 @@ rails db:schema:load RAILS_ENV=test
 ## Testing
 
 - [Phantom](http://phantomjs.org/) is required to run some of the feature tests. [Download](http://phantomjs.org/download.html) or install with [Homebrew](https://brew.sh/): `brew install phantom`
-- Test suite: `bin/rspec`. For more detailed logging use `bin/rspec LOUD_TESTS=true`.
+- Test suite: `bin/rspec`. For more detailed logging use `LOUD_TESTS=true bin/rspec`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
 
 ## Contact
