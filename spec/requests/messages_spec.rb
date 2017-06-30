@@ -24,9 +24,9 @@ describe 'Messages', type: :request do
 
       # send a message that's not successfully sent
       FakeTwilioClient.force_status = 'undelivered'
-      body1 = SecureRandom.hex(4)
+      bodyone = SecureRandom.hex(4)
       messageone = create_message(
-        build(:message, user: user, client: clientone, body: body1)
+        build(:message, user: user, client: clientone, body: bodyone)
       )
 
       expect(clientone.messages.last.id).to eq messageone.id
@@ -34,9 +34,9 @@ describe 'Messages', type: :request do
       expect_analytics_events_not_happened('message_send')
 
       # send a message that's successfully sent
-      body2 = SecureRandom.hex(4)
+      bodytwo = SecureRandom.hex(4)
       messagetwo = create_message(
-        build(:message, user: user, client: clientone, body: body2)
+        build(:message, user: user, client: clientone, body: bodytwo)
       )
 
       expect(clientone.messages.last.id).to eq messagetwo.id
