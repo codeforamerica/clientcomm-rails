@@ -19,9 +19,11 @@
 <section class="message--create">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
-      <%= form_for @message, remote: true, :html => {:class => "sendbar form-width--searchbar"}, builder: GcfFormBuilder do |f| %>
-      <%= f.gcf_send_message_field :body, "Send", autofocus: true, placeholder: "Send a text message" %>
-      <input name="client_id" type="hidden" value="<%= @client.id %>">
+      <%= form_for @message, remote: true, :html => {class: 'sendbar form-width--searchbar' }, builder: GcfFormBuilder do |f| %>
+          <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
+          <button id="send_message" class="button button--primary" type="submit">Send</button>
+
+          <input name="client_id" type="hidden" value="<%= @client.id %>">
       <% end %>
     </div>
   </div>
