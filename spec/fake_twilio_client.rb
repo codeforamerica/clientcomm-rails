@@ -3,8 +3,10 @@ class FakeTwilioClient
   FakeMessage = Struct.new(:from, :to, :body)
   FakeResponse = Struct.new(:sid, :status)
 
-  cattr_accessor :messages
+  mattr_accessor :messages
+  mattr_accessor :force_status
   self.messages = []
+  self.force_status = nil
 
   def initialize(_account_sid, _auth_token)
   end
@@ -20,6 +22,12 @@ class FakeTwilioClient
   def create(from:, to:, body:, statusCallback:)
     self.class.messages << FakeMessage.new(from, to, body)
     # return a fake response
-    FakeResponse.new(SecureRandom.hex(17), ["accepted", "queued", "sending", "sent", "receiving", "received", "delivered"].sample)
+    # reply with a successful status if force_status hasn't been set
+    status = self.force_status
+    self.force_status = nil
+    if not status
+      status = ["accepted", "queued", "sending", "sent", "receiving", "received", "delivered"].sample
+    end
+    FakeResponse.new(SecureRandom.hex(17), status)
   end
 end
