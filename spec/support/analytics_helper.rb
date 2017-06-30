@@ -11,6 +11,13 @@ module AnalyticsHelper
     end
   end
 
+  def expect_analytics_events_not_happened(*event_names)
+    # none of the passed events happened
+    event_names.each do |event_name|
+      expect(@mixpanel_event_names).not_to include event_name
+    end
+  end
+
   def expect_analytics_events(*event_hashes)
     # all the passed events happened, independent of order
     # and all the tracker data parameters and values match

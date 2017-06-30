@@ -2,6 +2,7 @@ require 'rails_helper'
 
 feature 'Twilio' do
   let(:message_params) { twilio_new_message_params }
+  let(:status_params) { twilio_status_update_params from_number: message_params['From'], sms_sid: message_params['SmsSid'] }
 
   before do
     userone = create :user
@@ -17,14 +18,14 @@ feature 'Twilio' do
     context 'with incorrect signature' do
       it 'returns a forbidden response' do
         # send false as 2nd argument to send bad signature
-        twilio_post_sms_status message_params, false
+        twilio_post_sms_status status_params, false
         expect(page).to have_http_status(:forbidden)
       end
     end
 
     context 'with correct signature' do
       it 'returns a no content response' do
-        twilio_post_sms_status message_params
+        twilio_post_sms_status status_params
         expect(page).to have_http_status(:no_content)
       end
     end

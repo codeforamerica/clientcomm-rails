@@ -32,6 +32,14 @@ class TwilioController < ApplicationController
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: message, is_update: true)
 
+    # track failed messages
+    if ['failed', 'undelivered'].include?(params[:SmsStatus])
+      analytics_track(
+        label: 'message_send_failed',
+        data: message.analytics_tracker_data
+      )
+    end
+
     head :no_content
   end
 
