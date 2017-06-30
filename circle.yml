@@ -9,3 +9,5 @@ test:
     - RAILS_ENV=test bundle exec rspec -r rspec_junit_formatter --format documentation --format RspecJunitFormatter --out $CIRCLE_TEST_REPORTS/rspec/junit.xml
   post:
     - bundle exec codeclimate-test-reporter $CIRCLE_ARTIFACTS/coverage/.resultset.json
+    - case $CIRCLE_NODE_INDEX in 0) ./script/brakeman ;; esac:
+           parallel: true
