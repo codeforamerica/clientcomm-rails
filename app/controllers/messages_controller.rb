@@ -47,8 +47,9 @@ class MessagesController < ApplicationController
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_now(message: new_message, is_update: false)
 
+    label = ['failed', 'undelivered'].include?(response.status) ? 'message_send_failed' : 'message_send'
     analytics_track(
-      label: 'message_send',
+      label: label,
       data: new_message.analytics_tracker_data
     )
 
