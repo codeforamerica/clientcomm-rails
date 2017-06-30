@@ -7,6 +7,5 @@ FactoryGirl.define do
     sequence(:number_to) { |n| "244" + (n.to_s + (1000000 + Random.rand(10000000 - 1000000)).to_s)[0..6] }
     inbound {[true, false].sample}
     sequence(:twilio_sid) { |n| (n.to_s + SecureRandom.hex(17))[0..33] }
-    twilio_status {["queued", "sending", "sent", "failed", "received"].sample}
-  end
+    twilio_status {["accepted", "queued", "sending", "sent", "receiving", "received", "delivered", "undelivered", "failed"].sample} end
 end
