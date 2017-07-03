@@ -54,7 +54,6 @@ class MessagesController < ApplicationController
     )
 
     respond_to do |format|
-      format.html { redirect_to client_messages_path(client.id) }
       format.js { head :no_content }
     end
   end

@@ -9,14 +9,6 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     HTML
   end
 
-  def gcf_send_message_field(method, button_text, options: {}, classes: [], placeholder: nil, autofocus: nil)
-    classes = classes.append(%w[sendbar__input])
-    <<-HTML.html_safe
-      #{text_field(method, { autofocus: autofocus, type: "text", class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: placeholder }.merge(options))}
-      <label class="sendbar__button">#{button_text}<button id="send_message" type="submit"></button></label>
-    HTML
-  end
-
   def gcf_textarea(method, label_text, notes: [], options: {}, classes: [], placeholder: nil, autofocus: nil)
     classes = classes.append(%w[textarea])
     <<-HTML.html_safe
