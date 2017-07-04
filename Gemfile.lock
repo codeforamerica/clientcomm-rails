@@ -48,7 +48,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
-    aescrypt (1.0.0)
     arel (7.1.4)
     aws-sdk (2.10.7)
       aws-sdk-resources (= 2.10.7)
@@ -301,7 +300,6 @@ PLATFORMS
 
 DEPENDENCIES
   addressable
-  aescrypt
   aws-sdk
   bourbon (~> 4.2.0)
   byebug
