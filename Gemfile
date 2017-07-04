@@ -26,6 +26,7 @@ gem 'twilio-ruby'
 gem 'intercom-rails'
 gem 'devise'
 gem 'aws-sdk'
+gem 'aescrypt'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
