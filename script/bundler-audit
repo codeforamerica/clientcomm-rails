@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Script for running bundler-audit tests
+# bundler-audit is a gem vulnerability scanner
+# https://github.com/rubysec/bundler-audit
+
+gem install --no-rdoc --no-ri bundler-audit
+bundle-audit check --update
