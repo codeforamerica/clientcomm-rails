@@ -62,6 +62,19 @@ describe 'Access to clients methods', type: :request do
           expect(response).to redirect_to clients_path
           expect(Client.count).to eq 1
         end
+
+        it 'tracks the creation of a new client' do
+          created_client = Client.find_by(phone_number: client.phone_number)
+
+          expect_analytics_events(
+              {
+                  'client_create_success' => {
+                      'client_id' => created_client.id,
+                      'has_client_dob' => true
+                  }
+              }
+          )
+        end
       end
 
       context 'invalid client' do

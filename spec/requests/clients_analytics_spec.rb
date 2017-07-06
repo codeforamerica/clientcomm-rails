@@ -47,21 +47,6 @@ describe 'Tracking of client analytics events', type: :request do
     end
   end
 
-  context 'POST#new' do
-    it 'tracks the creation of a new client' do
-      user = create :user
-      sign_in user
-      clientone = create_client build(:client)
-      expect(response.code).to eq '302'
-      expect_analytics_events({
-        'client_create_success' => {
-          'client_id' => clientone.id,
-          'has_client_dob' => true
-        }
-      })
-    end
-  end
-
   context 'GET#edit' do
     it 'tracks a visit to the edit client form' do
       userone = create :user
