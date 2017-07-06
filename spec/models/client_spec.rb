@@ -2,26 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Client, type: :model do
   describe 'relationships' do
-    let!(:user) { create :user }
-    let!(:client) { create :client, :user => user }
-    let!(:message) { create :message, :user => user, :client => client}
-
-    describe 'relationship to user' do
-      it 'belongs to a user' do
-        expect(client.user).to eq(user)
-      end
-    end
-
-    describe 'relationship to message' do
-      it 'has a message' do
-        expect(message.client).to eq(client)
-      end
-    end
+    it {
+      should belong_to(:user)
+      should have_many(:messages)
+    }
   end
 
   describe 'accessors' do
-    let!(:user) { create :user }
-    subject { create :client, :user => user }
+    subject { create :client }
 
     describe '#full_name' do
       it 'formats full name' do
@@ -47,6 +35,13 @@ RSpec.describe Client, type: :model do
       client = Client.new(last_name: 'Last', birth_date: DateTime.now)
       expect(client.valid?).to be_falsey
       expect([:phone_number]).to eql client.errors.keys
+    end
+
+    it 'validates uniqueness of phone_number' do
+      old_client = create(:client)
+      new_client = build(:client, phone_number: old_client.phone_number)
+      expect(new_client.valid?).to be_falsey
+      expect([:phone_number]).to eql new_client.errors.keys
     end
   end
 

@@ -24,13 +24,17 @@ class ClientsController < ApplicationController
   end
 
   def create
-    client = current_user.clients.create(client_params)
+    @client = current_user.clients.create(client_params)
 
-    analytics_track(
-      label: 'client_create_success',
-      data: client.analytics_tracker_data
-    )
-    redirect_to clients_path
+    if @client.valid?
+      analytics_track(
+          label: 'client_create_success',
+          data: @client.analytics_tracker_data
+      )
+      redirect_to clients_path
+    else
+      render :new
+    end
   end
 
   def edit

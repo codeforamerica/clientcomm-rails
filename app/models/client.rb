@@ -5,7 +5,8 @@ class Client < ApplicationRecord
 
   validates :last_name, :presence => true
   validates :birth_date, :presence => true
-  validates :phone_number, :presence => true
+  validates :phone_number, presence: true
+  validates_uniqueness_of :phone_number, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
 
   def analytics_tracker_data
     {

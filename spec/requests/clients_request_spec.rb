@@ -32,20 +32,59 @@ describe 'Access to clients methods', type: :request do
   end
 
   context 'POST#create' do
-    it 'rejects unauthenticated user' do
-      create_client build(:client)
-      expect(response.code).to eq '302'
-      expect(response).to redirect_to new_user_session_path
-      expect(Client.count()).to eq 0
+    context 'unauthenticated user' do
+      let(:client) {build(:client)}
+
+      before do
+        create_client client
+      end
+
+      it 'rejects unauthenticated user' do
+        expect(response.code).to eq '302'
+        expect(response).to redirect_to new_user_session_path
+        expect(Client.count).to eq 0
+      end
     end
 
-    it 'allows authenticated user' do
-      user = create :user
-      sign_in user
-      create_client build(:client)
-      expect(response.code).to eq '302'
-      expect(response).to redirect_to clients_path
-      expect(Client.count()).to eq 1
+    context 'authenticated user' do
+      before do
+        user = create :user
+        sign_in user
+
+        create_client client
+      end
+
+      context 'valid client' do
+        let(:client) { build(:client) }
+
+        it 'creates a client' do
+          expect(response.code).to eq '302'
+          expect(response).to redirect_to clients_path
+          expect(Client.count).to eq 1
+        end
+
+        it 'tracks the creation of a new client' do
+          created_client = Client.find_by(phone_number: client.phone_number)
+
+          expect_analytics_events(
+              {
+                  'client_create_success' => {
+                      'client_id' => created_client.id,
+                      'has_client_dob' => true
+                  }
+              }
+          )
+        end
+      end
+
+      context 'invalid client' do
+        let(:client) { build(:client, last_name: nil) }
+
+        it 'renders new with validation errors' do
+          expect(response.code).to eq '200'
+          expect(Client.count).to eq 0
+        end
+      end
     end
   end
 end
