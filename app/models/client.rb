@@ -5,7 +5,8 @@ class Client < ApplicationRecord
 
   validates :last_name, :presence => true
   validates :birth_date, :presence => true
-  validates :phone_number, :presence => true
+  validates :phone_number, presence: true
+  validates_uniqueness_of :phone_number, message: 'This phone number already belongs to a client in ClientComm. Need help? Chat with us by clicking the green chat button in the bottom-right of your screen.'
 
   def analytics_tracker_data
     {
