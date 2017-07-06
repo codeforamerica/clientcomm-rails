@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Access to clients methods', type: :request do
+describe 'Clients requests', type: :request do
   context 'unauthenticated' do
     it 'rejects unauthenticated user' do
       get clients_path
