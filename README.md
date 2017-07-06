@@ -15,7 +15,7 @@ A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm
 
 ## Setup
 
-1. Install [bundler](https://bundler.io/): `gem install bundler`
+1. Install [bundler](https://bundler.io/) (the latest Heroku-compatible version): `gem install bundler -v 1.15.1`
 2. Install other requirements: `bundle install`
 3. Create the databases: `rails db:create`
 4. Apply the schema to the databases:
