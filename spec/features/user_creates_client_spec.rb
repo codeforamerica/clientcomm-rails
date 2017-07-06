@@ -9,16 +9,26 @@ feature "logged-out user visits create client page" do
 end
 
 feature "User creates client" do
-  scenario "successfully" do
-    # log in with a fake user
+  before do
     myuser = create :user
     login_as(myuser, :scope => :user)
     visit root_path
-    click_on "New client"
+    click_on 'New client'
     expect(page).to have_current_path(new_client_path)
+  end
+
+  scenario 'successfully' do
     myclient = build :client
     add_client(myclient)
     expect(page).to have_css '.data-table td', text: myclient.full_name
     expect(page).to have_current_path(clients_path)
+  end
+
+  scenario 'unsuccessfully' do
+    myclient = build :client, last_name: nil
+
+    add_client(myclient)
+    expect(page).to have_content 'Add a new client'
+    expect(page).to have_content "Last name can't be blank"
   end
 end
