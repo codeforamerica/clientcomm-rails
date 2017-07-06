@@ -30,12 +30,12 @@
     }
 
     .message--outbound {
-      flex-basis: 55%;
+      width: 100%;
       margin-left: auto;
 
       .message--content {
         background: $color-teal;
-        border-radius: 8px;
+        border-radius: 10px 10px 0px 10px;
         color: $color-background;
         margin-bottom: 10px;
         padding: {
@@ -44,7 +44,9 @@
           right: $padding-small;
           top: $padding-small;
         }
-        text-align: right;
+        display: inline-block;
+        max-width: 60%;
+        float: right;
       }
 
       .message--label {
@@ -58,16 +60,19 @@
         padding: .5em;
         text-align: right;
         top: -.1em;
+        width: 100%;
+        display: block;
+        float: right;
       }
     }
 
     .message--inbound {
       align-self: flex-start;
-      flex-basis: 55%;
+      width: 100%;
 
       .message--content {
         background: $color-light-grey;
-        border-radius: 6px;
+        border-radius: 10px 10px 10px 0px;
         margin-bottom: 10px;
         padding: {
           bottom: .5em;
@@ -75,6 +80,7 @@
           right: $padding-small;
           top: $padding-small;
         }
+        display: inline-block;
       }
 
       .message--label {
