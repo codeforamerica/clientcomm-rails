@@ -16,12 +16,12 @@ describe 'Access to clients methods', type: :request do
       sign_in user
     end
 
-    context 'POST#create' do
+    describe 'POST#create' do
       before do
         create_client client
       end
 
-      context 'valid client' do
+      context 'receives valid client parameters' do
         let(:client) { build(:client) }
 
         it 'creates a client' do
@@ -44,12 +44,14 @@ describe 'Access to clients methods', type: :request do
         end
       end
 
-      context 'invalid client' do
+      context 'receives invalid client parameters' do
         let(:client) { build(:client, last_name: nil) }
 
         it 'renders new with validation errors' do
           expect(response.code).to eq '200'
           expect(Client.count).to eq 0
+          expect(client.valid?).to be_falsey
+          expect([:last_name]).to eq client.errors.keys
         end
       end
     end
