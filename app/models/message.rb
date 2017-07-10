@@ -11,7 +11,7 @@ class Message < ApplicationRecord
   OUTBOUND = 'outbound'
   READ = 'read'
   UNREAD = 'unread'
- 
+
   def self.create_from_twilio!(twilio_params)
     # get the client based on the phone number
     client = Client.find_by!(phone_number: twilio_params[:From])
