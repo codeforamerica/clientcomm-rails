@@ -4,7 +4,6 @@ class ReadsController < ApplicationController
 
   def create
     # change the read status of the message
-    message = current_user.messages.find params[:message_id]
     success = message.update_attributes read: message_params[:read]
     if success
       head :no_content
@@ -13,8 +12,14 @@ class ReadsController < ApplicationController
     end
   end
 
+  private
+
+  def message
+    current_user.messages.find params[:message_id]
+  end
+
   def message_params
-    params.fetch(:message, {})
+    params.require(:message)
       .permit(:read)
   end
 end
