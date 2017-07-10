@@ -22,7 +22,7 @@ const Messages = {
   markMessageRead: function(id) {
     // tell the server to mark this message read
     $.ajax({
-      type: "PATCH",
+      type: "POST",
       url: "/messages/" + id.toString() + "/read",
       id: id,
       data: {

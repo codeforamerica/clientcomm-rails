@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   end
 
   resources :messages, only: [:create] do
-    patch :read
+    resource :read, only: :create
   end
 
   # TWILIO
