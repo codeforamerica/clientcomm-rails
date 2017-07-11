@@ -15,7 +15,9 @@ Rails.application.routes.draw do
   end
 
   resources :messages, only: [:create] do
-    resource :read, only: :create
+    scope module: :messages do
+      resource :read, only: :create
+    end
   end
 
   # TWILIO

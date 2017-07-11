@@ -1,4 +1,4 @@
-class ReadsController < ApplicationController
+class Messages::ReadsController < ApplicationController
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
