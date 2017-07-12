@@ -46,16 +46,3 @@ feature "user wants to log in, check clients, and log out, so they" do
 
   end
 end
-
-feature "user who doesn't enter full name" do
-  scenario "sees email address in header" do
-      visit new_user_registration_path
-      fill_in "Email", with: user_email
-      fill_in "Password", with: user_password
-      fill_in "Confirm password", with: user_password
-      click_on "Sign up"
-      expect(page).to have_text "My clients"
-      expect(page).to have_text user_email
-      expect(page).to have_current_path(root_path)
-  end
-end
