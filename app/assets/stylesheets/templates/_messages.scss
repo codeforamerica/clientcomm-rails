@@ -26,7 +26,7 @@
       height: auto;
       max-width: 100%;
     }
-    
+
     .message--outbound {
       margin-left: auto;
 
@@ -38,8 +38,8 @@
         margin-bottom: 10px;
         padding: {
           bottom: .5em;
-          left: 1.5em;
-          right: 1.5em;
+          left: $padding-small;
+          right: $padding-small;
           top: $padding-small;
         }
         display: inline-block;
@@ -77,8 +77,8 @@
         margin-bottom: 10px;
         padding: {
           bottom: .5em;
-          left: 1.5em;
-          right: 1.5em;
+          left: $padding-small;
+          right: $padding-small;
           top: $padding-small;
         }
         @include media($mobile-up){
