@@ -10,18 +10,16 @@ class SMSService
     @client = Twilio::REST::Client.new sid, token
   end
 
-  def send_message(user, client_id, message_body, merge_params, callback_url)
-    client = user.clients.find client_id
-
+  def send_message(user:, client:, body:, callback_url:)
     # send the message via Twilio
-
     response = send_twilio_message(
       to: client.phone_number,
-      body: message_body,
-      callback_url: callback_url['callback_url']
+      body: body,
+      callback_url: callback_url
     )
 
-    updated_message = merge_params.merge(
+    message_params = {
+      body: body,
       client: client,
       inbound: false,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
@@ -30,19 +28,16 @@ class SMSService
       twilio_sid: response.sid,
       twilio_status: response.status,
       user: user
-    )
+    }
 
     # save the message
-    new_message = Message.create(updated_message)
+    message = Message.create(message_params)
 
     # put the message broadcast in the queue
-    MessageBroadcastJob.perform_now(message: new_message, is_update: false)
+    MessageBroadcastJob.perform_now(message: message, is_update: false)
 
-    return_value = {}
-    return_value['new_message'] = new_message
-    return_value['response'] = response
-
-    return_value
+    # return the message
+    message
   end
 
   def schedule_message(user, client_id, message_body, callback_url:)

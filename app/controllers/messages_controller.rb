@@ -21,23 +21,23 @@ class MessagesController < ApplicationController
   end
 
   def create
+    # send the message
     client = current_user.clients.find params[:client_id]
-    merge_params = message_params()
-
     message = SMSService.instance.send_message(
-        current_user,
-        params[:client_id],
-        params[:message][:body],
-        merge_params,
+        user: current_user,
+        client: client,
+        body: params[:message][:body],
         callback_url: incoming_sms_status_url
     )
 
-    puts message
-    label = ['failed', 'undelivered'].include?(message['response'].status) ? 'message_send_failed' : 'message_send'
-
+    # track the message send
+    label = 'message_send'
+    if ['failed', 'undelivered'].include?(message.twilio_status)
+      label = 'message_send_failed'
+    end
     analytics_track(
       label: label,
-      data: message['new_message'].analytics_tracker_data
+      data: message.analytics_tracker_data
     )
 
     respond_to do |format|
@@ -47,7 +47,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.fetch(:message, {})
+    params.require(:message)
       .permit(:body, :read)
   end
 end
