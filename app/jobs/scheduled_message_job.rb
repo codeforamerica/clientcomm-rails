@@ -9,16 +9,5 @@ class ScheduledMessageJob < ApplicationJob
         message: message,
         callback_url: callback_url
     )
-
-    # track the message send
-    label = 'message_send'
-    if ['failed', 'undelivered'].include?(message.twilio_status)
-      label = 'message_send_failed'
-    end
-
-    analytics_track(
-      label: label,
-      data: message.analytics_tracker_data
-    )
   end
 end

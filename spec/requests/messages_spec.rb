@@ -44,8 +44,7 @@ describe 'Messages requests', type: :request do
         )
 
         expect(clientone.messages.last.id).to eq messageone.id
-        expect_analytics_events_happened('message_send_failed')
-        expect_analytics_events_not_happened('message_send')
+        expect_analytics_events_happened('message_sent_immediately')
 
         # send a message that's successfully sent
         bodytwo = SecureRandom.hex(4)
@@ -54,8 +53,8 @@ describe 'Messages requests', type: :request do
         )
 
         expect(clientone.messages.last.id).to eq messagetwo.id
-        expect_analytics_events({
-          'message_send' => {
+        expect_most_recent_analytics_event({
+          'message_sent_immediately' => {
             'client_id' => clientone.id,
             'message_id' => messagetwo.id,
             'message_length' => messagetwo.body.length

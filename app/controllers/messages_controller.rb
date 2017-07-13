@@ -33,6 +33,13 @@ class MessagesController < ApplicationController
     )
 
     ScheduledMessageJob.perform_now(message: message, callback_url: incoming_sms_status_url)
+    # track the message send
+    label = 'message_sent_immediately'
+
+    analytics_track(
+      label: label,
+      data: message.analytics_tracker_data
+    )
 
     respond_to do |format|
       format.html { redirect_to client_messages_path(client.id) }
