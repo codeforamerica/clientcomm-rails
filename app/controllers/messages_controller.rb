@@ -36,9 +36,14 @@ class MessagesController < ApplicationController
     MessageBroadcastJob.perform_now(message: message, is_update: false)
 
     ScheduledMessageJob.set(wait_until: send_date).perform_later(message: message, callback_url: incoming_sms_status_url)
-    # track the message send
 
-    label = 'message_sent_immediately'
+    # track the message send
+    label = nil
+    if message.send_date.nil?
+      label = 'message_sent_immediately'
+    else
+      label = 'message_scheduled'
+    end
 
     analytics_track(
       label: label,
