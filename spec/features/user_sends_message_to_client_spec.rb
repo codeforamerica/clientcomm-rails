@@ -76,6 +76,19 @@ feature 'sending messages' do
       expect(page).to have_css('#send-later-modal', visible: true)
 
       expect(find('.send-later-input').value).to eq message_body
+
+      current_time = Time.now
+      travel_to 7.days.ago do
+        fill_in 'message_send_date_1i', with: current_time.year
+        fill_in 'message_send_date_2i', with: current_time.month
+        fill_in 'message_send_date_3i', with: current_time.day
+
+        #expect message not to have been set
+        #travel_to 6.days ago
+        #expect not to be sent
+
+        byebug
+      end
     end
   end
 end

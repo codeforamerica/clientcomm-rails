@@ -10,6 +10,12 @@
 
           <div class="modal-body">
             <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
+            <%= f.datetime_select :send_date,
+              :order => [:month, :day, :year, :hour, :minute],
+              :start_year => 1900,
+              :end_year => Time.now.year,
+              :html_options => {:class => "input-mini"}
+            %>
           </div>
           <div class="modal-footer">
             <button type="submit" class="button button--primary">Schedule message</button>

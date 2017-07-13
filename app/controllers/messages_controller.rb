@@ -23,6 +23,11 @@ class MessagesController < ApplicationController
   def create
     # send the message
     client = current_user.clients.find params[:client_id]
+
+    # TODO
+    #if params[:message][:send_date] > Time.now:
+      # use scheduled message job
+
     message = SMSService.instance.send_message(
         user: current_user,
         client: client,
