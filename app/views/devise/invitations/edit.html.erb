@@ -18,7 +18,6 @@
 
         <div class="form-card__content">
           <%= form_for resource, as: resource_name, url: invitation_path(resource_name), builder: GcfFormBuilder do |f| %>
-              <%= devise_error_messages! %>
               <%= f.hidden_field :invitation_token %>
 
               <%= f.gcf_input_field :full_name, "Full name", autofocus: true, classes: ['form-width--long'] %>
@@ -33,7 +32,7 @@
                 <div class="toolbar">
                   <div class="toolbar__left">
                     <div class="toolbar__item">
-                      <%= f.submit "Sign up" %>
+                      <%= f.continue 'Sign up' %>
                     </div>
                   </div>
                 </div>
