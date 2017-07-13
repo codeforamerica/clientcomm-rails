@@ -59,9 +59,4 @@ $(document).ready(function() {
       }
     }
   );
-
-  $('#send_later').click(function(){
-    var sendLaterMessage = $('input#message_body.main-message-input').val();
-    $('textarea#message_body.send-later-input').val(sendLaterMessage);
-  });
 });
