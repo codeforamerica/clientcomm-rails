@@ -52,7 +52,7 @@ feature 'sending messages' do
     end
   end
 
-  scenario 'user schedules a message to client', :js do
+  skip 'user schedules a message to client', :js do
     step 'when user logs in' do
       myuser = create :user
       login_as(myuser, scope: :user)
