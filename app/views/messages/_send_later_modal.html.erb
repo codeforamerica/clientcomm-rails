@@ -9,7 +9,7 @@
           <input name="client_id" type="hidden" value="<%= @client.id %>">
 
           <div class="modal-body">
-            <%= f.gcf_textarea(:body, 'Your message', classes: [], placeholder: 'Your message text', autofocus: true) %>
+            <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
           </div>
           <div class="modal-footer">
             <button type="submit" class="button button--primary">Schedule message</button>

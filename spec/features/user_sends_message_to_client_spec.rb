@@ -49,7 +49,8 @@ feature 'sending messages' do
     end
   end
 
-  scenario 'User schedules a message to be sent later' do
+  scenario 'User schedules a message to be sent later', :js do
+
     step 'when user logs in' do
       myuser = create :user
       login_as(myuser, scope: :user)
@@ -64,14 +65,17 @@ feature 'sending messages' do
     step 'user fills in message' do
       myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
       visit client_messages_path(client_id: myclient_id)
-      fill_in 'Send a text message', with: message_body
     end
 
     step 'user opens modal' do
+      fill_in 'Send a text message', with: message_body
       click_on 'Send later'
-
       expect(page).to have_content 'Send message later'
-      expect(page).to have_css '.modal message_body', text: message_body
+
+      # Make sure modal is visible before testing content
+      expect(page).to have_css('#send-later-modal', visible: true)
+
+      expect(find('.send-later-input').value).to eq message_body
     end
   end
 end
