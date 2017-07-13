@@ -29,7 +29,7 @@ describe MessagesController do
     it 'call the SMSService with the params' do
       expect(sms_service)
           .to have_received(:send_message)
-                  .with(user, client.id.to_s, message_text, merge_params, callback_url: incoming_sms_status_url)
+                  .with(user: user, client: client, body: message_text, callback_url: incoming_sms_status_url)
     end
 
     it 'tracks analytics' do
