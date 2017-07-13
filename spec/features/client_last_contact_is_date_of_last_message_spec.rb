@@ -28,7 +28,7 @@ feature "User enters a message and submits it" do
     visit clients_path
     savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(myfirstclient.phone_number))
     savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(mysecondclient.phone_number))
-    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute'
+    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute', wait: 10
     expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
   end
 end
