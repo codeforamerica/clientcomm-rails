@@ -31,7 +31,7 @@ feature "user wants to log in, check clients, and log out, so they" do
       invitation_token = invitation_token_from_email(ActionMailer::Base.deliveries.last)
 
       visit accept_user_invitation_path(invitation_token: invitation_token)
-      expect(page).to have_text 'Set your password'
+      expect(page).to have_text 'Sign up'
     end
 
     step 'when the new user completes the form; then are redirected to client list' do
@@ -61,4 +61,12 @@ feature "user wants to log in, check clients, and log out, so they" do
     end
 
   end
+end
+
+def invitation_token_from_email(email)
+  html_string = email.html_part.to_s
+  parsed_html = Nokogiri::HTML(html_string)
+  invitation_link_element = parsed_html.css('a').first
+  invitation_url = invitation_link_element[:href]
+  invitation_url.split('invitation_token=')[1]
 end
