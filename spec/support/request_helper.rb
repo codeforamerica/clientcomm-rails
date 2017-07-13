@@ -57,6 +57,17 @@ module RequestHelper
       message: { body: message.body },
       client_id: message.client.id
     }
+
+    if message.send_date
+      post_params[:message] = post_params[:message].merge({
+        'send_date(1i)': message.send_date.year,
+        'send_date(2i)': message.send_date.month,
+        'send_date(3i)': message.send_date.day,
+        'send_date(4i)': message.send_date.hour,
+        'send_date(5i)': message.send_date.min
+      })
+    end
+
     post messages_path, params: post_params
     # return the saved message record
     # NOTE: send unique body text to ensure the correct message is returned

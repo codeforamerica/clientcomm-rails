@@ -24,18 +24,20 @@ class MessagesController < ApplicationController
     # send the message
     client = current_user.clients.find params[:client_id]
 
-    message = Message.create(
+    message = Message.create(message_params.merge({
       user: current_user,
       client: client,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
-      number_to: client.phone_number,
-      body: params[:message][:body]
-    )
+      number_to: client.phone_number
+    }))
+
+    send_date = message.send_date || Time.now
 
     MessageBroadcastJob.perform_now(message: message, is_update: false)
 
-    ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
+    ScheduledMessageJob.set(wait_until: send_date).perform_later(message: message, callback_url: incoming_sms_status_url)
     # track the message send
+
     label = 'message_sent_immediately'
 
     analytics_track(
@@ -51,6 +53,6 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message)
-      .permit(:body, :read)
+      .permit(:body, :read, :send_date)
   end
 end
