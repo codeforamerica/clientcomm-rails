@@ -77,6 +77,9 @@ GEM
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
     childprocess (0.7.1)
+    capybara-screenshot (1.0.14)
+      capybara (>= 1.0, < 3)
+      launchy
       ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
     codeclimate-test-reporter (1.0.8)
@@ -310,6 +313,7 @@ DEPENDENCIES
   bourbon (~> 4.2.0)
   byebug
   capybara
+  capybara-screenshot
   codeclimate-test-reporter
   coffee-rails (~> 4.2)
   database_cleaner

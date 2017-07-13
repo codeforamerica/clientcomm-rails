@@ -5,19 +5,11 @@ feature 'sending messages' do
   let(:client_1) { build :client }
   let(:client_2) { build :client }
 
-<<<<<<< HEAD
   scenario 'user sends message to client', :js do
     step 'when user logs in' do
       myuser = create :user
       login_as(myuser, scope: :user)
     end
-=======
-  let(:message_body) {'You have an appointment tomorrow at 10am'}
-
-  before do
-    # log in with a fake user
-    login_as(myuser, :scope => :user)
->>>>>>> Add message body field for scheduled message
 
     step 'when user creates two clients' do
       travel_to 7.days.ago do

@@ -51,16 +51,4 @@ module RequestHelper
     # return the edited client record
     Client.find(client_id)
   end
-
-  def create_message(message)
-    post_params = {
-      message: { body: message.body },
-      client_id: message.client.id
-    }
-    post messages_path, params: post_params
-    # return the saved message record
-    # NOTE: send unique body text to ensure the correct message is returned
-    Message.find_by(body: message.body)
-  end
-
 end

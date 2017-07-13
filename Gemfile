@@ -42,6 +42,7 @@ gem 'jbuilder', '~> 2.5'
 
 group :test do
   gem 'launchy', require: false
+  gem 'capybara-screenshot'
   gem 'simplecov', require: false
   gem 'codeclimate-test-reporter', require: false
   gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'

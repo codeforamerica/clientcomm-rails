@@ -21,14 +21,11 @@ class MessagesController < ApplicationController
   end
 
   def create
-    # the client being messaged
-    client = current_user.clients.find params[:client_id]
-
-    # send the message via Twilio
-    response = SMSService.instance.send_message(
-      to: client.phone_number,
-      body: params[:message][:body],
-      callback_url: incoming_sms_status_url
+    new_message = SMSService.instance.send_message(
+        current_user,
+        params[:client_id],
+        params[:message][:body],
+        callback_url: incoming_sms_status_url
     )
 
     # save the message
@@ -48,13 +45,14 @@ class MessagesController < ApplicationController
     MessageBroadcastJob.perform_now(message: new_message, is_update: false)
 
     label = ['failed', 'undelivered'].include?(response.status) ? 'message_send_failed' : 'message_send'
+
     analytics_track(
       label: label,
       data: new_message.analytics_tracker_data
     )
 
     respond_to do |format|
-      format.html { redirect_to client_messages_path(client.id) }
+      # format.html { redirect_to client_messages_path(client.id) }
       format.js { head :no_content }
     end
   end
