@@ -34,23 +34,34 @@ describe 'Messages requests', type: :request do
 
     describe 'POST#create' do
       it 'creates a new message on submit' do
+        ActiveJob::Base.queue_adapter = :test
+
+        user = create :user
+        sign_in user
         clientone = create_client build(:client)
 
         # send a message that's not successfully sent
         FakeTwilioClient.force_status = 'undelivered'
         bodyone = SecureRandom.hex(4)
-        messageone = create_message(
-          build(:message, user: user, client: clientone, body: bodyone)
-        )
+        messageone = nil
+        expect do
+          messageone = create_message(
+            build(:message, user: user, client: clientone, body: bodyone)
+          )
+        end.to have_enqueued_job(ScheduledMessageJob)
 
         expect(clientone.messages.last.id).to eq messageone.id
         expect_analytics_events_happened('message_sent_immediately')
 
         # send a message that's successfully sent
         bodytwo = SecureRandom.hex(4)
-        messagetwo = create_message(
-          build(:message, user: user, client: clientone, body: bodytwo)
-        )
+
+        messagetwo = nil
+        expect do
+          messagetwo = create_message(
+            build(:message, user: user, client: clientone, body: bodytwo)
+          )
+        end.to have_enqueued_job(ScheduledMessageJob)
 
         expect(clientone.messages.last.id).to eq messagetwo.id
         expect_most_recent_analytics_event({
