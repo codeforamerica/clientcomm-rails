@@ -18,17 +18,14 @@
 
 <section class="message--create">
   <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
-      <%= form_for @message, remote: true, :html => {class: 'sendbar form-width--searchbar' } do |f| %>
+      <%= form_for @message, remote: true, :html => {class: 'sendbar' } do |f| %>
+        <div class="grid__item width-two-thirds">
           <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
-          <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
-
+        </div>
+        <button id="send_message" class="sendbar__button button--primary" type="submit">Send <i class="icon-arrow_upward"></i></button>
+        <button class="sendbar__button" data-toggle="modal" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
           <input name="client_id" type="hidden" value="<%= @client.id %>">
       <% end %>
-    </div>
-    <div class="grid__item width-one-third sendbar">
-      <button class="button" data-toggle="modal" data-target="#send-later-modal">Send later</button>
-    </div>
   </div>
 </section>
 
