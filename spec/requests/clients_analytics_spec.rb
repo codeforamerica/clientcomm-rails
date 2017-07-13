@@ -69,8 +69,7 @@ describe 'Tracking of client analytics events', type: :request do
       expect(response.code).to eq '302'
       expect_analytics_events({
         'client_edit_success' => {
-          'client_id' => clientone.id,
-          'has_client_dob' => true
+          'client_id' => clientone.id
         }
       })
     end

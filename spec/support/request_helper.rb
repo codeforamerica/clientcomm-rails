@@ -24,10 +24,7 @@ module RequestHelper
       client: {
         first_name: client.first_name,
         last_name: client.last_name,
-        phone_number: client.phone_number,
-        'birth_date(1i)': client.birth_date.year,
-        'birth_date(2i)': client.birth_date.month,
-        'birth_date(3i)': client.birth_date.day
+        phone_number: client.phone_number
       }
     }
     post clients_path, params: post_params
@@ -41,10 +38,7 @@ module RequestHelper
       client: {
         first_name: client.first_name,
         last_name: client.last_name,
-        phone_number: client.phone_number,
-        'birth_date(1i)': client.birth_date.year,
-        'birth_date(2i)': client.birth_date.month,
-        'birth_date(3i)': client.birth_date.day
+        phone_number: client.phone_number
       }
     }
     patch client_path(client_id), params: patch_params

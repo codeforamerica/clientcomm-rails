@@ -4,14 +4,12 @@ class Client < ApplicationRecord
   has_many :attachments, through: :messages
 
   validates :last_name, :presence => true
-  validates :birth_date, :presence => true
   validates :phone_number, presence: true
   validates_uniqueness_of :phone_number, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
 
   def analytics_tracker_data
     {
       client_id: self.id,
-      has_client_dob: !self.birth_date.nil?,
       has_unread_messages: (unread_messages_count > 0),
       hours_since_contact: hours_since_contact,
       messages_all_count: messages.count,

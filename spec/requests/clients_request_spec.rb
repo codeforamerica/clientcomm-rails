@@ -36,8 +36,7 @@ describe 'Clients requests', type: :request do
           expect_analytics_events(
               {
                   'client_create_success' => {
-                      'client_id' => created_client.id,
-                      'has_client_dob' => true
+                      'client_id' => created_client.id
                   }
               }
           )
