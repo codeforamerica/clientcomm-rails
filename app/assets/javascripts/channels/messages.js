@@ -2,7 +2,7 @@
 //= require_self
 //= require_tree .
 
-const Messages = {
+var Messages = {
   init: function() {
     this.msgs = $('#message-list');
     this.clientId = this.msgs.data('client-id');
