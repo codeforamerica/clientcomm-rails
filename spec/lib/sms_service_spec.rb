@@ -3,9 +3,9 @@ require 'rails_helper'
 describe SMSService do
   let(:account) { double('account', messages: messages) }
   let(:messages) { double('messages') }
-  let(:user_1) { build :user }
-  let(:client_1) { build :client }
-  let(:factory_message) { build :message, twilio_sid: nil, twilio_status: nil }
+  let(:user_1) { create :user }
+  let(:client_1) { create :client }
+  let(:factory_message) { create :message, twilio_sid: nil, twilio_status: nil }
 
   describe '#send_message' do
     let(:response) { double('response', sid: 'some_sid', status: 'some_status') }
@@ -48,6 +48,8 @@ describe SMSService do
 
 
       subject.send_message(message: factory_message, callback_url: callback_url)
+
+      factory_message.reload
 
       expect(factory_message.twilio_sid).to eq('some_sid')
       expect(factory_message.twilio_status).to eq('some_status')
