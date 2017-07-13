@@ -34,9 +34,6 @@ label {
   &:focus {
     border-color: $color-teal;
   }
-  @include placeholder() {
-    color: $color-grey;
-  }
 }
 
 .radio-button {

@@ -8,6 +8,7 @@ gem 'pg', '~> 0.18'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
+gem 'bootstrap-sass'
 gem 'sass-rails', '~> 5.0'
 gem 'bourbon', '~> 4.2.0'
 gem 'neat', '~> 1.8.0'

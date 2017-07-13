@@ -48,4 +48,10 @@ feature 'sending messages' do
       expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
     end
   end
+
+  scenario 'User schedules a message to be sent later' do
+    click_on 'Send later'
+
+    expect(page).to have_content 'Send message later'
+  end
 end

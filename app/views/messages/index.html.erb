@@ -26,5 +26,26 @@
           <input name="client_id" type="hidden" value="<%= @client.id %>">
       <% end %>
     </div>
+    <div class="grid__item width-one-third sendbar">
+      <button class="button" data-toggle="modal" data-target="#send-later-modal">Send later</button>
+    </div>
   </div>
 </section>
+
+<div class="modal fade" id="send-later-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Send message later</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="button" data-dismiss="modal">Close</button>
+        <button type="button" class="button button--primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
