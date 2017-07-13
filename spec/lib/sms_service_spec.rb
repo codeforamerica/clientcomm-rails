@@ -11,6 +11,7 @@ describe SMSService do
     let(:response) { double('response', sid: 'some_sid', status: 'some_status') }
     let(:body) { 'zak and charlie rule' }
     let(:callback_url) { 'whocares.com' }
+    let(:expected_number) {PhoneNumberParser.normalize(ENV['TWILIO_PHONE_NUMBER'])}
     subject { described_class.clone.instance }
 
     before do
@@ -23,7 +24,7 @@ describe SMSService do
     it 'sends twilio a message' do
       expect(messages).to receive(:create).with(
         {
-          from: ENV['TWILIO_PHONE_NUMBER'],
+          from: expected_number,
           to: factory_message.client.phone_number,
           body: factory_message.body,
           statusCallback: callback_url
@@ -36,7 +37,7 @@ describe SMSService do
     it 'updates the message with twilio info' do
       expect(messages).to receive(:create).with(
         {
-          from: ENV['TWILIO_PHONE_NUMBER'],
+          from: expected_number,
           to: factory_message.client.phone_number,
           body: factory_message.body,
           statusCallback: callback_url
