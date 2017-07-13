@@ -32,20 +32,7 @@ class MessagesController < ApplicationController
       body: params[:message][:body]
     )
 
-    SMSService.instance.send_message(
-        message: message,
-        callback_url: incoming_sms_status_url
-    )
-
-    # track the message send
-    label = 'message_send'
-    if ['failed', 'undelivered'].include?(message.twilio_status)
-      label = 'message_send_failed'
-    end
-    analytics_track(
-      label: label,
-      data: message.analytics_tracker_data
-    )
+    ScheduledMessageJob.perform_now(message: message, callback_url: incoming_sms_status_url)
 
     respond_to do |format|
       format.html { redirect_to client_messages_path(client.id) }
