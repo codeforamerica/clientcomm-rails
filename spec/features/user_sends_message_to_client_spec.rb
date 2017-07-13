@@ -76,19 +76,25 @@ feature 'sending messages' do
       expect(page).to have_css('#send-later-modal', visible: true)
 
       expect(find('.send-later-input').value).to eq message_body
+    end
 
-      current_time = Time.now
-      travel_to 7.days.ago do
-        fill_in 'message_send_date_1i', with: current_time.year
-        fill_in 'message_send_date_2i', with: current_time.month
-        fill_in 'message_send_date_3i', with: current_time.day
+    step 'user schedules messages for a week from now' do
+      future_date = Time.now + 7.days
+      expect(page).to have_css '#message_send_date_1i'
 
-        #expect message not to have been set
-        #travel_to 6.days ago
-        #expect not to be sent
+      select future_date.year, from: 'message_send_date_1i'
+      select Date::MONTHNAMES[future_date.month], from: 'message_send_date_2i'
+      select future_date.day, from: 'message_send_date_3i'
 
-        byebug
-      end
+      click_on 'Schedule message'
+
+      #expect message not to have been set
+      expect(page).not_to have_content message_body
+
+      #travel_to 6 days in the future
+      #expect not to be sent
+      #travel to 7 days in the future
+      #expect to be sent
     end
   end
 end
