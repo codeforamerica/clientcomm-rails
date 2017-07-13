@@ -50,11 +50,27 @@ feature 'sending messages' do
   end
 
   scenario 'User schedules a message to be sent later' do
-    click_on 'Send later'
+    step 'when user logs in' do
+      myuser = create :user
+      login_as(myuser, scope: :user)
+    end
 
-    expect(page).to have_content 'Send message later'
-    within('.modal') do
-      fill_in 'Your message', with: message_body
+    step 'when user creates a client' do
+      travel_to 7.days.ago do
+        add_client(client_1)
+      end
+    end
+
+    step 'user opens modal' do
+      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
+      visit client_messages_path(client_id: myclient_id)
+
+      click_on 'Send later'
+
+      expect(page).to have_content 'Send message later'
+      within('.modal') do
+        fill_in 'Your message', with: message_body
+      end
     end
   end
 end

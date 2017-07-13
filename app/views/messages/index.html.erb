@@ -23,7 +23,7 @@
           <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
         </div>
         <button id="send_message" class="sendbar__button button--primary" type="submit">Send <i class="icon-arrow_upward"></i></button>
-        <button class="sendbar__button" data-toggle="modal" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
+        <button id="send_later" class="sendbar__button" data-toggle="modal" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
           <input name="client_id" type="hidden" value="<%= @client.id %>">
       <% end %>
   </div>
