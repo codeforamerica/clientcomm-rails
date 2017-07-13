@@ -61,16 +61,17 @@ feature 'sending messages' do
       end
     end
 
-    step 'user opens modal' do
+    step 'user fills in message' do
       myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
       visit client_messages_path(client_id: myclient_id)
+      fill_in 'Send a text message', with: message_body
+    end
 
+    step 'user opens modal' do
       click_on 'Send later'
 
       expect(page).to have_content 'Send message later'
-      within('.modal') do
-        fill_in 'Your message', with: message_body
-      end
+      expect(page).to have_css '.modal message_body', text: message_body
     end
   end
 end
