@@ -60,7 +60,7 @@ describe SMSService do
 
       expect(MessageBroadcastJob).to receive(:perform_now).with(
         message: factory_message,
-        is_update: false
+        is_update: true
       )
 
       subject.send_message(message: factory_message, callback_url: callback_url)

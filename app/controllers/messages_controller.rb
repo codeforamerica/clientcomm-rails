@@ -32,6 +32,8 @@ class MessagesController < ApplicationController
       body: params[:message][:body]
     )
 
+    MessageBroadcastJob.perform_now(message: message, is_update: false)
+
     ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
     # track the message send
     label = 'message_sent_immediately'

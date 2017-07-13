@@ -22,9 +22,8 @@ class SMSService
     message.twilio_status = response.status
 
     message.save
-    # put the message broadcast in the queue
-    MessageBroadcastJob.perform_now(message: message, is_update: false)
 
+    MessageBroadcastJob.perform_now(message: message, is_update: true)
   end
 
   def schedule_message(user, client_id, message_body, callback_url:)
