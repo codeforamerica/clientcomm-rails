@@ -5,62 +5,63 @@ describe SMSService do
   let(:messages) { double('messages') }
   let(:user_1) { build :user }
   let(:client_1) { build :client }
+  let(:factory_message) { build :message, twilio_sid: nil, twilio_status: nil }
 
   describe '#send_message' do
     let(:response) { double('response', sid: 'some_sid', status: 'some_status') }
     let(:body) { 'zak and charlie rule' }
     let(:callback_url) { 'whocares.com' }
-    let(:fake_message) { instance_double(Message) }
     subject { described_class.clone.instance }
 
     before do
       allow(Twilio::REST::Client).to receive(:new).and_return(
         instance_double(Twilio::REST::Client, account: account)
       )
+      allow(MessageBroadcastJob).to receive(:perform_now)
     end
 
     it 'sends twilio a message' do
       expect(messages).to receive(:create).with(
         {
           from: ENV['TWILIO_PHONE_NUMBER'],
-          to: client_1.phone_number,
-          body: body,
+          to: factory_message.client.phone_number,
+          body: factory_message.body,
           statusCallback: callback_url
         }
       ).and_return(response)
 
-      subject.send_message(user: user_1,
-        client: client_1,
-        body: body,
-        callback_url: callback_url)
+      subject.send_message(message: factory_message, callback_url: callback_url)
     end
 
-    it 'saves a message model' do
-      allow(messages).to receive(:create).and_return(response)
+    it 'updates the message with twilio info' do
+      expect(messages).to receive(:create).with(
+        {
+          from: ENV['TWILIO_PHONE_NUMBER'],
+          to: factory_message.client.phone_number,
+          body: factory_message.body,
+          statusCallback: callback_url
+        }
+      ).and_return(response)
 
-      subject.send_message(user: user_1,
-        client: client_1,
-        body: body,
-        callback_url: callback_url)
+      expect(factory_message.twilio_sid).to be_nil
+      expect(factory_message.twilio_status).to be_nil
 
-      expect(Message.last.body).to eq(body)
-      expect(Message.last.number_to).to eq(client_1.phone_number)
+
+      subject.send_message(message: factory_message, callback_url: callback_url)
+
+      expect(factory_message.twilio_sid).to eq('some_sid')
+      expect(factory_message.twilio_status).to eq('some_status')
     end
 
     it 'creates a MessageBroadcastJob' do
       allow(messages).to receive(:create).and_return(response)
 
-      allow(Message).to receive(:create).and_return(fake_message)
-
       expect(MessageBroadcastJob).to receive(:perform_now).with(
-        message: fake_message,
+        message: factory_message,
         is_update: false
       )
 
-      subject.send_message(user: user_1,
-        client: client_1,
-        body: body,
-        callback_url: callback_url)
+      subject.send_message(message: factory_message, callback_url: callback_url)
     end
   end
 end

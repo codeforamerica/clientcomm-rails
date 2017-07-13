@@ -24,14 +24,16 @@ class MessagesController < ApplicationController
     # send the message
     client = current_user.clients.find params[:client_id]
 
-    # TODO
-    #if params[:message][:send_date] > Time.now:
-      # use scheduled message job
+    message = Message.create(
+      user: current_user,
+      client: client,
+      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      number_to: client.phone_number,
+      body: params[:message][:body]
+    )
 
-    message = SMSService.instance.send_message(
-        user: current_user,
-        client: client,
-        body: params[:message][:body],
+    SMSService.instance.send_message(
+        message: message,
         callback_url: incoming_sms_status_url
     )
 
