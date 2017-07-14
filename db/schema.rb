@@ -63,7 +63,6 @@ ActiveRecord::Schema.define(version: 20170711222129) do
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.boolean  "read",          default: false
-    t.datetime "send_date"
     t.index ["client_id"], name: "index_messages_on_client_id", using: :btree
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
@@ -95,6 +94,7 @@ ActiveRecord::Schema.define(version: 20170711222129) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true, using: :btree
     t.index ["invitations_count"], name: "index_users_on_invitations_count", using: :btree
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id", using: :btree
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
