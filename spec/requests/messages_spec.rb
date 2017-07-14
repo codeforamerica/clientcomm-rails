@@ -14,6 +14,7 @@ describe 'Messages requests', type: :request do
 
   context 'authenticated' do
     let(:user) { create :user }
+    let(:client) { create_client build(:client, user: user) }
 
     before do
       sign_in user
@@ -21,7 +22,6 @@ describe 'Messages requests', type: :request do
 
     describe 'GET#index' do
       it 'marks all messages read when index loaded' do
-        client = create_client build(:client, user: user)
         message = create :message, user: user, client: client, inbound: true
 
         # when we visit the messages path, it should mark the message read
@@ -34,33 +34,49 @@ describe 'Messages requests', type: :request do
 
     describe 'POST#create' do
       it 'creates a new message on submit' do
-        clientone = create_client build(:client)
+        ActiveJob::Base.queue_adapter = :test
 
-        # send a message that's not successfully sent
-        FakeTwilioClient.force_status = 'undelivered'
-        bodyone = SecureRandom.hex(4)
-        messageone = create_message(
-          build(:message, user: user, client: clientone, body: bodyone)
-        )
+        body = SecureRandom.hex(4)
+        message = nil
+        expect do
+          message = create_message(
+            build(:message, user: user, client: client, body: body)
+          )
+        end.to have_enqueued_job(ScheduledMessageJob)
 
-        expect(clientone.messages.last.id).to eq messageone.id
-        expect_analytics_events_happened('message_send_failed')
-        expect_analytics_events_not_happened('message_send')
-
-        # send a message that's successfully sent
-        bodytwo = SecureRandom.hex(4)
-        messagetwo = create_message(
-          build(:message, user: user, client: clientone, body: bodytwo)
-        )
-
-        expect(clientone.messages.last.id).to eq messagetwo.id
-        expect_analytics_events({
+        expect(client.messages.last.id).to eq message.id
+        expect_most_recent_analytics_event({
           'message_send' => {
-            'client_id' => clientone.id,
-            'message_id' => messagetwo.id,
-            'message_length' => messagetwo.body.length
+            'client_id' => client.id,
+            'message_id' => message.id,
+            'message_length' => message.body.length
           }
         })
+      end
+
+      context 'user sends a scheduled message' do
+        let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
+
+        it 'creates a Scheduled Message' do
+          ActiveJob::Base.queue_adapter = :test
+
+          message = nil
+          expect do
+            message = create_message(
+              build(:message, user: user, client: client, body: body, send_at: time_to_send)
+            )
+          end.to have_enqueued_job(ScheduledMessageJob).at(time_to_send)
+
+          expect(client.messages.last.id).to eq message.id
+          expect_most_recent_analytics_event({
+            'message_schedule' => {
+              'client_id' => client.id,
+              'message_id' => message.id,
+              'message_length' => message.body.length,
+              'scheduled_for' => time_to_send
+            }
+          })
+        end
       end
     end
   end

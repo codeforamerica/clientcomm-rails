@@ -21,36 +21,32 @@ class MessagesController < ApplicationController
   end
 
   def create
-    # the client being messaged
+    # send the message
     client = current_user.clients.find params[:client_id]
 
-    # send the message via Twilio
-    response = SMSService.instance.send_message(
-      to: client.phone_number,
-      body: params[:message][:body],
-      callback_url: incoming_sms_status_url
-    )
-
-    # save the message
-    new_message_params = message_params.merge({
+    message = Message.create(message_params.merge({
+      user: current_user,
       client: client,
-      inbound: false,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
-      number_to: client.phone_number,
-      read: true,
-      twilio_sid: response.sid,
-      twilio_status: response.status,
-      user: current_user
-    })
-    new_message = Message.create(new_message_params)
+      number_to: client.phone_number
+    }))
 
-    # put the message broadcast in the queue
-    MessageBroadcastJob.perform_now(message: new_message, is_update: false)
+    send_at = message.send_at || Time.now
 
-    label = ['failed', 'undelivered'].include?(response.status) ? 'message_send_failed' : 'message_send'
+    MessageBroadcastJob.perform_now(message: message, is_update: false)
+
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
+
+    # track the message send
+    if message.send_at.nil?
+      label = 'message_send'
+    else
+      label = 'message_schedule'
+    end
+
     analytics_track(
       label: label,
-      data: new_message.analytics_tracker_data
+      data: message.analytics_tracker_data
     )
 
     respond_to do |format|
@@ -60,7 +56,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.fetch(:message, {})
-      .permit(:body, :read)
+    params.require(:message)
+      .permit(:body, :read, :send_at)
   end
 end
