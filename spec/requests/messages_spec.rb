@@ -46,7 +46,7 @@ describe 'Messages requests', type: :request do
 
         expect(client.messages.last.id).to eq message.id
         expect_most_recent_analytics_event({
-          'message_sent_immediately' => {
+          'message_send' => {
             'client_id' => client.id,
             'message_id' => message.id,
             'message_length' => message.body.length
@@ -69,7 +69,7 @@ describe 'Messages requests', type: :request do
 
           expect(client.messages.last.id).to eq message.id
           expect_most_recent_analytics_event({
-            'message_scheduled' => {
+            'message_schedule' => {
               'client_id' => client.id,
               'message_id' => message.id,
               'message_length' => message.body.length,

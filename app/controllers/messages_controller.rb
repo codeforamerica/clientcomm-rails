@@ -39,9 +39,9 @@ class MessagesController < ApplicationController
 
     # track the message send
     if message.send_at.nil?
-      label = 'message_sent_immediately'
+      label = 'message_send'
     else
-      label = 'message_scheduled'
+      label = 'message_schedule'
     end
 
     analytics_track(
