@@ -12,7 +12,7 @@
             <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
             <fieldset class="form-group">
               <div class="select">
-                <%= f.datetime_select :send_date,
+                <%= f.datetime_select :send_at,
                   { order: [:month, :day, :year, :hour, :minute],
                   start_year: Time.now.year,
                   end_year: Time.now.year + 1,

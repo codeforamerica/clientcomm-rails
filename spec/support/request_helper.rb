@@ -58,13 +58,13 @@ module RequestHelper
       client_id: message.client.id
     }
 
-    if message.send_date
+    if message.send_at
       post_params[:message] = post_params[:message].merge({
-        'send_date(1i)': message.send_date.year,
-        'send_date(2i)': message.send_date.month,
-        'send_date(3i)': message.send_date.day,
-        'send_date(4i)': message.send_date.hour,
-        'send_date(5i)': message.send_date.min
+        'send_at(1i)': message.send_at.year,
+        'send_at(2i)': message.send_at.month,
+        'send_at(3i)': message.send_at.day,
+        'send_at(4i)': message.send_at.hour,
+        'send_at(5i)': message.send_at.min
       })
     end
 

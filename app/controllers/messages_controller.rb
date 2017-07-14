@@ -31,15 +31,14 @@ class MessagesController < ApplicationController
       number_to: client.phone_number
     }))
 
-    send_date = message.send_date || Time.now
+    send_at = message.send_at || Time.now
 
     MessageBroadcastJob.perform_now(message: message, is_update: false)
 
-    ScheduledMessageJob.set(wait_until: send_date).perform_later(message: message, callback_url: incoming_sms_status_url)
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
 
     # track the message send
-    label = nil
-    if message.send_date.nil?
+    if message.send_at.nil?
       label = 'message_sent_immediately'
     else
       label = 'message_scheduled'
@@ -58,6 +57,6 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message)
-      .permit(:body, :read, :send_date)
+      .permit(:body, :read, :send_at)
   end
 end

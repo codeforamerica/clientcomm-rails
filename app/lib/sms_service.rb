@@ -26,10 +26,6 @@ class SMSService
     MessageBroadcastJob.perform_now(message: message, is_update: true)
   end
 
-  def schedule_message(user, client_id, message_body, callback_url:)
-    ScheduledMessageJob.set(wait: 5.seconds).perform_later(user: user, client_id: client_id, message_body: message_body, callback_url: callback_url)
-  end
-
   private
 
   def send_twilio_message(from: nil, to:, body:, callback_url:)

@@ -60,11 +60,10 @@ describe 'Messages requests', type: :request do
         it 'creates a Scheduled Message' do
           ActiveJob::Base.queue_adapter = :test
 
-          # send a message that's successfully sent
           message = nil
           expect do
             message = create_message(
-              build(:message, user: user, client: client, body: body, send_date: time_to_send)
+              build(:message, user: user, client: client, body: body, send_at: time_to_send)
             )
           end.to have_enqueued_job(ScheduledMessageJob).at(time_to_send)
 
