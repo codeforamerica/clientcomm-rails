@@ -65,6 +65,23 @@ Rails.application.configure do
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
+  # Mailgun Actionmailer Configuration
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = { host: ENV['DEPLOY_BASE_URL'] }
+  routes.default_url_options = { host: ENV['DEPLOY_BASE_URL'] }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      domain: ENV['MAILGUN_DOMAIN'],
+      address: 'smtp.mailgun.org',
+      port: 587,
+      user_name: "postmaster@#{ENV['MAILGUN_DOMAIN']}",
+      password: ENV['MAILGUN_PASSWORD'],
+      authentication: 'plain',
+      enable_starttls_auto: true
+  }
+
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 

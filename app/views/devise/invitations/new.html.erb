@@ -1,0 +1,30 @@
+<div class="slab">
+  <div class="grid">
+    <div class="grid__item width-one-half shift-one-fourth">
+      <div class="form-card form-card--compact">
+
+        <div class="form-card__header">
+          <div class="toolbar">
+            <div class="toolbar__left">
+              <h1 class="form-card__title"><%= t "devise.invitations.new.header" %></h1>
+            </div>
+          </div>
+        </div>
+        <div class="form-card__content">
+        <%= form_for resource, as: resource_name, url: invitation_path(resource_name), builder: GcfFormBuilder do |f| %>
+          <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
+          <div class="form-card__footer">
+            <div class="toolbar">
+              <div class="toolbar__left">
+                <div class="toolbar__item">
+                  <%= f.continue t("devise.invitations.new.submit_button") %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

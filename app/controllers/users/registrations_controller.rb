@@ -4,9 +4,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/sign_up
   def new
-    super
-
-    analytics_track(label: 'signup_view')
+    redirect_to new_user_session_path
   end
 
   # POST /resource

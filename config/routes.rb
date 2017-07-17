@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # USERS / DEVISE
   devise_for :users, controllers: {
     registrations: 'users/registrations',
+    invitations: 'users/invitations',
     sessions: 'users/sessions'
   }
 

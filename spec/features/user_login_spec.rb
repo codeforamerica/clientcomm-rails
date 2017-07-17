@@ -6,19 +6,35 @@ user_password = 'paassswoord'
 
 feature "user wants to log in, check clients, and log out, so they" do
   specify do
-    step "go to the front page and are directed to the login form" do
-      visit root_path
-      expect(page).to have_text "Log in"
-      expect(page).to have_current_path(new_user_session_path)
+    step 'when an existing user logs in' do
+      existing_user = create :user
+      login_as(existing_user, scope: :user)
     end
 
-    step "click on the sign up button and are directed to the sign up form" do
-      click_on "Sign up"
-      expect(page).to have_text "Confirm password"
-      expect(page).to have_current_path(new_user_registration_path)
+    step 'when the user invites a new user' do
+      visit new_user_invitation_path
+
+      fill_in 'user_email', with: user_email
+
+      click_on 'Send an invitation'
+
+      expect(page).to have_content "An invitation email has been sent to #{user_email}."
+      click_on 'Sign out'
     end
 
-    step "fill out and submit the form; then are redirected to client list" do
+    step 'then the new user should receive an invitation email' do
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail['to'].to_s).to eq user_email
+    end
+
+    step 'when the new user navigates to the invitation page' do
+      invitation_token = invitation_token_from_email(ActionMailer::Base.deliveries.last)
+
+      visit accept_user_invitation_path(invitation_token: invitation_token)
+      expect(page).to have_text 'Sign up'
+    end
+
+    step 'when the new user completes the form; then are redirected to client list' do
       fill_in "Full name", with: user_full_name
       fill_in "Email", with: user_email
       fill_in "Password", with: user_password
@@ -45,4 +61,12 @@ feature "user wants to log in, check clients, and log out, so they" do
     end
 
   end
+end
+
+def invitation_token_from_email(email)
+  html_string = email.html_part.to_s
+  parsed_html = Nokogiri::HTML(html_string)
+  invitation_link_element = parsed_html.css('a').first
+  invitation_url = invitation_link_element[:href]
+  invitation_url.split('invitation_token=')[1]
 end

@@ -8,13 +8,6 @@
             <div class="toolbar__left">
               <h1 class="form-card__title">Log in</h1>
             </div>
-            <% if devise_mapping.registerable? -%>
-            <div class="toolbar__right">
-              <%= link_to new_registration_path(resource_name), class: "button button--small" do %>
-                <i class="button__icon--left icon-person_add"></i> Sign up
-              <% end %>
-            </div>
-            <% end -%>
           </div>
         </div>
 
@@ -23,7 +16,7 @@
           <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
           <div class="form-group">
             <%= f.label :password, "Password", class: 'form-question' %>
-            <%= f.password_field :password, autocomplete: "off", class: 'text-input form-width--long' =%>
+            <%= f.password_field :password, autocomplete: "off", class: 'text-input form-width--long' %>
           </div>
           <div class="form-card__footer">
             <div class="toolbar">
