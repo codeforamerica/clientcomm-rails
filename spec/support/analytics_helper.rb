@@ -18,6 +18,13 @@ module AnalyticsHelper
     end
   end
 
+  def expect_most_recent_analytics_event(event_hash)
+    event_name = event_hash.keys.first
+    event_properties = event_hash[event_name]
+
+    expect(@mixpanel_requests.last[event_name]).to include(event_properties)
+  end
+
   def expect_analytics_events(*event_hashes)
     # all the passed events happened, independent of order
     # and all the tracker data parameters and values match

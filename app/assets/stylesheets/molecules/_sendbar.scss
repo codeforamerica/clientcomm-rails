@@ -6,7 +6,7 @@
 
 .sendbar__input {
   display: table-cell;
-  width: 70%;
+  width: 100%;
   border: 2px solid $color-grey;
   padding: .5em .7em .5em .7em;
   margin: 0;
@@ -22,21 +22,19 @@
   button {
     display: none;
   }
-
   @extend .button;
   display: table-cell;
   appearance: none;
-  width: 1%;
-  border: 2px solid $color-teal;
-  background-color: $color-teal;
   vertical-align: top;
   min-width: 5em;
-  color: #FFFFFF;
   text-align: center;
-  margin: 0;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
-  width: 30%;
+  margin-top: 0.5em;
+  float: right;
+
+  @include media($mobile-up){
+    margin-top: 0;
+    float: left;
+  }
 
   &:hover {
     color: #FFFFFF;
