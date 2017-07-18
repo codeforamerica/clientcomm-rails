@@ -31,7 +31,7 @@
   margin-top: 0.5em;
   float: right;
 
-  @include media($mobile-up){
+  @include media($mobile-up) {
     margin-top: 0;
     float: left;
   }

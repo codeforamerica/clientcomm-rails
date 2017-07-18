@@ -17,6 +17,7 @@
     &:hover {
         background-color: tint($color-tan, 20%);
         color: #000000;
+        text-decoration: none;
     }
     &:active {
         background-color: shade($color-tan, 15%);
