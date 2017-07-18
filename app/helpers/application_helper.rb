@@ -1,4 +1,9 @@
 module ApplicationHelper
+  include FeatureFlagsHelper
+
+  def feature_flags
+    FeatureFlags.new
+  end
 
   def phone_number_display(phone_number)
     # format the passed phone number for display
