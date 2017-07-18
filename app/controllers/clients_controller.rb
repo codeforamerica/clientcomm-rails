@@ -66,7 +66,7 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client, {})
-      .permit(:first_name, :last_name, :birth_date, :phone_number, :active)
+      .permit(:first_name, :last_name, :phone_number, :active)
   end
 
   def sorted_clients
