@@ -34,6 +34,12 @@ Rails.application.routes.draw do
     match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
   end
 
+  match '/404', to: 'errors#not_found', via: :all
+  match '/500', to: 'errors#internal_server_error', via: :all
+
   # TESTS
   resource :file_preview, only: %i[show] if Rails.env.test? || Rails.env.development?
+
+  # This should always be last
+  get '*url' => 'errors#not_found'
 end
