@@ -17,13 +17,27 @@
             </div>
           </div>
 
-          <div class="grid__item">
+          <div id="client-list" class="grid__item">
+            <div class="input-group client-search-input">
+              <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+              <input type="text" class="searchbar__input search" placeholder="Search clients by name">
+              <label class="searchbar__button"><i class="icon-close"></i><button type="submit"></button></label>
+            </div>
             <table class="data-table data-table--selectable">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Last contact</th>
-                  <th class="hidden-xs">Action</th>
+                  <th class="sort" data-sort="full-name">
+                    <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    Name
+                  </th>
+                  <th class="sort desc" data-sort="last-contact">
+                    <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    Last contact
+                  </th>
                 </tr>
               </thead>
               <%= render "clients/clients" %>
