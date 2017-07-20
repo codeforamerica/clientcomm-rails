@@ -18,7 +18,7 @@ en:
     mailer:
       invitation_instructions:
         subject: "Set up your ClientComm account"
-        someone_invited_you: "You've been invited to make a ClientComm account. Click or copy the link below and start texting your clients today."
+        someone_invited_you: "You've been invited to make a ClientComm account. Click the link below and start texting your clients today."
         accept: "Set up your account"
         accept_until: "This invitation will be due in %{due_date}."
         questions: "If you have any questions, you can send us a message right from the ClientComm website!"
