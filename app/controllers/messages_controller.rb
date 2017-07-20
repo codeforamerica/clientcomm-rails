@@ -31,18 +31,21 @@ class MessagesController < ApplicationController
       number_to: client.phone_number
     }))
 
-    send_at = message.send_at || Time.now
+    if message.send_at.nil?
+      MessageBroadcastJob.perform_now(message: message)
 
-    MessageBroadcastJob.perform_now(message: message)
+      ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
+    else
+      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
 
-    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
+      NotificationBroadcastJob.perform_later(
+        channel_id: current_user.id,
+        text: 'Your message has been scheduled',
+        link_to: '#',
+        properties: nil
+      )
+    end
 
-    NotificationBroadcastJob.perform_later(
-      channel_id: current_user.id,
-      text: 'Your message has been scheduled',
-      link_to: '#',
-      properties: nil
-    )
 
     # track the message send
     if message.send_at.nil?
