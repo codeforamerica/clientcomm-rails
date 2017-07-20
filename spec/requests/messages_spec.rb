@@ -46,6 +46,11 @@ describe 'Messages requests', type: :request do
           expect(response.body).to include(message.body)
         end
 
+        it 'shows no link when scheduled messages do not exist' do
+          get client_messages_path(client)
+          expect(response.body).not_to match(/message[s]? scheduled/)
+        end
+
         it 'shows a link when scheduled messages exist' do
           message = create :message, user: user, client: client, send_at: Time.now.tomorrow
           message = create :message, user: user, client: client, send_at: Time.now.tomorrow

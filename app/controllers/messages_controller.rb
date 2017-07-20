@@ -17,8 +17,11 @@ class MessagesController < ApplicationController
       .where('send_at < ? OR send_at IS NULL', Time.now)
       .order('created_at ASC')
     @messages.update_all(read: true)
-    # a new message for the form
-    @message = Message.new
+
+    @messages_scheduled = current_user.messages
+      .where(client_id: params["client_id"])
+      .where('send_at >= ?', Time.now)
+      .order('created_at ASC')
   end
 
   def create

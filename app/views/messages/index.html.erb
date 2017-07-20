@@ -16,9 +16,15 @@
   </div>
 </section>
 
+<% if @messages_scheduled.count > 0 %>
+<div class="notice">
+  <p><%= pluralize(@messages_scheduled.count, 'message') %> scheduled</p>
+</div>
+<% end %>
+
 <section class="message--create">
   <div class="grid">
-    <%= form_for @message, remote: true, :html => {class: 'sendbar' } do |f| %>
+    <%= form_for Message.new, remote: true, :html => {class: 'sendbar' } do |f| %>
       <div class="grid__item width-two-thirds">
         <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input main-message-input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
       </div>
