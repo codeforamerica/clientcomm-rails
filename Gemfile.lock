@@ -76,12 +76,10 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    childprocess (0.7.1)
     capybara-screenshot (1.0.14)
       capybara (>= 1.0, < 3)
       launchy
     childprocess (0.7.1)
-      ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)

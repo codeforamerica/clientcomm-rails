@@ -91,12 +91,7 @@ describe 'Messages requests', type: :request do
             build(:message, user: user, client: client, body: body, send_at: time_to_send)
           )
           expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
-          expect(NotificationBroadcastJob).to have_been_enqueued.with(
-            channel_id: user.id,
-            text: 'Your message has been scheduled',
-            link_to: '#',
-            properties: nil
-          )
+          expect(flash[:notice]).to eq('Your message has been scheduled')
 
           expect(client.messages.last.id).to eq message.id
           expect_most_recent_analytics_event({

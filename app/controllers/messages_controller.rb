@@ -68,12 +68,7 @@ class MessagesController < ApplicationController
     else
       ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
 
-      NotificationBroadcastJob.perform_later(
-        channel_id: current_user.id,
-        text: 'Your message has been scheduled',
-        link_to: '#',
-        properties: nil
-      )
+      flash[:notice] = 'Your message has been scheduled'
     end
   end
 end
