@@ -17,7 +17,9 @@
 </section>
 
 <% if @messages_scheduled.count > 0 %>
-<%= render partial: "scheduled_messages_link", locals: {count: @messages_scheduled.count} %>
+<div id="scheduled_messages_link">
+  <%= render partial: "scheduled_messages_link", locals: {count: @messages_scheduled.count} %>
+</div>
 <% end %>
 
 <section class="message--create">
