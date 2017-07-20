@@ -17,9 +17,7 @@
 </section>
 
 <% if @messages_scheduled.count > 0 %>
-<div class="notice">
-  <p><%= pluralize(@messages_scheduled.count, 'message') %> scheduled</p>
-</div>
+<%= render partial: "scheduled_messages_link", locals: {count: @messages_scheduled.count} %>
 <% end %>
 
 <section class="message--create">
@@ -35,4 +33,4 @@
   </div>
 </section>
 
-<%= render "send_later_modal" %>
+<%= render partial: "send_later_modal" %>
