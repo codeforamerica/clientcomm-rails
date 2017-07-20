@@ -22,7 +22,6 @@ class MessagesController < ApplicationController
   end
 
   def create
-    # send the message
     client = current_user.clients.find params[:client_id]
 
     message = Message.create(message_params.merge({
@@ -32,23 +31,8 @@ class MessagesController < ApplicationController
       number_to: client.phone_number
     }))
 
-    if message.send_at.nil?
-      MessageBroadcastJob.perform_now(message: message)
+    create_message_jobs(message: message)
 
-      ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
-    else
-      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
-
-      NotificationBroadcastJob.perform_later(
-        channel_id: current_user.id,
-        text: 'Your message has been scheduled',
-        link_to: '#',
-        properties: nil
-      )
-    end
-
-
-    # track the message send
     if message.send_at.nil?
       label = 'message_send'
     else
@@ -69,5 +53,24 @@ class MessagesController < ApplicationController
   def message_params
     params.require(:message)
       .permit(:body, :read, :send_at)
+  end
+
+  private
+
+  def create_message_jobs(message:)
+    if message.send_at.nil?
+      MessageBroadcastJob.perform_now(message: message)
+
+      ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
+    else
+      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
+
+      NotificationBroadcastJob.perform_later(
+        channel_id: current_user.id,
+        text: 'Your message has been scheduled',
+        link_to: '#',
+        properties: nil
+      )
+    end
   end
 end

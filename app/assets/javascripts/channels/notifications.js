@@ -40,7 +40,7 @@ $(document).ready(function() {
         if(data.properties && data.properties.client_id) {
           // only update if the client id doesn't match
           // (meaning we're not on that client's messages page)
-          if (data.properties.client_id == Notifications.clientId) {
+          if (data.properties.client_id === Notifications.clientId) {
             return;
           }
           if ($("#client-list").length) {
