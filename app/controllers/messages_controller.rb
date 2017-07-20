@@ -37,6 +37,13 @@ class MessagesController < ApplicationController
 
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
 
+    NotificationBroadcastJob.perform_later(
+      channel_id: current_user.id,
+      text: 'Your message has been scheduled',
+      link_to: '#',
+      properties: nil
+    )
+
     # track the message send
     if message.send_at.nil?
       label = 'message_send'

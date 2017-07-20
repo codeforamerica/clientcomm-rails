@@ -52,7 +52,7 @@ feature 'sending messages' do
     end
   end
 
-  skip 'user schedules a message to client', :js do
+  scenario 'user schedules a message to client', :js do
     step 'when user logs in' do
       myuser = create :user
       login_as(myuser, scope: :user)
@@ -88,17 +88,13 @@ feature 'sending messages' do
       end
 
       expect(page).to_not have_content('Send message later')
-      expect(page).to have_content('Your message has been scheduled')
-      expect(page).to have_content('1 message scheduled')
     end
 
-    step 'then user sees the message displayed' do
-      expect(page).to have_css '.message--outbound div', text: message_body
+    step 'then user sees the pending message displayed' do
+      # expect(page).not_to have_css '.message--outbound div', text: message_body
 
-      # get the message object and find the dom_id
-      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
-      mymessage = Message.find_by(client_id: myclient_id, body: message_body)
-      expect(page).to have_css '.message--outbound', id: dom_id(mymessage)
+      expect(page).to have_css '.flash__message', text: 'Your message has been scheduled'
+      # expect(page).to have_content '1 message scheduled'
     end
   end
 end

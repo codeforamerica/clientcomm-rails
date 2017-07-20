@@ -37,15 +37,17 @@ $(document).ready(function() {
     { channel: 'NotificationsChannel', user_id: Notifications.userId },
     {
       received: function(data) {
-        // only update if the client id doesn't match
-        // (meaning we're not on that client's messages page)
-        if (data.client_id !== Notifications.clientId) {
-          Notifications.updateNotification(data.notification_html);
-          // and refresh the client list if it's on the page
+        if(data.properties && data.properties.client_id) {
+          // only update if the client id doesn't match
+          // (meaning we're not on that client's messages page)
+          if (data.properties.client_id == Notifications.clientId) {
+            return;
+          }
           if ($("#client-list").length) {
             Notifications.refreshClientList();
           }
         }
+        Notifications.updateNotification(data.notification_html);
       }
     }
   );

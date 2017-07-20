@@ -1,12 +1,12 @@
 class NotificationBroadcastJob < ApplicationJob
   queue_as :default
 
-  def perform(text:, link_to:, client:)
-    channel = "notifications_#{client.user_id}"
+  def perform(channel_id:, text:, link_to:, properties:)
+    channel = "notifications_#{channel_id}"
     content = render_notification_partial(text, link_to)
     ActionCable.server.broadcast(
       channel,
-      client_id: client.id,
+      properties: properties,
       notification_html: content
     )
   end
