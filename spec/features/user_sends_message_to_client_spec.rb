@@ -81,8 +81,8 @@ feature 'sending messages' do
       select future_date.year, from: 'message_send_at_1i'
       select Date::MONTHNAMES[future_date.month], from: 'message_send_at_2i'
       select future_date.day, from: 'message_send_at_3i'
-      select future_date.hour, from: 'message_send_at_4i'
-      select future_date.min, from: 'message_send_at_5i'
+      select "%02d" % future_date.hour, from: 'message_send_at_4i'
+      select "%02d" % future_date.min, from: 'message_send_at_5i'
 
       perform_enqueued_jobs do
         click_on 'Schedule message'
