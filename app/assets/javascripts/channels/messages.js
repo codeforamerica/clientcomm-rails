@@ -5,7 +5,6 @@
 var Messages = {
   init: function() {
     this.msgs = $('#message-list');
-    this.clientId = this.msgs.data('client-id');
   },
   appendMessage: function(message_html) {
     // append the message to the bottom of the list
@@ -42,15 +41,16 @@ var Messages = {
 
 $(document).ready(function() {
   Messages.init();
+  const clientId = Messages.msgs.data('client-id');
   Messages.messagesToBottom();
 
   // only subscribe if we're on a message page
-  if (!Messages.clientId) {
+  if (!clientId) {
     return;
   }
 
   App.messages = App.cable.subscriptions.create(
-    { channel: 'MessagesChannel', client_id: Messages.clientId },
+    { channel: 'MessagesChannel', client_id: clientId },
     {
       received: function(data) {
         Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);

@@ -3,29 +3,26 @@
 //= require_tree .
 
 var ScheduledMessages = {
-  init: function() {
-    this.link = $('#scheduled_messages_link');
-    this.clientId = $('#message-list').data('client-id');
-  },
   updateLink: function(link_html, count) {
+    var linkElement = $('.notice');
     if (count > 0) {
-      this.link.html(link_html);
+      linkElement.replaceWith(link_html);
     } else {
-      this.link.remove()
+      linkElement.remove()
     }
   }
 };
 
 $(document).ready(function() {
-  ScheduledMessages.init();
+  const clientId = $('#message-list').data('client-id');
 
   // only subscribe if we're on a message page
-  if (!ScheduledMessages.clientId) {
+  if (!clientId) {
     return;
   }
 
   App.scheduledMessages = App.cable.subscriptions.create(
-    { channel: 'ScheduledMessagesChannel', client_id: ScheduledMessages.clientId },
+    { channel: 'ScheduledMessagesChannel', client_id: clientId },
     {
       received: function(data) {
         console.log(data)
