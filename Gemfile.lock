@@ -136,6 +136,12 @@ GEM
     i18n (0.8.4)
     intercom-rails (0.3.5)
       activesupport (> 3.0)
+    jasmine (2.6.0)
+      jasmine-core (>= 2.6.0, < 3.0.0)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.6.4)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
@@ -173,6 +179,7 @@ GEM
       mini_portile2 (~> 2.2.0)
     orm_adapter (0.5.0)
     pg (0.21.0)
+    phantomjs (2.1.1.0)
     poltergeist (1.15.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -327,6 +334,7 @@ DEPENDENCIES
   factory_girl_rails
   faraday
   intercom-rails
+  jasmine
   jbuilder (~> 2.5)
   jquery-rails
   launchy

@@ -64,6 +64,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'webmock'
+  gem 'jasmine'
 end
 
 group :development do
