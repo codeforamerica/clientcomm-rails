@@ -14,6 +14,7 @@ class MessagesController < ApplicationController
     # the list of past messages
     @messages = current_user.messages
       .where(client_id: params["client_id"])
+      .where('send_at < ? OR send_at IS NULL', Time.now)
       .order('created_at ASC')
     @messages.update_all(read: true)
     # a new message for the form

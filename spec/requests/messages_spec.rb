@@ -30,6 +30,22 @@ describe 'Messages requests', type: :request do
           .from(false)
           .to(true)
       end
+
+      context 'there are scheduled messages' do
+        it 'does not show scheduled messages in the main timeline' do
+          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+
+          get client_messages_path(client)
+          expect(response.body).to_not include(message.body)
+        end
+
+        it 'shows messages after their send_at date' do
+          message = create :message, user: user, client: client, send_at: Time.now.yesterday
+
+          get client_messages_path(client)
+          expect(response.body).to include(message.body)
+        end
+      end
     end
 
     describe 'POST#create' do
