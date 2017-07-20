@@ -45,6 +45,14 @@ describe 'Messages requests', type: :request do
           get client_messages_path(client)
           expect(response.body).to include(message.body)
         end
+
+        it 'shows a link when scheduled messages exist' do
+          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+
+          get client_messages_path(client)
+          expect(response.body).to include('2 messages scheduled')
+        end
       end
     end
 
