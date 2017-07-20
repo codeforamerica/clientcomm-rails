@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   # For details on the DSL available within this file,
   # see http://guides.rubyonrails.org/routing.html
 
@@ -13,6 +14,8 @@ Rails.application.routes.draw do
   root to: "clients#index"
   resources :clients, only: [:index, :new, :create, :edit, :update] do
     resources :messages, only: [:index]
+    get 'scheduled_messages/index'
+    get 'scheduled_messages/edit'
   end
 
   resources :messages, only: [:create] do
