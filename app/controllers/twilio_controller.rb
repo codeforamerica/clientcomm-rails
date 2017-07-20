@@ -6,7 +6,7 @@ class TwilioController < ApplicationController
     client = new_message.client
 
     # queue message and notification broadcasts
-    MessageBroadcastJob.perform_later(message: new_message, is_update: false)
+    MessageBroadcastJob.perform_later(message: new_message)
 
     # construct and queue an alert
     message_alert = MessageAlertBuilder.build_alert(user: client.user)
@@ -30,7 +30,7 @@ class TwilioController < ApplicationController
     message.update(twilio_status: params[:SmsStatus])
 
     # put the message broadcast in the queue
-    MessageBroadcastJob.perform_later(message: message, is_update: true)
+    MessageBroadcastJob.perform_later(message: message)
 
     # track failed messages
     if ['failed', 'undelivered'].include?(params[:SmsStatus])

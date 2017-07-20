@@ -23,7 +23,7 @@ class SMSService
 
     message.save
 
-    MessageBroadcastJob.perform_now(message: message, is_update: true)
+    MessageBroadcastJob.perform_now(message: message)
   end
 
   private

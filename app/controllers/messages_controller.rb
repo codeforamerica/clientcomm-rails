@@ -33,7 +33,7 @@ class MessagesController < ApplicationController
 
     send_at = message.send_at || Time.now
 
-    MessageBroadcastJob.perform_now(message: message, is_update: false)
+    MessageBroadcastJob.perform_now(message: message)
 
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
 

@@ -12,11 +12,14 @@ var Messages = {
     this.msgs.append(message_html);
     this.messagesToBottom();
   },
-  updateMessage: function(dom_id, message_html) {
+  updateMessage: function(dom_id, message_id, message_html) {
     // update the message in place, if it's on the page
     var msgElement = $("#" + dom_id);
     if (msgElement.length) {
         msgElement.replaceWith(message_html);
+    } else {
+      Messages.markMessageRead(message_id);
+      this.appendMessage(message_html);
     }
   },
   markMessageRead: function(id) {
@@ -50,12 +53,7 @@ $(document).ready(function() {
     { channel: 'MessagesChannel', client_id: Messages.clientId },
     {
       received: function(data) {
-        if (data.is_update) {
-          Messages.updateMessage(data.message_dom_id, data.message_html);
-        } else {
-          Messages.markMessageRead(data.message_id);
-          Messages.appendMessage(data.message_html);
-        }
+        Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
       }
     }
   );
