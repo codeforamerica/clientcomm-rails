@@ -13,20 +13,27 @@ class Message < ApplicationRecord
   UNREAD = 'unread'
 
   def self.create_from_twilio!(twilio_params)
-    # get the client based on the phone number
-    client = Client.find_by!(phone_number: twilio_params[:From])
-    # create a new message
-    new_message_params = {
+    phone_number = twilio_params[:From]
+
+    client = Client.find_by(phone_number: phone_number)
+    if client.nil?
+      client = Client.create!(
+          phone_number: phone_number,
+          last_name: phone_number,
+          user:  User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
+      )
+    end
+
+    new_message = Message.create!(
       client: client,
       user_id: client.user_id,
       number_to: ENV['TWILIO_PHONE_NUMBER'],
-      number_from: twilio_params[:From],
+      number_from: phone_number,
       inbound: true,
       twilio_sid: twilio_params[:SmsSid],
       twilio_status: twilio_params[:SmsStatus],
       body: twilio_params[:Body]
-    }
-    new_message = Message.create!(new_message_params)
+    )
 
     twilio_params[:NumMedia].to_i.times.each do |i|
       new_message.attachments.create!({

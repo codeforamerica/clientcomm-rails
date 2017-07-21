@@ -10,19 +10,31 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#create_from_twilio' do
-    let(:user) { create :user }
-    let(:client) { create :client, user: user }
-
     context 'client does not exist' do
-      it 'errors' do
-        params = twilio_new_message_params from_number: '+99999999999'
-        expect {
-          Message.create_from_twilio!(params)
-        }.to raise_exception ActiveRecord::RecordNotFound
+      let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL']) }
+
+      it 'creates a new client with missing information' do
+        unknown_number = '+19999999999'
+        params = twilio_new_message_params from_number: unknown_number
+
+        message = Message.create_from_twilio!(params)
+
+        expect(message.user).to eq unclaimed_user
+        expect(message.number_to).to eq ENV['TWILIO_PHONE_NUMBER']
+        expect(message.number_from).to eq unknown_number
+        expect(message.inbound).to be_truthy
+
+        client = message.client
+        expect(client.first_name).to be_nil
+        expect(client.last_name).to eq unknown_number
+        expect(client.phone_number).to eq unknown_number
+        expect(client.user).to eq unclaimed_user
       end
     end
 
     context 'client exists' do
+      let(:client) { create :client }
+
       it 'creates a message if proper params are sent' do
         params = twilio_new_message_params from_number: client.phone_number
         msg = Message.create_from_twilio!(params)
