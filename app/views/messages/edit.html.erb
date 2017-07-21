@@ -33,7 +33,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <a href="<%= client_messages_path(@client) %>" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
         <h4 class="modal-title" id="myModalLabel">Edit your message</h4>
       </div>
       <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
