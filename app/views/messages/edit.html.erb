@@ -29,4 +29,14 @@
   </div>
 </section>
 
-<%= render partial: "scheduled_list_modal" %>
+<div class="modal fade" id="edit-message-modal" data-show="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit your message</h4>
+      </div>
+      <%= render partial: "send_later_modal" %>
+    </div>
+  </div>
+</div>

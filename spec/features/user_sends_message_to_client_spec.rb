@@ -76,13 +76,13 @@ feature 'sending messages' do
       fill_in 'Your message text', with: message_body
 
       future_date = Time.now + 7.days
-      expect(page).to have_css '#message_send_at_1i'
+      expect(page).to have_css '#scheduled_message_send_at_1i'
 
-      select future_date.year, from: 'message_send_at_1i'
-      select Date::MONTHNAMES[future_date.month], from: 'message_send_at_2i'
-      select future_date.day, from: 'message_send_at_3i'
-      select "%02d" % future_date.hour, from: 'message_send_at_4i'
-      select "%02d" % future_date.min, from: 'message_send_at_5i'
+      select future_date.year, from: 'scheduled_message_send_at_1i'
+      select Date::MONTHNAMES[future_date.month], from: 'scheduled_message_send_at_2i'
+      select future_date.day, from: 'scheduled_message_send_at_3i'
+      select "%02d" % future_date.hour, from: 'scheduled_message_send_at_4i'
+      select "%02d" % future_date.min, from: 'scheduled_message_send_at_5i'
 
       perform_enqueued_jobs do
         click_on 'Schedule message'

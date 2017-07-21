@@ -15,7 +15,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
       .and_return(scheduled_messages)
 
     expect(MessagesController).to receive(:render)
-      .with(partial: 'messages/scheduled_messages_link', locals: {count: count})
+      .with(partial: 'messages/scheduled_messages_link', locals: {count: count, client: message.client})
       .and_return(link_html)
 
     expect(ActionCable.server).to receive(:broadcast)

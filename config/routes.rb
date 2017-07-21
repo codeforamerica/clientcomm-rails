@@ -15,10 +15,9 @@ Rails.application.routes.draw do
   resources :clients, only: [:index, :new, :create, :edit, :update] do
     resources :messages, only: [:index]
     get 'scheduled_messages/index'
-    get 'scheduled_messages/edit'
   end
 
-  resources :messages, only: [:create] do
+  resources :messages, only: [:create, :edit, :update] do
     scope module: :messages do
       resource :read, only: :create
     end
