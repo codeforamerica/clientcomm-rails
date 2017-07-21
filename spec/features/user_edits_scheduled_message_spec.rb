@@ -3,9 +3,11 @@ include ActiveJob::TestHelper
 
 feature 'editing scheduled messages' do
   let(:message_body) {'You have an appointment tomorrow at 10am'}
+  let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
   let(:future_date) { Time.now.tomorrow }
+  let(:new_future_date) { future_date.tomorrow }
   let!(:scheduled_message) { create :message, client: clientone, user: userone, body: message_body, send_at: future_date }
 
   scenario 'user sends message to client', :js do
@@ -38,10 +40,35 @@ feature 'editing scheduled messages' do
     end
 
     step 'when user edits a message' do
-      # fill out body field with new message
-      # change time field to new time
-      # expect message.reload.send_at to eq new time
-      # expect message.body to eq new body
+
+      fill_in 'scheduled_message_body', with: new_message_body
+
+      select new_future_date.year, from: 'scheduled_message_send_at_1i'
+      select Date::MONTHNAMES[new_future_date.month], from: 'scheduled_message_send_at_2i'
+      select new_future_date.day, from: 'scheduled_message_send_at_3i'
+      select "%02d" % new_future_date.hour, from: 'scheduled_message_send_at_4i'
+      select "%02d" % new_future_date.min, from: 'scheduled_message_send_at_5i'
+
+      perform_enqueued_jobs do
+        click_on 'Update'
+        expect(page).to have_current_path(client_messages_path(scheduled_message.client))
+      end
+    end
+
+    step 'then when user edits the message again' do
+      click_on '1 message scheduled'
+      expect(page).to have_css '#scheduled-list-modal .modal-title', text: 'Manage scheduled messages'
+      expect(page).to have_css '#scheduled-list', text: new_message_body
+
+      click_on 'Edit'
+      expect(page).to have_css '#edit-message-modal .modal-title', text: 'Edit your message'
+
+      expect(page).to have_css '#scheduled_message_body', text: new_message_body # expect body text field to contain message.body
+      expect(page).to have_select('scheduled_message_send_at_1i', selected: new_future_date.year.to_s)
+      expect(page).to have_select('scheduled_message_send_at_2i', selected: Date::MONTHNAMES[new_future_date.month])
+      expect(page).to have_select('scheduled_message_send_at_3i', selected: new_future_date.day.to_s)
+      expect(page).to have_select('scheduled_message_send_at_4i', selected: new_future_date.hour.to_s)
+      expect(page).to have_select('scheduled_message_send_at_5i', selected: new_future_date.min.to_s)
     end
 
     # step 'then user sees the message displayed' do

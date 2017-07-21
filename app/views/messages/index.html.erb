@@ -42,7 +42,29 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Send message later</h4>
       </div>
-      <%= render partial: "send_later_modal" %>
+      <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
+        <input name="client_id" type="hidden" value="<%= @client.id %>">
+        <div class="modal-body">
+          <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
+          <fieldset class="form-group">
+            <div class="select">
+              <%= f.datetime_select :send_at,
+                { order: [:month, :day, :year, :hour, :minute],
+                  start_year: Time.now.year,
+                  end_year: Time.now.year + 1,
+                  date_separator: '</div><div class="select">',
+                  datetime_separator: '</div> — <div class="select">',
+                  time_separator: '</div> : <div class="select">'},
+                  { class: "select__element" }
+              %>
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button id="schedule-message" type="submit" class="button button--primary">Schedule message</button>
+          <button type="button" class="button" data-dismiss="modal">Cancel</button>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
