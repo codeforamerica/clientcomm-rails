@@ -20,6 +20,9 @@
     font-size: $font-size-normal;
     text-decoration: none;
     margin-right: .3em;
+    &:hover {
+      color: $color-darkest-grey;
+  }
   }
 
   .user-phone-number {
