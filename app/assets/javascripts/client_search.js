@@ -5,7 +5,7 @@ $(document).ready(function(){
 
   var clientList = new List('client-list', clientSeachOptions);
 
-  $('#clear-search').click(function(){
+  $('#clear_search').click(function(){
     $('.search').val('');
     clientList.search();
   });

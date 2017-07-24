@@ -55,6 +55,19 @@
   border-radius: 2px 0px 0px 2px;
 }
 
+.input-group-btn {
+  height: 100%;
+
+  .btn {
+    height: 100%;
+    border: 2px solid #EAEAE9;
+    background-color: #EAEAE9;
+    padding-left: $width-image-icon;
+    padding-right: $width-image-icon;
+    border-radius: 0px 2px 2px 0px;
+  }
+}
+
 .client-search-input {
   margin-bottom: 1em;
 }
