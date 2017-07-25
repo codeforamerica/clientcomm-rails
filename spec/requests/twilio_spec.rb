@@ -63,11 +63,16 @@ describe 'Twilio controller', type: :request do
   end
 
   context 'POST#incoming_sms_status' do
-    it 'saves a successful sms message status update' do
-      msgone = create :message, user: user, client: client, inbound: true, twilio_status: 'queued'
-      # validate the status
-      expect(client.messages.last.twilio_status).to eq 'queued'
+    let!(:msgone) {
+      create :message, user: user, client: client, inbound: true, twilio_status: 'queued'
+    }
 
+    before do
+      # validate the initial status
+      expect(client.messages.last.twilio_status).to eq 'queued'
+    end
+
+    it 'saves a successful sms message status update' do
       # post a status update
       status_params = twilio_status_update_params from_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
       twilio_post_sms_status status_params
@@ -80,10 +85,6 @@ describe 'Twilio controller', type: :request do
     end
 
     it 'saves an unsuccessful sms message status update' do
-      msgone = create :message, user: user, client: client, inbound: true, twilio_status: 'queued'
-      # validate the status
-      expect(client.messages.last.twilio_status).to eq 'queued'
-
       # post a status update
       status_params = twilio_status_update_params from_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
       twilio_post_sms_status status_params
