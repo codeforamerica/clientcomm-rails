@@ -25,7 +25,6 @@ $(document).ready(function() {
     { channel: 'ScheduledMessagesChannel', client_id: clientId },
     {
       received: function(data) {
-        console.log(data)
         ScheduledMessages.updateLink(data.link_html, data.count);
       }
     }
