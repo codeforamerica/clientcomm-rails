@@ -44,8 +44,27 @@ feature "search and sort clients" do
   end
 
   describe "user sorts clients" do
-    it "page is sorted by most recent contact by default", js: true do
+    it "sorts by most recent contact by default", js: true do
       expect(page).to have_css('.glyphicon-arrow-down')
+      expect(page).to have_css('tr:first-child', text: clientthree.full_name)
+      expect(page).to have_css('tr:last-child', text: clientone.full_name)
+    end
+
+    it "reverses list when Last contact is clicked", js: true do
+      find("th", text: "Last contact").click
+
+      expect(page).to have_css('tr:first-child', text: clientone.full_name)
+      expect(page).to have_css('tr:last-child', text: clientthree.full_name)
+    end
+
+    it "sorts by name", js: true do
+      find("th", text: "Name").click
+      expect(page).to have_css('tr:first-child', text: clientone.full_name)
+      expect(page).to have_css('tr:last-child', text: clientthree.full_name)
+
+      find("th", text: "Name").click
+      expect(page).to have_css('tr:first-child', text: clientthree.full_name)
+      expect(page).to have_css('tr:last-child', text: clientone.full_name)
     end
   end
 end
