@@ -41,6 +41,18 @@ feature "search and sort clients" do
       expect(page).to have_css '.data-table td', text: clienttwo.full_name
       expect(page).to have_css '.data-table td', text: clientthree.full_name
     end
+
+    it "shows a warning when there are no search results", js: true do
+      expect(page).to_not have_css '#no-search-results'
+
+      fill_in "Search clients by name", with: 'text-that-definitely-wont-return-results'
+
+      expect(page).to have_css '#no-search-results'
+
+      click_button("clear_search")
+
+      expect(page).to_not have_css '#no-search-results'
+    end
   end
 
   describe "user sorts clients" do
