@@ -47,6 +47,12 @@
           max-width: 60%;
         }
         float: right;
+
+        &.undelivered {
+          background-color: $color-background;
+          border: solid 2px $color-red;
+          color: $color-dark-grey;
+        }
       }
 
       .message--label {
@@ -63,7 +69,12 @@
         width: 100%;
         display: block;
         float: right;
+
+        &.undelivered {
+          color: $color-red;
+        }
       }
+
     }
 
     .message--inbound {
