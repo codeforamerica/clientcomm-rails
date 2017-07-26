@@ -59,7 +59,7 @@ feature 'editing scheduled messages', active_job: true do
       expect(page).to have_css '#scheduled-list', text: new_message_body
 
       click_on 'Edit'
-      expect(page).to have_css '#edit-message-modal .modal-title', text: 'Edit your message'
+      expect(page).to have_content 'Edit your message'
 
       expect(page).to have_css '#scheduled_message_body', text: new_message_body # expect body text field to contain message.body
       expect(page).to have_select('scheduled_message_send_at_1i', selected: new_future_date.strftime("%Y"))
