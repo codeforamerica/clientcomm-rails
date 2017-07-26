@@ -1,0 +1,32 @@
+<% content_for(:template_name) { "messages" }  %>
+
+<section class="slab slab--header">
+  <div class="grid">
+    <div class="grid__item">
+      <h2 class="client-name"><%= @client.full_name %></h2>
+      <%= link_to "Edit client", edit_client_path(@client), {class: 'button button--small' } %>
+    </div>
+    <span class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></span>
+  </div>
+</section>
+
+<section class="slab slab--padded slab--borderless" id="scroller-target">
+  <div id="message-list" class="message--container grid" data-client-id="<%= @client.id %>">
+    <%= render @messages %>
+  </div>
+</section>
+
+<section class="message--create">
+  <div class="grid">
+    <%= form_for Message.new, remote: true, :html => {class: 'sendbar' } do |f| %>
+      <div class="grid__item width-two-thirds">
+        <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input main-message-input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
+      </div>
+      <button id="send_message" class="sendbar__button button--primary" type="submit">Send <i class="icon-arrow_upward"></i></button>
+      <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
+      <input name="client_id" type="hidden" value="<%= @client.id %>">
+    <% end %>
+  </div>
+</section>
+
+<%= render partial: "scheduled_list_modal" %>

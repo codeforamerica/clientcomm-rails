@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   # For details on the DSL available within this file,
   # see http://guides.rubyonrails.org/routing.html
 
@@ -13,9 +14,10 @@ Rails.application.routes.draw do
   root to: "clients#index"
   resources :clients, only: [:index, :new, :create, :edit, :update] do
     resources :messages, only: [:index]
+    get 'scheduled_messages/index'
   end
 
-  resources :messages, only: [:create] do
+  resources :messages, only: [:create, :edit, :update] do
     scope module: :messages do
       resource :read, only: :create
     end
@@ -34,6 +36,12 @@ Rails.application.routes.draw do
     match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
   end
 
+  match '/404', to: 'errors#not_found', via: :all
+  match '/500', to: 'errors#internal_server_error', via: :all
+
   # TESTS
   resource :file_preview, only: %i[show] if Rails.env.test? || Rails.env.development?
+
+  # This should always be last
+  get '*url' => 'errors#not_found'
 end

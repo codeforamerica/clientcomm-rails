@@ -12,4 +12,11 @@ $(document).ready(function(){
   $('#schedule-message').click(function(){
     $('#send-later-modal').modal('hide');
   })
+
+  $('#edit-message-modal').modal();
+
+  $('#edit-message-modal').on('hidden.bs.modal', function(e) {
+    e.preventDefault()
+    window.location = $('.close').attr('href')
+  });
 })

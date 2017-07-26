@@ -22,6 +22,8 @@ class MessagesController < ApplicationController
       .where(client_id: params["client_id"])
       .where('send_at >= ?', Time.now)
       .order('created_at ASC')
+
+    @message = Message.new
   end
 
   def create
@@ -51,6 +53,35 @@ class MessagesController < ApplicationController
       format.html { redirect_to client_messages_path(client.id) }
       format.js { head :no_content }
     end
+  end
+
+  def edit
+    @message = Message.find(params[:id])
+
+    @client = @message.client
+
+    analytics_track(
+      label: 'client_messages_view',
+      data: @client.analytics_tracker_data
+    )
+
+    # the list of past messages
+    @messages = current_user.messages
+      .where(client: @message.client)
+      .where('send_at < ? OR send_at IS NULL', Time.now)
+      .order('created_at ASC')
+
+    # TODO use scheduled_messages_helper for this
+    @messages_scheduled = current_user.messages
+      .where(client_id: params["client_id"])
+      .where('send_at >= ?', Time.now)
+      .order('created_at ASC')
+  end
+
+  def update
+    @message = Message.find(params[:id])
+    @message.update(message_params)
+    redirect_to client_messages_path(@message.client)
   end
 
   def message_params

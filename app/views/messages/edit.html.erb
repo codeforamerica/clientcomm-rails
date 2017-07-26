@@ -16,12 +16,6 @@
   </div>
 </section>
 
-<% if @messages_scheduled.count > 0 %>
-<div id="scheduled_messages_link">
-  <%= render "scheduled_messages_link", count: @messages_scheduled.count, client: @client %>
-</div>
-<% end %>
-
 <section class="message--create">
   <div class="grid">
     <%= form_for Message.new, remote: true, :html => {class: 'sendbar' } do |f| %>
@@ -29,22 +23,18 @@
         <%= f.text_field(:body, { autofocus: true, type: 'text', class: 'sendbar__input main-message-input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
       </div>
       <button id="send_message" class="sendbar__button button--primary" type="submit">Send <i class="icon-arrow_upward"></i></button>
-
-      <% if feature_flags.scheduled_messages %>
-        <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
-      <% end %>
-
+      <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#send-later-modal">Send later <i class="icon-timer"></i></button>
       <input name="client_id" type="hidden" value="<%= @client.id %>">
     <% end %>
   </div>
 </section>
 
-<div class="modal fade" id="send-later-modal">
+<div class="modal fade" id="edit-message-modal" data-show="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Send message later</h4>
+        <a href="<%= client_messages_path(@client) %>" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+        <h4 class="modal-title" id="myModalLabel">Edit your message</h4>
       </div>
       <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
         <input name="client_id" type="hidden" value="<%= @client.id %>">
@@ -65,7 +55,7 @@
           </fieldset>
         </div>
         <div class="modal-footer">
-          <button id="schedule-message" type="submit" class="button button--primary">Schedule message</button>
+          <button id="schedule-message" type="submit" class="button button--primary">Update</button>
           <button type="button" class="button" data-dismiss="modal">Cancel</button>
         </div>
       <% end %>
