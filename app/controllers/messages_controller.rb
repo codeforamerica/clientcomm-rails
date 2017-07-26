@@ -81,6 +81,9 @@ class MessagesController < ApplicationController
   def update
     @message = Message.find(params[:id])
     @message.update(message_params)
+
+    create_message_jobs(message: @message)
+
     redirect_to client_messages_path(@message.client)
   end
 
@@ -95,9 +98,9 @@ class MessagesController < ApplicationController
     if message.send_at.nil?
       MessageBroadcastJob.perform_now(message: message)
 
-      ScheduledMessageJob.perform_later(message: message, callback_url: incoming_sms_status_url)
+      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     else
-      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, callback_url: incoming_sms_status_url)
+      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
 
       flash[:notice] = 'Your message has been scheduled'
     end

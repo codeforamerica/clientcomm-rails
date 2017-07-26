@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Messages requests', type: :request do
+describe 'Messages requests', type: :request, active_job: true do
   context 'unauthenticated' do
     it 'rejects unauthenticated user' do
       client = create(:client)
@@ -15,6 +15,7 @@ describe 'Messages requests', type: :request do
   context 'authenticated' do
     let(:user) { create :user }
     let(:client) { create_client build(:client, user: user) }
+    let(:body) { 'hello, my friend' }
 
     before do
       sign_in user
@@ -63,9 +64,6 @@ describe 'Messages requests', type: :request do
 
     describe 'POST#create' do
       it 'creates a new message on submit' do
-        ActiveJob::Base.queue_adapter = :test
-
-        body = SecureRandom.hex(4)
         message = create_message(
           build(:message, user: user, client: client, body: body)
         )
@@ -85,8 +83,6 @@ describe 'Messages requests', type: :request do
         let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
 
         it 'creates a Scheduled Message' do
-          ActiveJob::Base.queue_adapter = :test
-
           message = create_message(
             build(:message, user: user, client: client, body: body, send_at: time_to_send)
           )
@@ -103,6 +99,30 @@ describe 'Messages requests', type: :request do
             }
           })
         end
+      end
+    end
+
+    describe 'PUT#update' do
+      let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
+
+      it 'updates the message model' do
+        message = create_message(
+          build(:message, user: user, client: client, body: body, send_at: time_to_send)
+        )
+        expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
+
+        new_time_to_send = Time.now.change(sec: 0)
+        message.send_at = new_time_to_send
+        message.body = "Some new body"
+        old_message_id = message.id
+
+        update_message(message)
+        expect(ScheduledMessageJob).to have_been_enqueued.at(new_time_to_send)
+
+        new_message = Message.find(old_message_id)
+
+        expect(new_message.body).to eq("Some new body")
+        expect(new_message.send_at).to eq(new_time_to_send)
       end
     end
   end

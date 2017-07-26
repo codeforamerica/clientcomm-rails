@@ -4,7 +4,9 @@ class ScheduledMessageJob < ApplicationJob
 
   queue_as :default
 
-  def perform(message:, callback_url:)
+  def perform(message:, send_at:, callback_url:)
+    return unless message.send_at.to_i == send_at
+
     SMSService.instance.send_message(
         message: message,
         callback_url: callback_url

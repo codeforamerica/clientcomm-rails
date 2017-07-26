@@ -67,4 +67,22 @@ module RequestHelper
     # NOTE: send unique body text to ensure the correct message is returned
     Message.find_by(body: message.body)
   end
+
+  def update_message(message)
+    post_params = {
+      body: message.body
+    }
+
+    if message.send_at
+      post_params = post_params.merge({
+        'send_at(1i)': message.send_at.year,
+        'send_at(2i)': message.send_at.month,
+        'send_at(3i)': message.send_at.day,
+        'send_at(4i)': message.send_at.hour,
+        'send_at(5i)': message.send_at.min
+      })
+    end
+
+    put message_path(message), params: { message: post_params }
+  end
 end

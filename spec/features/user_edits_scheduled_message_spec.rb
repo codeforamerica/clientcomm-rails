@@ -1,7 +1,5 @@
 require "rails_helper"
-include ActiveJob::TestHelper
-
-feature 'editing scheduled messages' do
+feature 'editing scheduled messages', active_job: true do
   let(:message_body) {'You have an appointment tomorrow at 10am'}
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }

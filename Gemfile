@@ -65,6 +65,7 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'webmock'
   gem 'jasmine'
+  gem 'awesome_print'
 end
 
 group :development do

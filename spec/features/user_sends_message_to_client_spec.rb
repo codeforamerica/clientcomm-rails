@@ -1,7 +1,5 @@
 require "rails_helper"
-include ActiveJob::TestHelper
-
-feature 'sending messages' do
+feature 'sending messages', active_job: true do
   let(:message_body) {'You have an appointment tomorrow at 10am'}
   let(:client_1) { build :client }
   let(:client_2) { build :client }
