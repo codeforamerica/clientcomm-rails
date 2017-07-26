@@ -7,6 +7,11 @@ feature 'feature flags' do
 
     before do
       login_as(user, :scope => :user)
+      @scheduled_messages_value = ENV['SCHEDULED_MESSAGES']
+    end
+
+    after do
+      ENV['SCHEDULED_MESSAGES'] = @scheduled_messages_value
     end
 
     context 'enabled' do
