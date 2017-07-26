@@ -31,11 +31,11 @@ feature 'editing scheduled messages' do
       click_on 'Edit'
       expect(page).to have_css '#edit-message-modal .modal-title', text: 'Edit your message'
       expect(page).to have_css '#scheduled_message_body', text: message_body # expect body text field to contain message.body
-      expect(page).to have_select('scheduled_message_send_at_1i', selected: future_date.year.to_s)
+      expect(page).to have_select('scheduled_message_send_at_1i', selected: future_date.strftime("%Y"))
       expect(page).to have_select('scheduled_message_send_at_2i', selected: Date::MONTHNAMES[future_date.month])
-      expect(page).to have_select('scheduled_message_send_at_3i', selected: future_date.day.to_s)
-      expect(page).to have_select('scheduled_message_send_at_4i', selected: future_date.hour.to_s)
-      expect(page).to have_select('scheduled_message_send_at_5i', selected: future_date.min.to_s)
+      expect(page).to have_select('scheduled_message_send_at_3i', selected: future_date.strftime("%-d"))
+      expect(page).to have_select('scheduled_message_send_at_4i', selected: future_date.strftime("%H"))
+      expect(page).to have_select('scheduled_message_send_at_5i', selected: future_date.strftime("%M"))
       # expect time fields to be filled out with message.send_at
     end
 
@@ -64,11 +64,11 @@ feature 'editing scheduled messages' do
       expect(page).to have_css '#edit-message-modal .modal-title', text: 'Edit your message'
 
       expect(page).to have_css '#scheduled_message_body', text: new_message_body # expect body text field to contain message.body
-      expect(page).to have_select('scheduled_message_send_at_1i', selected: new_future_date.year.to_s)
+      expect(page).to have_select('scheduled_message_send_at_1i', selected: new_future_date.strftime("%Y"))
       expect(page).to have_select('scheduled_message_send_at_2i', selected: Date::MONTHNAMES[new_future_date.month])
-      expect(page).to have_select('scheduled_message_send_at_3i', selected: new_future_date.day.to_s)
-      expect(page).to have_select('scheduled_message_send_at_4i', selected: new_future_date.hour.to_s)
-      expect(page).to have_select('scheduled_message_send_at_5i', selected: new_future_date.min.to_s)
+      expect(page).to have_select('scheduled_message_send_at_3i', selected: new_future_date.strftime("%-d"))
+      expect(page).to have_select('scheduled_message_send_at_4i', selected: new_future_date.strftime("%H"))
+      expect(page).to have_select('scheduled_message_send_at_5i', selected: new_future_date.strftime("%M"))
     end
 
     step 'when the user clicks the button to dismiss the modal' do
