@@ -60,18 +60,21 @@
             <label for="scheduled_message_send_at_date">
               <p class="form-question">Date</p>
             </label>
-            <input type="text" name="message[send_at(date)]" id="scheduled_message_send_at_date" />
+            <input type="text" name="message[send_at_date]" id="scheduled_message_send_at_date" />
             <label for="scheduled_message_send_at_time">
               <p class="form-question">Time</p>
             </label>
-            <select name="message[send_at(time)]" id="scheduled_message_send_at_time">
-              <% 1.upto(12) do |i| %>
-                <option <%= "selected" if i == 9 %> value="<%= "#{i}:00am" %>"><%= "#{i}:00am" %></option>
-                <option value="<%= "#{i}:30am" %>"><%= "#{i}:30am" %></option>
-              <% end %>
-              <% 1.upto(12) do |i| %>
-                <option value="<%= "#{i}:00pm" %>"><%= "#{i}:00pm" %></option>
-                <option value="<%= "#{i}:30pm" %>"><%= "#{i}:30pm" %></option>
+            <select name="message[send_at_time]" id="scheduled_message_send_at_time">
+              <%
+                  start = Time.now.change(min: 0, hour: 0)
+                  times = []
+                  48.times do
+                    times << start
+                    start += 30.minutes
+                  end
+              %>
+              <% times.each_with_index do |time, i| %>
+                <option <%= "selected" if i == 19 %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
               <% end %>
             </select>
           </fieldset>

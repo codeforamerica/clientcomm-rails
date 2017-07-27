@@ -41,8 +41,26 @@
         <div class="modal-body">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
           <fieldset class="form-group">
-            <input type="text" name="message[send_at_date]" id="scheduled_message_send_at_date" />
-            <input type="text" name="message[send_at_time]" id="scheduled_message_send_at_time" />
+            <label for="scheduled_message_send_at_date">
+              <p class="form-question">Date</p>
+            </label>
+            <input type="text" name="message[send_at_date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>" />
+            <label for="scheduled_message_send_at_time">
+              <p class="form-question">Time</p>
+            </label>
+            <select name="message[send_at_time]" id="scheduled_message_send_at_time">
+              <%
+                  start = Time.now.change(min: 0, hour: 0)
+                  times = []
+                  48.times do
+                    times << start
+                    start += 30.minutes
+                  end
+              %>
+              <% times.each do |time| %>
+                <option <%= "selected" if time.strftime('%H:%M') == @message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+              <% end %>
+            </select>
           </fieldset>
         </div>
         <div class="modal-footer">

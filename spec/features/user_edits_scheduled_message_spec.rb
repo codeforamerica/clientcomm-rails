@@ -4,8 +4,8 @@ feature 'editing scheduled messages', active_job: true do
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
-  let(:future_date) { Time.now.tomorrow }
-  let(:new_future_date) { future_date.tomorrow }
+  let(:future_date) { Time.now.tomorrow.change(min: 0) }
+  let(:new_future_date) { future_date.tomorrow.change(min: 0) }
   let!(:scheduled_message) { create :message, client: clientone, user: userone, body: message_body, send_at: future_date }
 
   scenario 'user sends message to client', :js do
@@ -34,11 +34,8 @@ feature 'editing scheduled messages', active_job: true do
 
       fill_in 'scheduled_message_body', with: new_message_body
 
-      select new_future_date.year, from: 'scheduled_message_send_at_1i'
-      select Date::MONTHNAMES[new_future_date.month], from: 'scheduled_message_send_at_2i'
-      select new_future_date.day, from: 'scheduled_message_send_at_3i'
-      select "%02d" % new_future_date.hour, from: 'scheduled_message_send_at_4i'
-      select "%02d" % new_future_date.min, from: 'scheduled_message_send_at_5i'
+      fill_in 'Date', with: new_future_date.strftime("%m/%d/%Y")
+      select new_future_date.strftime("%-l:%M%P"), from: 'Time'
 
       perform_enqueued_jobs do
         click_on 'Update'
@@ -77,10 +74,7 @@ feature 'editing scheduled messages', active_job: true do
     expect(page).to have_content 'Edit your message'
 
     expect(page).to have_css '#scheduled_message_body', text: message_body # expect body text field to contain message.body
-    expect(page).to have_select('scheduled_message_send_at_1i', selected: date.strftime("%Y"))
-    expect(page).to have_select('scheduled_message_send_at_2i', selected: Date::MONTHNAMES[date.month])
-    expect(page).to have_select('scheduled_message_send_at_3i', selected: date.strftime("%-d"))
-    expect(page).to have_select('scheduled_message_send_at_4i', selected: date.strftime("%H"))
-    expect(page).to have_select('scheduled_message_send_at_5i', selected: date.strftime("%M"))
+    expect(page).to have_field('Date', with: date.strftime("%m/%d/%Y"))
+    expect(page).to have_select('Time', selected: date.strftime("%-l:%M%P"))
   end
 end
