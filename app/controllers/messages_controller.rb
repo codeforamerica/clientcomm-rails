@@ -33,7 +33,8 @@ class MessagesController < ApplicationController
       user: current_user,
       client: client,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
-      number_to: client.phone_number
+      number_to: client.phone_number,
+      read: true
     }))
 
     create_message_jobs(message: message)

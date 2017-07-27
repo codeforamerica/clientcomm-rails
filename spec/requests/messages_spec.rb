@@ -70,6 +70,7 @@ describe 'Messages requests', type: :request, active_job: true do
         expect(ScheduledMessageJob).to have_been_enqueued
 
         expect(client.messages.last.id).to eq message.id
+        expect(client.messages.last.read).to eq true
         expect_most_recent_analytics_event({
           'message_send' => {
             'client_id' => client.id,
