@@ -115,22 +115,16 @@
   .message--create {
     align-items: center;
     background: $color-background;
-    border-top: 2px solid $color-light-grey;
     bottom: 0;
     left: 0;
-    padding: 0 5px;
     position: fixed;
     white-space: nowrap;
     width: 100%;
     z-index: 10;
-    height: 128px;
 
     .sendbar {
-      margin-top: .5em;
-    }
-
-    @include media($mobile-up){
-      height: 80px;
+      padding: $padding-small;
+      border-top: 2px solid $color-light-grey;
     }
   }
 

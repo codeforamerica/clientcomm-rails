@@ -4,12 +4,7 @@
 
 var ScheduledMessages = {
   updateLink: function(link_html, count) {
-    var linkElement = $('.notice');
-    if (count > 0) {
-      linkElement.replaceWith(link_html);
-    } else {
-      linkElement.remove()
-    }
+    $('.scheduled-messages-bar').remove()
   }
 };
 

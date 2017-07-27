@@ -1,5 +1,3 @@
-<div class="notice">
-  <p><%= link_to(client_scheduled_messages_index_path(client)) do %>
+<%= link_to(client_scheduled_messages_index_path(client)) do %>
   <%= pluralize(count, 'message') %> scheduled
-  <% end %></p>
-</div>
+<% end %>

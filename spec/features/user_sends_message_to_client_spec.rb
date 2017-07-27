@@ -93,7 +93,7 @@ feature 'sending messages', active_job: true do
       expect(page).not_to have_css '.message--outbound div', text: message_body
 
       expect(page).to have_css '.flash__message', text: 'Your message has been scheduled'
-      expect(page).to have_css '.notice', text: '1 message scheduled'
+      expect(page).to have_content '1 message scheduled'
     end
 
   end

@@ -31,7 +31,7 @@
   margin-top: 0.5em;
   float: right;
 
-  @include media($mobile-up) {
+  @include media($site-max-up) {
     margin-top: 0;
     float: left;
   }
@@ -47,4 +47,13 @@
     background-color: shade($color-teal, 10%);
     border-color: shade($color-teal, 10%);
   }
+}
+
+.scheduled-messages-bar {
+  background-color: $color-header;
+  padding: $padding-small;
+  border: 1px solid $color-light-grey;
+  border-bottom: 0px;
+  width: 100%;
+  text-align: center;
 }

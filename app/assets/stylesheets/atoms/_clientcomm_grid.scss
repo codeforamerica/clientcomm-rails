@@ -1,0 +1,74 @@
+@include media($site-max-up) {
+  // Defines width of element
+  .width-one-whole-lg {
+    @include span-columns(12);
+  }
+  .width-one-half-lg {
+    @include span-columns(6);
+  }
+  .width-one-third-lg {
+    @include span-columns(4);
+  }
+  .width-two-thirds-lg {
+    @include span-columns(8);
+  }
+  .width-one-fourth-lg {
+    @include span-columns(3);
+  }
+  .width-three-fourths-lg {
+    @include span-columns(9);
+  }
+  .width-one-sixth-lg {
+    @include span-columns(2);
+  }
+  .width-five-sixths-lg {
+    @include span-columns(10);
+  }
+  .width-one-twelfth-lg {
+    @include span-columns(1);
+  }
+  .width-five-twelfths-lg {
+    @include span-columns(5);
+  }
+  .width-seven-twelfths-lg {
+    @include span-columns(7);
+  }
+  .width-eleven-twelfths-lg {
+    @include span-columns(11);
+  }
+
+  // Shift Classes (adds white space to the left of grid item)
+  .shift-one-half-lg {
+    @include shift(6);
+  }
+  .shift-one-third-lg {
+    @include shift(4);
+  }
+  .shift-two-thirds-lg {
+    @include shift(8);
+  }
+  .shift-one-fourth-lg {
+    @include shift(3);
+  }
+  .shift-three-fourths-lg {
+    @include shift(9);
+  }
+  .shift-one-sixth-lg {
+    @include shift(2);
+  }
+  .shift-five-sixths-lg {
+    @include shift(10);
+  }
+  .shift-one-twelfth-lg {
+    @include shift(1);
+  }
+  .shift-five-twelfths-lg {
+    @include shift(5);
+  }
+  .shift-seven-twelfths-lg {
+    @include shift(7);
+  }
+  .shift-eleven-twelfths-lg {
+    @include shift(11);
+  }
+}
