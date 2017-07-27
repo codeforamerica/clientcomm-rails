@@ -1,13 +1,13 @@
 module TwilioHelper
   def twilio_post_sms(tw_params = twilio_new_message_params, use_correct_signature = true)
     post_path = '/incoming/sms'
-    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    post_sig = use_correct_signature ? correct_signature(tw_params, post_path) : nil
     twilio_post tw_params, post_sig, post_path
   end
 
   def twilio_post_sms_status(tw_params = twilio_status_update_params, use_correct_signature = true)
     post_path = '/incoming/sms/status'
-    post_sig = (use_correct_signature == true) ? correct_signature(tw_params, post_path) : nil
+    post_sig = use_correct_signature ? correct_signature(tw_params, post_path) : nil
     twilio_post tw_params, post_sig, post_path
   end
 

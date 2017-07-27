@@ -15,7 +15,7 @@ feature 'Twilio' do
         twilio_post_sms twilio_params
         expect(page).to have_http_status(:no_content)
         visit client_messages_path client
-        expect(page).to have_css %Q|.message--inbound img[src="#{twilio_params['MediaUrl0']}"]|
+        expect(page).to have_css ".message--inbound img[src=\"#{twilio_params['MediaUrl0']}\"]"
       end
     end
   end
