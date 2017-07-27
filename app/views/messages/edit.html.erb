@@ -41,17 +41,8 @@
         <div class="modal-body">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
           <fieldset class="form-group">
-            <div class="select">
-              <%= f.datetime_select :send_at,
-                { order: [:month, :day, :year, :hour, :minute],
-                  start_year: Time.now.year,
-                  end_year: Time.now.year + 1,
-                  date_separator: '</div><div class="select">',
-                  datetime_separator: '</div> — <div class="select">',
-                  time_separator: '</div> : <div class="select">'},
-                  { class: "select__element" }
-              %>
-            </div>
+            <input type="text" name="message[send_at_date]" id="scheduled_message_send_at_date" />
+            <input type="text" name="message[send_at_time]" id="scheduled_message_send_at_time" />
           </fieldset>
         </div>
         <div class="modal-footer">

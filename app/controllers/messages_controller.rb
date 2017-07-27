@@ -29,13 +29,17 @@ class MessagesController < ApplicationController
   def create
     client = current_user.clients.find params[:client_id]
 
-    message = Message.create(message_params.merge({
+    message = Message.new(message_params.merge({
       user: current_user,
       client: client,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
       number_to: client.phone_number,
       read: true
     }))
+
+    message.send_at = Time.zone.strptime("#{send_at_params[:send_at_date]} #{send_at_params[:send_at_time]}", '%m/%d/%Y %H:%M%P') unless send_at_params.empty?
+
+    message.save!
 
     create_message_jobs(message: message)
 
@@ -83,6 +87,10 @@ class MessagesController < ApplicationController
     @message = Message.find(params[:id])
     @message.update(message_params)
 
+    @message.send_at = Time.zone.strptime("#{send_at_params[:send_at_date]} #{send_at_params[:send_at_time]}", '%m/%d/%Y %H:%M%P') unless send_at_params.empty?
+
+    @message.save!
+
     create_message_jobs(message: @message)
 
     redirect_to client_messages_path(@message.client)
@@ -90,7 +98,12 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message)
-      .permit(:body, :read, :send_at)
+      .permit(:body, :read)
+  end
+
+  def send_at_params
+    params.require(:message)
+      .permit(:send_at_date, :send_at_time)
   end
 
   private

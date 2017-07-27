@@ -54,11 +54,8 @@ module RequestHelper
 
     if message.send_at
       post_params[:message] = post_params[:message].merge({
-        'send_at(1i)': message.send_at.year,
-        'send_at(2i)': message.send_at.month,
-        'send_at(3i)': message.send_at.day,
-        'send_at(4i)': message.send_at.hour,
-        'send_at(5i)': message.send_at.min
+        'send_at_date': message.send_at.strftime("%m/%d/%Y"),
+        'send_at_time': message.send_at.strftime("%-l:%M%P")
       })
     end
 
@@ -70,19 +67,16 @@ module RequestHelper
 
   def update_message(message)
     post_params = {
-      body: message.body
+      message: { body: message.body }
     }
 
     if message.send_at
-      post_params = post_params.merge({
-        'send_at(1i)': message.send_at.year,
-        'send_at(2i)': message.send_at.month,
-        'send_at(3i)': message.send_at.day,
-        'send_at(4i)': message.send_at.hour,
-        'send_at(5i)': message.send_at.min
+      post_params[:message] = post_params[:message].merge({
+        'send_at_date': message.send_at.strftime("%m/%d/%Y"),
+        'send_at_time': message.send_at.strftime("%-l:%M%P")
       })
     end
 
-    put message_path(message), params: { message: post_params }
+    put message_path(message), params: post_params
   end
 end

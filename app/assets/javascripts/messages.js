@@ -15,6 +15,12 @@ $(document).ready(function(){
 
   $('#edit-message-modal').modal();
 
+  var default_date = new Date();
+  default_date.setDate(default_date.getDate() + 2);
+  $('#scheduled_message_send_at_date').datepicker({
+    defaultDate: default_date,
+  });
+
   $('#edit-message-modal').on('hidden.bs.modal', function(e) {
     e.preventDefault()
     window.location = $('.close').attr('href')

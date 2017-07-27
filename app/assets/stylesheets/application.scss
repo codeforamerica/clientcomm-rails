@@ -1,9 +1,9 @@
 /* Vendor */
 @import 'bourbon';
 @import 'neat';
-@import "normalize";
-@import "bootstrap-sprockets";
-@import "bootstrap";
+@import 'normalize';
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
 
 /* Atoms */
 @import 'atoms/variables';
@@ -68,3 +68,6 @@
 /* Shame */
 @import 'ie-hacks';
 @import 'shame';
+
+@import 'jquery-ui/theme';
+@import 'jquery-ui/datepicker';
