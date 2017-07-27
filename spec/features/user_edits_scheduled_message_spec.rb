@@ -73,5 +73,16 @@ feature 'editing scheduled messages', active_job: true do
       click_on '×'
       expect(page).to have_current_path(client_messages_path(clientone))
     end
+
+    step 'when user clicks on scheduled message notice' do
+      click_on '1 message scheduled'
+      expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
+      expect(page).to have_css '#scheduled-list', text: new_message_body
+    end
+
+    step 'when the user clicks the button to dismiss the modal' do
+      click_on '×'
+      expect(page).to have_current_path(client_messages_path(clientone))
+    end
   end
 end
