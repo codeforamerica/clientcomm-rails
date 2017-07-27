@@ -4,7 +4,6 @@
   </div>
   <p class="message--label <%= message.twilio_status %>">
     <% if message.twilio_status == 'undelivered' %>
-      <i class="icon-warning"></i>
       <%= t('message.status.undelivered') %>
     <% else %>
       <%= message.twilio_status %> <%= message.created_at.to_s(:message_timestamp) %>
