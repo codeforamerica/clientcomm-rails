@@ -34,7 +34,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <a href="<%= client_messages_path(@client) %>" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
-        <h4 class="modal-title" id="myModalLabel">Edit your message</h4>
+        <h2 class="form-card__title" id="myModalLabel">Edit your message</h2>
       </div>
       <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
         <input name="client_id" type="hidden" value="<%= @client.id %>">

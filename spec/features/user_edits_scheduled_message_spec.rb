@@ -21,13 +21,13 @@ feature 'editing scheduled messages', active_job: true do
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_css '#scheduled-list-modal .modal-title', text: 'Manage scheduled messages'
+      expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
       expect(page).to have_css '#scheduled-list', text: message_body
     end
 
     step 'when user clicks on edit message' do
       click_on 'Edit'
-      expect(page).to have_css '#edit-message-modal .modal-title', text: 'Edit your message'
+      expect(page).to have_css '#edit-message-modal', text: 'Edit your message'
       expect(page).to have_css '#scheduled_message_body', text: message_body # expect body text field to contain message.body
       expect(page).to have_select('scheduled_message_send_at_1i', selected: future_date.strftime("%Y"))
       expect(page).to have_select('scheduled_message_send_at_2i', selected: Date::MONTHNAMES[future_date.month])
@@ -55,7 +55,7 @@ feature 'editing scheduled messages', active_job: true do
 
     step 'then when user edits the message again' do
       click_on '1 message scheduled'
-      expect(page).to have_css '#scheduled-list-modal .modal-title', text: 'Manage scheduled messages'
+      expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
       expect(page).to have_css '#scheduled-list', text: new_message_body
 
       click_on 'Edit'
