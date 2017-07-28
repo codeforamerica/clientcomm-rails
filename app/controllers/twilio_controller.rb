@@ -17,6 +17,8 @@ class TwilioController < ApplicationController
       properties: { client_id: client.id }
     )
 
+    NotificationMailer.message_notification(client.user, new_message).deliver_later
+
     analytics_track(
       label: 'message_receive',
       data: new_message.analytics_tracker_data

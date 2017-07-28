@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe 'Twilio controller', type: :request do
+  include ActiveJob::TestHelper
+
   let(:user) { create :user }
   let(:client) { create(:client, user: user) }
 
@@ -18,7 +20,9 @@ describe 'Twilio controller', type: :request do
     }
 
     before do
-      twilio_post_sms message_params
+      perform_enqueued_jobs do
+        twilio_post_sms message_params
+      end
     end
 
     it 'saves an incoming sms message' do
@@ -37,6 +41,11 @@ describe 'Twilio controller', type: :request do
               }
           }
       )
+    end
+
+    it 'sends an email notification to user' do
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.body.to_s).to include 'sent you a text message'
     end
 
     context 'sms message contains an attachment' do
