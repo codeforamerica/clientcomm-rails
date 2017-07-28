@@ -29,7 +29,7 @@
         <input name="client_id" type="hidden" value="<%= @client.id %>">
         <div class="modal-body">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
-          <fieldset class="form-group">
+          <fieldset>
             <label for="scheduled_message_send_at_date">
               <p class="form-question">Date</p>
             </label>

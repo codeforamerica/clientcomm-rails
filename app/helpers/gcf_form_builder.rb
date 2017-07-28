@@ -12,7 +12,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
   def gcf_textarea(method, label_text, notes: [], options: {}, classes: [], placeholder: nil, autofocus: nil)
     classes = classes.append(%w[textarea])
     <<-HTML.html_safe
-      <fieldset class="form-group#{error_state(object, method)}">
+      <fieldset class="#{error_state(object, method)}">
         #{label_and_field(method, label_text, text_area(method, { autofocus: autofocus, class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false', placeholder: placeholder }.merge(options)), notes: notes)}
         #{errors_for(object, method)}
       </fieldset>
