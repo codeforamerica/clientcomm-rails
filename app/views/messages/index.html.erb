@@ -33,7 +33,7 @@
             <label for="scheduled_message_send_at_date">
               <p class="form-question">Date</p>
             </label>
-            <input type="text" name="message[send_at][date]" id="scheduled_message_send_at_date" />
+            <input type="text" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= Time.now.strftime('%m/%d/%Y') %>"/>
             <label for="scheduled_message_send_at_time">
               <p class="form-question">Time</p>
             </label>
@@ -47,7 +47,7 @@
                   end
               %>
               <% times.each_with_index do |time, i| %>
-                <option <%= "selected" if i == 19 %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                <option <%= "selected" if i == 18 %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
               <% end %>
             </select>
           </fieldset>
