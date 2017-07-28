@@ -45,7 +45,7 @@ describe 'Twilio controller', type: :request do
 
     it 'sends an email notification to user' do
       mail = ActionMailer::Base.deliveries.last
-      expect(mail.body.to_s).to include 'sent you a text message'
+      expect(mail.html_part.to_s).to include 'sent you a text message'
     end
 
     context 'sms message contains an attachment' do

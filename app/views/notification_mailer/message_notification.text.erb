@@ -1,0 +1,7 @@
+ClientComm
+
+<%= "#{@client.first_name} #{@client.last_name}" %> sent you a text message on <%= @message.created_at.strftime("%-m/%d") %>, at <%= @message.created_at.strftime("%-I:%M%p") %>:
+
+"<%= @message.body %>"
+
+Respond on ClientComm: <%= client_messages_url(@message) %>
