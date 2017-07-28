@@ -19,19 +19,23 @@ describe 'Twilio controller', type: :request do
       )
     }
 
-    before do
+    subject do
       perform_enqueued_jobs do
         twilio_post_sms message_params
       end
     end
 
     it 'saves an incoming sms message' do
+      subject
+
       msg = user.messages.last
       expect(msg).not_to eq nil
       expect(msg.body).to eq message_text
     end
 
     it 'tracks an incoming sms message' do
+      subject
+
       expect_analytics_events(
           {
               'message_receive' => {
@@ -44,8 +48,20 @@ describe 'Twilio controller', type: :request do
     end
 
     it 'sends an email notification to user' do
+      subject
+
       mail = ActionMailer::Base.deliveries.last
       expect(mail.html_part.to_s).to include 'sent you a text message'
+    end
+
+    context 'a user has opted out of emails' do
+      let(:user) { create :user, email_subscribe: false }
+
+      it 'should not send an email' do
+        expect(NotificationMailer).to_not receive(:message_notification)
+
+        subject
+      end
     end
 
     context 'sms message contains an attachment' do
@@ -58,6 +74,8 @@ describe 'Twilio controller', type: :request do
       }
 
       it 'tracks an analytics event for the attachment' do
+        subject
+
         expect_analytics_events(
             {
                 'message_receive' => {
