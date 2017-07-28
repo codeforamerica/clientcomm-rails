@@ -30,26 +30,39 @@
         <div class="modal-body">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
           <fieldset>
-            <label for="scheduled_message_send_at_date">
-              <p class="form-question">Date</p>
-            </label>
-            <input type="text" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= Time.now.strftime('%m/%d/%Y') %>"/>
-            <label for="scheduled_message_send_at_time">
-              <p class="form-question">Time</p>
-            </label>
-            <select name="message[send_at][time]" id="scheduled_message_send_at_time">
-              <%
-                  start = Time.now.change(min: 0, hour: 0)
-                  times = []
-                  48.times do
-                    times << start
-                    start += 30.minutes
-                  end
-              %>
-              <% times.each_with_index do |time, i| %>
-                <option <%= "selected" if i == 18 %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
-              <% end %>
-            </select>
+            <div class="grid">
+              <div class="grid__item width-one-half">
+                <label for="scheduled_message_send_at_date">
+                  <p class="form-question">Date</p>
+                </label>
+                <div class="text-input-group">
+                  <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= Time.now.strftime('%m/%d/%Y') %>"/>
+                </div>
+              </div>
+
+              <div class="grid__item width-one-half">
+                <label for="scheduled_message_send_at_time">
+                  <p class="form-question">Time</p>
+                </label>
+                <div class="text-input-group">
+                  <div class="select">
+                    <select class="select__element" name="message[send_at][time]" id="scheduled_message_send_at_time">
+                      <%
+                          start = Time.now.change(min: 0, hour: 0)
+                          times = []
+                          48.times do
+                            times << start
+                            start += 30.minutes
+                          end
+                      %>
+                      <% times.each_with_index do |time, i| %>
+                        <option <%= "selected" if i == 18 %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </fieldset>
         </div>
         <div class="modal-footer">

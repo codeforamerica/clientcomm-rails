@@ -21,19 +21,19 @@ $line-height-display: 1.3em;
 
 
 // Colors
-$color-background:    #FFFFFF;
-$color-header:        #FAFAF9;
-$color-teal:          #019C86;
-$color-magenta:       #A6005E;
-$color-tan:           #DEDED1;
-$color-darkest-grey:  #30302F;
-$color-dark-grey:     #666666;
-$color-grey:          #AAAAAA;
-$color-light-grey:    #EAEAE9;
-$color-green:         #009933;
-$color-yellow:        #FFC61E;
-$color-orange:        #D48C00;
-$color-red:           #D40000;
+$color-background:    #fff;
+$color-header:        #fafaf9;
+$color-teal:          #019c86;
+$color-magenta:       #a6005e;
+$color-tan:           #deded1;
+$color-darkest-grey:  #30302f;
+$color-dark-grey:     #666;
+$color-grey:          #aaa;
+$color-light-grey:    #eaeae9;
+$color-green:         #093;
+$color-yellow:        #ffc61e;
+$color-orange:        #d48c00;
+$color-red:           #d40000;
 
 
 // Breakpoints
@@ -45,7 +45,7 @@ $site-max-up:         961px;
 $site-margins:        40px;
 $site-max-width:      960px;
 $border-radius:       2px;
-$footer-height:       0px;
+$footer-height:       0;
 
 
 // Padding Sizes
@@ -71,12 +71,12 @@ $width-form-mid:        16em;
 $width-form-long:       20em;
 
 $width-form-casenumber: 8em;
-$width-form-phone:      8em;
+$width-form-date:       8em;
 $width-form-name:       12em;
-$width-form-zip:        5em;
-$width-form-ssn:        7em;
+$width-form-phone:      8em;
 $width-form-searchbar:  30em;
-
+$width-form-ssn:        7em;
+$width-form-zip:        5em;
 
 // Animations
 $animation-fast:      .1s ease-out;
