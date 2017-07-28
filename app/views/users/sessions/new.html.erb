@@ -18,6 +18,11 @@
             <%= f.label :password, "Password", class: 'form-question' %>
             <%= f.password_field :password, autocomplete: "off", class: 'text-input form-width--long' %>
           </div>
+          <div class="toolbar">
+            <div class="toolbar__right">
+              <%= link_to "Reset my password", new_user_password_path %>
+            </div>
+          </div>
           <div class="form-card__footer">
             <div class="toolbar">
               <div class="toolbar__left">
