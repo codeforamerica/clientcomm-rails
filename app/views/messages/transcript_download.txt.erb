@@ -1,0 +1,9 @@
+Viewing messages between client <%= "#{@client.first_name} #{@client.last_name}" %> and <%= current_user.full_name %>
+Retrieved at: <%= Time.now %>
+--------------------------
+<% @messages.each_with_index do |message, i| %>
+
+<%= i %>. <%= message.inbound ? "#{@client.first_name} #{@client.last_name}" : current_user.full_name %>: <%= message.body %>
+-- <%= message.inbound ? "received from cell (#{message.number_from})" : "sent to cell (#{message.number_to})" %>
+-- on <%= message.created_at.strftime("%b %-d %Y, %-l:%M:%S %P") %>
+<% end %>
