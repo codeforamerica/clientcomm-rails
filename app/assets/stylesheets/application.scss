@@ -4,6 +4,8 @@
 @import 'normalize';
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
+@import 'jquery-ui/theme';
+@import 'jquery-ui/datepicker';
 
 /* Atoms */
 @import 'atoms/variables';
@@ -69,5 +71,3 @@
 @import 'ie-hacks';
 @import 'shame';
 
-@import 'jquery-ui/theme';
-@import 'jquery-ui/datepicker';

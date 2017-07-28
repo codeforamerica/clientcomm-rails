@@ -17,6 +17,13 @@
     }
   }
 
+  .ui-datepicker-current-day {
+    .ui-state-active {
+      background: $color-magenta;
+      color: #fff;
+    }
+  }
+
   .message--container {
     justify-content: space-between;
     margin-bottom: 1em;
