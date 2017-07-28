@@ -54,8 +54,10 @@ module RequestHelper
 
     if message.send_at
       post_params[:message] = post_params[:message].merge({
-        'send_at_date': message.send_at.strftime("%m/%d/%Y"),
-        'send_at_time': message.send_at.strftime("%-l:%M%P")
+        'send_at': {
+          'date': message.send_at.strftime("%m/%d/%Y"),
+          'time': message.send_at.strftime("%-l:%M%P")
+        }
       })
     end
 
@@ -72,8 +74,10 @@ module RequestHelper
 
     if message.send_at
       post_params[:message] = post_params[:message].merge({
-        'send_at_date': message.send_at.strftime("%m/%d/%Y"),
-        'send_at_time': message.send_at.strftime("%-l:%M%P")
+        'send_at': {
+          'date': message.send_at.strftime("%m/%d/%Y"),
+          'time': message.send_at.strftime("%-l:%M%P")
+        }
       })
     end
 

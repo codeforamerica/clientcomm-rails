@@ -29,15 +29,16 @@ class MessagesController < ApplicationController
   def create
     client = current_user.clients.find params[:client_id]
 
-    message = Message.new(message_params.merge({
+    message = Message.new(
+      body: message_params[:body],
       user: current_user,
       client: client,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
       number_to: client.phone_number,
       read: true
-    }))
+    )
 
-    message.send_at = Time.zone.strptime("#{send_at_params[:send_at_date]} #{send_at_params[:send_at_time]}", '%m/%d/%Y %H:%M%P') unless send_at_params.empty?
+    message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P') unless message_params[:send_at].nil?
 
     message.save!
 
@@ -85,9 +86,9 @@ class MessagesController < ApplicationController
 
   def update
     @message = Message.find(params[:id])
-    @message.update(message_params)
+    @message.update(body: message_params[:body])
 
-    @message.send_at = Time.zone.strptime("#{send_at_params[:send_at_date]} #{send_at_params[:send_at_time]}", '%m/%d/%Y %H:%M%P') unless send_at_params.empty?
+    @message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P') unless message_params[:send_at].nil?
 
     @message.save!
 
@@ -97,13 +98,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message)
-      .permit(:body, :read)
-  end
-
-  def send_at_params
-    params.require(:message)
-      .permit(:send_at_date, :send_at_time)
+    params.require(:message).permit(:body, send_at: [:date, :time])
   end
 
   private

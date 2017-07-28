@@ -33,11 +33,11 @@
             <label for="scheduled_message_send_at_date">
               <p class="form-question">Date</p>
             </label>
-            <input type="text" name="message[send_at_date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>" />
+            <input type="text" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>" />
             <label for="scheduled_message_send_at_time">
               <p class="form-question">Time</p>
             </label>
-            <select name="message[send_at_time]" id="scheduled_message_send_at_time">
+            <select name="message[send_at][time]" id="scheduled_message_send_at_time">
               <%
                   start = Time.now.change(min: 0, hour: 0)
                   times = []
