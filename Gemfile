@@ -67,6 +67,7 @@ group :development, :test do
   gem 'webmock'
   gem 'jasmine'
   gem 'awesome_print'
+  gem 'faker'
 end
 
 group :development do
