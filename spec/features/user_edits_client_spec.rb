@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "logged-out user visits edit client page" do
+feature "logged-out user visits manage client page" do
   scenario "and is redirected to the login form" do
     myuser = create :user
     clientone = create :client, user: myuser
@@ -43,7 +43,7 @@ feature "user edits client" do
     expect(page).to have_current_path(edit_client_path(clientone))
     fill_in 'Last name', with: ''
     click_on 'Save changes'
-    expect(page).to have_content 'Edit client'
+    expect(page).to have_content 'Manage client'
     expect(page).to have_content "Last name can't be blank"
   end
 end
