@@ -54,5 +54,49 @@ describe 'Clients requests', type: :request do
         end
       end
     end
+
+    describe 'get#index' do
+      before do
+        create_list :client, 5, user: user
+      end
+
+      subject { get clients_path }
+
+      it 'returns a list of clients' do
+        subject
+
+        user.clients.each do |client|
+          expect(response.body).to include("#{client.first_name} #{client.last_name}")
+        end
+      end
+
+      context 'there are archived clients' do
+        let(:archived_client) { user.clients.first }
+
+        before do
+          archived_client.archived = true
+          archived_client.save
+        end
+
+        it 'does not return archived clients' do
+          subject
+
+          expect(response.body).to_not include("#{archived_client.first_name} #{archived_client.last_name}")
+        end
+      end
+    end
+
+    describe 'put#archive' do
+      let(:client) { create_client build(:client) }
+      subject { put client_archive_path(client) }
+
+      it 'removes the client from the clients list' do
+        subject
+
+        expect(response.body).to_not include("#{client.first_name} #{client.last_name}")
+
+        expect(client.reload.archived).to eq(true)
+      end
+    end
   end
 end

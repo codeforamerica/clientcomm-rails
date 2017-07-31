@@ -62,6 +62,14 @@ class ClientsController < ApplicationController
     end
   end
 
+  def archive
+    @client = current_user.clients.find(params[:client_id])
+    @client.archived = true
+    @client.save
+
+    redirect_to clients_path
+  end
+
   private
 
   def client_params
@@ -72,7 +80,7 @@ class ClientsController < ApplicationController
   def sorted_clients
     # sort clients with unread messages to the top,
     # no matter when they were last contacted
-    current_user.clients.all.sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
+    current_user.clients.where(archived: false).sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
   end
 
 end

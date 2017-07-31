@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :messages, only: [:index]
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
+    put 'archive', to: 'clients#archive'
   end
 
   resources :messages, only: [:create, :edit, :update] do

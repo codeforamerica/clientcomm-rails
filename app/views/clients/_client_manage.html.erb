@@ -3,8 +3,17 @@
     <h1 class="form-card__title">Manage</h1>
   </div>
   <div class="form-card__content">
+    <h4>Download Transcript</h4>
+    <p>You can download a text file with a timestamped Transcript of your message history with John Smith</p>
     <a href="<%= client_messages_download_path(@client) %>">
       <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
     </a>
+    <h4>Delete client</h4>
+    <p>
+      When a client leaves your caseload you can delete them from your contact list.
+      If they send you a message later they will automatically return to your contact list.
+    </p>
+    <p class="text--danger"><i class="icon-report"></i> Once you delete a client you won't be able to undo it</p>
+    <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), method: :put, class: :button, data: { confirm: 'Are you sure you want to delete this client?' } %>
   </div>
 </div>
