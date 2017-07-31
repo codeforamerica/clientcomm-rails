@@ -4,4 +4,6 @@ ClientComm
 
 "<%= @message.body %>"
 
+<%= '[Image attached, view on ClientComm]' if @message.attachments.present? %>
+
 Respond on ClientComm: <%= client_messages_url(@client) %>
