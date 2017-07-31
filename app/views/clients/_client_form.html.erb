@@ -5,7 +5,7 @@
   <div class="form-card__content">
 
     <%= form_for @client, builder: GcfFormBuilder do |f| %>
-        <%= f.gcf_input_field :first_name, "First name", autofocus: true, classes: ['form-width--name'] %>
+        <%= f.gcf_input_field :first_name, "First name", classes: ['form-width--name'] %>
         <%= f.gcf_input_field :last_name, "Last name", classes: ['form-width--name'] %>
         <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'] %>
 
