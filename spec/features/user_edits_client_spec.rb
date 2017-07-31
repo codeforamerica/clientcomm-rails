@@ -18,7 +18,7 @@ feature "user edits client" do
     login_as myuser, :scope => :user
     visit root_path
     within "#client_#{clientone.id}" do
-      click_on 'Edit'
+      click_on 'Manage'
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     new_first_name = 'Vinicius'
@@ -38,12 +38,12 @@ feature "user edits client" do
     login_as myuser, :scope => :user
     visit root_path
     within("#client_#{clientone.id}") do
-      click_on 'Edit'
+      click_on 'Manage'
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     fill_in 'Last name', with: ''
     click_on 'Save changes'
-    expect(page).to have_content 'Manage client'
+    expect(page).to have_content 'Edit client'
     expect(page).to have_content "Last name can't be blank"
   end
 end
