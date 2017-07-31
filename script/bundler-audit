@@ -4,5 +4,9 @@
 # bundler-audit is a gem vulnerability scanner
 # https://github.com/rubysec/bundler-audit
 
+set -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 gem install --no-rdoc --no-ri bundler-audit
 bundle-audit check --update

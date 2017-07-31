@@ -3,5 +3,9 @@
 # Script for running Brakeman tests
 # Brakeman is a security scanner https://github.com/presidentbeef/brakeman.
 
+set -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 gem install --no-rdoc --no-ri brakeman
 brakeman --exit-on-warn .

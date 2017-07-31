@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+RAILS_ENV=test bundle exec rspec \
+  -r rspec_junit_formatter \
+  --format documentation \
+  --format RspecJunitFormatter \
+  --out results/rspec/junit.xml
+
+
+
