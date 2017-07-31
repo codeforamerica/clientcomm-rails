@@ -1,0 +1,81 @@
+version: 2
+
+jobs:
+  rspec:
+    docker:
+      - image: circleci/ruby:2.4-node-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: clientcomm
+          RAILS_ENV: test
+          TWILIO_PHONE_NUMBER: +12435551212
+          TWILIO_AUTH_TOKEN: TWILIOAUTHTOKENTWILIOAUTHTOKENTWIL
+          MIXPANEL_TOKEN: MIXPANELTOKENMIXPANELTOKENMIXPANEL
+          UNCLAIMED_EMAIL: unclaimed@example.com
+          SCHEDULED_MESSAGES: true
+      - image: circleci/postgres:9.4.12-alpine
+        environment:
+          POSTGRES_USER: clientcomm
+          POSTGRES_GB: clientcomm-test
+          POSTGRES_PASSWORD: ""
+    steps:
+      - checkout
+
+      # Restore bundler cache
+      - type: cache-restore
+        key: clientcomm-bundle-{{ checksum "Gemfile.lock" }}
+
+      - run: bundle install --path vendor/bundle
+
+      # Save bundler cache
+      - type: cache-save
+        key: clientcomm-bundle-{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
+
+      # Prepare db
+      - run: bundle exec rails db:create
+      - run: bundle exec rails db:migrate
+
+      #Run tests
+      - run:
+          name: rspec
+          command: 'script/test'
+
+      #Save test results
+      - store_test_results:
+          path: results/rspec
+
+      #Save artifacts
+      - store_artifacts:
+          path: tmp/capybara/artifacts
+
+      - run:
+          name: codeclimate
+          command: 'script/codeclimate'
+
+  brakeman:
+    docker:
+      - image: circleci/ruby:2.4
+    steps:
+      - checkout
+      - run:
+          name: brakeman
+          command: 'script/brakeman'
+
+  bundler-audit:
+    docker:
+      - image: circleci/ruby:2.4
+    steps:
+      - checkout
+      - run:
+          name: bundler-audit
+          command: 'script/bundler-audit'
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - rspec
+      - brakeman
+      - bundler-audit
