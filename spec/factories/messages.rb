@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :message do
     user { create :user }
     client { create :client, user: user }
-    body { Faker::Hipster.sentence(5) }
+    body { "i am a message #{SecureRandom.hex(17)}" }
     sequence(:number_from) { Faker::PhoneNumber.cell_phone }
     sequence(:number_to) { Faker::PhoneNumber.cell_phone }
     inbound {[true, false].sample}
