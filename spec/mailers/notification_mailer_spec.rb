@@ -2,21 +2,36 @@ require "rails_helper"
 
 describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
-    let(:user) { build(:user) }
-    let(:message) { create(:message, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0)) }
-    let(:mail) { NotificationMailer.message_notification(user, message) }
-    let(:client) { message.client }
-    it "renders the headers" do
-      expect(mail.subject).to eq("New text message from #{client.first_name} #{client.last_name} on ClientComm")
-      expect(mail.to).to eq([user.email])
+    let(:user) {build(:user)}
+    let(:client) {build(:client, id: 4)}
+    let(:message) {create(:message, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0))}
+    let(:mail) {NotificationMailer.message_notification(user, message)}
+
+    shared_examples_for 'notification email' do
+      it 'renders the headers' do
+        expect(mail.subject).to eq("New text message from #{client.first_name} #{client.last_name} on ClientComm")
+        expect(mail.to).to eq([user.email])
+      end
+
+      it 'renders the body' do
+        expect(subject).to include('sent you a text')
+        expect(subject).to include(message.created_at.strftime('7/11'))
+        expect(subject).to include(message.created_at.strftime('8:10PM'))
+        expect(subject).to include(message.body)
+        expect(subject).to include(client_messages_url(client))
+      end
     end
 
-    it "renders the body" do
-      expect(mail.body.encoded).to include('sent you a text')
-      expect(mail.body.encoded).to include(message.created_at.strftime('7/11'))
-      expect(mail.body.encoded).to include(message.created_at.strftime('8:10PM'))
-      expect(mail.body.encoded).to include(message.body)
-      expect(mail.body.encoded).to include(client_messages_url(message))
+    context 'html part' do
+      subject {mail.body.encoded}
+
+      it_behaves_like 'notification email'
+    end
+
+    context 'text part' do
+      subject {mail.text_part.body}
+
+      it_behaves_like 'notification email'
     end
   end
 end
