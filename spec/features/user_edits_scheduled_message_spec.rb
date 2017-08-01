@@ -26,7 +26,8 @@ feature 'editing scheduled messages', active_job: true do
     end
 
     step 'when user clicks on edit message' do
-      click_on 'Edit'
+      find(:css, '.icon-mode_edit').click
+      # click_on '.icon-mode_edit'
       expect_edit_modal(future_date, message_body)
     end
 
@@ -48,24 +49,25 @@ feature 'editing scheduled messages', active_job: true do
       expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
       expect(page).to have_css '#scheduled-list', text: new_message_body
 
-      click_on 'Edit'
+      find(:css, '.icon-mode_edit').click
+      # click_on '.icon-mode_edit'
       expect_edit_modal(new_future_date, new_message_body)
     end
 
     step 'when the user clicks the button to dismiss the modal' do
       click_on '×'
-      expect(page).to have_no_css '#scheduled-list-modal'
+      expect(page).to_not have_content('Manage scheduled messages')
     end
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
-      expect(page).to have_css '#scheduled-list', text: new_message_body
+      expect(page).to have_content('Manage scheduled messages')
+      expect(page).to have_content(new_message_body)
     end
 
     step 'when the user clicks the button to dismiss the modal' do
       click_on '×'
-      expect(page).to have_no_css '#scheduled-list-modal'
+      expect(page).to_not have_content('Manage scheduled messages', wait: 30)
     end
   end
 
