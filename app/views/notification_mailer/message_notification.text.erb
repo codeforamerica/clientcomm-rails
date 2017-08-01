@@ -2,7 +2,9 @@ ClientComm
 
 <%= "#{@client.first_name} #{@client.last_name}" %> sent you a text message on <%= @message.created_at.strftime("%-m/%d") %>, at <%= @message.created_at.strftime("%-I:%M%p") %>:
 
+<% if @message.body.present? %>
 "<%= @message.body %>"
+<% end %>
 
 <%= '[Image attached, view on ClientComm]' if @message.attachments.present? %>
 
