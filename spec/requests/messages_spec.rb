@@ -63,11 +63,21 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'POST#create' do
+      let(:post_params) {
+        {
+            message: {body: body, send_at: message_send_at},
+            client_id: client.id
+        }
+      }
+
       context 'no date' do
+        let(:message_send_at) { nil }
+
         it 'creates a new message on submit' do
-          message = create_message(
-              build(:message, user: user, client: client, body: body)
-          )
+          post messages_path, params: post_params
+
+          message = Message.find_by(body: body)
+
           expect(ScheduledMessageJob).to have_been_enqueued
 
           expect(client.messages.last.id).to eq message.id
@@ -77,7 +87,7 @@ describe 'Messages requests', type: :request, active_job: true do
                   'message_send' => {
                       'client_id' => client.id,
                       'message_id' => message.id,
-                      'message_length' => message.body.length
+                      'message_length' => body.length
                   }
               }
           )
@@ -85,17 +95,14 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'invalid date' do
-        it 'does not create a new message' do
-          post_params = {
-              message: {
-                  body: body,
-                  send_at: {
-                      date: 'foo',
-                      time: 'bar'
-                  }
-              },
-              client_id: client.id,
+        let(:message_send_at) {
+          {
+              date: 'foo',
+              time: 'bar'
           }
+        }
+
+        it 'does not create a new message' do
           post messages_path, params: post_params
 
           expect(ScheduledMessageJob).not_to have_been_enqueued
@@ -104,11 +111,17 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'valid date' do
         let(:time_to_send) {Time.now.tomorrow.change(sec: 0)}
+        let(:message_send_at) {
+          {
+              date: time_to_send.strftime("%m/%d/%Y"),
+              time: time_to_send.strftime("%-l:%M%P")
+          }
+        }
 
         it 'creates a Scheduled Message' do
-          message = create_message(
-              build(:message, user: user, client: client, body: body, send_at: time_to_send)
-          )
+          post messages_path, params: post_params
+
+          message = Message.find_by(body: body)
           expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
           expect(flash[:notice]).to eq('Your message has been scheduled')
 
@@ -130,9 +143,20 @@ describe 'Messages requests', type: :request, active_job: true do
       let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
 
       it 'updates the message model' do
-        message = create_message(
-          build(:message, user: user, client: client, body: body, send_at: time_to_send)
-        )
+        message = build(:message, user: user, client: client, body: body, send_at: time_to_send)
+        post_params = {
+            message: {
+                body: body,
+                send_at: {
+                    'date': message.send_at.strftime("%m/%d/%Y"),
+                    'time': message.send_at.strftime("%-l:%M%P")
+                }
+            },
+            client_id: client.id
+        }
+
+        post messages_path, params: post_params
+        message = Message.find_by(body: message.body)
         expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
 
         new_time_to_send = Time.now.change(sec: 0)
@@ -168,25 +192,4 @@ describe 'Messages requests', type: :request, active_job: true do
     end
   end
 
-  def create_message(message)
-    post_params = {
-        message: {body: message.body},
-        client_id: message.client.id
-    }
-
-    if message.send_at
-      post_params[:message] = post_params[:message].merge(
-          {
-              'send_at': {
-                  'date': message.send_at.strftime("%m/%d/%Y"),
-                  'time': message.send_at.strftime("%-l:%M%P")
-              }
-          })
-    end
-
-    post messages_path, params: post_params
-    # return the saved message record
-    # NOTE: send unique body text to ensure the correct message is returned
-    Message.find_by(body: message.body)
-  end
 end
