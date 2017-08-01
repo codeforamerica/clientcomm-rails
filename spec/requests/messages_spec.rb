@@ -63,42 +63,65 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'POST#create' do
-      it 'creates a new message on submit' do
-        message = create_message(
-          build(:message, user: user, client: client, body: body)
-        )
-        expect(ScheduledMessageJob).to have_been_enqueued
+      context 'no date' do
+        it 'creates a new message on submit' do
+          message = create_message(
+              build(:message, user: user, client: client, body: body)
+          )
+          expect(ScheduledMessageJob).to have_been_enqueued
 
-        expect(client.messages.last.id).to eq message.id
-        expect(client.messages.last.read).to eq true
-        expect_most_recent_analytics_event({
-          'message_send' => {
-            'client_id' => client.id,
-            'message_id' => message.id,
-            'message_length' => message.body.length
-          }
-        })
+          expect(client.messages.last.id).to eq message.id
+          expect(client.messages.last.read).to eq true
+          expect_most_recent_analytics_event(
+              {
+                  'message_send' => {
+                      'client_id' => client.id,
+                      'message_id' => message.id,
+                      'message_length' => message.body.length
+                  }
+              }
+          )
+        end
       end
 
-      context 'user sends a scheduled message' do
-        let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
+      context 'invalid date' do
+        it 'does not create a new message' do
+          post_params = {
+              message: {
+                  body: body,
+                  send_at: {
+                      date: 'foo',
+                      time: 'bar'
+                  }
+              },
+              client_id: client.id,
+          }
+          post messages_path, params: post_params
+
+          expect(ScheduledMessageJob).not_to have_been_enqueued
+        end
+      end
+
+      context 'valid date' do
+        let(:time_to_send) {Time.now.tomorrow.change(sec: 0)}
 
         it 'creates a Scheduled Message' do
           message = create_message(
-            build(:message, user: user, client: client, body: body, send_at: time_to_send)
+              build(:message, user: user, client: client, body: body, send_at: time_to_send)
           )
           expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
           expect(flash[:notice]).to eq('Your message has been scheduled')
 
           expect(client.messages.last.id).to eq message.id
-          expect_most_recent_analytics_event({
-            'message_schedule' => {
-              'client_id' => client.id,
-              'message_id' => message.id,
-              'message_length' => message.body.length,
-              'scheduled_for' => time_to_send
-            }
-          })
+          expect_most_recent_analytics_event(
+              {
+                  'message_schedule' => {
+                      'client_id' => client.id,
+                      'message_id' => message.id,
+                      'message_length' => message.body.length,
+                      'scheduled_for' => time_to_send
+                  }
+              })
         end
       end
     end
@@ -143,5 +166,27 @@ describe 'Messages requests', type: :request, active_job: true do
         end
       end
     end
+  end
+
+  def create_message(message)
+    post_params = {
+        message: {body: message.body},
+        client_id: message.client.id
+    }
+
+    if message.send_at
+      post_params[:message] = post_params[:message].merge(
+          {
+              'send_at': {
+                  'date': message.send_at.strftime("%m/%d/%Y"),
+                  'time': message.send_at.strftime("%-l:%M%P")
+              }
+          })
+    end
+
+    post messages_path, params: post_params
+    # return the saved message record
+    # NOTE: send unique body text to ensure the correct message is returned
+    Message.find_by(body: message.body)
   end
 end

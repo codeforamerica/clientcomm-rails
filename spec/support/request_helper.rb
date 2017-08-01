@@ -46,27 +46,6 @@ module RequestHelper
     Client.find(client_id)
   end
 
-  def create_message(message)
-    post_params = {
-      message: { body: message.body },
-      client_id: message.client.id
-    }
-
-    if message.send_at
-      post_params[:message] = post_params[:message].merge({
-        'send_at': {
-          'date': message.send_at.strftime("%m/%d/%Y"),
-          'time': message.send_at.strftime("%-l:%M%P")
-        }
-      })
-    end
-
-    post messages_path, params: post_params
-    # return the saved message record
-    # NOTE: send unique body text to ensure the correct message is returned
-    Message.find_by(body: message.body)
-  end
-
   def update_message(message)
     post_params = {
       message: { body: message.body }

@@ -46,6 +46,10 @@ class MessagesController < ApplicationController
   end
 
   def create
+    if message_params[:send_at].present?
+      return unless is_valid(message_params[:send_at])
+    end
+
     client = current_user.clients.find params[:client_id]
 
     message = Message.new(
@@ -132,5 +136,13 @@ class MessagesController < ApplicationController
 
       flash[:notice] = 'Your message has been scheduled'
     end
+  end
+
+  def is_valid(send_at)
+    Time.zone.strptime("#{send_at[:date]} #{send_at[:time]}", '%m/%d/%Y %H:%M%P')
+
+    true
+  rescue ArgumentError
+    false
   end
 end
