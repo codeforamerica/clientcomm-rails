@@ -20,7 +20,7 @@
             <tr id="<%= dom_id(message) %>">
               <td><%= link_to message.body, edit_message_path(message) %></td>
               <td><%= link_to message.send_at, edit_message_path(message) %></td>
-              <td><%= link_to 'Edit', edit_message_path(message) %></td>
+              <td><a href="<%= edit_message_path(message) %>"><i class="icon-mode_edit"></i></a></td>
             </tr>
           <% end %>
           </tbody>
