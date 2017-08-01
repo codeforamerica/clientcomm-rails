@@ -13,6 +13,7 @@
 !/log/.keep
 !/tmp/.keep
 /coverage/*
+/results/*
 
 # JetBrains RubyMine
 .idea/*
