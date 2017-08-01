@@ -1,6 +1,8 @@
 require "rails_helper"
+include ActionView::Helpers::TextHelper
+
 feature 'editing scheduled messages', active_job: true do
-  let(:message_body) {'You have an appointment tomorrow at 10am'}
+  let(:message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.'}
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
@@ -22,7 +24,7 @@ feature 'editing scheduled messages', active_job: true do
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
       expect(page).to have_css '#scheduled-list-modal', text: 'Manage scheduled messages'
-      expect(page).to have_css '#scheduled-list', text: message_body
+      expect(page).to have_css '#scheduled-list', text: truncate(message_body, length: 65)
     end
 
     step 'when user clicks on edit message' do
