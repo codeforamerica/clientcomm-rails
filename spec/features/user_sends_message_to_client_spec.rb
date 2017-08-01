@@ -70,7 +70,7 @@ feature 'sending messages', active_job: true do
 
     step 'when user schedules a message' do
       click_on 'Send later'
-      expect(page).to have_content('Send message later')
+      expect(page).to have_content('Schedule message')
       fill_in 'Your message text', with: message_body
 
       future_date = Time.now + 7.days
@@ -82,7 +82,7 @@ feature 'sending messages', active_job: true do
         find('#schedule-message').trigger('click')
       end
 
-      expect(page).to_not have_content('Send message later')
+      expect(page).to_not have_content('Schedule message')
     end
 
     step 'then user sees the pending message displayed' do

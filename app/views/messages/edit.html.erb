@@ -45,18 +45,14 @@
           <fieldset>
             <div class="grid">
               <div class="grid__item width-one-half">
-                <label for="scheduled_message_send_at_date">
-                  <p class="form-question">Date</p>
-                </label>
+                <label for="scheduled_message_send_at_date" class="form-question">Date</label>
                 <div class="text-input-group">
                   <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>"/>
                 </div>
               </div>
 
               <div class="grid__item width-one-half">
-                <label for="scheduled_message_send_at_time">
-                  <p class="form-question">Time</p>
-                </label>
+                <label for="scheduled_message_send_at_time" class="form-question">Time</label>
                 <div class="text-input-group">
                   <div class="select">
                     <select class="select__element" name="message[send_at][time]" id="scheduled_message_send_at_time">
