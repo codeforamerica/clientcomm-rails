@@ -1,4 +1,6 @@
 class ScheduledMessagesController < ApplicationController
+  skip_after_action :intercom_rails_auto_include
+
   def index
     @client = current_user.clients.find params[:client_id]
 
