@@ -5,7 +5,15 @@ class ScheduledMessageJob < ApplicationJob
   queue_as :default
 
   def perform(message:, send_at:, callback_url:)
+    return if message.sent
     return unless message.send_at.to_i == send_at
+
+    # Locking to prevent race conditions between jobs
+    begin
+      message.update(sent: true)
+    rescue ActiveRecord::StaleObjectError
+      return
+    end
 
     SMSService.instance.send_message(
         message: message,

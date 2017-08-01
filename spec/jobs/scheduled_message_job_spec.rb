@@ -58,5 +58,19 @@ describe ScheduledMessageJob, active_job: true, type: :job do
         perform_enqueued_jobs { scheduled_job }
       end
     end
+
+    context 'When already sent' do
+      let(:message) {create :message, send_at: send_at_time, sent: true}
+
+      it 'ignores the message and does not send' do
+        expect(SMSService.instance).to_not receive(:send_message)
+        expect_any_instance_of(ScheduledMessageJob).to_not receive(:scheduled_messages)
+
+        expect(MessagesController).to_not receive(:render)
+
+        expect(ActionCable.server).to_not receive(:broadcast)
+        perform_enqueued_jobs { scheduled_job }
+      end
+    end
   end
 end
