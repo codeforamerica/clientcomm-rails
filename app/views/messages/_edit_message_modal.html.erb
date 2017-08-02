@@ -1,0 +1,64 @@
+<div class="modal fade" id="edit-message-modal" data-show="<%= autofocus %>">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="grid">
+          <div class="grid__item width-one-fourth">
+            <%= link_to back_link do %>
+                <button class="button"><i class="icon-arrow_back"></i> Back</button>
+            <% end %>
+          </div>
+          <div class="grid__item width-one-half">
+            <h2 class="form-card__title text--centered" id="myModalLabel"><%= modal_title %></h2>
+          </div>
+          <div class="grid__item width-one-fourth">
+            <a href="<%= client_messages_path(@client) %>" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+          </div>
+        </div>
+      </div>
+      <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
+          <input name="client_id" type="hidden" value="<%= @client.id %>">
+          <div class="modal-body">
+            <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
+
+
+            <fieldset>
+              <div class="grid">
+                <div class="grid__item width-one-half">
+                  <label for="scheduled_message_send_at_date" class="form-question">Date</label>
+                  <div class="text-input-group">
+                    <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>"/>
+                  </div>
+                </div>
+
+                <div class="grid__item width-one-half">
+                  <label for="scheduled_message_send_at_time" class="form-question">Time</label>
+                  <div class="text-input-group">
+                    <div class="select">
+                      <select class="select__element" name="message[send_at][time]" id="scheduled_message_send_at_time">
+                        <%
+                          start = Time.now.change(min: 0, hour: 0)
+                          times = []
+                          48.times do
+                            times << start
+                            start += 30.minutes
+                          end
+                        %>
+                        <% times.each_with_index do |time, i| %>
+                            <option <%= "selected" if time.strftime('%H:%M') == @message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button id="schedule-message" type="submit" class="button button--primary"><%= submit_text %></button>
+            <button type="button" class="button" data-dismiss="modal">Cancel</button>
+          </div>
+      <% end %>
+    </div>
+  </div>
+</div>

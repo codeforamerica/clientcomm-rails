@@ -16,4 +16,6 @@
   </div>
 </section>
 
-<%= render "send_message_form", autofocus: true %>
+<%= render "send_message_form", autofocus: send_autofocus %>
+
+<%= render 'edit_message_modal',autofocus: edit_autofocus, back_link: back_link, modal_title: modal_title, submit_text: submit_text %>
