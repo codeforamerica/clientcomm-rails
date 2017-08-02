@@ -74,6 +74,17 @@ describe 'Messages requests', type: :request, active_job: true do
       end
     end
 
+    describe 'GET#edit' do
+      it 'renders the requested message template' do
+        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2012, 07, 11, 20, 30, 0)
+
+        get edit_message_path(message)
+
+        expect(response.body).to include(message.body)
+        expect(response.body).to include('07/11/2012')
+      end
+    end
+
     describe 'POST#create' do
       let(:post_params) {
         {
