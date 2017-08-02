@@ -1,4 +1,6 @@
 class MessagesController < ApplicationController
+  include ScheduledMessagesHelper
+
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
@@ -128,13 +130,6 @@ class MessagesController < ApplicationController
   end
 
   private
-
-  def scheduled_messages(client:)
-    current_user.messages
-        .where(client: client)
-        .where('send_at >= ?', Time.now)
-        .order('created_at ASC')
-  end
 
   def past_messages(client:)
     current_user.messages

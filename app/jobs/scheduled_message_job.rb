@@ -21,7 +21,7 @@ class ScheduledMessageJob < ApplicationJob
     )
 
     broadcast(
-      count: scheduled_messages(user: message.user).count,
+      count: scheduled_messages(client: message.client).count,
       client: message.client
     )
   end

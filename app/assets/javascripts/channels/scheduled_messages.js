@@ -4,7 +4,12 @@
 
 var ScheduledMessages = {
   updateLink: function(link_html, count) {
-    $('.scheduled-messages-bar').remove()
+      var linkElement = $('.scheduled-messages-bar');
+      if (count > 0) {
+          linkElement.html(link_html);
+      } else {
+          linkElement.remove()
+      }
   }
 };
 

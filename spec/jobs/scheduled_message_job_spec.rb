@@ -11,7 +11,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   it 'calls SMSService when performed' do
     expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
     expect_any_instance_of(ScheduledMessageJob).to receive(:scheduled_messages)
-      .with(user: message.user)
+      .with(client: message.client)
       .and_return(scheduled_messages)
 
     expect(MessagesController).to receive(:render)
@@ -32,7 +32,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     it 'calls SMSService when performed' do
       expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
       expect_any_instance_of(ScheduledMessageJob).to receive(:scheduled_messages)
-        .with(user: message.user)
+        .with(client: message.client)
         .and_return(scheduled_messages)
 
       expect(MessagesController).to receive(:render)
