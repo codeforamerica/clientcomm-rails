@@ -18,10 +18,7 @@ class MessagesController < ApplicationController
       .order('created_at ASC')
     @messages.update_all(read: true)
 
-    @messages_scheduled = current_user.messages
-      .where(client_id: params["client_id"])
-      .where('send_at >= ?', Time.now)
-      .order('created_at ASC')
+    @messages_scheduled = scheduled_messages
 
     @message = Message.new
   end
@@ -84,27 +81,30 @@ class MessagesController < ApplicationController
     end
   end
 
+  def new
+    @message = Message.new(send_at: DateTime.now.beginning_of_day + 9.hours)
+
+    @client = Client.find(params[:client_id])
+
+    @messages = past_messages(client: @client)
+    @messages_scheduled = scheduled_messages
+
+    render :edit, locals: {
+        back_link: client_messages_path(@client), modal_title: 'Send message later', submit_text: 'Schedule message'
+    }
+  end
+
   def edit
     @message = Message.find(params[:id])
 
     @client = @message.client
 
-    analytics_track(
-      label: 'client_messages_view',
-      data: @client.analytics_tracker_data
-    )
+    @messages = past_messages(client: @message.client)
+    @messages_scheduled = scheduled_messages
 
-    # the list of past messages
-    @messages = current_user.messages
-      .where(client: @message.client)
-      .where('send_at < ? OR send_at IS NULL', Time.now)
-      .order('created_at ASC')
-
-    # TODO use scheduled_messages_helper for this
-    @messages_scheduled = current_user.messages
-      .where(client_id: params["client_id"])
-      .where('send_at >= ?', Time.now)
-      .order('created_at ASC')
+    render :edit, locals: {
+        back_link: client_scheduled_messages_index_path(@client), modal_title: 'Edit your message', submit_text: 'Update'
+    }
   end
 
   def update
@@ -125,6 +125,20 @@ class MessagesController < ApplicationController
   end
 
   private
+
+  def scheduled_messages
+    current_user.messages
+        .where(client_id: params["client_id"])
+        .where('send_at >= ?', Time.now)
+        .order('created_at ASC')
+  end
+
+  def past_messages(client:)
+    current_user.messages
+        .where(client: client)
+        .where('send_at < ? OR send_at IS NULL', Time.now)
+        .order('created_at ASC')
+  end
 
   def create_message_jobs(message:)
     if message.send_at.nil?

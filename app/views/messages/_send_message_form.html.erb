@@ -19,7 +19,9 @@
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
 
           <% if feature_flags.scheduled_messages %>
-            <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#send-later-modal">Send later</button>
+              <%= link_to new_client_message_path(@client) do %>
+                  <button id="send_later" class="sendbar__button" data-toggle="modal" type="button">Send later</button>
+              <% end %>
           <% end %>
         </div>
       <% end %>

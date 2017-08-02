@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   # CLIENTS and MESSAGES
   root to: "clients#index"
   resources :clients, only: [:index, :new, :create, :edit, :update] do
-    resources :messages, only: [:index]
+    resources :messages, only: [:index, :new]
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
     put 'archive', to: 'clients#archive'

@@ -69,7 +69,7 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user schedules a message' do
-      click_on 'Send later'
+      click_button 'Send later'
       expect(page).to have_content('Schedule message')
       fill_in 'Your message text', with: message_body
 
