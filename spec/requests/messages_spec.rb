@@ -59,6 +59,18 @@ describe 'Messages requests', type: :request, active_job: true do
           get client_messages_path(client)
           expect(response.body).to include('2 messages scheduled')
         end
+
+        it 'deletes scheduled message' do
+          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+
+          delete message_path(message)
+
+          expect(response.code).to eq '302'
+          expect(response).to redirect_to client_messages_path(client)
+
+          get client_messages_path(client)
+          expect(response.body).to_not include('1 message scheduled')
+        end
       end
     end
 

@@ -19,7 +19,7 @@ Rails.application.routes.draw do
     put 'archive', to: 'clients#archive'
   end
 
-  resources :messages, only: [:create, :edit, :update] do
+  resources :messages, only: [:create, :edit, :update, :destroy] do
     scope module: :messages do
       resource :read, only: :create
     end

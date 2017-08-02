@@ -120,6 +120,14 @@ class MessagesController < ApplicationController
     redirect_to client_messages_path(@message.client)
   end
 
+  def destroy
+    @message = Message.find(params[:id])
+
+    @message.destroy
+
+    redirect_to client_messages_path(@message.client)
+  end
+
   def message_params
     params.require(:message).permit(:body, send_at: [:date, :time])
   end
