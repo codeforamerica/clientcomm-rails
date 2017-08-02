@@ -6,19 +6,10 @@ $(document).ready(function(){
 
   $('#send_later').click(function(){
     var sendLaterMessage = $('input#message_body.main-message-input').val();
-    $('textarea#message_body.send-later-input').val(sendLaterMessage);
+    $('textarea#scheduled_message_body.send-later-input').val(sendLaterMessage);
   });
-
-  $('#schedule-message').click(function(){
-    $('#send-later-modal').modal('hide');
-  })
 
   $('#edit-message-modal').modal();
 
   $('#scheduled_message_send_at_date').datepicker();
-
-  $('#edit-message-modal').on('hidden.bs.modal', function(e) {
-    e.preventDefault()
-    window.location = $('.close').attr('href')
-  });
 })

@@ -4,9 +4,13 @@
       <div class="modal-header">
         <div class="grid">
           <div class="grid__item width-one-fourth">
+          <% if autofocus %>
             <%= link_to back_link do %>
                 <button class="button"><i class="icon-arrow_back"></i> Back</button>
             <% end %>
+          <% else %>
+            <div>&nbsp;</div>
+          <% end %>
           </div>
           <div class="grid__item width-one-half">
             <h2 class="form-card__title text--centered" id="myModalLabel"><%= modal_title %></h2>

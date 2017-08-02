@@ -3,7 +3,6 @@ class MessagesController < ApplicationController
   skip_after_action :intercom_rails_auto_include
 
   def index
-    # the client being messaged
     @client = current_user.clients.find params[:client_id]
 
     analytics_track(
@@ -12,13 +11,10 @@ class MessagesController < ApplicationController
     )
 
     # the list of past messages
-    @messages = current_user.messages
-      .where(client_id: params["client_id"])
-      .where('send_at < ? OR send_at IS NULL', Time.now)
-      .order('created_at ASC')
+    @messages = past_messages(client: @client)
     @messages.update_all(read: true)
 
-    @messages_scheduled = scheduled_messages
+    @messages_scheduled = scheduled_messages(client: @client)
 
     @message = Message.new(send_at: DateTime.now.beginning_of_day + 9.hours)
 
@@ -89,30 +85,13 @@ class MessagesController < ApplicationController
     end
   end
 
-  def new
-    @message = Message.new(send_at: DateTime.now.beginning_of_day + 9.hours)
-
-    @client = Client.find(params[:client_id])
-
-    @messages = past_messages(client: @client)
-    @messages_scheduled = scheduled_messages
-
-    render :index, locals: {
-        back_link: client_messages_path(@client),
-        modal_title: 'Send message later',
-        submit_text: 'Schedule message',
-        send_autofocus: false,
-        edit_autofocus: true
-    }
-  end
-
   def edit
     @message = Message.find(params[:id])
 
     @client = @message.client
 
     @messages = past_messages(client: @message.client)
-    @messages_scheduled = scheduled_messages
+    @messages_scheduled = scheduled_messages(client: @client)
 
     render :index, locals: {
         back_link: client_scheduled_messages_index_path(@client),
@@ -150,9 +129,9 @@ class MessagesController < ApplicationController
 
   private
 
-  def scheduled_messages
+  def scheduled_messages(client:)
     current_user.messages
-        .where(client_id: params["client_id"])
+        .where(client: client)
         .where('send_at >= ?', Time.now)
         .order('created_at ASC')
   end
