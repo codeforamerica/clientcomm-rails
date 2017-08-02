@@ -26,8 +26,12 @@
 
   .message--container {
     justify-content: space-between;
-    margin-bottom: 1em;
+    margin-bottom: 6em;
     max-width: 750px;
+
+    @include media($mobile-up) {
+      margin-bottom: 3em;
+    }
 
     img {
       height: auto;
