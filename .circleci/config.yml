@@ -40,7 +40,7 @@ jobs:
       #Run tests
       - run:
           name: rspec
-          command: 'script/test'
+          command: 'bin/test'
 
       #Save test results
       - store_test_results:
@@ -52,7 +52,7 @@ jobs:
 
       - run:
           name: codeclimate
-          command: 'script/codeclimate'
+          command: 'bin/codeclimate'
 
   brakeman:
     docker:
@@ -61,7 +61,7 @@ jobs:
       - checkout
       - run:
           name: brakeman
-          command: 'script/brakeman'
+          command: 'bin/brakeman'
 
   bundler-audit:
     docker:
@@ -70,7 +70,7 @@ jobs:
       - checkout
       - run:
           name: bundler-audit
-          command: 'script/bundler-audit'
+          command: 'bin/bundler-audit'
 
 workflows:
   version: 2
