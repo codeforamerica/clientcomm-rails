@@ -85,6 +85,11 @@ class MessagesController < ApplicationController
     @messages = past_messages(client: @message.client)
     @messages_scheduled = scheduled_messages(client: @client)
 
+    analytics_track(
+      label: 'message_scheduled_edit_view',
+      data: @message.analytics_tracker_data
+    )
+
     render :index
   end
 
@@ -104,7 +109,12 @@ class MessagesController < ApplicationController
   def destroy
     @message = Message.find(params[:id])
 
-    @message.destroy
+    @message.destroy!
+
+    analytics_track(
+      label: 'message_scheduled_delete',
+      data: @message.analytics_tracker_data
+    )
 
     flash[:notice] = 'The scheduled message has been deleted'
     redirect_to client_messages_path(@message.client)

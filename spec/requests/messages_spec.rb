@@ -74,6 +74,8 @@ describe 'Messages requests', type: :request, active_job: true do
 
           get client_messages_path(client)
           expect(response.body).to_not include('1 message scheduled')
+
+          expect_analytics_events_happened('message_scheduled_delete')
         end
       end
     end
@@ -86,6 +88,8 @@ describe 'Messages requests', type: :request, active_job: true do
 
         expect(response.body).to include(message.body)
         expect(response.body).to include('07/11/2012')
+
+        expect_analytics_events_happened('message_scheduled_edit_view')
       end
     end
 
