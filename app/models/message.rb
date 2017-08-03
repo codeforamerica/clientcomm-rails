@@ -52,7 +52,8 @@ class Message < ApplicationRecord
       message_length: self.body.length,
       current_user_id: self.user.id,
       attachments_count: self.attachments.count,
-      scheduled_for: self.send_at
+      scheduled_for: self.send_at,
+      scheduled_message: !self.send_at.nil?
     }
   end
 

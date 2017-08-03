@@ -90,37 +90,64 @@ describe 'Twilio controller', type: :request do
   end
 
   context 'POST#incoming_sms_status' do
-    let!(:msgone) {
-      create :message, user: user, client: client, inbound: true, twilio_status: 'queued'
-    }
+    context 'receives a notice about a non-scheduled message' do
+      let!(:msgone) {
+        create :message, user: user, client: client, inbound: false, twilio_status: 'queued'
+      }
 
-    before do
-      # validate the initial status
-      expect(client.messages.last.twilio_status).to eq 'queued'
+      before do
+        # validate the initial status
+        expect(client.messages.last.twilio_status).to eq 'queued'
+      end
+
+      it 'saves a successful sms message status update' do
+        # post a status update
+        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
+        twilio_post_sms_status status_params
+
+        # validate the updated status
+        expect(client.messages.last.twilio_status).to eq 'received'
+
+        # no failed analytics event
+        expect_analytics_events_not_happened('message_send_failed')
+      end
+
+      it 'saves an unsuccessful sms message status update' do
+        # post a status update
+        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
+        twilio_post_sms_status status_params
+
+        # validate the updated status
+        expect(client.messages.last.twilio_status).to eq 'failed'
+
+        # failed analytics event
+        expect_analytics_events({
+          'message_send_failed' => {
+            'scheduled_message' => false
+          }
+        })
+      end
     end
 
-    it 'saves a successful sms message status update' do
-      # post a status update
-      status_params = twilio_status_update_params from_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
-      twilio_post_sms_status status_params
+    context 'received a notice about a scheduled-message' do
+      let!(:scheduled_message) {
+        create :message, user: user, client: client, inbound: false, twilio_status: 'queued', send_at: Time.now - 1.hour
+      }
+      it 'saves an unsuccessful sms message status update' do
+        # post a status update
+        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: scheduled_message.twilio_sid, sms_status: 'failed'
+        twilio_post_sms_status status_params
 
-      # validate the updated status
-      expect(client.messages.last.twilio_status).to eq 'received'
+        # validate the updated status
+        expect(client.messages.last.twilio_status).to eq 'failed'
 
-      # no failed analytics event
-      expect_analytics_events_not_happened('message_send_failed')
-    end
-
-    it 'saves an unsuccessful sms message status update' do
-      # post a status update
-      status_params = twilio_status_update_params from_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
-      twilio_post_sms_status status_params
-
-      # validate the updated status
-      expect(client.messages.last.twilio_status).to eq 'failed'
-
-      # failed analytics event
-      expect_analytics_events_happened('message_send_failed')
+        # failed analytics event
+        expect_analytics_events({
+          'message_send_failed' => {
+            'scheduled_message' => true
+          }
+        })
+      end
     end
   end
 end

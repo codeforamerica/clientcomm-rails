@@ -74,13 +74,14 @@ module TwilioHelper
   def twilio_status_update_params(
     from_number: '+12425551212',
     sms_sid: SecureRandom.hex(17),
-    sms_status: 'delivered'
+    sms_status: 'delivered',
+    to_number: '+12435551212'
   )
     {
       "SmsSid"=>sms_sid,
       "SmsStatus"=>sms_status,
       "MessageStatus"=>sms_status,
-      "To"=>"+12435551212",
+      "To"=>to_number,
       "MessageSid"=>sms_sid,
       "AccountSid"=>"077541f41cce52ea6c4944fa6823a4a277",
       "From"=>from_number,
