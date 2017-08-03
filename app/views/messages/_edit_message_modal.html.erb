@@ -58,9 +58,16 @@
               </div>
             </fieldset>
           </div>
-          <div class="modal-footer">
-            <button id="schedule-message" type="submit" class="button button--primary"><%= submit_text %></button>
-            <button type="button" class="button" data-dismiss="modal">Cancel</button>
+          <div class="toolbar modal-footer">
+            <div class="toolbar__left">
+              <%= button_to submit_text, @message, class: 'button button--primary', method: :update %>
+              <% if @message.id %>
+                <%= link_to 'Delete message', @message, class: 'button button--danger', method: :delete %>
+              <% end %>
+            </div>
+            <div class="toolbar__right">
+              <button type="button" class="button" data-dismiss="modal">Cancel</button>
+            </div>
           </div>
       <% end %>
     </div>
