@@ -122,6 +122,7 @@ class MessagesController < ApplicationController
 
     @message.destroy
 
+    flash[:notice] = 'The scheduled message has been deleted'
     redirect_to client_messages_path(@message.client)
   end
 
