@@ -22,7 +22,6 @@ feature 'creating and editing scheduled messages', active_job: true do
 
     step 'when user clicks on send later button' do
       click_button 'Send later'
-      expect(page).to have_current_path(new_client_message_path(clientone))
       expect(page).to have_content 'Send message later'
       expect(page).not_to have_content 'Delete message'
     end

@@ -60,9 +60,9 @@
           </div>
           <div class="toolbar modal-footer">
             <div class="toolbar__left">
-              <%= button_to submit_text, @message, class: 'button button--primary', method: :update %>
+              <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
               <% if @message.id %>
-                <%= link_to 'Delete message', @message, class: 'button button--danger', method: :delete %>
+                <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
               <% end %>
             </div>
             <div class="toolbar__right">

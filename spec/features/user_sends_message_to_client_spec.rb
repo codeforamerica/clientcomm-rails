@@ -70,16 +70,19 @@ feature 'sending messages', active_job: true do
 
     step 'when user schedules a message' do
       click_button 'Send later'
-      expect(page).to have_content('Schedule message')
+      expect(page).to have_content('Send message later')
       fill_in 'Your message text', with: message_body
 
       future_date = Time.now + 7.days
 
-      fill_in 'Date', with: future_date.strftime("%m/%d/%Y")
+      # if we don't interact with the datepicker, it persists and
+      # covers other ui elements
+      fill_in 'Date', with: ""
+      click_on future_date.strftime("%-d")
       select future_date.change(min: 0).strftime("%-l:%M%P"), from: 'Time'
 
       perform_enqueued_jobs do
-        find('#schedule-message').trigger('click')
+        click_on 'Schedule message'
       end
 
       expect(page).to_not have_content('Schedule message')
