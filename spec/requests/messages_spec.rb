@@ -153,14 +153,15 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(flash[:notice]).to eq('Your message has been scheduled')
 
           expect(client.messages.last.id).to eq message.id
-          expect_most_recent_analytics_event(
+          expect_analytics_events_with_keys(
               {
-                  'message_schedule' => {
-                      'client_id' => client.id,
-                      'message_id' => message.id,
-                      'message_length' => message.body.length,
-                      'scheduled_for' => time_to_send
-                  }
+                  'message_scheduled' => [
+                    'client_id',
+                    'message_id',
+                    'message_length',
+                    'message_date_scheduled',
+                    'message_date_created'
+                  ]
               })
         end
       end

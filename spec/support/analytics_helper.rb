@@ -36,4 +36,19 @@ module AnalyticsHelper
       expect(found_request[event_name]).to include event_properties
     end
   end
+
+  def expect_analytics_events_with_keys(*event_arrays)
+    # all the passed events happened with these keys
+    # key values are not tested
+    event_arrays.each do |event_names|
+      event_name = event_names.keys.first
+      event_properties = event_names.values.first
+      found_request = @mixpanel_requests.find { |req| req.has_key? event_name }
+      fail "Could not find #{event_name} in the requests" unless found_request
+      # byebug
+      event_properties.each do |key|
+        expect(found_request[event_name].keys).to include key
+      end
+    end
+  end
 end

@@ -63,7 +63,7 @@ class MessagesController < ApplicationController
     if message.send_at.nil?
       label = 'message_send'
     else
-      label = 'message_schedule'
+      label = 'message_scheduled'
     end
 
     analytics_track(
