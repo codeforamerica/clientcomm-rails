@@ -31,7 +31,7 @@
 
 <%= render 'edit_message_modal',
            modal_id: 'new-message-modal',
-           message: Message.new(send_at: DateTime.now.beginning_of_day + 9.hours),
+           message: Message.new(send_at: Time.current.beginning_of_day + 9.hours),
            autofocus: false,
            modal_title: 'Send message later',
            date_picker_id: 'new_message_send_at_date',
