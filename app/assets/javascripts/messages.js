@@ -10,7 +10,11 @@ $(document).ready(function(){
   });
 
   $('#edit-message-modal').modal();
-  $("#scheduled_message_send_at_date").datepicker();
-  $("#scheduled_message_send_at_date").datepicker("option", "showAnim", "");
+  $('#new-message-modal').modal();
 
+  $("#edit_message_send_at_date").datepicker();
+  $("#edit_message_send_at_date").datepicker("option", "showAnim", "");
+
+  $("#new_message_send_at_date").datepicker();
+  $("#new_message_send_at_date").datepicker("option", "showAnim", "");
 });

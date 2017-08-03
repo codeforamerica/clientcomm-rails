@@ -17,16 +17,6 @@ class MessagesController < ApplicationController
     @messages.update_all(read: true)
 
     @messages_scheduled = scheduled_messages(client: @client)
-
-    @message = Message.new(send_at: DateTime.now.beginning_of_day + 9.hours)
-
-    render :index, locals: {
-        back_link: client_messages_path(@client),
-        modal_title: 'Send message later',
-        submit_text: 'Schedule message',
-        send_autofocus: true,
-        edit_autofocus: false
-    }
   end
 
   def download
@@ -95,13 +85,7 @@ class MessagesController < ApplicationController
     @messages = past_messages(client: @message.client)
     @messages_scheduled = scheduled_messages(client: @client)
 
-    render :index, locals: {
-        back_link: client_scheduled_messages_index_path(@client),
-        modal_title: 'Edit your message',
-        submit_text: 'Update',
-        send_autofocus: false,
-        edit_autofocus: true
-    }
+    render :index
   end
 
   def update

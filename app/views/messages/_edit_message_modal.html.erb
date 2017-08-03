@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-message-modal" data-show="<%= autofocus %>">
+<div class="modal fade" id="<%= modal_id %>" data-show="<%= autofocus %>">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
       <div class="form-card">
@@ -21,7 +21,7 @@
             </div>
           </div>
         </div>
-        <%= form_for @message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
+        <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
             <input name="client_id" type="hidden" value="<%= @client.id %>">
             <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
 
@@ -30,8 +30,8 @@
               <div class="form-group">
                 <div class="grid">
                   <div class="grid__item width-one-half">
-                    <label for="scheduled_message_send_at_date" class="form-question">Date</label>
-                    <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="scheduled_message_send_at_date" value="<%= @message.send_at.strftime('%m/%d/%Y') %>"/>
+                    <label for="<%= date_picker_id %>" class="form-question">Date</label>
+                    <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
                   </div>
 
                   <div class="grid__item width-one-half">
@@ -47,7 +47,7 @@
                           end
                         %>
                         <% times.each_with_index do |time, i| %>
-                            <option <%= "selected" if time.strftime('%H:%M') == @message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                            <option <%= "selected" if time.strftime('%H:%M') == message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
                         <% end %>
                       </select>
                     </div>
@@ -55,19 +55,19 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="toolbar form-card__footer">
-            <div class="toolbar__left">
-              <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
-              <% if @message.id %>
-                <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
-              <% end %>
+            <div class="toolbar form-card__footer">
+              <div class="toolbar__left">
+                <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
+                <% if autofocus %>
+                  <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
+                <% end %>
+              </div>
+              <div class="toolbar__right">
+                <button type="button" class="button" data-dismiss="modal">Cancel</button>
+              </div>
             </div>
-            <div class="toolbar__right">
-              <button type="button" class="button" data-dismiss="modal">Cancel</button>
-            </div>
-          </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
