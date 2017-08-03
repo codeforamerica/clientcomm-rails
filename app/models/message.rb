@@ -6,6 +6,7 @@ class Message < ApplicationRecord
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
+  scope :scheduled, -> { where('send_at >= ?', Time.now).order('created_at ASC') }
 
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'

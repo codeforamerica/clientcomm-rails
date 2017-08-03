@@ -1,11 +1,12 @@
 class ScheduledMessagesController < ApplicationController
+  before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
   def index
     @client = current_user.clients.find params[:client_id]
 
     analytics_track(
-      label: 'client_messages_view',
+      label: 'client_scheduled_messages_view',
       data: @client.analytics_tracker_data
     )
 
@@ -16,10 +17,7 @@ class ScheduledMessagesController < ApplicationController
       .order('created_at ASC')
     @messages.update_all(read: true)
 
-    @messages_scheduled = current_user.messages
-      .where(client_id: params["client_id"])
-      .where('send_at >= ?', Time.now)
-      .order('created_at ASC')
+    @messages_scheduled = current_user.clients.find(params["client_id"]).messages.scheduled
   end
 
 end

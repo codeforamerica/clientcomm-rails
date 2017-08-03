@@ -15,7 +15,8 @@ class Client < ApplicationRecord
       messages_all_count: messages.count,
       messages_received_count: inbound_messages_count,
       messages_sent_count: outbound_messages_count,
-      messages_attachments_count: attachments.count
+      messages_attachments_count: attachments.count,
+      messages_scheduled_count: scheduled_messages_count
     }
   end
 
@@ -49,6 +50,10 @@ class Client < ApplicationRecord
   def outbound_messages_count
     # the number of messages sent
     messages.outbound.count
+  end
+
+  def scheduled_messages_count
+    messages.scheduled.count
   end
 
   def unread_messages_sort
