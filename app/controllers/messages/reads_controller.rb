@@ -4,12 +4,9 @@ class Messages::ReadsController < ApplicationController
 
   def create
     # change the read status of the message
-    success = message.update_attributes read: message_params[:read]
-    if success
-      head :no_content
-    else
-      head :bad_request
-    end
+    message.update!(read: message_params[:read])
+
+    head :no_content
   end
 
   private

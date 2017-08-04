@@ -86,9 +86,9 @@ describe 'Clients requests', type: :request do
       end
     end
 
-    describe 'put#archive' do
+    describe 'post#archive' do
       let(:client) { create_client build(:client) }
-      subject { put client_archive_path(client) }
+      subject { post client_archive_path(client), params: { client: { active: false } } }
 
       it 'removes the client from the clients list' do
         subject

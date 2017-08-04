@@ -62,14 +62,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  def archive
-    @client = current_user.clients.find(params[:client_id])
-    @client.active = false
-    @client.save
-
-    redirect_to clients_path
-  end
-
   private
 
   def client_params

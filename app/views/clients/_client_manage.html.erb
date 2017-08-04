@@ -14,6 +14,6 @@
       If they send you a message later they will automatically return to your contact list.
     </p>
     <p class="text--danger"><i class="icon-report"></i> Once you delete a client you won't be able to undo it</p>
-    <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), method: :put, class: :button, data: { confirm: 'Are you sure you want to delete this client?' } %>
+    <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), class: :button, data: { confirm: 'Are you sure you want to delete this client?' }, params: { client: { active: false } } %>
   </div>
 </div>

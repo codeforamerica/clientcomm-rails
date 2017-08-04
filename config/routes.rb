@@ -13,6 +13,10 @@ Rails.application.routes.draw do
   # CLIENTS and MESSAGES
   root to: "clients#index"
   resources :clients, only: [:index, :new, :create, :edit, :update] do
+    scope module: :clients do
+      resource :archive, only: :create
+    end
+
     resources :messages, only: [:index]
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
