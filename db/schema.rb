@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170801222108) do
+ActiveRecord::Schema.define(version: 20170803184914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20170801222108) do
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.boolean  "read",          default: false
-    t.datetime "send_at"
+    t.datetime "send_at",                       null: false
     t.integer  "lock_version",  default: 0
     t.boolean  "sent",          default: false
     t.index ["client_id"], name: "index_messages_on_client_id", using: :btree

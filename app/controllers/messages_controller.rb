@@ -54,16 +54,22 @@ class MessagesController < ApplicationController
       read: true
     )
 
-    message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P') unless message_params[:send_at].nil?
+    if message_params[:send_at].present?
+      label = 'message_scheduled'
+      message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P')
+    else
+      label = 'message_send'
+      message.send_at = Time.current
+    end
 
     message.save!
 
-    create_message_jobs(message: message)
-
-    if message.send_at.nil?
-      label = 'message_send'
+    if message_params[:send_at].present?
+      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
+      flash[:notice] = 'Your message has been scheduled'
     else
-      label = 'message_scheduled'
+      MessageBroadcastJob.perform_now(message: message)
+      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     end
 
     analytics_track(
@@ -101,7 +107,9 @@ class MessagesController < ApplicationController
 
     @message.save!
 
-    create_message_jobs(message: @message)
+    ScheduledMessageJob.set(wait_until: @message.send_at).perform_later(message: @message, send_at: @message.send_at.to_i, callback_url: incoming_sms_status_url)
+
+    flash[:notice] = 'Your message has been updated'
 
     redirect_to client_messages_path(@message.client)
   end
@@ -131,18 +139,6 @@ class MessagesController < ApplicationController
         .where(client: client)
         .where('send_at < ? OR send_at IS NULL', Time.now)
         .order('created_at ASC')
-  end
-
-  def create_message_jobs(message:)
-    if message.send_at.nil?
-      MessageBroadcastJob.perform_now(message: message)
-
-      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
-    else
-      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
-
-      flash[:notice] = 'Your message has been scheduled'
-    end
   end
 
   def is_valid(send_at)

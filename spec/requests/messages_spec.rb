@@ -110,9 +110,12 @@ describe 'Messages requests', type: :request, active_job: true do
           message = Message.find_by(body: body)
 
           expect(ScheduledMessageJob).to have_been_enqueued
+          created_message = client.messages.last
 
-          expect(client.messages.last.id).to eq message.id
-          expect(client.messages.last.read).to eq true
+          expect(created_message.id).to eq message.id
+          expect(created_message.read).to eq true
+          expect(created_message.send_at).to_not be_nil
+
           expect_most_recent_analytics_event(
               {
                   'message_send' => {

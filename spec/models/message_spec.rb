@@ -7,6 +7,8 @@ RSpec.describe Message, type: :model do
       should belong_to :user
       should have_many :attachments
     end
+
+    it { should validate_presence_of :send_at }
   end
 
   describe '#create_from_twilio' do
@@ -23,6 +25,7 @@ RSpec.describe Message, type: :model do
         expect(message.number_to).to eq ENV['TWILIO_PHONE_NUMBER']
         expect(message.number_from).to eq unknown_number
         expect(message.inbound).to be_truthy
+        expect(message.send_at).to be_present
 
         client = message.client
         expect(client.first_name).to be_nil

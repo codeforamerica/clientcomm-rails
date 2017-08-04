@@ -123,30 +123,18 @@ describe 'Twilio controller', type: :request do
         # failed analytics event
         expect_analytics_events({
           'message_send_failed' => {
-            'scheduled_message' => false
+            'client_id' => client.id,
+            'message_id' => msgone.id,
+            'message_length' => msgone.body.length,
+            'attachments_count' => 0,
           }
         })
-      end
-    end
 
-    context 'received a notice about a scheduled-message' do
-      let!(:scheduled_message) {
-        create :message, user: user, client: client, inbound: false, twilio_status: 'queued', send_at: Time.now - 1.hour
-      }
-      it 'saves an unsuccessful sms message status update' do
-        # post a status update
-        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: scheduled_message.twilio_sid, sms_status: 'failed'
-        twilio_post_sms_status status_params
-
-        # validate the updated status
-        expect(client.messages.last.twilio_status).to eq 'failed'
-
-        # failed analytics event
-        expect_analytics_events({
-          'message_send_failed' => {
-            'scheduled_message' => true
-          }
-        })
+        expect_analytics_events_with_keys(
+            {
+                'message_send_failed' => ['message_date_scheduled', 'message_date_created']
+            }
+        )
       end
     end
   end

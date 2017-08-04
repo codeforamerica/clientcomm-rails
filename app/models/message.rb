@@ -3,6 +3,8 @@ class Message < ApplicationRecord
   belongs_to :user
   has_many :attachments
 
+  validates_presence_of :send_at
+
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
@@ -33,7 +35,8 @@ class Message < ApplicationRecord
       inbound: true,
       twilio_sid: twilio_params[:SmsSid],
       twilio_status: twilio_params[:SmsStatus],
-      body: twilio_params[:Body]
+      body: twilio_params[:Body],
+      send_at: Time.current
     )
 
     twilio_params[:NumMedia].to_i.times.each do |i|
@@ -53,7 +56,6 @@ class Message < ApplicationRecord
       message_length: self.body.length,
       current_user_id: self.user.id,
       attachments_count: self.attachments.count,
-      scheduled_message: self.send_at.present?,
       message_date_scheduled: self.send_at,
       message_date_created: self.created_at
     }
