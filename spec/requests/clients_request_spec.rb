@@ -74,7 +74,7 @@ describe 'Clients requests', type: :request do
         let(:archived_client) { user.clients.first }
 
         before do
-          archived_client.archived = true
+          archived_client.active = false
           archived_client.save
         end
 
@@ -95,7 +95,7 @@ describe 'Clients requests', type: :request do
 
         expect(response.body).to_not include("#{client.first_name} #{client.last_name}")
 
-        expect(client.reload.archived).to eq(true)
+        expect(client.reload.active).to eq(false)
       end
     end
   end
