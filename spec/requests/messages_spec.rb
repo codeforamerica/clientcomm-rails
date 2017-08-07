@@ -131,16 +131,24 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'invalid date' do
         let(:message_send_at) {
           {
-              date: 'foo',
-              time: 'bar'
+              date: '2011/02/',
+              time: '9:30pm'
           }
         }
 
         it 'does not create a new message' do
+          allow(DateParser).to receive(:parse)
+                                   .with(message_send_at[:date], message_send_at[:time])
+                                   .and_return(nil)
+
           post messages_path, params: post_params
 
           expect(ScheduledMessageJob).not_to have_been_enqueued
+          response_body = Nokogiri::HTML(response.body).to_s
+          expect(response_body).to include "That date doesn't look right."
+          expect(response_body).to include body
         end
+
       end
 
       context 'valid date' do
@@ -153,9 +161,14 @@ describe 'Messages requests', type: :request, active_job: true do
         }
 
         it 'creates a Scheduled Message' do
+          allow(DateParser).to receive(:parse)
+                                   .with(message_send_at[:date], message_send_at[:time])
+                                   .and_return(time_to_send)
+
           post messages_path, params: post_params
 
           message = Message.find_by(body: body)
+
           expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
           expect(flash[:notice]).to eq('Your message has been scheduled')
 

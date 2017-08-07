@@ -1,4 +1,4 @@
-<div class="modal fade" id="<%= modal_id %>" data-show="<%= autofocus %>">
+<div class="modal fade" id="<%= modal_id %>" data-show="<%= autofocus or @new_message.errors.any? %>">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
       <div class="form-card">
@@ -27,11 +27,16 @@
 
 
             <div class="form-card__content">
-              <div class="form-group">
+              <div class="form-group <%= 'form-group--error' if message.errors[:send_at].any? %>">
                 <div class="grid">
                   <div class="grid__item width-one-half">
                     <label for="<%= date_picker_id %>" class="form-question">Date</label>
-                    <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
+                    <% if message.errors[:send_at].any? %>
+                      <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" />
+                      <p class="text--error" id=""><%= message.errors[:send_at].first %></p>
+                    <% else %>
+                      <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
+                    <% end %>
                   </div>
 
                   <div class="grid__item width-one-half">

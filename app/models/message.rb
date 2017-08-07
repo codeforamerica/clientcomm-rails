@@ -3,7 +3,7 @@ class Message < ApplicationRecord
   belongs_to :user
   has_many :attachments
 
-  validates_presence_of :send_at
+  validates_presence_of :send_at, message: "That date doesn't look right."
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }

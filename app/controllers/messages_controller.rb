@@ -4,6 +4,8 @@ class MessagesController < ApplicationController
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
+  DEFAULT_SEND_AT = Time.current.beginning_of_day + 9.hours
+
   def index
     @client = current_user.clients.find params[:client_id]
 
@@ -15,6 +17,8 @@ class MessagesController < ApplicationController
     # the list of past messages
     @messages = past_messages(client: @client)
     @messages.update_all(read: true)
+
+    @new_message = Message.new(send_at: DEFAULT_SEND_AT)
 
     @messages_scheduled = scheduled_messages(client: @client)
   end
@@ -40,7 +44,21 @@ class MessagesController < ApplicationController
 
   def create
     if message_params[:send_at].present?
-      return unless is_valid(message_params[:send_at])
+      @new_message = Message.new(
+          body: message_params[:body],
+          send_at: DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
+      )
+
+      if @new_message.invalid?
+        @client = current_user.clients.find params[:client_id]
+
+        @messages = past_messages(client: @client)
+        @messages_scheduled = scheduled_messages(client: @client)
+
+        @new_message.send_at = DEFAULT_SEND_AT
+        render :index
+        return
+      end
     end
 
     client = current_user.clients.find params[:client_id]
@@ -56,7 +74,7 @@ class MessagesController < ApplicationController
 
     if message_params[:send_at].present?
       label = 'message_scheduled'
-      message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P')
+      message.send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
     else
       label = 'message_send'
       message.send_at = Time.current
@@ -95,6 +113,8 @@ class MessagesController < ApplicationController
       label: 'message_scheduled_edit_view',
       data: @message.analytics_tracker_data
     )
+
+    @new_message = Message.new(send_at: DEFAULT_SEND_AT)
 
     render :index
   end
@@ -139,13 +159,5 @@ class MessagesController < ApplicationController
         .where(client: client)
         .where('send_at < ? OR send_at IS NULL', Time.now)
         .order('created_at ASC')
-  end
-
-  def is_valid(send_at)
-    Time.zone.strptime("#{send_at[:date]} #{send_at[:time]}", '%m/%d/%Y %H:%M%P')
-
-    true
-  rescue ArgumentError
-    false
   end
 end

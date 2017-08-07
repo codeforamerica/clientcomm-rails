@@ -8,7 +8,9 @@ RSpec.describe Message, type: :model do
       should have_many :attachments
     end
 
-    it { should validate_presence_of :send_at }
+    it do
+      should validate_presence_of(:send_at).with_message("That date doesn't look right.")
+    end
   end
 
   describe '#create_from_twilio' do
