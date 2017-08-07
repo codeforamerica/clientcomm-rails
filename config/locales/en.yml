@@ -24,3 +24,10 @@ en:
   message:
     status:
       undelivered: "Message could not be delivered. Please check this is a working cell phone number and try again."
+  activerecord:
+    errors:
+        models:
+          message:
+            attributes:
+              send_at:
+                on_or_after: You can't schedule a message in the past.

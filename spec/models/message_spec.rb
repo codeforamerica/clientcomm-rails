@@ -11,6 +11,15 @@ RSpec.describe Message, type: :model do
     it do
       should validate_presence_of(:send_at).with_message("That date doesn't look right.")
     end
+
+    it 'should validate that a message is scheduled in the future' do
+      expect(Message.new(send_at: Time.current - 1.days).valid?).to be_falsey
+      expect(Message.new(send_at: Time.current - 2.minutes).valid?).to be_falsey
+      expect(Message.new(send_at: Time.current).valid?).to be_truthy
+      expect(Message.new(send_at: Time.current + 5.minutes).valid?).to be_truthy
+      expect(Message.new(send_at: Time.current + 8.hours).valid?).to be_truthy
+      expect(Message.new(send_at: Time.current + 8.days).valid?).to be_truthy
+    end
   end
 
   describe '#create_from_twilio' do

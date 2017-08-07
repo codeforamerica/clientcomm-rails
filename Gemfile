@@ -30,6 +30,7 @@ gem 'devise_invitable'
 gem 'aws-sdk'
 
 gem 'timeliness'
+gem 'validates_timeliness'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

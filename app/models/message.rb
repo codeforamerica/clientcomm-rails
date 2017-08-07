@@ -4,6 +4,7 @@ class Message < ApplicationRecord
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date doesn't look right."
+  validates_datetime :send_at, :on_or_after => :future_time
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
@@ -61,4 +62,9 @@ class Message < ApplicationRecord
     }
   end
 
+  private
+
+  def future_time
+    Time.current - 1.minute
+  end
 end

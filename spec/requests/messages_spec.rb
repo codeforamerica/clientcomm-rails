@@ -41,10 +41,12 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         it 'shows messages after their send_at date' do
-          message = create :message, user: user, client: client, send_at: Time.now.yesterday
+          travel_to 1.day.ago do
+            message = create :message, user: user, client: client, body: body, send_at: Time.now
+          end
 
           get client_messages_path(client)
-          expect(response.body).to include(message.body)
+          expect(response.body).to include(body)
         end
 
         it 'shows no link when scheduled messages do not exist' do
@@ -82,12 +84,12 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#edit' do
       it 'renders the requested message template' do
-        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2012, 07, 11, 20, 30, 0)
+        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2056, 07, 11, 20, 30, 0)
 
         get edit_message_path(message)
 
         expect(response.body).to include(message.body)
-        expect(response.body).to include('07/11/2012')
+        expect(response.body).to include('07/11/2056')
 
         expect_analytics_events_happened('message_scheduled_edit_view')
       end
