@@ -5,13 +5,13 @@
         <div class="form-card__header">
           <div class="grid">
             <div class="grid__item width-one-fourth">
-              <% if autofocus %>
-                  <%= link_to back_link do %>
-                      <button class="button button--small"><i class="icon-arrow_back"></i> Back</button>
-                  <% end %>
-              <% else %>
-                  <div>&nbsp;</div>
+            <% if autofocus %>
+              <%= link_to back_link do %>
+              <button class="button button--small"><i class="icon-arrow_back"></i> Back</button>
               <% end %>
+            <% else %>
+              <div>&nbsp;</div>
+            <% end %>
             </div>
             <div class="grid__item width-one-half">
               <h2 class="form-card__title" id="myModalLabel"><%= modal_title %></h2>
@@ -21,56 +21,54 @@
             </div>
           </div>
         </div>
-        <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
-            <input name="client_id" type="hidden" value="<%= @client.id %>">
-            <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
+        <div class="form-card__content">
+          <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
+          <input name="client_id" type="hidden" value="<%= @client.id %>">
+          <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
+          <div class="form-group <%= 'form-group--error' if message.errors[:send_at].any? %>">
+            <div class="grid">
+              <div class="grid__item width-one-half">
+                <label for="<%= date_picker_id %>" class="form-question">Date</label>
+                <% if message.errors[:send_at].any? %>
+                  <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" />
+                  <p class="text--error" id=""><%= message.errors[:send_at].first %></p>
+                <% else %>
+                  <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
+                <% end %>
+              </div>
 
-
-            <div class="form-card__content">
-              <div class="form-group <%= 'form-group--error' if message.errors[:send_at].any? %>">
-                <div class="grid">
-                  <div class="grid__item width-one-half">
-                    <label for="<%= date_picker_id %>" class="form-question">Date</label>
-                    <% if message.errors[:send_at].any? %>
-                      <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" />
-                      <p class="text--error" id=""><%= message.errors[:send_at].first %></p>
-                    <% else %>
-                      <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
-                    <% end %>
-                  </div>
-
-                  <div class="grid__item width-one-half">
-                    <label for="scheduled_message_send_at_time" class="form-question">Time</label>
-                    <div class="select">
-                      <select class="select__element" name="message[send_at][time]" id="scheduled_message_send_at_time">
-                        <%
-                          start = Time.now.change(min: 0, hour: 0)
-                          times = []
-                          48.times do
-                            times << start
-                            start += 30.minutes
-                          end
-                        %>
-                        <% times.each_with_index do |time, i| %>
-                            <option <%= "selected" if time.strftime('%H:%M') == message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
-                        <% end %>
-                      </select>
-                    </div>
-                  </div>
+              <div class="grid__item width-one-half">
+                <label for="scheduled_message_send_at_time" class="form-question">Time</label>
+                <div class="select">
+                  <select class="select__element" name="message[send_at][time]" id="scheduled_message_send_at_time">
+                  <%
+                    start = Time.now.change(min: 0, hour: 0)
+                    times = []
+                    48.times do
+                      times << start
+                      start += 30.minutes
+                    end
+                  %>
+                  <% times.each_with_index do |time, i| %>
+                    <option <%= "selected" if time.strftime('%H:%M') == message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                  <% end %>
+                  </select>
                 </div>
               </div>
             </div>
-            <div class="toolbar form-card__footer">
-              <div class="toolbar__left">
-                <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
-                <% if autofocus %>
-                  <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
-                <% end %>
-              </div>
-              <div class="toolbar__right">
-                <button type="button" class="button" data-dismiss="modal">Cancel</button>
-              </div>
-            </div>
+          </div>
+        </div>
+        <div class="toolbar form-card__footer">
+          <div class="toolbar__left">
+            <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
+          <% if autofocus %>
+            <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
+          <% end %>
+          </div>
+          <div class="toolbar__right">
+            <button type="button" class="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
         <% end %>
       </div>
     </div>
