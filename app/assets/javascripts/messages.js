@@ -11,6 +11,9 @@ $(document).ready(function(){
 
   $('#edit-message-modal').modal();
   $('#new-message-modal').modal();
+  $('#new-message-modal').on('shown.bs.modal', function () {
+    $('textarea#scheduled_message_body.send-later-input').focus();
+  });
 
   $("#edit_message_send_at_date").datepicker();
   $("#edit_message_send_at_date").datepicker("option", "showAnim", "");

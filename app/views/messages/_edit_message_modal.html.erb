@@ -1,27 +1,27 @@
-<div class="modal fade" id="<%= modal_id %>" data-show="<%= autofocus or @new_message.errors.any? %>">
-  <div class="grid">
-    <div class="grid__item width-two-thirds shift-one-sixth">
-      <div class="form-card">
-        <div class="form-card__header">
-          <div class="grid">
-            <div class="grid__item width-one-fourth">
-            <% if autofocus %>
+<div class="modal" id="<%= modal_id %>" data-show="<%= defined?(back_link).present? or @new_message.errors.any? %>">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+          <table width="100%">
+            <tr>
+              <td>
+            <% if defined?(back_link) %>
               <%= link_to back_link do %>
               <button class="button button--small"><i class="icon-arrow_back"></i> Back</button>
               <% end %>
-            <% else %>
-              <div>&nbsp;</div>
             <% end %>
-            </div>
-            <div class="grid__item width-one-half">
               <h2 class="form-card__title" id="myModalLabel"><%= modal_title %></h2>
-            </div>
-            <div class="grid__item width-one-fourth">
+              </td>
+              <td>
               <a href="<%= client_messages_path(@client) %>" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
-            </div>
-          </div>
+              </td>
+            </tr>
+          </table>
         </div>
-        <div class="form-card__content">
+
+        <div class="modal-body">
           <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
           <input name="client_id" type="hidden" value="<%= @client.id %>">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
@@ -58,10 +58,11 @@
             </div>
           </div>
         </div>
-        <div class="toolbar form-card__footer">
+
+        <div class="modal-footer">
           <div class="toolbar__left">
             <%= f.submit submit_text, class: 'button button--primary', role: 'button' %>
-          <% if autofocus %>
+          <% if defined?(back_link) %>
             <%= link_to 'Delete message', message_path(@message), class: 'button button--danger', method: :delete %>
           <% end %>
           </div>
@@ -70,7 +71,7 @@
           </div>
         </div>
         <% end %>
-      </div>
+
     </div>
   </div>
 </div>
