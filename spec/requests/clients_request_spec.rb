@@ -66,7 +66,7 @@ describe 'Clients requests', type: :request do
         subject
 
         user.clients.each do |client|
-          expect(response.body).to include("#{client.first_name} #{client.last_name}")
+          expect(Nokogiri.parse(response.body).to_s).to include("#{client.first_name} #{client.last_name}")
         end
       end
 
@@ -93,7 +93,7 @@ describe 'Clients requests', type: :request do
       it 'removes the client from the clients list' do
         subject
 
-        expect(response.body).to_not include("#{client.first_name} #{client.last_name}")
+        expect(Nokogiri.parse(response.body).to_s).to_not include("#{client.first_name} #{client.last_name}")
 
         expect(client.reload.active).to eq(false)
       end
