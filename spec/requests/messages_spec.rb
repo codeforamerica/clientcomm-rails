@@ -188,37 +188,53 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'PUT#update' do
-      let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
-
-      it 'updates the message model' do
-        message = build(:message, user: user, client: client, body: body, send_at: time_to_send)
-        post_params = {
+      let!(:message) {create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0))}
+      let(:posted_date) { 'some date' }
+      let(:posted_time) { 'some time' }
+      let(:post_params) {
+        {
             message: {
-                body: body,
+                body: new_body,
                 send_at: {
-                    'date': message.send_at.strftime("%m/%d/%Y"),
-                    'time': message.send_at.strftime("%-l:%M%P")
+                    date: posted_date,
+                    time: posted_time
                 }
-            },
-            client_id: client.id
+            }
         }
+      }
+      let(:new_body) { 'Some new body' }
 
-        post messages_path, params: post_params
-        message = Message.find_by(body: message.body)
-        expect(ScheduledMessageJob).to have_been_enqueued.at(time_to_send)
+      context 'valid update' do
+        it 'updates the message model' do
+          new_time_to_send = Time.now.change(sec: 0)
+          allow(DateParser).to receive(:parse)
+                                   .with(posted_date, posted_time)
+                                   .and_return(new_time_to_send)
 
-        new_time_to_send = Time.now.change(sec: 0)
-        message.send_at = new_time_to_send
-        message.body = "Some new body"
-        old_message_id = message.id
+          old_message_id = Message.find_by_body(body).id
 
-        update_message(message)
-        expect(ScheduledMessageJob).to have_been_enqueued.at(new_time_to_send)
+          put message_path(message), params: post_params
 
-        new_message = Message.find(old_message_id)
+          expect(ScheduledMessageJob).to have_been_enqueued.at(new_time_to_send)
 
-        expect(new_message.body).to eq("Some new body")
-        expect(new_message.send_at).to eq(new_time_to_send)
+          new_message = Message.find(old_message_id)
+          expect(new_message.body).to eq(new_body)
+          expect(new_message.send_at).to eq(new_time_to_send)
+        end
+      end
+
+      context 'invalid update' do
+        it 'fails if date is invalid' do
+          allow(DateParser).to receive(:parse)
+                                   .with(posted_date, posted_time)
+                                   .and_return(nil)
+
+          put message_path(message), params: post_params
+          expect(ScheduledMessageJob).to_not have_been_enqueued
+          response_body = Nokogiri::HTML(response.body).to_s
+          expect(response_body).to include "That date doesn't look right."
+          expect(response_body).to include new_body
+        end
       end
     end
 

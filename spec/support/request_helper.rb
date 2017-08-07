@@ -46,20 +46,4 @@ module RequestHelper
     Client.find(client_id)
   end
 
-  def update_message(message)
-    post_params = {
-      message: { body: message.body }
-    }
-
-    if message.send_at
-      post_params[:message] = post_params[:message].merge({
-        'send_at': {
-          'date': message.send_at.strftime("%m/%d/%Y"),
-          'time': message.send_at.strftime("%-l:%M%P")
-        }
-      })
-    end
-
-    put message_path(message), params: post_params
-  end
 end

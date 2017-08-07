@@ -121,9 +121,20 @@ class MessagesController < ApplicationController
 
   def update
     @message = Message.find(params[:id])
-    @message.update(body: message_params[:body])
+    @message.body = message_params[:body]
+    @message.send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
 
-    @message.send_at = Time.zone.strptime("#{message_params[:send_at][:date]} #{message_params[:send_at][:time]}", '%m/%d/%Y %H:%M%P') unless message_params[:send_at].nil?
+    if @message.invalid?
+      @client = @message.client
+
+      @messages = past_messages(client: @client)
+      @messages_scheduled = scheduled_messages(client: @client)
+      @new_message = Message.new(send_at: DEFAULT_SEND_AT)
+
+      @message.send_at = DEFAULT_SEND_AT
+      render :index
+      return
+    end
 
     @message.save!
 
