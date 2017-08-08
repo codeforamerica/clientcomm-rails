@@ -24,6 +24,17 @@
   }
 }
 
+@mixin full-bleed-modal() {
+  margin: {
+    left: -$modal-margins;
+    right: -$modal-margins;
+  }
+  padding: {
+    left: $modal-margins;
+    right: $modal-margins;
+  }
+}
+
 @function opposite-position($directions) {
   $opposite-directions: ();
   $direction-map: (

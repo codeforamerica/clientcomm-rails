@@ -25,13 +25,13 @@
           <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
           <input name="client_id" type="hidden" value="<%= @client.id %>">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
-          <div class="form-group <%= 'form-group--error' if message.errors[:send_at].any? %>">
+          <div class="form-group <%= 'form-group--error-modal' if message.errors[:send_at].any? %>">
             <div class="grid">
               <div class="grid__item width-one-half">
                 <label for="<%= date_picker_id %>" class="form-question">Date</label>
                 <% if message.errors[:send_at].any? %>
                   <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" />
-                  <p class="text--error" id=""><%= message.errors[:send_at].first %></p>
+                  <p class="text--error"><%= message.errors[:send_at].first %></p>
                 <% else %>
                   <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
                 <% end %>
