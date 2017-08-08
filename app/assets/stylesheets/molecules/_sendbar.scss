@@ -51,9 +51,11 @@
 
 .scheduled-messages-bar {
   background-color: $color-header;
+  border-color: $color-light-grey;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+  display: block;
   padding: $padding-small;
-  border: 1px solid $color-light-grey;
-  border-bottom: 0px;
-  width: 100%;
   text-align: center;
+  width: 100%;
 }
