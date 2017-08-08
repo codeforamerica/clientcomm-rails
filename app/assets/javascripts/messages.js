@@ -10,6 +10,11 @@ $(document).ready(function(){
   });
 
   $('#edit-message-modal').modal();
+  $('#edit-message-modal').on('hidden.bs.modal', function(e) {
+    e.preventDefault();
+    window.location = $('.close').attr('href');
+  });
+
   $('#new-message-modal').modal();
   $('#new-message-modal').on('shown.bs.modal', function () {
     $('textarea#scheduled_message_body.send-later-input').focus();
