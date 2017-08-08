@@ -31,3 +31,4 @@ en:
             attributes:
               send_at:
                 on_or_after: You can't schedule a message in the past.
+                before: You can't schedule a message more than a year in the future.

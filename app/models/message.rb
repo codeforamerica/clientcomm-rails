@@ -4,7 +4,8 @@ class Message < ApplicationRecord
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date doesn't look right."
-  validates_datetime :send_at, :on_or_after => :future_time
+  validates_datetime :send_at, :on_or_after => :time_buffer
+  validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
@@ -64,7 +65,11 @@ class Message < ApplicationRecord
 
   private
 
-  def future_time
+  def time_buffer
     Time.current - 1.minute
+  end
+
+  def max_future_date
+    Time.current + 1.year
   end
 end

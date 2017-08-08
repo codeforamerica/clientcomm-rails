@@ -84,12 +84,12 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#edit' do
       it 'renders the requested message template' do
-        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2056, 07, 11, 20, 30, 0)
+        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2018, 07, 11, 20, 30, 0)
 
         get edit_message_path(message)
 
         expect(response.body).to include(message.body)
-        expect(response.body).to include('07/11/2056')
+        expect(response.body).to include('07/11/2018')
 
         expect_analytics_events_happened('message_scheduled_edit_view')
       end

@@ -20,6 +20,10 @@ RSpec.describe Message, type: :model do
       expect(Message.new(send_at: Time.current + 8.hours).valid?).to be_truthy
       expect(Message.new(send_at: Time.current + 8.days).valid?).to be_truthy
     end
+
+    it 'should validate that a message is not scheduled more than a year in advance' do
+      expect(Message.new(send_at: Time.current + 2.years).valid?).to be_falsey
+    end
   end
 
   describe '#create_from_twilio' do
