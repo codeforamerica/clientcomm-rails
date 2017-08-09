@@ -42,7 +42,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
         it 'shows messages after their send_at date' do
           travel_to 1.day.ago do
-            message = create :message, user: user, client: client, body: body, send_at: Time.now
+            create :message, user: user, client: client, body: body, send_at: Time.now
           end
 
           get client_messages_path(client)
@@ -153,6 +153,30 @@ describe 'Messages requests', type: :request, active_job: true do
 
       end
 
+      context 'past date' do
+        let(:time_in_past) {Time.now.yesterday.change(sec: 0)}
+        let(:message_send_at) {
+          {
+              date: time_in_past.strftime("%m/%d/%Y"),
+              time: time_in_past.strftime("%-l:%M%P")
+          }
+        }
+
+        it 'does not create a new message' do
+          allow(DateParser).to receive(:parse)
+                                   .with(message_send_at[:date], message_send_at[:time])
+                                   .and_return(time_in_past)
+
+          post messages_path, params: post_params
+
+          expect(ScheduledMessageJob).not_to have_been_enqueued
+          response_body = Nokogiri::HTML(response.body).to_s
+          expect(response_body).to include "You can't schedule a message in the past."
+          expect(response_body).to include body
+          expect(response_body).to include time_in_past.strftime("%m/%d/%Y")
+        end
+      end
+
       context 'valid date' do
         let(:time_to_send) {Time.now.tomorrow.change(sec: 0)}
         let(:message_send_at) {
@@ -191,26 +215,20 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'PUT#update' do
       let!(:message) {create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0))}
-      let(:posted_date) { 'some date' }
-      let(:posted_time) { 'some time' }
       let(:post_params) {
         {
-            message: {
-                body: new_body,
-                send_at: {
-                    date: posted_date,
-                    time: posted_time
-                }
-            }
+          message: { body: new_body, send_at: message_send_at }
         }
       }
       let(:new_body) { 'Some new body' }
 
       context 'valid update' do
+        let(:message_send_at) { { date: 'some_date', time: 'some_time' } }
+
         it 'updates the message model' do
           new_time_to_send = Time.now.change(sec: 0)
           allow(DateParser).to receive(:parse)
-                                   .with(posted_date, posted_time)
+                                   .with(message_send_at[:date], message_send_at[:time])
                                    .and_return(new_time_to_send)
 
           old_message_id = Message.find_by_body(body).id
@@ -226,9 +244,17 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'invalid update' do
+        let(:time_in_past) {Time.now.yesterday.change(sec: 0)}
+        let(:message_send_at) {
+          {
+              date: time_in_past.strftime("%m/%d/%Y"),
+              time: time_in_past.strftime("%-l:%M%P")
+          }
+        }
+
         it 'fails if date is invalid' do
           allow(DateParser).to receive(:parse)
-                                   .with(posted_date, posted_time)
+                                   .with(message_send_at[:date], message_send_at[:time])
                                    .and_return(nil)
 
           put message_path(message), params: post_params
@@ -236,6 +262,19 @@ describe 'Messages requests', type: :request, active_job: true do
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "That date doesn't look right."
           expect(response_body).to include new_body
+        end
+
+        it 'fails if date is in the past' do
+          allow(DateParser).to receive(:parse)
+                                   .with(message_send_at[:date], message_send_at[:time])
+                                   .and_return(time_in_past)
+
+          put message_path(message), params: post_params
+          expect(ScheduledMessageJob).to_not have_been_enqueued
+          response_body = Nokogiri::HTML(response.body).to_s
+          expect(response_body).to include "You can't schedule a message in the past."
+          expect(response_body).to include new_body
+          expect(response_body).to include time_in_past.strftime("%m/%d/%Y")
         end
       end
     end
