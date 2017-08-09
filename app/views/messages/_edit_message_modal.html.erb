@@ -1,4 +1,4 @@
-<div class="modal" id="<%= modal_id %>" data-show="<%= defined?(back_link).present? or @new_message.errors.any? %>">
+<div class="modal" id="<%= modal_id %>" data-show="<%= modal_id == 'edit-message-modal' or errors %>">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -7,7 +7,7 @@
           <table width="100%">
             <tr>
               <td>
-            <% if defined?(back_link) %>
+            <% if modal_id == 'edit-message-modal' %>
               <%= link_to back_link do %>
               <button id="modal-back-button" class="button button--small"><i class="icon-arrow_back"></i> Back</button>
               <% end %>
@@ -24,16 +24,22 @@
         <div class="modal-body">
           <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
           <input name="client_id" type="hidden" value="<%= @client.id %>">
-          <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: autofocus) %>
+          <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: true) %>
           <div class="form-group <%= 'form-group--error-modal' if message.errors[:send_at].any? %>">
             <div class="grid">
               <div class="grid__item width-one-half">
                 <label for="<%= date_picker_id %>" class="form-question">Date</label>
+                <%
+                    send_at_date = ''
+                    send_at_time = '09:00'
+                    if message.send_at.present?
+                      send_at_date = message.send_at.strftime('%m/%d/%Y')
+                      send_at_time = message.send_at.strftime('%H:%M')
+                    end
+                %>
+                <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= send_at_date %>" />
                 <% if message.errors[:send_at].any? %>
-                  <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" />
                   <p class="text--error"><%= message.errors[:send_at].first %></p>
-                <% else %>
-                  <input type="text" class="form-width--date text-input" name="message[send_at][date]" id="<%= date_picker_id %>" value="<%= message.send_at.strftime('%m/%d/%Y') %>"/>
                 <% end %>
               </div>
 
@@ -50,7 +56,7 @@
                     end
                   %>
                   <% times.each_with_index do |time, i| %>
-                    <option <%= "selected" if time.strftime('%H:%M') == message.send_at.strftime('%H:%M') %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                    <option <%= "selected" if time.strftime('%H:%M') == send_at_time %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
                   <% end %>
                   </select>
                 </div>
@@ -62,7 +68,7 @@
         <div class="modal-footer">
           <div class="toolbar__left">
             <%= f.submit submit_text, class: 'button button--primary toolbar__item', role: 'button' %>
-          <% if defined?(back_link) %>
+          <% if modal_id == 'edit-message-modal' %>
             <%= link_to 'Delete message', message_path(@message), class: 'button button--danger toolbar__item', method: :delete %>
           <% end %>
           </div>

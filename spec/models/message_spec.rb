@@ -9,7 +9,7 @@ RSpec.describe Message, type: :model do
     end
 
     it do
-      should validate_presence_of(:send_at).with_message("That date doesn't look right.")
+      should validate_presence_of(:send_at).with_message("That date didn't look right.")
     end
 
     it 'should validate that a message is scheduled in the future' do

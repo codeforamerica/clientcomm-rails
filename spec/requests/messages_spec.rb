@@ -147,7 +147,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
           expect(ScheduledMessageJob).not_to have_been_enqueued
           response_body = Nokogiri::HTML(response.body).to_s
-          expect(response_body).to include "That date doesn't look right."
+          expect(response_body).to include "That date didn't look right."
           expect(response_body).to include body
         end
 
@@ -260,7 +260,7 @@ describe 'Messages requests', type: :request, active_job: true do
           put message_path(message), params: post_params
           expect(ScheduledMessageJob).to_not have_been_enqueued
           response_body = Nokogiri::HTML(response.body).to_s
-          expect(response_body).to include "That date doesn't look right."
+          expect(response_body).to include "That date didn't look right."
           expect(response_body).to include new_body
         end
 
