@@ -19,6 +19,7 @@ class MessagesController < ApplicationController
     @messages.update_all(read: true)
 
     @message = Message.new(send_at: DEFAULT_SEND_AT)
+    @sendfocus = true
 
     @messages_scheduled = scheduled_messages(client: @client)
   end

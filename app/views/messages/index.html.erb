@@ -16,7 +16,7 @@
   </div>
 </section>
 
-<%= render "send_message_form", autofocus: @message.nil? %>
+<%= render "send_message_form", autofocus: @sendfocus.present? %>
 
 <% if @message.id.present? %>
   <%= render 'edit_message_modal',
