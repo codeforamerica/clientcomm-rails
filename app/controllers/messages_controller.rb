@@ -18,7 +18,8 @@ class MessagesController < ApplicationController
     @messages = past_messages(client: @client)
     @messages.update_all(read: true)
 
-    @new_message = Message.new(send_at: DEFAULT_SEND_AT)
+    @message = Message.new(send_at: DEFAULT_SEND_AT)
+    @sendfocus = true
 
     @messages_scheduled = scheduled_messages(client: @client)
   end
@@ -43,19 +44,23 @@ class MessagesController < ApplicationController
   end
 
   def create
+    param_body = message_params[:body]
+    param_send_at = Time.current
+    analytics_label = 'message_send'
     if message_params[:send_at].present?
-      @new_message = Message.new(
-          body: message_params[:body],
-          send_at: DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
+      param_send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
+      analytics_label = 'message_scheduled'
+      @message = Message.new(
+          body: param_body,
+          send_at: param_send_at
       )
 
-      if @new_message.invalid?
+      if @message.invalid?
         @client = current_user.clients.find params[:client_id]
 
         @messages = past_messages(client: @client)
         @messages_scheduled = scheduled_messages(client: @client)
 
-        @new_message.send_at = DEFAULT_SEND_AT
         render :index
         return
       end
@@ -64,22 +69,14 @@ class MessagesController < ApplicationController
     client = current_user.clients.find params[:client_id]
 
     message = Message.new(
-      body: message_params[:body],
+      body: param_body,
       user: current_user,
       client: client,
       number_from: ENV['TWILIO_PHONE_NUMBER'],
       number_to: client.phone_number,
-      read: true
+      read: true,
+      send_at: param_send_at
     )
-
-    if message_params[:send_at].present?
-      label = 'message_scheduled'
-      message.send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
-    else
-      label = 'message_send'
-      message.send_at = Time.current
-    end
-
     message.save!
 
     if message_params[:send_at].present?
@@ -91,7 +88,7 @@ class MessagesController < ApplicationController
     end
 
     analytics_track(
-      label: label,
+      label: analytics_label,
       data: message.analytics_tracker_data
     )
 
@@ -114,24 +111,22 @@ class MessagesController < ApplicationController
       data: @message.analytics_tracker_data
     )
 
-    @new_message = Message.new(send_at: DEFAULT_SEND_AT)
-
     render :index
   end
 
   def update
+    param_body = message_params[:body]
+    param_send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
     @message = Message.find(params[:id])
-    @message.body = message_params[:body]
-    @message.send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
+    @message.body = param_body
+    @message.send_at = param_send_at
 
     if @message.invalid?
       @client = @message.client
 
       @messages = past_messages(client: @client)
       @messages_scheduled = scheduled_messages(client: @client)
-      @new_message = Message.new(send_at: DEFAULT_SEND_AT)
 
-      @message.send_at = DEFAULT_SEND_AT
       render :index
       return
     end

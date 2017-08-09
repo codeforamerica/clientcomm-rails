@@ -16,23 +16,23 @@
   </div>
 </section>
 
-<%= render "send_message_form", autofocus: @message.nil? %>
+<%= render "send_message_form", autofocus: @sendfocus.present? %>
 
-<% if @message.present? %>
+<% if @message.id.present? %>
   <%= render 'edit_message_modal',
-             modal_id: 'edit-message-modal',
-             message: @message,
-             autofocus: true,
-             back_link: client_scheduled_messages_index_path(@client),
-             modal_title: 'Edit your message',
-             date_picker_id: 'edit_message_send_at_date',
-             submit_text: 'Update' %>
+    modal_id: 'edit-message-modal',
+    message: @message,
+    errors: @message.errors.any?,
+    back_link: client_scheduled_messages_index_path(@client),
+    modal_title: 'Edit your message',
+    date_picker_id: 'edit_message_send_at_date',
+    submit_text: 'Update' %>
+<% else %>
+  <%= render 'edit_message_modal',
+    modal_id: 'new-message-modal',
+    message: @message,
+    errors: @message.errors.any?,
+    modal_title: 'Send message later',
+    date_picker_id: 'new_message_send_at_date',
+    submit_text: 'Schedule message' %>
 <% end %>
-
-<%= render 'edit_message_modal',
-           modal_id: 'new-message-modal',
-           message: @new_message,
-           autofocus: false,
-           modal_title: 'Send message later',
-           date_picker_id: 'new_message_send_at_date',
-           submit_text: 'Schedule message' %>

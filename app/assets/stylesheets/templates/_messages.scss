@@ -1,5 +1,68 @@
 .template--messages {
 
+  // modal tweaks
+  .close {
+    font-size: 3.6rem;
+  }
+
+  .form-group--error-modal {
+    @include full-bleed-modal();
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: -.5em;
+      bottom: -.5em;
+      left: 0px;
+      width: 4px;
+      background-color: tint($color-red, 75%);
+
+      @include media($tablet-up) {
+        width: 6px;
+      }
+    }
+  }
+
+  .modal-header {
+    table {
+      margin-bottom: 0;
+    }
+
+    #modal-back-button {
+      float: left;
+      margin-bottom: 0;
+      margin-right: 1em;
+    }
+  }
+
+  .modal-footer {
+    .toolbar__item {
+      margin-right: .5em;
+    }
+
+    .toolbar__right-responsive {
+      float: left;
+      margin-right: .5em;
+      margin-left: 0;
+      @include media($mobile-up) {
+        float: right;
+        margin-left: .5em;
+      }
+      .toolbar__item {
+        margin-right: .5em;
+        margin-left: 0;
+        @include media($mobile-up) {
+          margin-right: 0;
+          margin-left: .5em;
+          display: inline-block;
+          float: left;
+        }
+      }
+    }
+  }
+
+
+
   .slab--header {
     padding: {
       bottom: .5em;

@@ -46,7 +46,7 @@ feature 'creating and editing scheduled messages', active_job: true do
       click_on '1 message scheduled'
       expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
       expect(page).to have_content 'Manage scheduled messages'
-      expect(page).to have_content truncate(message_body, length: 65)
+      expect(page).to have_content truncate(message_body, length: 80)
     end
 
     step 'when user clicks on edit message' do

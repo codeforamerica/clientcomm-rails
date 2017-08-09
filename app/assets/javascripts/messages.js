@@ -10,7 +10,22 @@ $(document).ready(function(){
   });
 
   $('#edit-message-modal').modal();
+  $('#edit-message-modal').on('shown.bs.modal', function () {
+    $('textarea#scheduled_message_body.send-later-input.textarea').focus();
+  });
+  $('#edit-message-modal').on('hidden.bs.modal', function(e) {
+    e.preventDefault();
+    window.location = $('.close').attr('href');
+  });
+
   $('#new-message-modal').modal();
+  $('#new-message-modal').on('shown.bs.modal', function () {
+    $('textarea#scheduled_message_body.send-later-input.textarea').focus();
+  });
+  $('#new-message-modal').on('hidden.bs.modal', function(e) {
+    e.preventDefault();
+    window.location = $('.close').attr('href');
+  });
 
   $("#edit_message_send_at_date").datepicker();
   $("#edit_message_send_at_date").datepicker("option", "showAnim", "");

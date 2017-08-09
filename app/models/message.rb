@@ -3,14 +3,14 @@ class Message < ApplicationRecord
   belongs_to :user
   has_many :attachments
 
-  validates_presence_of :send_at, message: "That date doesn't look right."
+  validates_presence_of :send_at, message: "That date didn't look right."
   validates_datetime :send_at, :on_or_after => :time_buffer
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
-  scope :scheduled, -> { where('send_at >= ?', Time.now).order('created_at ASC') }
+  scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
 
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'

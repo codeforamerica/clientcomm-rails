@@ -1,9 +1,7 @@
 <section class="message--create">
   <div class="grid">
     <% if @messages_scheduled.count > 0 %>
-      <div class="scheduled-messages-bar">
-        <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, client: @client %>
-      </div>
+      <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, client: @client %>
     <% end %>
   </div>
 
