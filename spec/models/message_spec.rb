@@ -76,6 +76,17 @@ RSpec.describe Message, type: :model do
         expect(types).to match_array(params.fetch_values('MediaContentType0', 'MediaContentType1'))
       end
     end
+
+    context 'client is archived' do
+      let(:client) { create :client, active: false }
+
+      it 'returns the client to the active client list' do
+        expect(client.active).to eq false
+        params = twilio_new_message_params from_number: client.phone_number
+        Message.create_from_twilio!(params)
+        expect(client.reload.active).to eq true
+      end
+    end
   end
 
 end

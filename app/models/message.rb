@@ -29,6 +29,8 @@ class Message < ApplicationRecord
       )
     end
 
+    client.update(active: true)
+
     new_message = Message.create!(
       client: client,
       user_id: client.user_id,

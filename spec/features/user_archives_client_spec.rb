@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "user edits client" do
+feature "user archives client" do
   scenario "user clicks archive client button" do
     # log in with a fake user
     myuser = create :user
@@ -17,5 +17,17 @@ feature "user edits client" do
 
     expect(page).to have_current_path(clients_path)
     expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
+  end
+
+  scenario "archived client is revived by incoming sms" do
+    # log in with a fake user
+    myuser = create :user
+    clientone = create :client, user: myuser, active: false, phone_number: twilio_new_message_params['From']
+    login_as myuser, :scope => :user
+    visit root_path
+    expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
+    twilio_post_sms
+    visit root_path
+    expect(page).to have_content "#{clientone.first_name} #{clientone.last_name}"
   end
 end
