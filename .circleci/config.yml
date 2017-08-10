@@ -77,6 +77,9 @@ jobs:
       - image: circleci/ruby:2.4
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "7a:a4:eb:b7:19:13:6a:63:8a:32:ac:a7:8a:d2:b2:21"
       - run:
           command: |
             git checkout master
