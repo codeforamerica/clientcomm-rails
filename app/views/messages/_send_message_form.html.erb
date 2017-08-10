@@ -11,7 +11,7 @@
         <input name="client_id" type="hidden" value="<%= @client.id %>">
 
         <div class="grid__item width-two-thirds-lg">
-          <%= f.text_field(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Send a text message' }) %>
+          <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autoExpand', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, data_min_rows: 1, data_max_rows: 4, placeholder: 'Send a text message' }) %>
         </div>
         <div class="grid__item width-one-third-lg">
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
