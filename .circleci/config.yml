@@ -72,6 +72,17 @@ jobs:
           name: bundler-audit
           command: 'bin/bundler-audit'
 
+  merge_master:
+    docker:
+      - image: circleci/ruby:2.4
+    steps:
+      - checkout
+      - run:
+          command: |
+            git checkout master
+            git merge develop
+            git push
+
 workflows:
   version: 2
   test:
@@ -79,3 +90,13 @@ workflows:
       - rspec
       - brakeman
       - bundler-audit
+      - merge_master:
+          filters:
+            branches:
+              only: develop
+          requires:
+            - rspec
+            - brakeman
+            - bundler-audit
+
+
