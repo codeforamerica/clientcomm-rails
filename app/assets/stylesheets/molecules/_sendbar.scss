@@ -11,6 +11,9 @@
   padding: .5em .7em .5em .7em;
   margin: 0;
   outline: 0;
+  resize: none;
+  max-height: 115px;
+
   &:focus {
     border-color: $color-teal;
   }

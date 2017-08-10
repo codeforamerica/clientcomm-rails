@@ -14,6 +14,7 @@
 //= require jquery-ui/widgets/datepicker
 //= require bootstrap-sprockets
 //= require jquery_ujs
+//= require autosize
 //= require_tree .
 
 var incrementer = (function() {

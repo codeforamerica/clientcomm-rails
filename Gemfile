@@ -28,6 +28,7 @@ gem 'intercom-rails'
 gem 'devise'
 gem 'devise_invitable'
 gem 'aws-sdk'
+gem 'autosize'
 
 gem 'timeliness'
 gem 'validates_timeliness'

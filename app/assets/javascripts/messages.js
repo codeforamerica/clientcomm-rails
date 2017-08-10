@@ -32,4 +32,12 @@ $(document).ready(function(){
 
   $("#new_message_send_at_date").datepicker();
   $("#new_message_send_at_date").datepicker("option", "showAnim", "");
+
+  var sendInput = $('textarea.autosize');
+
+  autosize(sendInput);
+
+  $('form#new_message').on('ajax:success', function(e) {
+      autosize.update(sendInput);
+  });
 });
