@@ -32,4 +32,24 @@ $(document).ready(function(){
 
   $("#new_message_send_at_date").datepicker();
   $("#new_message_send_at_date").datepicker("option", "showAnim", "");
+
+  // Auto-expand sendbar textarea
+  $(document).one('focus.autoExpand', 'textarea.autoExpand', function() {
+      var savedValue = this.value;
+      this.value = '';
+      this.baseScrollHeight = this.scrollHeight;
+      this.value = savedValue;
+  })
+  .on('input.autoExpand', 'textarea.autoExpand', function() {
+      var
+        minRows = this.getAttribute('data_min_rows') | 0,
+        maxRows = this.getAttribute('data_max_rows') | 4,
+        additionalRows,
+        totalRows;
+
+      this.rows = minRows;
+      additionalRows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 28);
+      totalRows = minRows + additionalRows;
+      totalRows <= maxRows ? this.rows = totalRows : this.rows = maxRows;
+  });
 });
