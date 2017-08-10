@@ -20,8 +20,9 @@ describe 'Clients sorting order', type: :request do
       get clients_path
       expect(response.code).to eq '200'
       # check the sort order (clientthree, clienttwo, clientone)
-      expect(response.body.index(clientthree.full_name)).to be < response.body.index(clienttwo.full_name)
-      expect(response.body.index(clienttwo.full_name)).to be < response.body.index(clientone.full_name)
+      response_body = Nokogiri.parse(response.body).to_s
+      expect(response_body.index(clientthree.full_name)).to be < response_body.index(clienttwo.full_name)
+      expect(response_body.index(clienttwo.full_name)).to be < response_body.index(clientone.full_name)
     end
 
     it 'sorts clients with unread messages to top' do
@@ -53,8 +54,9 @@ describe 'Clients sorting order', type: :request do
       get clients_path
       expect(response.code).to eq '200'
       # check the sort order (clientone, clientthree, clienttwo)
-      expect(response.body.index(clientone.full_name)).to be < response.body.index(clientthree.full_name)
-      expect(response.body.index(clientthree.full_name)).to be < response.body.index(clienttwo.full_name)
+      response_body = Nokogiri.parse(response.body).to_s
+      expect(response_body.index(clientone.full_name)).to be < response_body.index(clientthree.full_name)
+      expect(response_body.index(clientthree.full_name)).to be < response_body.index(clienttwo.full_name)
     end
   end
 end
