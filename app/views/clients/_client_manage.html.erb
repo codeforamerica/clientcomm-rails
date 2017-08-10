@@ -3,7 +3,7 @@
     <h1 class="form-card__title">Manage</h1>
   </div>
   <div class="form-card__content">
-    <h4>Download Transcript</h4>
+    <h4>Download transcript</h4>
     <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
     <a href="<%= client_messages_download_path(@client) %>">
       <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
