@@ -8,6 +8,14 @@ class Clients::ArchivesController < ApplicationController
 
     typeform_link = ENV.fetch('TYPEFORM_LINK', nil)
 
+    analytics_track(
+      label: 'client_archive_success',
+      data: {
+        client_id: @client.id,
+        client_duration: (Date.current - @client.created_at.to_date).to_i
+      }
+    )
+
     if typeform_link
       render :show, locals: { typeform_link: typeform_link }
     else
