@@ -13,6 +13,7 @@ jobs:
           MIXPANEL_TOKEN: MIXPANELTOKENMIXPANELTOKENMIXPANEL
           UNCLAIMED_EMAIL: unclaimed@example.com
           SCHEDULED_MESSAGES: true
+          TYPEFORM_LINK: zaksoup.com
       - image: circleci/postgres:9.4.12-alpine
         environment:
           POSTGRES_USER: clientcomm

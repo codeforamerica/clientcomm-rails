@@ -1,12 +1,18 @@
 class Clients::ArchivesController < ApplicationController
   before_action :authenticate_user!
-  skip_after_action :intercom_rails_auto_include
 
   def create
     # change the archive status of the client
-    client.update!(active: client_params[:active])
+    @client = client
+    @client.update!(active: client_params[:active])
 
-    redirect_to clients_path
+    typeform_link = ENV.fetch('TYPEFORM_LINK', nil)
+
+    if typeform_link
+      render :show, locals: { typeform_link: typeform_link }
+    else
+      redirect_to clients_path
+    end
   end
 
   private
@@ -20,5 +26,4 @@ class Clients::ArchivesController < ApplicationController
       .permit(:active)
   end
 end
-
 

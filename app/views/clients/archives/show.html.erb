@@ -1,0 +1,29 @@
+<% content_for(:template_name) { "archive" }  %>
+
+<div class="slab">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+
+      <h2><i class="icon-check_circle color--green"></i> Client successfully deleted</h2>
+
+      <p><%= "#{@client.first_name} #{@client.last_name}" %> will no longer appear in ClientComm, and you won't be able to see your past conversations with them.</p>
+      <p>Did you do this by accident? Just <a class="intercom-activate" href="#">message</a> us and we'll add them back.</p>
+
+      <h2>Optional survey</h2>
+      <p>Do you have a minute? Please fill out this short survey about your experience texting with this client. This is completely optional, and helps the ClientComm team keep track of how much impact this tool has.</p>
+
+      <p>
+        <div class="card typeform-widget" data-url="<%= typeform_link %>" style="width: 100%; height: 500px;" > </div> <script> (function() { var qs,js,q,s,d=document, gi=d.getElementById, ce=d.createElement, gt=d.getElementsByTagName, id="typef_orm", b="https://embed.typeform.com/"; if(!gi.call(d,id)) { js=ce.call(d,"script"); js.id=id; js.src=b+"embed.js"; q=gt.call(d,"script")[0]; q.parentNode.insertBefore(js,q) } })() </script>
+      </p>
+
+      <p>
+        <%= link_to clients_path do %>
+          <button class='button button--cta'><i class="button__icon--left icon-arrow_back"></i>Home</button>
+        <% end %>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+

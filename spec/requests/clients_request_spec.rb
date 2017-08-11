@@ -90,10 +90,10 @@ describe 'Clients requests', type: :request do
       let(:client) { create_client build(:client) }
       subject { post client_archive_path(client), params: { client: { active: false } } }
 
-      it 'removes the client from the clients list' do
+      it 'shows a confirmation page' do
         subject
 
-        expect(Nokogiri.parse(response.body).to_s).to_not include("#{client.first_name} #{client.last_name}")
+        expect(Nokogiri.parse(response.body).to_s).to include("#{client.first_name} #{client.last_name} will no longer appear in ClientComm")
 
         expect(client.reload.active).to eq(false)
       end

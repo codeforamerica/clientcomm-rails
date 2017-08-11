@@ -15,6 +15,9 @@ feature "user archives client" do
 
     click_on "Delete #{clientone.first_name} #{clientone.last_name}"
 
+    expect(page).to have_content 'Client successfully deleted'
+    click_link 'Home'
+
     expect(page).to have_current_path(clients_path)
     expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
   end

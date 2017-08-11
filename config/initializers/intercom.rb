@@ -102,12 +102,12 @@ IntercomRails.config do |config|
   # uncomment this line and clicks on any element with id 'Intercom' will
   # open the messenger.
   #
-  # config.inbox.style = :custom
+  config.inbox.style = :custom
   #
   # If you'd like to use your own link activator CSS selector
   # uncomment this line and clicks on any element that matches the query will
   # open the messenger
-  # config.inbox.custom_activator = '.intercom'
+  config.inbox.custom_activator = '.intercom-activate'
   #
   # If you'd like to hide default launcher button uncomment this line
   # config.hide_default_launcher = true
