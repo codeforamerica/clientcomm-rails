@@ -5,33 +5,27 @@ $(document).ready(function(){
   });
 
   $('#send_later').click(function(){
-    var sendLaterMessage = $('input#message_body.main-message-input').val();
+    var sendLaterMessage = $('textarea#message_body.main-message-input').val();
     $('textarea#scheduled_message_body.send-later-input').val(sendLaterMessage);
   });
 
-  $('#edit-message-modal').modal();
-  $('#edit-message-modal').on('shown.bs.modal', function () {
-    $('textarea#scheduled_message_body.send-later-input.textarea').focus();
-  });
-  $('#edit-message-modal').on('hidden.bs.modal', function(e) {
-    e.preventDefault();
-    window.location = $('.close').attr('href');
-  });
+  function initializeModal(modalSelector) {
+    $(modalSelector).modal();
+    $(modalSelector).on('shown.bs.modal', function () {
+      $('textarea#scheduled_message_body.send-later-input.textarea').focus();
+    });
+  }
 
-  $('#new-message-modal').modal();
-  $('#new-message-modal').on('shown.bs.modal', function () {
-    $('textarea#scheduled_message_body.send-later-input.textarea').focus();
-  });
-  $('#new-message-modal').on('hidden.bs.modal', function(e) {
-    e.preventDefault();
-    window.location = $('.close').attr('href');
-  });
+  initializeModal('#new-message-modal');
+  initializeModal('#edit-message-modal');
 
-  $("#edit_message_send_at_date").datepicker();
-  $("#edit_message_send_at_date").datepicker("option", "showAnim", "");
+  function initializeDatepicker(datepickerSelector) {
+    $(datepickerSelector).datepicker();
+    $(datepickerSelector).datepicker("option", "showAnim", "");
+  };
 
-  $("#new_message_send_at_date").datepicker();
-  $("#new_message_send_at_date").datepicker("option", "showAnim", "");
+  initializeDatepicker("#edit_message_send_at_date");
+  initializeDatepicker("#new_message_send_at_date");
 
   var sendInput = $('textarea.autosize');
 

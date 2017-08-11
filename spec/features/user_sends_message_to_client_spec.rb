@@ -69,8 +69,12 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user schedules a message' do
+      incomplete_message = 'incomplete message'
+      fill_in 'Send a text message', with: incomplete_message
       click_button 'Send later'
       expect(page).to have_content('Send message later')
+
+      expect(find_field('Your message text').value).to eq incomplete_message
       fill_in 'Your message text', with: message_body
 
       future_date = Time.now + 7.days
