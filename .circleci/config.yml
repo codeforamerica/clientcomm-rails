@@ -83,16 +83,25 @@ jobs:
       - run:
           command: |
             git checkout master
-            git merge develop
+            git merge --ff-only develop
             git push
 
 workflows:
   version: 2
   test:
     jobs:
-      - rspec
-      - brakeman
-      - bundler-audit
+      - rspec:
+          filters:
+            branches:
+              ignore: master
+      - brakeman:
+          filters:
+            branches:
+              ignore: master
+      - bundler-audit:
+          filters:
+            branches:
+              ignore: master
       - merge_master:
           filters:
             branches:
