@@ -16,11 +16,15 @@ programmatic provisioning of Mailgun DNS settings
    aws_secret_key        = "REPLACE_ME"
    route53_zone_id       = "REPLACE_ME"
    ```
-1. (OPTIONAL) set the `mailgun_require_dkim` variable to `false` if you have
-   already verified the root domain you are trying to set with mailgun
-1. run the apply script
+1. (OPTIONAL) add a `mailgun_require_dkim` variable set to `false` if you have
+   already verified the root domain you are trying to set with mailgun.
+1. run the plan script
    ```bash
-   apply.sh <(lpass show --notes "THE_NAME_OF_YOUR_NOTE")
+   plan.sh THE_NAME_OF_YOUR_NOTE
+   ```
+1. if the plan looks good, run the apply script
+   ```bash
+   apply.sh THE_NAME_OF_YOUR_NOTE
    ```
 1. verify in Mailgun and Route53 that your resources created correctly
 
