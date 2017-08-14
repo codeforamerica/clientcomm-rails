@@ -4,8 +4,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_visitor_id
   before_action :set_phone_number
+  before_action :enable_intercom_launcher
 
   private
+
+  def enable_intercom_launcher
+    IntercomRails.config.hide_default_launcher = false
+  end
 
   # ANALYTICS
 

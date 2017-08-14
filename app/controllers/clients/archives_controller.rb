@@ -17,6 +17,7 @@ class Clients::ArchivesController < ApplicationController
     )
 
     if typeform_link
+      IntercomRails.config.hide_default_launcher = true
       render :show, locals: { typeform_link: typeform_link }
     else
       redirect_to clients_path
