@@ -38,6 +38,9 @@ feature "User receives a message from a client" do
       twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
       expect(page).to have_css '.flash p', text: "You have 2 unread messages"
       expect(page).to have_css '.unread td', text: clienttwo.full_name
+      page.all(:css, '.unread').each do |el|
+        expect(el).to have_css '.message-status-icon'
+      end
       expect(page.body.index(clienttwo.full_name)).to be < page.body.index(clientone.full_name)
     end
 

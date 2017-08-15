@@ -6,4 +6,13 @@
   .read {
     font-weight: normal;
   }
+
+  .client-name {
+    .message-status-icon {
+      display: inline-block;
+    }
+    a {
+      display: inline;
+    }
+  }
 }

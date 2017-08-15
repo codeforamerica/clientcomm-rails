@@ -45,6 +45,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # custom helpers, including steps
   config.include AnalyticsHelper
+  config.include ResponsiveHelper
   config.include TwilioHelper
   config.include FeatureHelper, type: :feature
   config.include RequestHelper, type: :request

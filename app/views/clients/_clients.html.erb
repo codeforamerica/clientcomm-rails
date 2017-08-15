@@ -1,9 +1,13 @@
 <tbody id="client-list">
 <% @clients.each do |client| %>
   <tr id="<%= dom_id(client) %>" class="<%= client_messages_read_or_unread(client) %>">
-    <td><%= link_to client.full_name, client_messages_path(client.id) %></td>
+    <td class="client-name">
+      <% if client_messages_read_or_unread(client) == 'unread' %>
+          <i class="icon-markunread message-status-icon hidden-xs"></i>
+      <% end %>
+      <%= link_to client.full_name, client_messages_path(client.id) %></td>
     <td><%= link_to time_ago_in_words(client.contacted_at), client_messages_path(client.id) %></td>
-    <td><%= link_to 'Manage', edit_client_path(client) %></td>
+    <td class="hidden-xs"><%= link_to 'Manage', edit_client_path(client) %></td>
   </tr>
 <% end %>
 </tbody>
