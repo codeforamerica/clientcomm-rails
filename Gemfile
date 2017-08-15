@@ -46,6 +46,8 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'activeadmin'
+
 group :test do
   gem 'launchy', require: false
   gem 'capybara-screenshot'

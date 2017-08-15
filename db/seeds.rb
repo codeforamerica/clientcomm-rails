@@ -8,3 +8,4 @@
 
 User.create!(email: 'test@example.com', password: 'changeme')
 User.create!(email: ENV['UNCLAIMED_EMAIL'], password: 'changeme')
+AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
