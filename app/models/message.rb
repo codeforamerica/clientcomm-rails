@@ -29,8 +29,6 @@ class Message < ApplicationRecord
       )
     end
 
-    client.update(active: true)
-
     new_message = Message.create!(
       client: client,
       user_id: client.user_id,
@@ -61,7 +59,8 @@ class Message < ApplicationRecord
       current_user_id: self.user.id,
       attachments_count: self.attachments.count,
       message_date_scheduled: self.send_at,
-      message_date_created: self.created_at
+      message_date_created: self.created_at,
+      client_active: self.client.active?
     }
   end
 

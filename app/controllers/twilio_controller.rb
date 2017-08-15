@@ -5,6 +5,10 @@ class TwilioController < ApplicationController
     new_message = Message.create_from_twilio! params
     client = new_message.client
 
+    client_previously_active = client.active
+
+    client.update(active: true)
+
     # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message)
 
@@ -21,7 +25,7 @@ class TwilioController < ApplicationController
 
     analytics_track(
       label: 'message_receive',
-      data: new_message.analytics_tracker_data
+      data: new_message.analytics_tracker_data.merge(client_active: client_previously_active)
     )
 
     head :no_content

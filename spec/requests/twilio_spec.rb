@@ -41,7 +41,8 @@ describe 'Twilio controller', type: :request do
               'message_receive' => {
                   'client_id' => client.id,
                   'message_length' => message_text.length,
-                  'attachments_count' => 0
+                  'attachments_count' => 0,
+                  'client_active' => true
               }
           }
       )
@@ -52,6 +53,31 @@ describe 'Twilio controller', type: :request do
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.html_part.to_s).to include 'sent you a text message'
+    end
+
+    context 'the client was previously inactive' do
+      let(:client) { create(:client, user: user, active: false) }
+
+      it 'returns the client to the active list' do
+        subject
+
+        expect(client.reload.active).to eq true
+      end
+
+      it 'tracks that the client was previously inactive' do
+        subject
+
+        expect_analytics_events(
+            {
+                'message_receive' => {
+                    'client_id' => client.id,
+                    'message_length' => message_text.length,
+                    'attachments_count' => 0,
+                    'client_active' => false
+                }
+            }
+        )
+      end
     end
 
     context 'a user has opted out of emails' do
