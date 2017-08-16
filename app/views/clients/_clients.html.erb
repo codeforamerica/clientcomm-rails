@@ -3,7 +3,7 @@
   <tr id="<%= dom_id(client) %>" class="<%= client_messages_read_or_unread(client) %>">
     <td class="client-name">
       <% if client_messages_read_or_unread(client) == 'unread' %>
-          <i class="icon-markunread message-status-icon hidden-xs"></i>
+          <i class="message-status-icon hidden-xs"></i>
       <% end %>
       <%= link_to client.full_name, client_messages_path(client.id) %></td>
     <td><%= link_to time_ago_in_words(client.contacted_at), client_messages_path(client.id) %></td>
