@@ -42,6 +42,11 @@ rails db:schema:load RAILS_ENV=test
 - Test suite: `bin/rspec`. For more detailed logging use `LOUD_TESTS=true bin/rspec`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
 
+## How to restore DB from backup
+
+1. Get the public URL for the databse backup: `heroku pg:backups:url --app [APP_NAME]` This should return a long AWS url for the most recent backup.
+1. Restore the DB: `heroku pg:backups:restore [previously found url] DATABASE_URL --app [APP_NAME]` Do not forget to correctly escape the db url, either with backslashes or with single quotes.
+
 ## Contact
 
 Tomas Apodaca ( @tmaybe )
