@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe FrontImport do
+describe FrontImport, front: true do
   before do
     WebMock.disable!
   end

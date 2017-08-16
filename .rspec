@@ -1,2 +1,7 @@
 --color
 --require spec_helper
+-r rspec_junit_formatter
+--format documentation
+--format RspecJunitFormatter
+--out results/rspec/junit.xml
+--tag '~front'
