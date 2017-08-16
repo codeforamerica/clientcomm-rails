@@ -24,8 +24,14 @@ describe FrontImport, front: true do
       user = User.first
       expect(user.full_name).to eq 'Joanne Morales'
       expect(user.email).to eq user_email
+    end
 
+    context 'invalid inbox' do
+      let(:user_email) { 'estelamolina@workforce.org' }
 
+      it 'fails' do
+        expect { subject }.to raise_error StandardError
+      end
     end
   end
 

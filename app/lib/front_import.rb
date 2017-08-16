@@ -66,6 +66,8 @@ class FrontImport
       teammate['email'] == email
     end
 
+    raise StandardError, 'Invalid email' if user.nil?
+
     user_model = User.find_or_initialize_by(email: email)
     user_model.update(full_name: "#{user['first_name']} #{user['last_name']}", password: SecureRandom.uuid)
     user_model.save!
