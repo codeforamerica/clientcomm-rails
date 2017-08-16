@@ -48,6 +48,9 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'activeadmin'
 
+# Use to import front users
+gem 'httparty'
+
 group :test do
   gem 'launchy', require: false
   gem 'capybara-screenshot'
