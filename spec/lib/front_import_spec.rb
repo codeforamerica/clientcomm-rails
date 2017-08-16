@@ -35,6 +35,56 @@ describe FrontImport, front: true do
     end
   end
 
+  describe '#import_messages' do
+    let(:conversation_id) { 'cnv_6vqm67' }
+    let!(:some_client) { create :client, phone_number: '+16198449469' }
+
+    subject { front_import.import_messages(user: user, conversation_id: conversation_id) }
+
+    it 'saves a list of messages to the database' do
+      subject
+
+      received_message = Message.first
+      expect(received_message.client).to eq some_client
+      expect(received_message.user).to eq user
+      expect(received_message.body).to eq 'Ok'
+      expect(received_message.number_from).to eq '+16198449469'
+      expect(received_message.number_to).to eq '+15614492331'
+      expect(received_message.inbound).to be_truthy
+      expect(received_message.created_at).to eq Time.zone.local(2017, 8, 15, 16, 4, 8, 3999)
+      expect(received_message.send_at).to eq Time.zone.local(2017, 8, 15, 16, 4, 8, 3999)
+      expect(received_message.sent).to be_truthy
+      expect(received_message.read).to be_truthy
+
+      sent_message = Message.second
+      expect(sent_message.client).to eq some_client
+      expect(sent_message.user).to eq user
+      expect(sent_message.body).to eq 'Great see you then😃'
+      expect(sent_message.number_from).to eq '+15614492331'
+      expect(sent_message.number_to).to eq '+16198449469'
+      expect(sent_message.inbound).to be_falsey
+      expect(sent_message.created_at).to eq Time.zone.local(2017, 8, 15, 15, 34, 47, 538000)
+      expect(sent_message.send_at).to eq Time.zone.local(2017, 8, 15, 15, 34, 47, 538000)
+      expect(sent_message.sent).to be_truthy
+      expect(received_message.read).to be_truthy
+
+      expect(Message.count).to eq 12
+    end
+
+    context 'users changed number of client' do
+      let(:conversation_id) { 'cnv_61jpvv' }
+      let!(:some_client) { create :client, phone_number: '+18588694853' }
+
+      subject { front_import.import_messages(user: user, conversation_id: conversation_id) }
+
+      it 'sets the correct client on each message' do
+        subject
+
+        expect(some_client.messages.count).to eq 3
+      end
+    end
+  end
+
   describe '#conversations' do
     let(:inbox_id) { 'inb_1zhv' }
 

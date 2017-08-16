@@ -55,6 +55,36 @@ class FrontImport
     end
   end
 
+  def import_messages(user:, conversation_id:)
+    messages = @front_client.conversation_messages(conversation_id)
+
+    first_message = messages.first
+    if first_message['is_inbound']
+      client_response = first_message['recipients'].find { |r| r['role'] == 'from' }
+    else
+      client_response = first_message['recipients'].find { |r| r['role'] == 'to' }
+    end
+    client = Client.find_by!(phone_number: PhoneNumberParser.normalize(client_response['handle']))
+
+    messages.each do |message|
+      recipient = message['recipients'].find { |r| r['role'] == 'to' }
+      sender = message['recipients'].find { |r| r['role'] == 'from' }
+
+      Message.new(
+          client: client,
+          user: user,
+          body: message['text'],
+          number_from: PhoneNumberParser.normalize(sender['handle']),
+          number_to: PhoneNumberParser.normalize(recipient['handle']),
+          inbound: message['is_inbound'],
+          created_at: Time.at(message['created_at']),
+          send_at: Time.at(message['created_at']),
+          sent: true,
+          read: true
+      ).save!(validate: false)
+    end
+  end
+
   def inboxes
     @inboxes ||= get_inboxes
   end
@@ -79,6 +109,9 @@ class FrontImport
     conversation_ids = conversations(user: user_model, inbox_id: inbox_id)
 
     # import all messages
+    conversation_ids.each do |conversation_id|
+      import_messages(user: user_model, conversation_id: conversation_id)
+    end
   end
 
   private
@@ -118,6 +151,10 @@ class FrontClient
 
   def inbox_conversations(inbox_id)
     list "#{FRONT_API_PATH}/inboxes/#{inbox_id}/conversations?limit=100"
+  end
+
+  def conversation_messages(conversation_id)
+    list "#{FRONT_API_PATH}/conversations/#{conversation_id}/messages?limit=100"
   end
 
   def inboxes
