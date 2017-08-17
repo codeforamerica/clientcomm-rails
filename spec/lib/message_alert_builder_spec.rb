@@ -5,14 +5,19 @@ describe MessageAlertBuilder do
   describe '#build' do
     specify 'when there are no unread messages' do
       user = create :user
-      expect(described_class.build_alert(user: user)).to eq nil
+      expect(described_class.build_alert(user: user, client_messages_path: nil, clients_path: nil)).to eq nil
     end
 
     specify 'when there is one unread message' do
       user = create :user
       client = create :client, user: user, first_name: "Senay", last_name: "Haylom"
       create :message, user: user, client: client, inbound: true, read: false
-      expect(described_class.build_alert(user: user)).to eq({
+
+      expect(described_class.build_alert(
+        user: user,
+        client_messages_path: "/clients/#{client.id}/messages",
+        clients_path: "/clients")
+      ).to eq({
         text: "You have 1 unread message from Senay Haylom",
         link_to: "/clients/#{client.id}/messages"
       })
@@ -23,7 +28,12 @@ describe MessageAlertBuilder do
       client = create :client, user: user, first_name: "Anna", last_name: "Futsum"
       create :message, user: user, client: client, inbound: true, read: false
       create :message, user: user, client: client, inbound: true, read: false
-      expect(described_class.build_alert(user: user)).to eq({
+
+      expect(described_class.build_alert(
+        user: user,
+        client_messages_path: "/clients/#{client.id}/messages",
+        clients_path: "/clients")
+      ).to eq({
         text: "You have 2 unread messages from Anna Futsum",
         link_to: "/clients/#{client.id}/messages"
       })
@@ -35,7 +45,11 @@ describe MessageAlertBuilder do
       clienttwo = create :client, user: user, first_name: "Mustafa", last_name: "Semhar"
       create :message, user: user, client: clientone, inbound: true, read: false
       create :message, user: user, client: clienttwo, inbound: true, read: false
-      expect(described_class.build_alert(user: user)).to eq({
+      expect(described_class.build_alert(
+        user: user,
+        client_messages_path: "/clients/#{clienttwo.id}/messages",
+        clients_path: "/clients")
+      ).to eq({
         text: "You have 2 unread messages",
         link_to: "/clients"
       })
@@ -47,7 +61,11 @@ describe MessageAlertBuilder do
       create :message, user: user, client: client, inbound: true, read: true
       create :message, user: user, client: client, inbound: true, read: true
       create :message, user: user, client: client, inbound: true, read: false
-      expect(described_class.build_alert(user: user)).to eq({
+      expect(described_class.build_alert(
+        user: user,
+        client_messages_path: "/clients/#{client.id}/messages",
+        clients_path: "/clients")
+      ).to eq({
         text: "You have 1 unread message from Luwam Sayid",
         link_to: "/clients/#{client.id}/messages"
       })
@@ -59,7 +77,11 @@ describe MessageAlertBuilder do
       client = create :client, user: userone, first_name: "Demet", last_name: "Zula"
       create :message, user: userone, client: client, inbound: true, read: false
       create :message, user: userone, client: client, inbound: true, read: false
-      expect(described_class.build_alert(user: usertwo)).to eq nil
+      expect(described_class.build_alert(
+        user: usertwo,
+        client_messages_path: "/clients/#{client.id}/messages",
+        clients_path: "/clients")
+      ).to eq nil
     end
 
   end
