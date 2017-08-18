@@ -13,7 +13,12 @@ class TwilioController < ApplicationController
     MessageBroadcastJob.perform_later(message: new_message)
 
     # construct and queue an alert
-    message_alert = MessageAlertBuilder.build_alert(user: client.user)
+    message_alert = MessageAlertBuilder.build_alert(
+      user: client.user,
+      client_messages_path: client_messages_path(client.id),
+      clients_path: clients_path
+    )
+    
     NotificationBroadcastJob.perform_later(
       channel_id: client.user_id,
       text: message_alert[:text],
