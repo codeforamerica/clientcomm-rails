@@ -15,10 +15,7 @@
         </div>
         <div class="grid__item width-one-third-lg">
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
-
-          <% if feature_flags.scheduled_messages %>
-              <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
-          <% end %>
+          <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
         </div>
       <% end %>
     </div>
