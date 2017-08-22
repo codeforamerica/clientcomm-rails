@@ -23,9 +23,9 @@ A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm
 rails db:schema:load RAILS_ENV=development
 rails db:schema:load RAILS_ENV=test
 ```
-5. Install [Foreman](https://github.com/ddollar/foreman) or the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+5. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
 6. Copy `.env.example` to `.env` and fill in the relevant values.
-7. Start the server with `foreman start` or `heroku local`. Take note of the port the server is running on, which may be set with the `PORT` variable in your `.env` file.
+7. Start the server with `heroku local`. Take note of the port the server is running on, which may be set with the `PORT` variable in your `.env` file.
 
 ## Setting Up Twilio
 
