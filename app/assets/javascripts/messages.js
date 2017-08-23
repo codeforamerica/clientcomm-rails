@@ -34,4 +34,8 @@ $(document).ready(function(){
   $('form#new_message').on('ajax:success', function(e) {
       autosize.update(sendInput);
   });
+
+  $('#client-list').find('td').click(function() {
+    window.location = $(this).attr('data-href')
+  })
 });

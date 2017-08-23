@@ -10,15 +10,18 @@ feature "logged-out user visits manage client page" do
   end
 end
 
-feature "user edits client" do
-  scenario "successfully" do
-    # log in with a fake user
-    myuser = create :user
-    clientone = create :client, user: myuser
+feature "user edits client", :js do
+  let(:myuser) { create :user }
+  let!(:clientone) { create :client, user: myuser }
+
+  before do
     login_as myuser, :scope => :user
     visit root_path
+  end
+
+  scenario "successfully" do
     within "#client_#{clientone.id}" do
-      click_on 'Manage'
+      find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     new_first_name = 'Vinicius'
@@ -29,16 +32,10 @@ feature "user edits client" do
     expect(page).to have_current_path(clients_path)
     expect(page).to have_content "#{new_first_name} #{new_last_name}"
   end
-end
 
-feature "user edits client" do
   scenario "and fails validation" do
-    myuser = create :user
-    clientone = create :client, user: myuser
-    login_as myuser, :scope => :user
-    visit root_path
     within("#client_#{clientone.id}") do
-      click_on 'Manage'
+      find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     fill_in 'Last name', with: ''

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "User clicks on client in list" do
+feature "User clicks on client in list", :js do
   scenario "and sees the messages page" do
     # log in with a fake user
     myuser = create :user
@@ -15,7 +15,7 @@ feature "User clicks on client in list" do
     expect(page).to have_css '.data-table td', text: myclient_fullname
     expect(page).to have_current_path(clients_path)
     # click on the client
-    click_on myclient_fullname
+    find('td', text: myclient_fullname).click
     expect(page).to have_content myclient_fullname
     expect(page).to have_content PhoneNumberParser.format_for_display(myclient.phone_number)
     # get the id from the saved client record

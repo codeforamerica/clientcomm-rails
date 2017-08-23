@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-feature 'Twilio' do
+feature 'Twilio', :js do
   after do
-    page.driver.header 'X-Twilio-Signature', nil
+    page.driver.headers = { 'X-Twilio-Signature' => nil }
   end
 
   describe 'POSTs to #incoming_sms' do
@@ -20,7 +20,7 @@ feature 'Twilio' do
         unknown_phone_number = message_params['From']
         message_body = message_params['Body']
         expect(page).to have_css '.data-table td', text: unknown_phone_number
-        click_on unknown_phone_number
+        find('td', text: unknown_phone_number).click
         expect(page).to have_content PhoneNumberParser.format_for_display(unknown_phone_number)
         expect(page).to have_content message_body
       end

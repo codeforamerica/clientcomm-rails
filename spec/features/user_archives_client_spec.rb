@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "user archives client" do
+feature "user archives client", :js do
   scenario "user clicks archive client button" do
     # log in with a fake user
     myuser = create :user
@@ -8,7 +8,7 @@ feature "user archives client" do
     login_as myuser, :scope => :user
     visit root_path
     within "#client_#{clientone.id}" do
-      click_on 'Manage'
+      find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     expect(page).to have_content 'Delete client'
