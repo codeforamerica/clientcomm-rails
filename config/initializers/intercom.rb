@@ -52,10 +52,9 @@ IntercomRails.config do |config|
   # You can provide either a method name which will be sent to the current
   # user object, or a Proc which will be passed the current user.
   #
-  # config.user.custom_data = {
-  #   :plan => Proc.new { |current_user| current_user.plan.name },
-  #   :favorite_color => :favorite_color
-  # }
+  config.user.custom_data = {
+    user_id: Proc.new { |user| user.email }
+  }
 
   # == Current company method/variable
   # The method/variable that contains the current company for the current user,
