@@ -1,12 +1,15 @@
-<tbody id="client-list">
+<tbody class="list">
 <% @clients.each do |client| %>
   <tr id="<%= dom_id(client) %>" class="<%= client_messages_read_or_unread(client) %>">
-    <td class="client-name" data-href="<%= client_messages_path(client.id) %>">
+    <td class="lastname fullname" data-href="<%= client_messages_path(client.id) %>" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
       <% if client_messages_read_or_unread(client) == 'unread' %>
           <i class="message-status-icon hidden-xs"></i>
       <% end %>
-      <%= client.full_name %></td>
-    <td data-href="<%= client_messages_path(client.id) %>"><%= time_ago_in_words(client.contacted_at) %></td>
+      <%= client.full_name %>
+    </td>
+    <td class="timestamp" data-href="<%= client_messages_path(client.id) %>" data-timestamp="<%= client.contacted_at.to_time.to_i %>">
+      <%= time_ago_in_words(client.contacted_at) %>
+    </td>
     <td class="hidden-xs" data-href="<%= edit_client_path(client.id) %>">Manage</td>
   </tr>
 <% end %>

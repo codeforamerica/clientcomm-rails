@@ -46,4 +46,58 @@ feature 'feature flags' do
       end
     end
   end
+
+  describe 'search and sort' do
+    let!(:myuser) { create :user }
+
+    context 'disabled' do
+      before do
+        ENV['SEARCH_AND_SORT'] = 'false'
+        login_as(myuser, :scope => :user)
+        visit clients_path
+      end
+
+      it 'does not show search input' do
+        expect(page).to_not have_css('.searchbar__input')
+        expect(page).to_not have_css('.glyphicon-search')
+        expect(page).to_not have_css('.glyphicon-remove')
+      end
+
+      it 'does not show sort icons' do
+        expect(page).to_not have_css('.glyphicon-resize-vertical')
+        expect(page).to_not have_css('.glyphicon-arrow-up')
+        expect(page).to_not have_css('.glyphicon-arrow-down')
+      end
+
+      it 'does not have sort classes ' do
+        expect(page).to_not have_css('.sort')
+      end
+
+    end
+
+    context 'enabled' do
+      before do
+        ENV['SEARCH_AND_SORT'] = 'true'
+        login_as(myuser, :scope => :user)
+        visit clients_path
+      end
+
+      it 'shows search input' do
+        expect(page).to have_css('.searchbar__input')
+        expect(page).to have_css('.glyphicon-search')
+        expect(page).to have_css('.glyphicon-remove')
+      end
+
+      it 'shows sort icons' do
+        expect(page).to have_css('.glyphicon-resize-vertical')
+        expect(page).to have_css('.glyphicon-arrow-up')
+        expect(page).to have_css('.glyphicon-arrow-down')
+      end
+
+      it 'has sort classes ' do
+        expect(page).to have_css('.sort')
+      end
+
+    end
+  end
 end

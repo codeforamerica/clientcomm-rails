@@ -98,6 +98,41 @@
         opacity: .3;
       }
   }
+
+  .sort {
+    .glyphicon-arrow-down {
+      display: none;
+    }
+    .glyphicon-arrow-up {
+      display: none;
+    }
+
+    &.asc {
+      .glyphicon-resize-vertical {
+        display: none;
+      }
+      .glyphicon-arrow-down {
+        display: none;
+      }
+      .glyphicon-arrow-up {
+        color: $color-teal;
+        display: inline;
+      }
+    }
+
+    &.desc {
+      .glyphicon-resize-vertical {
+        display: none;
+      }
+      .glyphicon-arrow-up {
+        display: none;
+      }
+      .glyphicon-arrow-down {
+        color: $color-teal;
+        display: inline;
+      }
+    }
+  }
 }
 
 .data-table--selectable {

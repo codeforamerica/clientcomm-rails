@@ -46,3 +46,56 @@
     border-color: shade($color-light-grey, 10%);
   }
 }
+
+.input-group-addon {
+  border: 2px solid #EAEAE9;
+  background-color: #EAEAE9;
+  padding-left: $width-image-icon;
+  padding-right: $width-image-icon;
+  border-radius: 2px 0px 0px 2px;
+
+  &#search-addon {
+    background-color: $color-background;
+  }
+}
+
+.inner-addon {
+    position: relative;
+}
+
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 15px;
+  pointer-events: none;
+  color: $color-grey;
+}
+
+.left-addon .glyphicon  {
+  left:  0px;
+}
+
+.left-addon input  {
+  padding-left:  45px;
+}
+
+.input-group-btn {
+  height: 50px;
+  .btn {
+    height: 100%;
+    border: 2px solid #EAEAE9;
+    background-color: #EAEAE9;
+    padding-left: $width-image-icon;
+    padding-right: $width-image-icon;
+    border-radius: 0px 2px 2px 0px;
+  }
+
+  &:last-child {
+    .btn {
+      margin-left: 0px;
+    }
+  }
+}
+
+.client-search-input {
+  margin-bottom: 1em;
+}

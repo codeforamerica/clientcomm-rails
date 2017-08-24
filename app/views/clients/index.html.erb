@@ -17,17 +17,43 @@
             </div>
           </div>
 
-          <div class="grid__item">
+          <div id="client-list" class="grid__item">
+            <% if feature_flags.search_and_sort == true %>
+              <div class="input-group client-search-input">
+                <div class="inner-addon left-addon">
+                  <input type="text" class="searchbar__input search" placeholder="Search clients by name" />
+                  <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </div>
+                <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-remove"></i></button></span>
+              </div>
+            <% end %>
             <table class="data-table data-table--selectable">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Last contact</th>
+                  <th <% if feature_flags.search_and_sort == true %> class="sort" data-sort="lastname" <% end %>>
+                    <% if feature_flags.search_and_sort == true %>
+                      <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    <% end %>
+                    Name
+                  </th>
+                  <th <% if feature_flags.search_and_sort == true %> class="sort desc" data-sort="timestamp" <% end %>>
+                    <% if feature_flags.search_and_sort == true %>
+                      <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    <% end %>
+                    Last contact
+                  </th>
                   <th class="hidden-xs">Action</th>
                 </tr>
               </thead>
               <%= render "clients/clients" %>
             </table>
+            <div id="no-search-results" class="notice" role="alert" style="display: none;">
+              Your search didn't return any results. Clear your search to view all clients.
+            </div>
           </div>
 
         </div>
