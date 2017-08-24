@@ -323,6 +323,8 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.0)
       tilt (~> 2.0)
+    skylight (1.3.1)
+      activesupport (>= 3.0.0)
     slop (3.6.0)
     spring (2.0.2)
       activesupport (>= 4.2)
@@ -416,6 +418,7 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-matchers!
   simplecov
+  skylight
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)

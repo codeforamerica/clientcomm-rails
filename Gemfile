@@ -48,6 +48,9 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'activeadmin'
 
+# Metrics and performance tracking
+gem 'skylight'
+
 # Use to import front users
 gem 'httparty'
 
