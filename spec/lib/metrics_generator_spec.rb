@@ -9,9 +9,11 @@ describe MetricsGenerator do
       expect(subject).to include 'Case managers: 3'
     end
 
-    it 'outputs total number of clients' do
-      create_list :client, 50
-      expect(subject).to include 'Clients: 50'
+    it 'outputs the number of active and total clients' do
+      create_list :client, 50, active: true
+      create_list :client, 10, active: false
+      expect(subject).to include 'Active Clients: 50'
+      expect(subject).to include 'Total Clients: 60'
     end
 
     it 'outputs number of clients who received their first message in the last week' do
@@ -20,7 +22,6 @@ describe MetricsGenerator do
       client3 = create :client
       client4 = create :client
       client5 = create :client
-      client6 = create :client
 
       create :message, client: client1, created_at: Time.now
 

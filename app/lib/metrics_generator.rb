@@ -2,7 +2,8 @@ class MetricsGenerator
   def self.generate
     %Q(
 Case managers: #{User.count}
-Clients: #{Client.count}
+Active Clients: #{Client.where(active: true).count}
+Total Clients: #{Client.count}
 New conversations in last week: #{new_conversations}
 Average number of messages per conversation: #{average_messages_in_conversation}
 Total number of messages sent/received: #{Message.count}
