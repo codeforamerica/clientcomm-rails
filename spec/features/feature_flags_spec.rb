@@ -8,7 +8,7 @@ feature 'feature flags' do
     end
 
     after do
-      ENV['ALLOW_SIGNUPS'] = @signups_values
+      ENV['ALLOW_SIGNUPS'] = @signups_value
     end
 
     context 'disabled' do
@@ -48,6 +48,14 @@ feature 'feature flags' do
   end
 
   describe 'search and sort' do
+    before do
+      @search_and_sort_value = ENV['ALLOW_SIGNUPS']
+    end
+
+    after do
+      ENV['ALLOW_SIGNUPS'] = @search_and_sort_value
+    end
+
     let!(:myuser) { create :user }
 
     context 'disabled' do
@@ -60,11 +68,11 @@ feature 'feature flags' do
       it 'does not show search input' do
         expect(page).to_not have_css('.searchbar__input')
         expect(page).to_not have_css('.glyphicon-search')
-        expect(page).to_not have_css('.glyphicon-remove')
+        expect(page).to_not have_css('.icon-close')
       end
 
       it 'does not show sort icons' do
-        expect(page).to_not have_css('.glyphicon-resize-vertical')
+        expect(page).to_not have_css('.glyphicon-sort')
         expect(page).to_not have_css('.glyphicon-arrow-up')
         expect(page).to_not have_css('.glyphicon-arrow-down')
       end
@@ -85,11 +93,11 @@ feature 'feature flags' do
       it 'shows search input' do
         expect(page).to have_css('.searchbar__input')
         expect(page).to have_css('.glyphicon-search')
-        expect(page).to have_css('.glyphicon-remove')
+        expect(page).to have_css('.icon-close')
       end
 
       it 'shows sort icons' do
-        expect(page).to have_css('.glyphicon-resize-vertical')
+        expect(page).to have_css('.glyphicon-sort')
         expect(page).to have_css('.glyphicon-arrow-up')
         expect(page).to have_css('.glyphicon-arrow-down')
       end

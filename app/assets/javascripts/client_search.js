@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var clientSeachOptions = {
+  var clientSearchOptions = {
     valueNames: [
       { attr: 'data-fullname', name: 'fullname' },
       { attr: 'data-lastname', name: 'lastname' },
@@ -7,7 +7,7 @@ $(document).ready(function(){
     ]
   };
 
-  var clientList = new List('client-list', clientSeachOptions);
+  var clientList = new List('client-list', clientSearchOptions);
 
   clientList.on('updated', function(list){
     if(list.matchingItems.length === 0){

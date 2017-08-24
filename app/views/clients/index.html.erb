@@ -24,7 +24,7 @@
                   <input type="text" class="searchbar__input search" placeholder="Search clients by name" />
                   <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                 </div>
-                <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="glyphicon glyphicon-remove"></i></button></span>
+                <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="icon-close"></i></button></span>
               </div>
             <% end %>
             <table class="data-table data-table--selectable">
@@ -32,7 +32,7 @@
                 <tr>
                   <th <% if feature_flags.search_and_sort == true %> class="sort" data-sort="lastname" <% end %>>
                     <% if feature_flags.search_and_sort == true %>
-                      <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                       <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
                       <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
                     <% end %>
@@ -40,7 +40,7 @@
                   </th>
                   <th <% if feature_flags.search_and_sort == true %> class="sort desc" data-sort="timestamp" <% end %>>
                     <% if feature_flags.search_and_sort == true %>
-                      <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                       <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
                       <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
                     <% end %>
