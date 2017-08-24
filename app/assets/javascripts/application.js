@@ -15,6 +15,8 @@
 //= require bootstrap-sprockets
 //= require jquery_ujs
 //= require autosize
+//= require lib/list.min
+//= require client_search
 //= require_tree .
 
 var incrementer = (function() {
