@@ -24,13 +24,24 @@ feature "user edits client", :js do
       find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
+
     new_first_name = 'Vinicius'
     new_last_name = 'Lima'
+    note = 'Here is a note.'
+
     fill_in 'First name', with: new_first_name
     fill_in 'Last name', with: new_last_name
+    fill_in 'Notes', with: note
+
     click_on 'Save changes'
     expect(page).to have_current_path(clients_path)
     expect(page).to have_content "#{new_first_name} #{new_last_name}"
+
+    within "#client_#{clientone.id}" do
+      find('td', text: 'Manage').click
+    end
+
+    expect(find_field('Notes').value).to eq note
   end
 
   scenario "and fails validation" do

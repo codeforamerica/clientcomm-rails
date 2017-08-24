@@ -16,7 +16,8 @@ class Client < ApplicationRecord
       messages_received_count: inbound_messages_count,
       messages_sent_count: outbound_messages_count,
       messages_attachments_count: attachments.count,
-      messages_scheduled_count: scheduled_messages_count
+      messages_scheduled_count: scheduled_messages_count,
+      has_client_notes: notes.present?
     }
   end
 

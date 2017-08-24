@@ -17,11 +17,16 @@ feature "User creates client" do
     expect(page).to have_current_path(new_client_path)
   end
 
-  scenario 'successfully' do
-    myclient = build :client
+  scenario 'successfully', :js do
+    myclient = build :client, notes: 'some note'
     add_client(myclient)
     expect(page).to have_css '.data-table td', text: myclient.full_name
     expect(page).to have_current_path(clients_path)
+
+    find('td', text: "#{myclient.first_name} #{myclient.last_name}").click
+    click_on 'Manage client'
+
+    expect(find_field('Notes').value).to eq myclient.notes
   end
 
   scenario 'unsuccessfully' do

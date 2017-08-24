@@ -13,6 +13,7 @@ module FeatureHelper
     fill_in "First name", with: the_client.first_name
     fill_in "Last name", with: the_client.last_name
     fill_in "Phone number", with: the_client.phone_number
+    fill_in 'Notes', with: the_client.notes
     click_on "Save new client"
     expect(page).to have_current_path(clients_path)
   end
