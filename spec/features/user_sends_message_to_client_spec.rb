@@ -82,6 +82,7 @@ feature 'sending messages', active_job: true do
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
       fill_in 'Date', with: ""
+      find('.ui-datepicker-next').click
       click_on future_date.strftime("%-d")
       select future_date.change(min: 0).strftime("%-l:%M%P"), from: 'Time'
 
