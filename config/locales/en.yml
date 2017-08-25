@@ -21,6 +21,7 @@
 
 en:
   hello: "Hello world"
+  voice_response: 'This phone number can only receive text messages. Please hang up and send a text message.'
   message:
     status:
       undelivered: "Message could not be delivered. Please check this is a working cell phone number and try again."

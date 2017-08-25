@@ -11,6 +11,12 @@ module TwilioHelper
     twilio_post tw_params, post_sig, post_path
   end
 
+  def twilio_post_voice(tw_params = twilio_status_update_params, use_correct_signature = true)
+    post_path = '/incoming/voice'
+    post_sig = use_correct_signature ? correct_signature(tw_params, post_path) : nil
+    twilio_post tw_params, post_sig, post_path
+  end
+
   def twilio_clear_after
     if defined?(page)
       page.driver.header post_header_name, nil

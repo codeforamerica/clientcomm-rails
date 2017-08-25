@@ -164,5 +164,13 @@ describe 'Twilio controller', type: :request do
       end
     end
   end
-end
 
+  context 'POST#incoming_voice' do
+    it 'responds to an incoming call with xml' do
+      twilio_post_voice()
+      expect(response.status).to eq 200
+      expect(response.content_type).to eq 'application/xml'
+      expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
+    end
+  end
+end

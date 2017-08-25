@@ -18,7 +18,7 @@ class TwilioController < ApplicationController
       client_messages_path: client_messages_path(client.id),
       clients_path: clients_path
     )
-    
+
     NotificationBroadcastJob.perform_later(
       channel_id: client.user_id,
       text: message_alert[:text],
@@ -56,7 +56,8 @@ class TwilioController < ApplicationController
   end
 
   def incoming_voice
-
+    voice_client = VoiceService.new
+    render :xml => voice_client.generate_twiml(message: t('voice_response'))
   end
 
 end
