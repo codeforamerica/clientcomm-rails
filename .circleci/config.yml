@@ -12,7 +12,8 @@ jobs:
           TWILIO_AUTH_TOKEN: TWILIOAUTHTOKENTWILIOAUTHTOKENTWIL
           MIXPANEL_TOKEN: MIXPANELTOKENMIXPANELTOKENMIXPANEL
           UNCLAIMED_EMAIL: unclaimed@example.com
-          TYPEFORM_LINK: zaksoup.com
+          TYPEFORM_LINK: example.com
+          MASS_MESSAGES: 'true'
       - image: circleci/postgres:9.4.12-alpine
         environment:
           POSTGRES_USER: clientcomm
