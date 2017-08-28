@@ -72,7 +72,6 @@ class ClientsController < ApplicationController
   def sorted_clients
     # sort clients with unread messages to the top,
     # no matter when they were last contacted
-    current_user.clients.where(active: true).sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
+    current_user.clients.where(active: true).includes(:messages).sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
   end
-
 end

@@ -1,6 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :user
-  has_many :messages
+  has_many :messages, -> { order(created_at: :desc) }
   has_many :attachments, through: :messages
 
   validates :last_name, :presence => true
@@ -27,11 +27,11 @@ class Client < ApplicationRecord
 
   def contacted_at
     # the date of the most recent message sent to or received from this client
-    last_message = messages.order(:created_at).last
+    last_message = messages.last
     if last_message
       return last_message.created_at
     end
-    self.updated_at
+    updated_at
   end
 
   def hours_since_contact
@@ -58,8 +58,11 @@ class Client < ApplicationRecord
   end
 
   def unread_messages_sort
-    # return a 0 or 1 to sort clients with unread messages on
-    [self.unread_messages_count, 1].min
+    order = 0
+    if messages.last
+      order = messages.last.read ? 0 : 1
+    end
+    order
   end
 
   # override default accessors
