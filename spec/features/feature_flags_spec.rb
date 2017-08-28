@@ -108,4 +108,42 @@ feature 'feature flags' do
 
     end
   end
+
+  describe 'mass messages' do
+    let(:myuser) { create :user }
+
+    before do
+      @mass_messages_value = ENV['MASS_MESSAGES']
+    end
+
+    after do
+      ENV['MASS_MESSAGES'] = @mass_messages_value
+    end
+
+    before do
+      login_as(myuser, :scope => :user)
+    end
+
+    context 'enabled' do
+      before do
+        ENV['MASS_MESSAGES'] = 'true'
+      end
+
+      it 'shows mass messages button' do
+        visit clients_path
+        expect(page).to have_content 'Mass message'
+      end
+    end
+
+    context 'disabled' do
+      before do
+        ENV['MASS_MESSAGES'] = 'false'
+      end
+
+      it 'does not show mass messages button' do
+        visit clients_path
+        expect(page).not_to have_content 'Mass message'
+      end
+    end
+  end
 end

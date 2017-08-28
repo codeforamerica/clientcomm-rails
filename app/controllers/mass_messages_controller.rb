@@ -1,0 +1,3 @@
+class MassMessagesController < ApplicationController
+
+end

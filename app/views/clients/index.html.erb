@@ -6,13 +6,18 @@
       <div class="media-box--bleed media-box">
         <div class="media-box__content">
 
-          <div class="toolbar with-padding-med">
-            <div class="toolbar__left">
+          <div class="toolbar-responsive with-padding-med">
+            <div class="toolbar__left-responsive">
               <h1>My clients</h1>
             </div>
-            <div class="toolbar__right">
-              <%= link_to new_client_path, class: "button button--small button--cta" do %>
+            <div class="toolbar__right-responsive">
+              <%= link_to new_client_path, class: "button button--small" do %>
                 <i class="button__icon--left icon-add"></i> New client
+              <% end %>
+              <% if feature_flags.mass_messages %>
+                <%= link_to new_mass_message_path, class: "button button--small button--primary" do %>
+                  Mass message
+                <% end %>
               <% end %>
             </div>
           </div>
