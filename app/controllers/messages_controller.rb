@@ -4,8 +4,6 @@ class MessagesController < ApplicationController
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
-  DEFAULT_SEND_AT = Time.current.beginning_of_day + 9.hours
-
   def index
     @client = current_user.clients.find params[:client_id]
 
@@ -18,7 +16,7 @@ class MessagesController < ApplicationController
     @messages = past_messages(client: @client)
     @messages.update_all(read: true)
 
-    @message = Message.new(send_at: DEFAULT_SEND_AT)
+    @message = Message.new(send_at: default_send_at)
     @sendfocus = true
 
     @messages_scheduled = scheduled_messages(client: @client)
@@ -159,6 +157,10 @@ class MessagesController < ApplicationController
   end
 
   private
+
+  def default_send_at
+    Time.current.beginning_of_day + 9.hours
+  end
 
   def past_messages(client:)
     current_user.messages
