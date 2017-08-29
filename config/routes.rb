@@ -14,7 +14,16 @@ Rails.application.routes.draw do
   }
 
   # CLIENTS and MESSAGES
-  root to: "clients#index"
+  devise_scope :user do
+    authenticated :user do
+      root to: 'clients#index'
+    end
+
+    unauthenticated do
+      root to: 'users/sessions#new'
+    end
+  end
+
   resources :clients, only: [:index, :new, :create, :edit, :update] do
     scope module: :clients do
       resource :archive, only: :create

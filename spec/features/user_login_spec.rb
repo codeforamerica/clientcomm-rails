@@ -48,7 +48,7 @@ feature "user wants to log in, check clients, and log out, so they" do
     step "log out and are redirected to login form" do
       click_on "Sign out"
       expect(page).to have_text "Log in"
-      expect(page).to have_current_path(new_user_session_path)
+      expect(page).to have_current_path(root_path)
     end
 
     step "log in and are redirected to client list" do
