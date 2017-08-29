@@ -1,4 +1,8 @@
 $(document).ready(function(){
+  clientSearchInit();
+});
+
+function clientSearchInit() {
   var clientSearchOptions = {
     valueNames: [
       { attr: 'data-fullname', name: 'fullname' },
@@ -21,4 +25,4 @@ $(document).ready(function(){
     $('.search').val('');
     clientList.search();
   });
-});
+}
