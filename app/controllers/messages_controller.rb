@@ -37,8 +37,7 @@ class MessagesController < ApplicationController
                     .order('created_at ASC')
 
     transcript = render_to_string file: 'messages/transcript_download.txt'
-
-    send_data transcript, filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
+    send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
   end
 
   def create
