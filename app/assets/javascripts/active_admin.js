@@ -1,1 +1,2 @@
-// jquery already required in application.js
+//= require jquery
+//= require jquery_ujs

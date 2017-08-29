@@ -21,6 +21,6 @@ class ApplicationController < ActionController::Base
   # COMMON
 
   def set_phone_number
-    @clientcomm_phone_number ||= PhoneNumberParser.format_for_display(ENV['TWILIO_PHONE_NUMBER'])
+    @clientcomm_phone_number ||= ::PhoneNumberParser.format_for_display(ENV['TWILIO_PHONE_NUMBER'])
   end
 end
