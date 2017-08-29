@@ -7,17 +7,11 @@
     font-weight: normal;
   }
 
-  .client-name {
-    .message-status-icon {
-      display: inline-block;
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-      background-color: $color-green;
-    }
-
-    a {
-      display: inline;
-    }
+  .message-status-icon {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: $color-green;
   }
 }
