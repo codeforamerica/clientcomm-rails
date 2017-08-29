@@ -1,10 +1,20 @@
-# clientcomm-rails
+# clientcomm
 
 [![CircleCI](https://circleci.com/gh/codeforamerica/clientcomm-rails.svg?style=svg)](https://circleci.com/gh/codeforamerica/clientcomm-rails)
 [![Code Climate](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/gpa.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails)
 [![Test Coverage](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/coverage.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails/coverage)
 
-A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm).
+The best way to keep clients compliant with the terms of their probation is to check in with them often. ClientComm makes it easy to keep in touch. ClientComm lets case managers send clients text messages from their computers. Conversations are kept together even if the client changes phone numbers. ClientComm triages texts based on communication history and authentication, and assigns messages to the right case.
+
+Read more: ClientComm.org
+
+# Context
+
+Every county struggles with individuals cycling in and out of jail due to missing court appearances or court-ordered treatment. Those jail stays are expensive, inefficient and, most of all, don't help address the person's underlying issues. Probation case managers and pretrial case managers juggle clients who are often dealing with other things like unstable family, housing and employment situations; changing addresses and phone numbers. All of these things makes it hard to stay in touch.
+
+Case managers know the best way to keep their clients compliant with the terms of their probation is to check in with them often, remind them of their commitments, and help them with problems that arise. Stakes are high—if they don’t comply with probation, they may go to jail.
+
+ClientComm started as a [2016 Code for America fellowship project](https://github.com/slco-2016/clientcomm) and is now a central part of Code for America's product work on [Safety and Justice](https://www.codeforamerica.org/focus-areas/safety-and-justice)
 
 ## Installation
 ### Requirements
