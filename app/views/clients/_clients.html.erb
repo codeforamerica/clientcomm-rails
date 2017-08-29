@@ -1,4 +1,4 @@
-<tbody class="list">
+<tbody id="client-rows" class="list">
 <% @clients.each do |client| %>
   <tr id="<%= dom_id(client) %>" class="<%= client_messages_read_or_unread(client) %>">
     <td class="lastname fullname" data-href="<%= client_messages_path(client.id) %>" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">

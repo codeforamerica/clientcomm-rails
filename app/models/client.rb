@@ -1,6 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :user
-  has_many :messages, -> { order(created_at: :desc) }
+  has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 
   validates :last_name, :presence => true

@@ -43,6 +43,7 @@ $(document).ready(function() {
           if (data.properties.client_id === Notifications.clientId) {
             return;
           }
+          // the page we're on contains an element with id client-list
           if ($("#client-list").length) {
             Notifications.refreshClientList();
           }
