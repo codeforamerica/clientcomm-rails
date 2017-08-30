@@ -2,11 +2,20 @@
 
 <section class="slab slab--header">
   <div class="grid">
-    <div class="grid__item">
-      <h2 class="client-name"><%= @client.full_name %></h2>
-      <%= link_to "Manage client", edit_client_path(@client), {class: 'button button--small' } %>
+    <div class="row">
+      <div class="col-md-5">
+        <h2 class="client-name">
+          <%= @client.full_name %>
+          <small><%= phone_number_display(@client.phone_number) %></small>
+        </h2>
+      </div>
+      <div class="col-md-4 hidden-sm hidden-xs">
+        <h2><small><%= @client.notes %></small></h2>
+      </div>
+      <div class="col-md-3">
+        <%= link_to "Manage client", edit_client_path(@client), {class: 'button button--small pull-right' } %>
+      </div>
     </div>
-    <span class="text--help is-mobile-hidden--inline"><%= phone_number_display(@client.phone_number) %></span>
   </div>
 </section>
 
