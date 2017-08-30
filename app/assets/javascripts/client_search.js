@@ -1,8 +1,8 @@
 $(document).ready(function(){
-  clientSearchInit();
+  clientListInit();
 });
 
-function clientSearchInit() {
+function clientListInit() {
   var clientSearchOptions = {
     valueNames: [
       { attr: 'data-fullname', name: 'fullname' },
@@ -25,4 +25,8 @@ function clientSearchInit() {
     $('.search').val('');
     clientList.search();
   });
+
+  $('#client-list').find('td').click(function() {
+    window.location = $(this).attr('data-href')
+  })
 }
