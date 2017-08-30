@@ -55,9 +55,11 @@ feature "User clicks on client in list", :js do
 end
 
 feature "User sees client notes on messages page", :js do
+
   context "visits clients page on mobile" do
-    let!(:myuser) { create :user }
-    let!(:myclient) { create :client, user: myuser }
+    let(:myuser) { create :user }
+
+    let(:myclient) { create :client, user: myuser }
 
     before do
       resize_window_to_mobile
@@ -72,5 +74,36 @@ feature "User sees client notes on messages page", :js do
       visit client_messages_path(myclient)
       expect(page).to_not have_content myclient.notes
     end
+  end
+
+  context "user clicks show more link" do
+    let!(:myuser) { create :user }
+
+    let!(:client_with_long_note) { create :client, user: myuser, notes: '12345678901234567890123456789011234567890123456789012345678901' }
+    before do
+      login_as(myuser, :scope => :user)
+      visit client_messages_path(client_with_long_note)
+    end
+
+    it "has show more button" do
+      expect(page).to have_content 'Show more'
+
+    end
+
+    it "shows full note when show more button is clicked" do
+      expect(page).to have_selector('#truncated_note', visible: true)
+      expect(page).to have_selector('#full_note', visible: false)
+
+      click_link 'More'
+
+      expect(page).to have_selector('#truncated_note', visible: false)
+      expect(page).to have_selector('#full_note', visible: true)
+
+      click_link 'Less'
+
+      expect(page).to have_selector('#truncated_note', visible: true)
+      expect(page).to have_selector('#full_note', visible: false)
+    end
+
   end
 end

@@ -37,8 +37,12 @@
 
   .slab--header {
     padding: {
-      bottom: .5em;
-      top: 1em;
+      bottom: .2em;
+      top: .6em;
+    }
+
+    h2 {
+      font-size: $font-size-h3;
     }
 
     h2,
@@ -47,7 +51,6 @@
     }
 
     .client-name {
-      float: left;
       padding-right: .3em;
     }
   }
@@ -175,4 +178,23 @@
     }
   }
 
+}
+
+.chat--header {
+  padding-bottom: .2em;
+  padding-top: .6em;
+
+  .header--paragraph {
+    font-size: $font-size-small;
+    margin-top: 4px;
+    line-height: $line-height-normal;
+
+    &.no-margin {
+      margin-top: 0px;
+    }
+  }
+
+  #manage_client {
+    margin-top: 5px;
+  }
 }

@@ -34,4 +34,14 @@ $(document).ready(function(){
   $('form#new_message').on('ajax:success', function(e) {
       autosize.update(sendInput);
   });
+
+  $('#show_note').click(function(){
+    $('#truncated_note').hide();
+    $('#full_note').show();
+  });
+
+  $('#hide_note').click(function(){
+    $('#full_note').hide();
+    $('#truncated_note').show();
+  });
 });

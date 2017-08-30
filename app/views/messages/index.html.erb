@@ -1,20 +1,31 @@
 <% content_for(:template_name) { "messages" }  %>
 
-<section class="slab slab--header">
+<section class="slab slab--header chat--header">
   <div class="grid">
     <div class="row">
-      <div class="col-md-5">
-        <h2 class="client-name">
-          <%= @client.full_name %>
-          <small><%= phone_number_display(@client.phone_number) %></small>
-        </h2>
-      </div>
-      <div class="col-md-4 hidden-sm hidden-xs">
-        <h2><small><%= @client.notes %></small></h2>
-      </div>
-      <div class="col-md-3">
-        <%= link_to "Manage client", edit_client_path(@client), {class: 'button button--small pull-right' } %>
-      </div>
+
+        <div class="col-xs-7 col-sm-4 col-md-4">
+          <h2 class="client-name">
+            <%= @client.full_name %>
+          </h2>
+          <p class="header--paragraph no-margin"><%= phone_number_display(@client.phone_number) %></p>
+        </div>
+
+        <div class="col-sm-4 col-md-5 hidden-xs">
+          <p id="truncated_note" class="header--paragraph">
+            <%= truncate(@client.notes, length: 40) %> <%=link_to 'More', '#', { id: 'show_note' } %>
+          </p>
+          <p id="full_note" style="display:none" class="header--paragraph">
+            <%= @client.notes %> <%=link_to 'Less', '#', { id: 'hide_note' } %>
+          </p>
+        </div>
+
+        <div class="col-sm-4 col-md-3 hidden-xs">
+          <%= link_to "Manage client", edit_client_path(@client), {id: 'manage_client', class: 'button button--small pull-right' } %>
+        </div>
+        <div class="col-xs-5 hidden-sm hidden-md hidden-lg">
+          <%= link_to "Manage", edit_client_path(@client), {id: 'manage_client', class: 'button button--small pull-right' } %>
+        </div>
     </div>
   </div>
 </section>
