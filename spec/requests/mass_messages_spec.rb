@@ -16,7 +16,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       post_params = {
         mass_message: {
           message: message_body,
-          clients: ["", "1", "3"]
+          clients: ["", client_1.id, client_3.id]
         }
       }
 
