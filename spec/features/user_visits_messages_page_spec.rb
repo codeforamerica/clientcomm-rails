@@ -69,7 +69,7 @@ feature "User sees client notes on messages page", :js do
     it "hides notes on mobile" do
       login_as(myuser, :scope => :user)
       visit client_messages_path(myclient)
-      expect(page).to_not have_content truncate(myclient.notes, length: 40)
+      expect(page).to_not have_content truncate(myclient.notes, length: 40, separator: ' ', omission: '... ')
     end
   end
 
@@ -85,7 +85,7 @@ feature "User sees client notes on messages page", :js do
     it "shows notes on desktop" do
       login_as(myuser, :scope => :user)
       visit client_messages_path(myclient)
-      expect(page).to have_content truncate(myclient.notes, length: 40)
+      expect(page).to have_content truncate(myclient.notes, length: 40, separator: ' ', omission: '... ')
     end
   end
 

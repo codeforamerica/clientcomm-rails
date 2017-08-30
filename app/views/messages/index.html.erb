@@ -13,7 +13,7 @@
 
         <div class="col-sm-4 col-md-5 hidden-xs">
           <p id="truncated_note" class="header--paragraph">
-            <%= truncate(@client.notes, length: 40) %> <%=link_to 'More', '#', { id: 'show_note' } %>
+            <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#', { id: 'show_note' } } %>
           </p>
           <p id="full_note" style="display:none" class="header--paragraph">
             <%= @client.notes %> <%=link_to 'Less', '#', { id: 'hide_note' } %>
