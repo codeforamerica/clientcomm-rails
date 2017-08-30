@@ -6,8 +6,8 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
-  let(:future_date) { Time.now.tomorrow.change(min: 0) }
-  let(:new_future_date) { future_date.tomorrow.change(min: 0) }
+  let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
+  let(:new_future_date) { future_date.change(min: 0, day: 4) }
 
   scenario 'user schedules and edits message for client', :js do
     step 'when user logs in' do
@@ -30,6 +30,7 @@ feature 'creating and editing scheduled messages', active_job: true do
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
       fill_in 'Date', with: ""
+      find('.ui-datepicker-next').click
       click_on future_date.strftime("%-d")
 
       select future_date.strftime("%-l:%M%P"), from: 'Time'
