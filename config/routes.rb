@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :mass_messages, only: [:new]
+  resources :mass_messages, only: [:new, :create]
 
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'

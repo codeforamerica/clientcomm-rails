@@ -1,1 +1,59 @@
-New mass message
+<div class="slab">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+      <div class="form-card form-card--compact">
+        <div class="form-card__header">
+          <h1 class="form-card__title">New mass message</h1>
+        </div>
+        <div class="form-card__content">
+          <%= form_for @mass_message, builder: GcfFormBuilder do |f| %>
+            <%= f.gcf_textarea :message, "Your message" %>
+
+            <div id="client-select-list" class="grid__item">
+              <p class="form-question">Select recipients</p>
+              <table class="data-table data-table--selectable">
+                <thead>
+                  <tr>
+                    <th>
+                      Name
+                    </th>
+                    <th>
+                      Last contact
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
+                    <tr id="<%= dom_id(b.object) %>">
+                      <td>
+                        <%= b.label do %>
+                          <%= b.check_box %>
+                          <%= b.object.full_name %>
+                        <% end %>
+                      </td>
+                      <td class="timestamp">
+                        <%= time_ago_in_words(b.object.contacted_at) %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="form-card__footer">
+              <div class="toolbar">
+                <div class="toolbar__left"><%= f.submit 'Send', class: 'button button--cta', role: 'button' %></div>
+                <div class="toolbar__right">
+                  <%= link_to clients_path, class: "button" do %>
+                    Cancel
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
