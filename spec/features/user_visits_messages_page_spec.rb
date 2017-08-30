@@ -41,9 +41,6 @@ feature "User clicks on client in list", :js do
         expect(page).to have_content PhoneNumberParser.format_for_display(myclient.phone_number)
       end
 
-      it "shows the client's notes in the header" do
-        expect(page).to have_content myclient.notes
-      end
       # get the id from the saved client record
       it "has the correct path for the client" do
         myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myclient.phone_number)).id
@@ -72,7 +69,23 @@ feature "User sees client notes on messages page", :js do
     it "hides notes on mobile" do
       login_as(myuser, :scope => :user)
       visit client_messages_path(myclient)
-      expect(page).to_not have_content myclient.notes
+      expect(page).to_not have_content truncate(myclient.notes, length: 40)
+    end
+  end
+
+  context "visits clients page on desktop" do
+    let(:myuser) { create :user }
+
+    let(:myclient) { create :client, user: myuser }
+
+    before do
+      resize_window_default
+    end
+
+    it "shows notes on desktop" do
+      login_as(myuser, :scope => :user)
+      visit client_messages_path(myclient)
+      expect(page).to have_content truncate(myclient.notes, length: 40)
     end
   end
 
@@ -86,7 +99,7 @@ feature "User sees client notes on messages page", :js do
     end
 
     it "has show more button" do
-      expect(page).to have_content 'Show more'
+      expect(page).to have_content 'More'
 
     end
 

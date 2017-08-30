@@ -19,6 +19,7 @@ feature "manage action is hidden on mobile", js: true do
     resize_window_to_mobile
     expect(page).to_not have_text "Manage"
     expect(page).to_not have_text "Action"
+    resize_window_default
   end
 end
 
