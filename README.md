@@ -1,12 +1,27 @@
-# clientcomm-rails
+# ClientComm
 
 [![CircleCI](https://circleci.com/gh/codeforamerica/clientcomm-rails.svg?style=svg)](https://circleci.com/gh/codeforamerica/clientcomm-rails)
 [![Code Climate](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/gpa.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails)
 [![Test Coverage](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/coverage.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails/coverage)
 
-A rails port/reimagining of [ClientComm](https://github.com/slco-2016/clientcomm).
+ClientComm facilitates better communication between clients and case managers to increase the number of clients who successfully complete supervision.
 
-## Installation
+# Overview
+
+5.1 million people are currently on probation or parole, and that number is projected to grow in the coming years as criminal justice reform continues to spread. Across the country, community supervision departments are managing greater numbers of people, with limited resources.  
+
+Community supervision personnel are tasked with maintaining public safety while helping their large caseloads navigate the terms of their release. It is vital for case managers to have a reliable way to contact each client, and today, people on community supervision are more likely to have a cell phone than a landline, and more likely to read a text than a letter in the mail. 
+
+### ClientComm allows case managers to efficiently communicate with their clients.
+
+ClientComm lets case managers send clients text messages from their computers or mobile devices. The text messages are sent from one department-wide phone number, and are not attached to individual case managers’ phones. Conversations between manager and client are kept together even if the client changes phone numbers, and can be printed or exported to your case management system.
+
+In early 2016, we launched ClientComm with Salt Lake County Criminal Justice Services, which was struggling with individuals cycling in and out of jail due to missed court appearances or court-ordered treatment. Probation and Pretrial case managers are using ClientComm to text hundreds of their clients on a daily basis. ClientComm allows case managers to cut down on time lost playing phone tag and leaving voicemails. In minutes, case managers can remind, and have their client confirm, they will be at their next court date, or attend their next treatment class.
+
+Our internal results in Salt Lake County show lower Failure to Appear rates, and time saved for case managers. We are currently undergoing a Randomized Control Test on the effectiveness of ClientComm in collaboration with researchers from the University of Virginia. ClientComm is now a central part of Code for America's product work on [Safety and Justice](https://www.codeforamerica.org/focus-areas/safety-and-justice), and is expanding to new jurisdictions across the country.
+
+
+# Installation
 ### Requirements
 1. Install Ruby with your ruby version manager of choice, like [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
 2. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.0`
