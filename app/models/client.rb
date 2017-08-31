@@ -27,9 +27,9 @@ class Client < ApplicationRecord
 
   def contacted_at
     # the date of the most recent message sent to or received from this client
-    last_message = messages.last
+    last_message = messages.reverse.find { |message| message.send_at < Time.now }
     if last_message
-      return last_message.created_at
+      return last_message.send_at
     end
     updated_at
   end
