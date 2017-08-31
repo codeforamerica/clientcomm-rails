@@ -22,6 +22,8 @@ describe 'Mass messages requests', type: :request, active_job: true do
 
       post mass_messages_path, params: post_params
 
+      expect(ScheduledMessageJob).to have_been_enqueued.twice
+
       expect(user.messages.count).to eq 2
       expect(client_1.messages.count).to eq 1
       expect(client_1.messages.first.body).to eq message_body

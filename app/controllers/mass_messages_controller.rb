@@ -8,7 +8,11 @@ class MassMessagesController < ApplicationController
 
   def create
     mass_message = MassMessage.new(mass_message_params.merge(user: current_user))
-    mass_message.send_to_all
+    SMSService.instance.send_mass_message(mass_message: mass_message, callback_url: incoming_sms_status_url)
+
+    flash[:notice] = 'Your mass message has been sent.'
+
+    redirect_to clients_path
   end
 
   private
