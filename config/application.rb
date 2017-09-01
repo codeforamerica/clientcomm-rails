@@ -31,8 +31,10 @@ module Clientcomm
     config.active_job.queue_adapter = :delayed_job
 
     # Configure external DSN
-    Raven.configure do |config|
-      config.dsn = ENV['SENTRY_ENDPOINT']
+    if ENV['SENTRY_ENDPOINT']
+      Raven.configure do |config|
+        config.dsn = ENV['SENTRY_ENDPOINT']
+      end
     end
 
     # Set the time zone from ENV, or default to UTC
