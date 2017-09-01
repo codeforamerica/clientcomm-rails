@@ -50,6 +50,7 @@ gem 'activeadmin'
 
 # Metrics and performance tracking
 gem 'skylight'
+gem 'sentry-raven'
 
 # Use to import front users
 gem 'httparty'
