@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = sorted_clients
+    @clients = SortClients.run(user: current_user)
 
     analytics_track(
       label: 'clients_view',
@@ -67,11 +67,5 @@ class ClientsController < ApplicationController
   def client_params
     params.fetch(:client, {})
       .permit(:first_name, :last_name, :phone_number, :notes, :active)
-  end
-
-  def sorted_clients
-    # sort clients with unread messages to the top,
-    # no matter when they were last contacted
-    current_user.clients.where(active: true).includes(:messages).sort_by { |c| [c.unread_messages_sort, c.contacted_at] }.reverse
   end
 end

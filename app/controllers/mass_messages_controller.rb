@@ -3,7 +3,7 @@ class MassMessagesController < ApplicationController
 
   def new
     @mass_message = MassMessage.new
-    @clients = current_user.clients
+    @clients = SortClients.run(user: current_user)
   end
 
   def create
