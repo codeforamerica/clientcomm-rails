@@ -24,6 +24,12 @@
     }
     &:focus {
         outline: 2px solid tint($color-teal, 50%);
+        text-decoration: none;
+    }
+
+    &:visited {
+      color: #000000;
+      text-decoration: none;
     }
 }
 
@@ -39,6 +45,9 @@
   &:active {
       background-color: shade($color-magenta, 15%);
   }
+  &:visited {
+    color: #FFFFFF;
+  }
 }
 
 .button--primary {
@@ -53,11 +62,17 @@
     &:active {
         background-color: shade($color-teal, 15%);
     }
+    &:visited {
+      color: #FFFFFF;
+    }
 }
 
 .button--danger {
     color: $color-red;
     &:hover {
+        color: $color-red;
+    }
+    &:visited {
         color: $color-red;
     }
 }
