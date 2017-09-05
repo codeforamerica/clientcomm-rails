@@ -27,6 +27,6 @@ function clientListInit() {
   });
 
   $('#client-list').find('td').click(function() {
-    window.location = $(this).attr('data-href')
-  })
+    window.location = $(this).attr('data-href');
+  });
 }

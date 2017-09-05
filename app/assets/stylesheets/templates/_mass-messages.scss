@@ -1,0 +1,21 @@
+.template--mass-messages {
+  .check-column {
+    padding-right: 0;
+  }
+
+  .data-table {
+    th, td {
+      &:first-child {
+        padding-left: $site-margins/2;
+      }
+      &:last-child {
+        padding-right: $site-margins/2;
+      }
+    }
+
+    label {
+      font-weight: normal;
+      cursor: pointer;
+    }
+  }
+}

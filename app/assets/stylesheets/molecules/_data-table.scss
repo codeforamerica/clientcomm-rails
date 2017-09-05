@@ -77,6 +77,10 @@
     &.row--warning td {
       background-color: tint($color-yellow, 40%);
     }
+
+    &.row--warning:hover {
+      background-color: tint($color-yellow, 37%);
+    }
   }
 
   td {

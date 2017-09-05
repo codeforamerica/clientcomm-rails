@@ -1,3 +1,5 @@
+<% content_for(:template_name) { "mass-messages" }  %>
+
 <div class="slab">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">
@@ -14,6 +16,8 @@
               <table class="data-table data-table--selectable">
                 <thead>
                   <tr>
+                    <th class="check-column">
+                    </th>
                     <th>
                       Name
                     </th>
@@ -25,9 +29,11 @@
                 <tbody class="list">
                   <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
                     <tr id="<%= dom_id(b.object) %>">
+                      <td class="check-column">
+                        <%= b.check_box %>
+                      </td>
                       <td>
                         <%= b.label do %>
-                          <%= b.check_box %>
                           <%= b.object.full_name %>
                         <% end %>
                       </td>
