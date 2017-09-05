@@ -10,7 +10,6 @@
 
         <%= form_for resource, as: resource_name, url: password_path(resource_name), builder: GcfFormBuilder do |f| %>
         <div class="form-card__content">
-          <%= devise_error_messages! %>
           <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
         </div>
         <div class="form-card__footer">
