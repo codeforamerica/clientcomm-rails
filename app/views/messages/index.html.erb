@@ -9,8 +9,8 @@
             <%= @client.full_name %>
           </h2>
           <span class="header--paragraph no-margin hidden-xs"><%= phone_number_display(@client.phone_number) %></span>
+          <% unless @client.notes.blank? %> | <% end %>
           <span id="truncated_note" class="header--paragraph hidden-xs">
-            <% unless @client.notes.blank? %> | <% end %>
             <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#', { id: 'show_note' } } %>
           </span>
           <span id="full_note" style="display:none" class="header--paragraph hidden-xs">
