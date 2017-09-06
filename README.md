@@ -32,6 +32,10 @@ Our internal results in Salt Lake County show lower Failure to Appear rates, and
 
 1. Install [bundler](https://bundler.io/) (the latest Heroku-compatible version): `gem install bundler -v 1.15.1`
 2. Install other requirements: `bundle install`
+
+    If you installed Postgres.app, you may need to install the `pg` gem independently with this command:
+
+    ```gem install pg -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config```
 3. Create the databases: `rails db:create`
 4. Apply the schema to the databases:
 ```
@@ -53,7 +57,7 @@ rails db:schema:load RAILS_ENV=test
 
 ## Testing
 
-- [Phantom](http://phantomjs.org/) is required to run some of the feature tests. [Download](http://phantomjs.org/download.html) or install with [Homebrew](https://brew.sh/): `brew install phantom`
+- [Phantom](http://phantomjs.org/) is required to run some of the feature tests. [Download](http://phantomjs.org/download.html) or install with [Homebrew](https://brew.sh/): `brew install phantomjs`
 - Test suite: `bin/rspec`. For more detailed logging use `LOUD_TESTS=true bin/rspec`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
 
