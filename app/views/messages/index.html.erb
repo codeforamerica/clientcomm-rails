@@ -4,21 +4,20 @@
   <div class="grid">
     <div class="row">
 
-        <div class="col-xs-7 col-sm-4 col-md-4">
+        <div class="col-xs-7 col-sm-8 col-md-9">
           <h2 class="client-name">
             <%= @client.full_name %>
           </h2>
-          <p class="header--paragraph no-margin"><%= phone_number_display(@client.phone_number) %></p>
+          <span class="header--paragraph no-margin hidden-xs"><%= phone_number_display(@client.phone_number) %></span>
+          <span id="truncated_note" class="header--paragraph hidden-xs">
+            <% unless @client.notes.blank? %> | <% end %>
+            <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#', { id: 'show_note' } } %>
+          </span>
+          <span id="full_note" style="display:none" class="header--paragraph hidden-xs">
+            <%= @client.notes %> <%=link_to 'Less', '#', { id: 'hide_note' } %>
+          </span>
         </div>
 
-        <div class="col-sm-4 col-md-5 hidden-xs">
-          <p id="truncated_note" class="header--paragraph">
-            <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#', { id: 'show_note' } } %>
-          </p>
-          <p id="full_note" style="display:none" class="header--paragraph">
-            <%= @client.notes %> <%=link_to 'Less', '#', { id: 'hide_note' } %>
-          </p>
-        </div>
 
         <div class="col-sm-4 col-md-3 hidden-xs">
           <%= link_to "Manage client", edit_client_path(@client), {id: 'manage_client', class: 'button button--small pull-right' } %>
