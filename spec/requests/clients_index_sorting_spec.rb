@@ -2,12 +2,12 @@ require 'rails_helper'
 
 describe 'Clients sorting order', type: :request do
   context 'GET#index' do
-    it 'sorts clients with no messages by updated_at' do
+    it 'sorts clients with no unread messages by last_contacted_at' do
       user = create :user
       sign_in user
-      clientone = create :client, user: user, last_contacted_at: 3.hours.ago
-      clienttwo = create :client, user: user, last_contacted_at: 2.hours.ago
-      clientthree = create :client, user: user, last_contacted_at: 1.hour.ago
+      clientone = create :client, user: user, last_contacted_at: 3.hours.ago, has_unread_messages: false
+      clienttwo = create :client, user: user, last_contacted_at: 2.hours.ago, has_unread_messages: false
+      clientthree = create :client, user: user, last_contacted_at: 1.hour.ago, has_unread_messages: false
 
       get clients_path
       expect(response.code).to eq '200'
