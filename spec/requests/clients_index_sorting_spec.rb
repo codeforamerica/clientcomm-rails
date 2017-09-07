@@ -5,18 +5,10 @@ describe 'Clients sorting order', type: :request do
     it 'sorts clients with no messages by updated_at' do
       user = create :user
       sign_in user
-      clientone = nil
-      clienttwo = nil
-      clientthree = nil
-      travel_to 3.hours.ago do
-        clientone = create :client, user: user
-      end
-      travel_to 2.hours.ago do
-        clienttwo = create :client, user: user
-      end
-      travel_to 1.hours.ago do
-        clientthree = create :client, user: user
-      end
+      clientone = create :client, user: user, last_contacted_at: 3.hours.ago
+      clienttwo = create :client, user: user, last_contacted_at: 2.hours.ago
+      clientthree = create :client, user: user, last_contacted_at: 1.hour.ago
+
       get clients_path
       expect(response.code).to eq '200'
       # check the sort order (clientthree, clienttwo, clientone)
