@@ -8,8 +8,10 @@
           <h2 class="client-name">
             <%= @client.full_name %>
           </h2>
-          <span class="header--paragraph no-margin hidden-xs"><%= phone_number_display(@client.phone_number) %></span>
-          <% unless @client.notes.blank? %> | <% end %>
+          <span class="header--paragraph no-margin hidden-xs">
+            <%= phone_number_display(@client.phone_number) %>
+            <% unless @client.notes.blank? %> &#8226; <% end %>
+          </span>
           <span id="truncated_note" class="header--paragraph hidden-xs">
             <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#', { id: 'show_note' } } %>
           </span>
