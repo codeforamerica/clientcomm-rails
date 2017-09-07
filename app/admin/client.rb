@@ -10,7 +10,8 @@ ActiveAdmin.register Client do
   end
 
   filter :user
-  filter :full_name
+  filter :first_name, label: 'Client first name'
+  filter :last_name, label: 'Client last name'
   filter :phone_number
   filter :active
 
