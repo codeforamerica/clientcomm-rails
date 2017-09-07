@@ -5,15 +5,22 @@ feature "search and sort clients" do
 
   before do
     ENV['SEARCH_AND_SORT'] = 'true'
+
+    @clientone = build :client, user: myuser, first_name: 'Rachel', last_name: 'A'
+    @clienttwo = build :client, user: myuser, first_name: 'Paras', last_name: 'B'
+    @clientthree = build :client, user: myuser, first_name: 'Charlie', last_name: 'C'
+
     login_as(myuser, :scope => :user)
     travel_to 7.days.ago do
-      @clientone = create :client, user: myuser, first_name: 'Rachel', last_name: 'A'
-    end
-    travel_to 1.day.ago do
-      @clienttwo = create :client, user: myuser, first_name: 'Paras', last_name: 'B'
+      add_client(@clientone)
     end
 
-    @clientthree = create :client, user: myuser, first_name: 'Charlie', last_name: 'C'
+    travel_to 1.day.ago do
+      add_client(@clienttwo)
+    end
+
+    add_client(@clientthree)
+
     visit clients_path
   end
 

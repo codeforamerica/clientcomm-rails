@@ -15,6 +15,8 @@ class ScheduledMessageJob < ApplicationJob
       return
     end
 
+    message.client.update!(last_contacted_at: message.send_at)
+
     SMSService.instance.send_message(
         message: message,
         callback_url: callback_url

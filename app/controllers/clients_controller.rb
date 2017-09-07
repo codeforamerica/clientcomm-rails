@@ -24,12 +24,19 @@ class ClientsController < ApplicationController
   end
 
   def create
-    @client = current_user.clients.create(client_params)
+    @client = Client.create(
+      user: current_user,
+      first_name: client_params[:first_name],
+      last_name: client_params[:last_name],
+      phone_number: client_params[:phone_number],
+      notes: client_params[:notes],
+      last_contacted_at: Time.now
+    )
 
     if @client.valid?
       analytics_track(
           label: 'client_create_success',
-          data: @client.analytics_tracker_data
+          data: @client.reload.analytics_tracker_data
       )
       redirect_to clients_path
     else
@@ -66,6 +73,6 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client, {})
-      .permit(:first_name, :last_name, :phone_number, :notes, :active)
+      .permit(:first_name, :last_name, :phone_number, :notes)
   end
 end

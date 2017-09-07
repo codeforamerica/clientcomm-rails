@@ -18,6 +18,6 @@ module ApplicationHelper
 
   def client_messages_read_or_unread(client)
     # return a string indicating whether the client has read or unread messages
-    client.unread_messages_count == 0 ? Message::READ : Message::UNREAD
+    client.has_unread_messages ? Message::UNREAD : Message::READ
   end
 end

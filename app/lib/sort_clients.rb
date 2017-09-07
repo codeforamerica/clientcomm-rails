@@ -1,8 +1,5 @@
 class SortClients
   def self.run(user:)
-    user.clients.where(active: true)
-      .includes(:messages)
-      .sort_by { |c| [c.unread_messages_sort, c.contacted_at] }
-      .reverse
+    user.clients.where(active: true).order(has_unread_messages: :desc, last_contacted_at: :desc)
   end
 end

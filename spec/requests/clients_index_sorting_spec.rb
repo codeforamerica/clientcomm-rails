@@ -28,31 +28,14 @@ describe 'Clients sorting order', type: :request do
     it 'sorts clients with unread messages to top' do
       user = create :user
       sign_in user
-      clientone = nil
-      clienttwo = nil
-      clientthree = nil
-      travel_to 3.hours.ago do
-        clientone = create :client, user: user
-      end
-      travel_to 2.hours.ago do
-        clienttwo = create :client, user: user
-      end
-      travel_to 1.hours.ago do
-        clientthree = create :client, user: user
-      end
 
-      # receive a message from clientthree 30 minutes ago
-      travel_to 30.minutes.ago do
-        create :message, user: user, client: clientthree, inbound: true, read: false
-      end
-      # receive a message from clientone 15 minutes ago
-      travel_to 15.minutes.ago do
-        create :message, user: user, client: clientone, inbound: true, read: false
-      end
-      # send a message to clienttwo now
-      create :message, user: user, client: clienttwo, inbound: false, read: true
+      clientone = create :client, user: user, last_contacted_at: 15.minutes.ago, has_unread_messages: true
+      clienttwo = create :client, user: user, last_contacted_at: Time.now
+      clientthree = create :client, user: user, last_contacted_at: 30.minutes.ago, has_unread_messages: true
+
       get clients_path
       expect(response.code).to eq '200'
+
       # check the sort order (clientone, clientthree, clienttwo)
       response_body = Nokogiri.parse(response.body).to_s
       expect(response_body.index(clientone.full_name)).to be < response_body.index(clientthree.full_name)

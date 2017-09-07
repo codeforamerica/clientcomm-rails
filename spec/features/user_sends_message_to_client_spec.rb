@@ -26,17 +26,8 @@ feature 'sending messages', active_job: true do
       fill_in 'Send a text message', with: message_body
       perform_enqueued_jobs do
         click_on 'send_message'
+        expect(page).to have_css '.message--outbound div', text: message_body
       end
-    end
-
-    step 'then user sees the message displayed' do
-      expect(page).to have_css '.message--outbound div', text: message_body
-      expect(page).to_not have_css '.flash__message', text: 'Your message has been scheduled'
-
-      # get the message object and find the dom_id
-      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
-      mymessage = Message.find_by(client_id: myclient_id, body: message_body)
-      expect(page).to have_css '.message--outbound', id: dom_id(mymessage)
     end
 
     step 'when user visits the clients page' do

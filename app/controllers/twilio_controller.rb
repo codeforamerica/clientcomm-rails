@@ -7,7 +7,11 @@ class TwilioController < ApplicationController
 
     client_previously_active = client.active
 
-    client.update(active: true)
+    client.update!(
+      active: true,
+      last_contacted_at: new_message.send_at,
+      has_unread_messages: true
+    )
 
     # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message)

@@ -16,6 +16,8 @@ class MessagesController < ApplicationController
     @messages = past_messages(client: @client)
     @messages.update_all(read: true)
 
+    @client.update(has_unread_messages: false)
+
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
 

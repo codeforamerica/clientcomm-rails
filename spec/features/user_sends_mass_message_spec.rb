@@ -35,7 +35,11 @@ feature 'sending mass messages', active_job: true do
       client_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).id
       visit client_messages_path(client_id)
       fill_in "Send a text message", with: message.body
-      click_on "Send"
+
+      perform_enqueued_jobs do
+        click_on 'Send'
+        expect(page).to have_css '.message--outbound div', text: message.body
+      end
 
       visit clients_path
     end

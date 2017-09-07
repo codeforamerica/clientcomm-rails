@@ -46,13 +46,14 @@ RSpec.describe Client, type: :model do
 
   describe '#analytics_tracker_data' do
     it 'shows data about the client' do
-      client = create :client, id: 4, notes: 'some notes'
-      create :message, client: client, read: false, inbound: true
-      create :message, client: client, read: false, inbound: true
-      create :message, client: client, read: false, inbound: false
-      create :message, client: client, read: false, inbound: false
-      create :message, client: client, read: false, inbound: false
-      create :message, client: client, read: false, inbound: false, send_at: Time.current + 10.days
+      client = create :client, id: 4, notes: 'some notes', has_unread_messages: true, last_contacted_at: Time.now
+
+      create :message, client: client, inbound: true
+      create :message, client: client, inbound: true
+      create :message, client: client, inbound: false
+      create :message, client: client, inbound: false
+      create :message, client: client, inbound: false
+      create :message, client: client, inbound: false, send_at: Time.current + 10.days
 
       expect(client.analytics_tracker_data).to include(
           client_id: 4,

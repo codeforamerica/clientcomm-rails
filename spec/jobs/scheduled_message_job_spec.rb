@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 describe ScheduledMessageJob, active_job: true, type: :job do
-  let(:message){ create :message }
   let(:count) { 4 }
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
+  let(:send_at_time) { Time.now.tomorrow }
+  let(:message) {create :message, send_at: send_at_time}
 
-  subject(:scheduled_job){ ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: 'whocares.com') }
+  subject do
+    perform_enqueued_jobs { ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
+  end
 
   it 'calls SMSService when performed' do
     expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
@@ -21,56 +24,35 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     expect(ActionCable.server).to receive(:broadcast)
       .with("scheduled_messages_#{message.client.id}", link_html: link_html, count: count)
 
-    perform_enqueued_jobs { scheduled_job }
+    subject
+
+    message.reload
+
+    expect(message.client.last_contacted_at).to eq send_at_time
   end
 
-  context "when scheduled for later" do
-    let(:send_at_time) { Time.now.tomorrow }
-    subject(:scheduled_job){ ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
-    let(:message) {create :message, send_at: send_at_time}
+  shared_examples 'does not send' do
+    it 'does not send the message' do
+      expect(SMSService.instance).to_not receive(:send_message)
+      expect_any_instance_of(ScheduledMessageJob).to_not receive(:scheduled_messages)
 
-    it 'calls SMSService when performed' do
-      expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
-      expect_any_instance_of(ScheduledMessageJob).to receive(:scheduled_messages)
-        .with(client: message.client)
-        .and_return(scheduled_messages)
+      expect(MessagesController).to_not receive(:render)
 
-      expect(MessagesController).to receive(:render)
-        .with(partial: 'messages/scheduled_messages_link', locals: {count: count, client: message.client})
-        .and_return(link_html)
+      expect(ActionCable.server).to_not receive(:broadcast)
 
-      expect(ActionCable.server).to receive(:broadcast)
-        .with("scheduled_messages_#{message.client.id}", link_html: link_html, count: count)
-
-      perform_enqueued_jobs { scheduled_job }
+      subject
     end
+  end
 
-    context 'When rescheduled' do
-      let(:message) { create :message, send_at: Time.now }
+  context 'When rescheduled' do
+    let(:message) { create :message, send_at: Time.now }
 
-      it 'does not send the message' do
-        expect(SMSService.instance).to_not receive(:send_message)
-        expect_any_instance_of(ScheduledMessageJob).to_not receive(:scheduled_messages)
+    it_behaves_like 'does not send'
+  end
 
-        expect(MessagesController).to_not receive(:render)
+  context 'When already sent' do
+    let(:message) { create :message, sent: true }
 
-        expect(ActionCable.server).to_not receive(:broadcast)
-        perform_enqueued_jobs { scheduled_job }
-      end
-    end
-
-    context 'When already sent' do
-      let(:message) {create :message, send_at: send_at_time, sent: true}
-
-      it 'ignores the message and does not send' do
-        expect(SMSService.instance).to_not receive(:send_message)
-        expect_any_instance_of(ScheduledMessageJob).to_not receive(:scheduled_messages)
-
-        expect(MessagesController).to_not receive(:render)
-
-        expect(ActionCable.server).to_not receive(:broadcast)
-        perform_enqueued_jobs { scheduled_job }
-      end
-    end
+    it_behaves_like 'does not send'
   end
 end

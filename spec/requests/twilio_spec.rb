@@ -3,18 +3,14 @@ require 'rails_helper'
 describe 'Twilio controller', type: :request do
   include ActiveJob::TestHelper
 
-  let(:user) { create :user }
-  let(:client) { create(:client, user: user) }
-
-  before do
-    sign_in user
-  end
+  let(:phone_number) { '+15552345678' }
+  let!(:client) { create :client, phone_number: phone_number }
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }
     let(:message_params) {
       twilio_new_message_params(
-          from_number: client.phone_number,
+          from_number: phone_number,
           msg_txt: message_text
       )
     }
@@ -28,8 +24,7 @@ describe 'Twilio controller', type: :request do
     it 'saves an incoming sms message' do
       subject
 
-      msg = user.messages.last
-      expect(msg).not_to eq nil
+      msg = client.messages.last
       expect(msg.body).to eq message_text
     end
 
@@ -55,8 +50,23 @@ describe 'Twilio controller', type: :request do
       expect(mail.html_part.to_s).to include 'sent you a text message'
     end
 
+    it 'updates the client last_contacted_at and has_unread_messages' do
+      some_date = rand(10.years).seconds.ago
+
+      travel_to some_date do
+        subject
+      end
+
+      client.reload
+
+      expect(client.last_contacted_at).to be_within(1.seconds).of some_date
+      expect(client.has_unread_messages).to eq true
+    end
+
     context 'the client was previously inactive' do
-      let(:client) { create(:client, user: user, active: false) }
+      before do
+        client.update!(active: false)
+      end
 
       it 'returns the client to the active list' do
         subject
@@ -81,7 +91,9 @@ describe 'Twilio controller', type: :request do
     end
 
     context 'a user has opted out of emails' do
-      let(:user) { create :user, email_subscribe: false }
+      before do
+        client.user.update!(email_subscribe: false)
+      end
 
       it 'should not send an email' do
         expect(NotificationMailer).to_not receive(:message_notification)
@@ -93,7 +105,7 @@ describe 'Twilio controller', type: :request do
     context 'sms message contains an attachment' do
       let(:message_params) {
         twilio_new_message_params(
-            from_number: client.phone_number,
+            from_number: phone_number,
             msg_txt: message_text,
             media_count: 1
         )
@@ -118,17 +130,12 @@ describe 'Twilio controller', type: :request do
   context 'POST#incoming_sms_status' do
     context 'receives a notice about a non-scheduled message' do
       let!(:msgone) {
-        create :message, user: user, client: client, inbound: false, twilio_status: 'queued'
+        create :message, client: client, inbound: false, twilio_status: 'queued'
       }
-
-      before do
-        # validate the initial status
-        expect(client.messages.last.twilio_status).to eq 'queued'
-      end
 
       it 'saves a successful sms message status update' do
         # post a status update
-        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
+        status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
         twilio_post_sms_status status_params
 
         # validate the updated status
@@ -140,7 +147,7 @@ describe 'Twilio controller', type: :request do
 
       it 'saves an unsuccessful sms message status update' do
         # post a status update
-        status_params = twilio_status_update_params to_number: client.phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
+        status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
         twilio_post_sms_status status_params
 
         # validate the updated status

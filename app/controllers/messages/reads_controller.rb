@@ -5,6 +5,7 @@ class Messages::ReadsController < ApplicationController
   def create
     # change the read status of the message
     message.update!(read: message_params[:read])
+    message.client.update!(has_unread_messages: false)
 
     head :no_content
   end

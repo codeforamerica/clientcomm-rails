@@ -17,17 +17,22 @@ feature "User enters a message and submits it" do
         mysecondclient = build :client
         add_client(mysecondclient)
     end
+
     # go to messages page
     myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myfirstclient.phone_number)).id
     visit client_messages_path(client_id: myclient_id)
+
     # enter a message in the form
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
     click_on "send_message"
+
     # go to the client list and check the last contact times
     visit clients_path
+
     savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(myfirstclient.phone_number))
     savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(mysecondclient.phone_number))
+
     expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute', wait: 10
     expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
   end
@@ -42,10 +47,7 @@ feature "User schedules a message for later and submits it", :js, active_job: tr
 
   scenario "then returns to clients list" do
     travel_to 7.days.ago do
-      # log in with a fake user
       login_as(user, :scope => :user)
-      # create a new client
-      visit new_client_path
       add_client(client)
     end
 
@@ -67,11 +69,9 @@ feature "User schedules a message for later and submits it", :js, active_job: tr
       select future_date.strftime("%-l:%M%P"), from: 'Time'
       fill_in 'scheduled_message_body', with: message_body
 
-      perform_enqueued_jobs do
-        click_on 'Schedule message'
-        expect(page).to have_content client.full_name
-        expect(page).to have_content '1 message scheduled'
-      end
+      click_on 'Schedule message'
+      expect(page).to have_content client.full_name
+      expect(page).to have_content '1 message scheduled'
     end
 
     step 'return to client messages path' do
