@@ -22,6 +22,18 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'GET#index' do
+      it 'shows all past messages' do
+        message = create :message, client: client
+        message_2 = create :message, client: client
+
+        get client_messages_path(client)
+
+        response_body = Nokogiri::HTML(response.body).to_s
+
+        expect(response_body).to include(message.body)
+        expect(response_body).to include(message_2.body)
+      end
+
       it 'marks all messages read when index loaded' do
         message = create :message, user: user, client: client, inbound: true
 

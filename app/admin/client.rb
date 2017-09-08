@@ -9,6 +9,8 @@ ActiveAdmin.register Client do
     actions
   end
 
+  actions :all, :except => [:destroy]
+
   filter :user
   filter :first_name, label: 'Client first name'
   filter :last_name, label: 'Client last name'

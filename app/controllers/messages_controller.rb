@@ -164,7 +164,7 @@ class MessagesController < ApplicationController
   end
 
   def past_messages(client:)
-    current_user.messages
+    Message
         .where(client: client)
         .where('send_at < ?', Time.now)
         .order('created_at ASC')
