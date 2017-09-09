@@ -26,6 +26,7 @@ feature "User enters a message and submits it" do
     message_body = "You have an appointment tomorrow at 10am"
     fill_in "Send a text message", with: message_body
     click_on "send_message"
+    expect(page).to have_content message_body
 
     # go to the client list and check the last contact times
     visit clients_path
@@ -33,7 +34,7 @@ feature "User enters a message and submits it" do
     savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(myfirstclient.phone_number))
     savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(mysecondclient.phone_number))
 
-    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute', wait: 10
+    expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'less than a minute'
     expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
   end
 end

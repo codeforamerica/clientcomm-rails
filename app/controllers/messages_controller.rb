@@ -43,53 +43,47 @@ class MessagesController < ApplicationController
   end
 
   def create
-    param_body = message_params[:body]
-    param_send_at = Time.current
-    analytics_label = 'message_send'
-    if message_params[:send_at].present?
-      param_send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
-      analytics_label = 'message_scheduled'
-      @message = Message.new(
-          body: param_body,
-          send_at: param_send_at
-      )
+    client = current_user.clients.find params[:client_id]
+    send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.now
+    message = Message.new(
+        body: message_params[:body],
+        user: current_user,
+        client: client,
+        number_from: ENV['TWILIO_PHONE_NUMBER'],
+        number_to: client.phone_number,
+        send_at: send_at,
+        read: true
+    )
 
-      if @message.invalid?
-        @client = current_user.clients.find params[:client_id]
-
+    if message.invalid?
+        @message = message
+        @client = client
         @messages = past_messages(client: @client)
         @messages_scheduled = scheduled_messages(client: @client)
 
         render :index
         return
-      end
     end
 
-    client = current_user.clients.find params[:client_id]
-
-    message = Message.new(
-      body: param_body,
-      user: current_user,
-      client: client,
-      number_from: ENV['TWILIO_PHONE_NUMBER'],
-      number_to: client.phone_number,
-      read: true,
-      send_at: param_send_at
-    )
     message.save!
 
     if message_params[:send_at].present?
-      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
       flash[:notice] = 'Your message has been scheduled'
+
+      analytics_track(
+        label: 'message_scheduled',
+        data: message.analytics_tracker_data
+      )
+      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     else
       MessageBroadcastJob.perform_now(message: message)
+
+      analytics_track(
+        label: 'message_send',
+        data: message.analytics_tracker_data
+      )
       ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     end
-
-    analytics_track(
-      label: analytics_label,
-      data: message.analytics_tracker_data
-    )
 
     respond_to do |format|
       format.html { redirect_to client_messages_path(client.id) }
