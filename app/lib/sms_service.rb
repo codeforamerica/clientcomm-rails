@@ -26,29 +26,6 @@ class SMSService
     MessageBroadcastJob.perform_now(message: message)
   end
 
-  def send_mass_message(mass_message:, callback_url:)
-    clients = mass_message.clients.reject { |item| item.empty? }
-    clients.each do |client_id|
-
-      client = Client.find(client_id)
-
-      message_params = {
-          body: mass_message.message,
-          user: mass_message.user,
-          client: client,
-          number_from: ENV['TWILIO_PHONE_NUMBER'],
-          number_to: client.phone_number,
-          read: true,
-          inbound: false,
-          send_at: Time.now
-      }
-
-      message = Message.create!(message_params)
-
-      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: callback_url)
-    end
-  end
-
   private
 
   def send_twilio_message(from: nil, to:, body:, callback_url:)
