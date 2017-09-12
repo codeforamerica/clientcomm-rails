@@ -16,6 +16,7 @@ ActiveAdmin.register Client do
   filter :last_name, label: 'Client last name'
   filter :phone_number
   filter :active
+  filter :notes_present, as: 'boolean'
 
   form do |f|
     f.inputs "Client Info" do
