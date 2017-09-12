@@ -28,7 +28,7 @@ feature 'Admin features' do
       end
 
       expect(page).to have_content "Disable #{@user_1.full_name}'s account"
-      expect(page).to have_content 'This user has active clients assigned to them.'
+      expect(page).to have_content 'This user has active clients.'
     end
 
     step 'admin transfers active clients' do

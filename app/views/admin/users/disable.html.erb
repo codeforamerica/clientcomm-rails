@@ -1,7 +1,16 @@
-<p>Disabling an account means xyz</p>
-
+<h3>Disabling an account means that this user will no longer be able to log in. You can re-enable their account at any
+  time.</h3>
 <% if resource.clients.where(active: true).empty? %>
-    <%= link_to 'Disable account', disable_confirm_admin_user_path(resource) %>
+    <%= link_to 'Disable account', disable_confirm_admin_user_path(resource), {class: 'button'} %>
 <% else %>
-    This user has active clients assigned to them.
+    <div class='panel'>
+      <h3>Warning</h3>
+      <div class='panel-content'>
+        <p>This user has active clients. You
+          must <%= link_to 'transfer their clients', admin_clients_path(q: {user_id_eq: resource.id, active_eq: true}) %>
+          to another user or archive them before you can disable their account.</p>
+      </div>
+    </div>
+
+    <button class="disabled">Disable account</button>
 <% end %>

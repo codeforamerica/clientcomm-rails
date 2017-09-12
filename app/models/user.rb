@@ -30,6 +30,6 @@ class User < ApplicationRecord
   end
 
   def inactive_message
-    'Sorry, this account has been disabled.'
+    'Sorry, this account has been disabled. Please contact an administrator.'
   end
 end
