@@ -12,6 +12,7 @@ class ScheduledMessageJob < ApplicationJob
     begin
       message.update(sent: true)
     rescue ActiveRecord::StaleObjectError
+      logger.warn("Invalid scheduled message conflict")
       return
     end
 
