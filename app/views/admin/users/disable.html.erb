@@ -1,3 +1,7 @@
 <p>Disabling an account means xyz</p>
 
-<%= link_to 'Disable account', disable_confirm_admin_user_path(resource) %>
+<% if resource.clients.where(active: true).empty? %>
+    <%= link_to 'Disable account', disable_confirm_admin_user_path(resource) %>
+<% else %>
+    This user has active clients assigned to them.
+<% end %>
