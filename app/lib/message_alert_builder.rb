@@ -1,6 +1,6 @@
-include ActionView::Helpers::TextHelper
-
 module MessageAlertBuilder
+  extend ActionView::Helpers::TextHelper
+
   def self.build_alert(user:, client_messages_path:, clients_path:)
     # return an alert appropriate for the state of unread messages
     unread_messages = user.messages.where(read: false)

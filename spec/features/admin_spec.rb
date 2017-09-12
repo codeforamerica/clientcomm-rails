@@ -4,26 +4,39 @@ feature 'Admin features' do
   let!(:user) { create :user }
 
   scenario 'Admin disables user' do
-    admin = create :admin_user
+    step 'log in to admin panel' do
+      admin = create :admin_user
+      login_as(admin, scope: :admin_user)
 
-    login_as(admin, scope: :admin_user)
-
-    visit admin_users_path
-
-    expect(page).to have_content 'Users'
-
-    expect(find("tr##{dom_id(user)}").text).to include 'Disable'
-
-    within "tr##{dom_id(user)}" do
-      click_on 'Disable'
+      visit admin_users_path
+      expect(page).to have_content 'Users'
     end
 
-    expect(page).to have_content "Disable #{user.full_name}'s account"
+    step 'admin disables user' do
+      expect(find("tr##{dom_id(user)}").text).to include 'Disable'
 
-    click_on 'Disable account'
+      within "tr##{dom_id(user)}" do
+        click_on 'Disable'
+      end
+    end
 
-    save_and_open_page
+    step 'admin confirms the disable action' do
+      expect(page).to have_content "Disable #{user.full_name}'s account"
+      click_on 'Disable account'
+    end
 
-    expect(find("tr##{dom_id(user)}").text).not_to include 'Disable'
+    step 'admin returns to the list of users' do
+      expect(page).to have_content 'Users'
+    end
+
+    step 'admin re-enables user' do
+      expect(find("tr##{dom_id(user)}").text).to include 'Enable'
+
+      within "tr##{dom_id(user)}" do
+        click_on 'Enable'
+      end
+
+      expect(find("tr##{dom_id(user)}").text).to include 'Disable'
+    end
   end
 end

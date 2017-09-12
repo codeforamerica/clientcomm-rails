@@ -1,8 +1,8 @@
 require "rails_helper"
-include ActionView::Helpers::TextHelper
 
 feature 'creating and editing scheduled messages', active_job: true do
   let(:message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.'}
+  let(:truncated_message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at ...'}
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
@@ -47,7 +47,7 @@ feature 'creating and editing scheduled messages', active_job: true do
       click_on '1 message scheduled'
       expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
       expect(page).to have_content 'Manage scheduled messages'
-      expect(page).to have_content truncate(message_body, length: 80)
+      expect(page).to have_content truncated_message_body
     end
 
     step 'when user clicks on edit message' do

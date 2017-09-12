@@ -10,6 +10,19 @@ describe 'Root Paths', type: :request do
     end
   end
 
+  context 'Disabled' do
+    let(:inactive_user) { create :user, active: false }
+
+    it 'shows the login page' do
+      sign_in inactive_user
+
+      subject
+
+      expect(response.body).to include('Log in')
+      expect(response.body).to include('Sorry, this account has been disabled.')
+    end
+  end
+
   context 'Authenticated' do
     let(:user) { create :user }
     before do

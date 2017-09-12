@@ -52,12 +52,12 @@ feature "User clicks on client in list", :js do
 end
 
 feature "User sees client notes on messages page", :js do
+  let(:notes) { 'Example text that is more than forty characters long.' }
+  let(:truncated_notes) { 'Example text that is more than forty...' }
+  let(:myuser) { create :user }
+  let(:myclient) { create :client, user: myuser, notes: notes }
 
   context "visits clients page on mobile" do
-    let(:myuser) { create :user }
-
-    let(:myclient) { create :client, user: myuser }
-
     before do
       resize_window_to_mobile
     end
@@ -69,15 +69,11 @@ feature "User sees client notes on messages page", :js do
     it "hides notes on mobile" do
       login_as(myuser, :scope => :user)
       visit client_messages_path(myclient)
-      expect(page).to_not have_content truncate(myclient.notes, length: 40, separator: ' ', omission: '... ')
+      expect(page).to_not have_content truncated_notes
     end
   end
 
   context "visits clients page on desktop" do
-    let(:myuser) { create :user }
-
-    let(:myclient) { create :client, user: myuser }
-
     before do
       resize_window_default
     end
@@ -85,7 +81,7 @@ feature "User sees client notes on messages page", :js do
     it "shows notes on desktop" do
       login_as(myuser, :scope => :user)
       visit client_messages_path(myclient)
-      expect(page).to have_content truncate(myclient.notes, length: 40, separator: ' ', omission: '... ')
+      expect(page).to have_content truncated_notes
     end
   end
 
