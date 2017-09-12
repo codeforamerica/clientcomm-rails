@@ -25,5 +25,11 @@ class User < ApplicationRecord
     clients.count
   end
 
+  def active_for_authentication?
+    super && active
+  end
 
+  def inactive_message
+    'Sorry, this account has been disabled.'
+  end
 end

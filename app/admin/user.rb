@@ -5,7 +5,22 @@ ActiveAdmin.register User do
     id_column
     column :full_name
     column :email
-    actions
+
+    actions defaults: true do |user|
+      link_to 'Disable', disable_admin_user_path(user) if user.active
+    end
+  end
+
+  actions :all, :except => [:destroy]
+
+  member_action :disable, method: :get do
+    @page_title = "Disable #{resource.full_name}'s account"
+  end
+
+  member_action :disable_confirm, method: :get do
+    resource.update!(active: false)
+
+    redirect_to admin_users_path
   end
 
   filter :email
