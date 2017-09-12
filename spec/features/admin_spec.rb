@@ -5,7 +5,8 @@ feature 'Admin features' do
     step 'given there is an active user with clients' do
       @user_1 = create :user, active: true
       @client = create :client, user: @user_1, active: true
-      archived_client = create :client, user: @user_1, active: false
+      @archived_client = create :client, user: @user_1, active: false
+      @unclaimed_account = create :user, email: ENV['UNCLAIMED_EMAIL'], full_name: 'Unclaimed'
     end
 
     step 'given there is a second user to transfer to' do
@@ -67,7 +68,19 @@ feature 'Admin features' do
       expect(page).to have_content 'Users'
     end
 
+    step 'archived client is transferred to unclaimed account' do
+      click_on 'Clients'
+
+      expect(page).to have_css('#page_title', text: 'Clients')
+
+      expect(find("tr##{dom_id(@archived_client)}").text).to include @unclaimed_account.full_name
+    end
+
     step 'admin re-enables user' do
+      click_on 'Users'
+
+      expect(page).to have_css('#page_title', text: 'Users')
+
       expect(find("tr##{dom_id(@user_1)}").text).to include 'Enable'
 
       within "tr##{dom_id(@user_1)}" do

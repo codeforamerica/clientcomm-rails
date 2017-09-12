@@ -28,6 +28,11 @@ ActiveAdmin.register User do
   member_action :disable_confirm, method: :get do
     resource.update!(active: false)
 
+    user = User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
+    resource.clients.where(active: false).each do |client|
+      client.update!(user: user)
+    end
+
     redirect_to admin_users_path
   end
 
