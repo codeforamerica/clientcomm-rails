@@ -1,6 +1,6 @@
 class Users::PasswordsController < Devise::PasswordsController
-  append_before_filter :assert_reset_link_valid, :only => :edit
-  append_before_filter :assert_reset_token_valid, :only => :update
+  append_before_action :assert_reset_link_valid, :only => :edit
+  append_before_action :assert_reset_token_valid, :only => :update
 
   protected
   # Check the password token is valid
