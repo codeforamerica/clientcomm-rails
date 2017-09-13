@@ -4,5 +4,8 @@ production: &default
 development:
   <<: *default
 
+staging:
+  <<: *default
+
 test:
   adapter: async
