@@ -43,4 +43,44 @@ describe NotificationMailer, type: :mailer do
       end
     end
   end
+
+  describe '#client_transfer_notification' do
+    let(:current_user) { create(:user) }
+    let(:previous_user) { create(:user) }
+    let(:client) { create(:client) }
+    let(:mail) do
+      NotificationMailer.client_transfer_notification(
+        current_user: current_user,
+        previous_user: previous_user,
+        client: client
+      )
+    end
+
+    shared_examples_for 'client_transfer_notification' do
+      it 'renders the headers' do
+        expect(mail.subject).to eq('You have a new client on ClientComm')
+        expect(mail.to).to eq([current_user.email])
+      end
+
+      it 'renders the body' do
+        expect(subject).to include('An administrator has transferred')
+        expect(subject).to include(client.full_name)
+        expect(subject).to include(client.phone_number)
+        expect(subject).to include(previous_user.full_name)
+        expect(subject).to include(client_messages_url(client))
+      end
+    end
+
+    context 'html part' do
+      subject { mail.body.encoded }
+
+      it_behaves_like 'client_transfer_notification'
+    end
+
+    context 'text part' do
+      subject { mail.text_part.body }
+
+      it_behaves_like 'client_transfer_notification'
+    end
+  end
 end

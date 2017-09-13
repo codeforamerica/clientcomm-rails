@@ -45,6 +45,12 @@ feature 'Admin features' do
       click_on 'Update Client'
     end
 
+    step 'user_2 receives email for transfer' do
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.to).to contain_exactly @user_2.email
+      expect(mail.html_part.to_s).to include 'An administrator has transferred'
+    end
+
     step 'admin navigates to user panel' do
       click_on 'Users'
 
