@@ -38,6 +38,8 @@ class TwilioController < ApplicationController
       data: new_message.analytics_tracker_data.merge(client_active: client_previously_active)
     )
 
+    SMSService.instance.redact_message(message_sid: params['SmsSid'])
+
     head :no_content
   end
 

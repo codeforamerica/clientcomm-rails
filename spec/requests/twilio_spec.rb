@@ -53,6 +53,12 @@ describe 'Twilio controller', type: :request do
       expect(mail.html_part.to_s).to include 'sent you a text message'
     end
 
+    it 'redacts the message from twilio' do
+      expect(SMSService.instance).to receive(:redact_message).with(message_sid: message_params['SmsSid'])
+
+      subject
+    end
+
     context 'client has message error and no unread messages' do
       let(:has_unread_messages) { false }
       let(:has_message_error) { true }

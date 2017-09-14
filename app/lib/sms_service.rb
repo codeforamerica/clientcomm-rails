@@ -26,6 +26,11 @@ class SMSService
     MessageBroadcastJob.perform_now(message: message)
   end
 
+  def redact_message(message_sid:)
+    message = @client.account.messages.get(message_sid)
+    message.redact
+  end
+
   private
 
   def send_twilio_message(from: nil, to:, body:, callback_url:)
