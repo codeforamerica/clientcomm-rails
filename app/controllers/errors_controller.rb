@@ -1,8 +1,12 @@
 class ErrorsController < ApplicationController
   def not_found
+    request.format = 'html'
+
     @title = 'ClientComm.org | Page not found (404)'
 
-    render(status: 404)
+    respond_to do |format|
+      format.any { render status: 404 }
+    end
   end
 
   def internal_server_error
