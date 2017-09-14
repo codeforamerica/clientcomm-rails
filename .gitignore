@@ -17,6 +17,9 @@
 /coverage/*
 /results/*
 
+# Terraform
+.terraform/
+
 # JetBrains RubyMine
 .idea/*
 
