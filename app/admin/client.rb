@@ -1,5 +1,5 @@
 ActiveAdmin.register Client do
-  permit_params :user_id, :first_name, :last_name, :phone_number, :notes
+  permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active
   index do
     column :user
     column :full_name
@@ -21,6 +21,7 @@ ActiveAdmin.register Client do
   form do |f|
     f.inputs "Client Info" do
       f.input :user_id, :label => 'User', :as => :select, :collection => User.all.map { |user| ["#{user.full_name}", user.id] }
+      f.input :active
       f.input :first_name
       f.input :last_name
       f.input :phone_number
