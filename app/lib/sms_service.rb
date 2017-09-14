@@ -18,10 +18,10 @@ class SMSService
       callback_url: callback_url
     )
 
-    message.twilio_sid = response.sid
-    message.twilio_status = response.status
-
-    message.save
+    message.update!(
+      twilio_sid: response.sid,
+      twilio_status: response.status
+    )
 
     MessageBroadcastJob.perform_now(message: message)
   end

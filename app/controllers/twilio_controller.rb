@@ -43,8 +43,8 @@ class TwilioController < ApplicationController
 
   def incoming_sms_status
     # update the status of the corresponding message in the database
-    message = Message.find_by twilio_sid: params[:SmsSid]
-    message.update(twilio_status: params[:SmsStatus])
+    message = Message.find_by! twilio_sid: params[:SmsSid]
+    message.update!(twilio_status: params[:SmsStatus])
 
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: message)
