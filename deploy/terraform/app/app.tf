@@ -29,16 +29,25 @@ resource "heroku_app" "clientcomm" {
   buildpacks = [
     "heroku/ruby"
   ]
+}
 
-  provisioner "local-exec" {
-    command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
-  }
+resource "heroku_addon" "database" {
+  app  = "${heroku_app.clientcomm.name}"
+  plan = "heroku-postgresql:hobby-dev"
 }
 
 resource "heroku_pipeline_coupling" "production" {
   app      = "${heroku_app.clientcomm.name}"
   pipeline = "${var.heroku_pipeline_id}"
   stage    = "production"
+
+  provisioner "local-exec" {
+    command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"
+  }
+
+  provisioner "local-exec" {
+    command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
+  }
 }
 
 resource "heroku_domain" "clientcomm" {
@@ -55,6 +64,10 @@ resource "aws_route53_record" "clientcomm" {
 }
 
 resource "null_resource" "ssl" {
+  provisioner "local-exec" {
+    command = "heroku ps:resize hobby --app ${heroku_app.clientcomm.name}"
+  }
+
   provisioner "local-exec" {
     command = "heroku certs:auto:enable --app ${heroku_app.clientcomm.name}"
   }
