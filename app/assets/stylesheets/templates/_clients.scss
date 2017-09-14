@@ -7,6 +7,10 @@
     font-weight: normal;
   }
 
+  .error {
+    color: $color-red;
+  }
+
   .message-status-icon {
     display: inline-block;
     height: 10px;

@@ -4,7 +4,10 @@ describe 'Twilio controller', type: :request do
   include ActiveJob::TestHelper
 
   let(:phone_number) { '+15552345678' }
-  let!(:client) { create :client, phone_number: phone_number }
+  let(:has_unread_messages) { false }
+  let(:has_message_error) { false }
+  let(:active) { true }
+  let!(:client) { create :client, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }
@@ -50,23 +53,28 @@ describe 'Twilio controller', type: :request do
       expect(mail.html_part.to_s).to include 'sent you a text message'
     end
 
-    it 'updates the client last_contacted_at and has_unread_messages' do
-      some_date = rand(10.years).seconds.ago
+    context 'client has message error and no unread messages' do
+      let(:has_unread_messages) { false }
+      let(:has_message_error) { true }
 
-      travel_to some_date do
-        subject
+      it 'updates the client last_contacted_at, has_unread_messages, has_message_error' do
+        some_date = rand(10.years).seconds.ago
+
+        travel_to some_date do
+          subject
+        end
+
+        client.reload
+
+        expect(client.last_contacted_at).to be_within(1.seconds).of some_date
+        expect(client.has_unread_messages).to eq true
+        expect(client.has_message_error).to eq false
       end
-
-      client.reload
-
-      expect(client.last_contacted_at).to be_within(1.seconds).of some_date
-      expect(client.has_unread_messages).to eq true
     end
 
+
     context 'the client was previously inactive' do
-      before do
-        client.update!(active: false)
-      end
+      let(:active) { false }
 
       it 'returns the client to the active list' do
         subject
@@ -128,28 +136,39 @@ describe 'Twilio controller', type: :request do
   end
 
   context 'POST#incoming_sms_status' do
-    context 'receives a notice about a non-scheduled message' do
-      let!(:msgone) {
-        create :message, client: client, inbound: false, twilio_status: 'queued'
-      }
+    let!(:msgone) {
+      create :message, client: client, inbound: false, twilio_status: 'queued'
+    }
+
+    before do
+      status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: sms_status
+      twilio_post_sms_status status_params
+    end
+
+    context 'message received' do
+      let(:sms_status) { 'received' }
 
       it 'saves a successful sms message status update' do
-        # post a status update
-        status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: 'received'
-        twilio_post_sms_status status_params
-
         # validate the updated status
         expect(client.messages.last.twilio_status).to eq 'received'
 
         # no failed analytics event
         expect_analytics_events_not_happened('message_send_failed')
       end
+    end
+
+    context 'message delivered' do
+      let(:sms_status) { 'delivered' }
+
+      it 'associated client has false message error' do
+        expect(client.reload.has_message_error).to be_falsey
+      end
+    end
+
+    context 'message failed' do
+      let(:sms_status) { 'failed' }
 
       it 'saves an unsuccessful sms message status update' do
-        # post a status update
-        status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: 'failed'
-        twilio_post_sms_status status_params
-
         # validate the updated status
         expect(client.messages.last.twilio_status).to eq 'failed'
 
@@ -164,10 +183,14 @@ describe 'Twilio controller', type: :request do
         })
 
         expect_analytics_events_with_keys(
-            {
-                'message_send_failed' => ['message_date_scheduled', 'message_date_created']
-            }
+          {
+            'message_send_failed' => ['message_date_scheduled', 'message_date_created']
+          }
         )
+      end
+
+      it 'sets error true on associated client' do
+        expect(client.reload.has_message_error).to be_truthy
       end
     end
   end

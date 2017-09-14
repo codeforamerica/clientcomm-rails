@@ -16,6 +16,7 @@ class Message < ApplicationRecord
   OUTBOUND = 'outbound'
   READ = 'read'
   UNREAD = 'unread'
+  ERROR = 'error'
 
   def self.create_from_twilio!(twilio_params)
     phone_number = twilio_params[:From]

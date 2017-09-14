@@ -10,7 +10,8 @@ class TwilioController < ApplicationController
     client.update!(
       active: true,
       last_contacted_at: new_message.send_at,
-      has_unread_messages: true
+      has_unread_messages: true,
+      has_message_error: false
     )
 
     # queue message and notification broadcasts
@@ -48,8 +49,10 @@ class TwilioController < ApplicationController
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: message)
 
-    # track failed messages
-    if ['failed', 'undelivered'].include?(params[:SmsStatus])
+    if params[:SmsStatus] == 'delivered'
+      message.client.update!(has_message_error: false)
+    elsif ['failed', 'undelivered'].include?(params[:SmsStatus])
+      message.client.update!(has_message_error: true)
       analytics_track(
         label: 'message_send_failed',
         data: message.analytics_tracker_data

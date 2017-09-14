@@ -74,14 +74,27 @@ describe 'Clients requests', type: :request do
         let(:archived_client) { user.clients.first }
 
         before do
-          archived_client.active = false
-          archived_client.save
+          archived_client.update!(active: false)
         end
 
         it 'does not return archived clients' do
           subject
 
           expect(response.body).to_not include("#{archived_client.first_name} #{archived_client.last_name}")
+        end
+      end
+
+      context 'there is a client with a conversation error' do
+        let(:error_client) { user.clients.first }
+
+        before do
+          error_client.update!(has_message_error: true)
+        end
+
+        it 'shows a error logo' do
+          subject
+
+          expect(Nokogiri.parse(response.body).css("tr##{dom_id(error_client)} .icon-warning")).to be_present
         end
       end
     end

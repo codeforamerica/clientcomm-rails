@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170911215234) do
+ActiveRecord::Schema.define(version: 20170913221609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20170911215234) do
     t.text "notes"
     t.datetime "last_contacted_at", default: -> { "now()" }, null: false
     t.boolean "has_unread_messages", default: false, null: false
+    t.boolean "has_message_error", default: false, null: false
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
