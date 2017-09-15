@@ -66,23 +66,4 @@ describe SMSService do
       subject.send_message(message: factory_message, callback_url: callback_url)
     end
   end
-
-  describe '#redact_message' do
-    let(:sid) { 'some_sid' }
-    let(:message) { instance_double('message', redact: nil) }
-
-    before do
-      allow(Twilio::REST::Client).to receive(:new).and_return(
-        instance_double(Twilio::REST::Client, account: account)
-      )
-
-      allow(messages).to receive(:get).with(sid).and_return(message)
-    end
-
-    it 'calls redact on the message' do
-      expect(message).to receive(:redact)
-
-      subject.redact_message(message_sid:sid)
-    end
-  end
 end
