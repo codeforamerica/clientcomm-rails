@@ -43,8 +43,11 @@ ActiveAdmin.register User do
     f.inputs "User Info" do
       f.input :full_name
       f.input :email
-      f.input :password
-      f.input :password_confirmation
+
+      if f.object.new_record?
+        f.input :password
+        f.input :password_confirmation
+      end
     end
 
     f.actions
