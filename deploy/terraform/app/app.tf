@@ -2,6 +2,7 @@ variable "heroku_email" {}
 variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
+variable "heroku_team" {}
 
 variable "route53_zone_id" {}
 
@@ -25,10 +26,9 @@ provider "aws" {
 resource "heroku_app" "clientcomm" {
   name   = "${var.heroku_app_name}"
   region = "us"
-
-  buildpacks = [
-    "heroku/ruby"
-  ]
+  organization = {
+    name = "${var.heroku_team}"
+  }
 }
 
 resource "heroku_addon" "database" {
@@ -40,7 +40,9 @@ resource "heroku_pipeline_coupling" "production" {
   app      = "${heroku_app.clientcomm.name}"
   pipeline = "${var.heroku_pipeline_id}"
   stage    = "production"
+}
 
+resource "null_resource" "provision_app" {
   provisioner "local-exec" {
     command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"
   }
@@ -64,6 +66,8 @@ resource "aws_route53_record" "clientcomm" {
 }
 
 resource "null_resource" "ssl" {
+  depends_on = ["null_resource.provision_app"]
+
   provisioner "local-exec" {
     command = "heroku ps:resize hobby --app ${heroku_app.clientcomm.name}"
   }

@@ -7,6 +7,7 @@ variable "heroku_email" {}
 variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
+variable "heroku_team" {}
 variable "route53_app_zone_id" {}
 variable "app_domain" {}
 
@@ -34,6 +35,7 @@ module "app" {
   heroku_api_key     = "${var.heroku_api_key}"
   heroku_app_name    = "${var.heroku_app_name}"
   heroku_pipeline_id = "${var.heroku_pipeline_id}"
+  heroku_team        = "${var.heroku_team}"
   route53_zone_id    = "${var.route53_app_zone_id}"
   app_domain         = "${var.app_domain}"
 }
