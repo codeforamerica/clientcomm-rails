@@ -29,15 +29,20 @@ variable "mailgun_require_dkim" {
 module "app" {
   source = "./app"
 
-  aws_access_key     = "${var.aws_access_key}"
-  aws_secret_key     = "${var.aws_secret_key}"
-  heroku_email       = "${var.heroku_email}"
-  heroku_api_key     = "${var.heroku_api_key}"
-  heroku_app_name    = "${var.heroku_app_name}"
-  heroku_pipeline_id = "${var.heroku_pipeline_id}"
-  heroku_team        = "${var.heroku_team}"
-  route53_zone_id    = "${var.route53_app_zone_id}"
-  app_domain         = "${var.app_domain}"
+  aws_access_key        = "${var.aws_access_key}"
+  aws_secret_key        = "${var.aws_secret_key}"
+  route53_zone_id       = "${var.route53_app_zone_id}"
+
+  heroku_email          = "${var.heroku_email}"
+  heroku_api_key        = "${var.heroku_api_key}"
+  heroku_app_name       = "${var.heroku_app_name}"
+  heroku_pipeline_id    = "${var.heroku_pipeline_id}"
+  heroku_team           = "${var.heroku_team}"
+
+  mailgun_domain        = "${var.mailgun_domain}"
+  mailgun_smtp_password = "${var.mailgun_smtp_password}"
+
+  app_domain            = "${var.app_domain}"
 }
 
 module "email" {

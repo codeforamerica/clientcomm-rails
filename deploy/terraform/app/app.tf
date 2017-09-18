@@ -1,15 +1,19 @@
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
+variable "route53_zone_id" {}
+
 variable "heroku_email" {}
 variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
 
-variable "route53_zone_id" {}
+variable "mailgun_domain" {}
+variable "mailgun_smtp_password" {}
+
 
 variable "app_domain" {}
 
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
 
 # Configure the Heroku provider
 provider "heroku" {
@@ -28,6 +32,20 @@ resource "heroku_app" "clientcomm" {
   region = "us"
   organization = {
     name = "${var.heroku_team}"
+  }
+
+  config_vars {
+    DEPLOY_BASE_URL = "https://${var.app_domain}"
+    MAILGUN_DOMAIN = "${var.mailgun_domain}"
+    MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
+    LANG = "en_US.UTF-8"
+    RACK_ENV = "production"
+    RAILS_ENV = "production"
+    RAILS_LOG_TO_STDOUT = "enabled"
+    RAILS_SERVE_STATIC_FILES = true
+    SCHEDULED_MESSAGES = true
+    SEARCH_AND_SORT = true
+    UNCLAIMED_EMAIL = clientcomm+unclaimed@codeforamerica.org
   }
 }
 
