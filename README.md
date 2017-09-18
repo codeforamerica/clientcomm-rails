@@ -20,8 +20,12 @@ In early 2016, we launched ClientComm with Salt Lake County Criminal Justice Ser
 
 Our internal results in Salt Lake County show lower Failure to Appear rates, and time saved for case managers. We are currently undergoing a Randomized Control Test on the effectiveness of ClientComm in collaboration with researchers from the University of Virginia. ClientComm is now a central part of Code for America's product work on [Safety and Justice](https://www.codeforamerica.org/focus-areas/safety-and-justice), and is expanding to new jurisdictions across the country.
 
+# Contents
+1. [Development Setup](#development-setup)
+2. [Production Deploy](#production-deploy)
+3. [Restoring the DB](#restoring-the-db)
 
-# Installation
+# Development Setup
 ### Requirements
 1. Install Ruby with your ruby version manager of choice, like [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
 2. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.0`
@@ -61,7 +65,76 @@ rails db:schema:load RAILS_ENV=test
 - Test suite: `bin/rspec`. For more detailed logging use `LOUD_TESTS=true bin/rspec`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
 
-## How to restore DB from backup
+# Production Deploy
+
+1. Create a new lastpass note with this template:
+
+```
+mailgun_api_key = ""
+mailgun_domain = ""
+mailgun_smtp_password = ""
+aws_access_key = ""
+aws_secret_key = ""
+mailgun_require_dkim = ""
+
+route53_email_zone_id = ""
+route53_app_zone_id = ""
+
+heroku_email = ""
+heroku_api_key = ""
+heroku_app_name = ""
+app_domain = ""
+heroku_pipeline_id = ""
+heroku_team = ""
+```
+
+Save the lastpass note as [INSTALL_NAME]-clientcomm-terraform (e.g. pima-clientcomm-terraform).
+
+1. From the project root `cd deploy/terraform` and then run `./apply.sh <(lpass show --notes [NAME_OF_NOTE])` to run terraform. This will set up a heroku instance and configure mailgun.
+
+2. Create a new twilio subaccount. Buy a number that matches the area code of where the delploy will be used.
+
+3. Terraform should set the following config vars. Verify these are present:
+
+|Config Var|Comment|
+|---|---|
+|DEPLOY_BASE_URL|[APP_SUBDOMAIN].clientcomm.org|
+|MAILGUN_DOMAIN|[APP_SUBDOMAIN].clientcomm-email.org|
+|MAILGUN_PASSWORD|(from the lastpass note)|
+|LANG|en_US.UTF-8|
+|RACK_ENV|production|
+|RAILS_ENV|production|
+|RAILS_LOG_TO_STDOUT|enabled|
+|RAILS_SERVE_STATIC_FILES|true|
+|SCHEDULED_MESSAGES|true|
+|SEARCH_AND_SORT|true|
+|UNCLAIMED_EMAIL|clientcomm+unclaimed@codeforamerica.org|
+
+4. You will need to set these Heroku config vars:
+
+|Config Var|Comment|
+|---|---|
+|INTERCOM_APP_ID|(same for all apps)|
+|MIXPANEL_TOKEN|(same for all apps)|
+|PAPERTRAIL_API_TOKEN|(provision the Papertrail addon)|
+|SECRET_KEY_BASE|run `rake secret`|
+|SENTRY_ENDPOINT|(same for all apps)|
+|SKYLIGHT_AUTHENTICATION|(same for all apps)|
+|TIME_ZONE|([rails time zone](http://api.rubyonrails.org/v5.1/classes/ActiveSupport/TimeZone.html#method-c-country_zones))|
+|TWILIO_ACCOUNT_SID|(get from the twilio account that you created)|
+|TWILIO_AUTH_TOKEN|(get from the twilio account that you created)|
+|TWILIO_PHONE_NUMBER|(get from the twilio account that you created)|
+|TYPEFORM_LINK|(set up in typeform, optional)|
+
+
+5. At this point, the instance should be up and running. The next step is to provision an Admin user:
+
+```bash
+heroku run rails c --app=[APP_NAME]
+AdminUser.create(email: '', password: '', password_confirmation: '')
+```
+
+# Restoring the DB
 
 1. Get the public URL for the databse backup: `heroku pg:backups:url --app [APP_NAME]` This should return a long AWS url for the most recent backup.
 1. Restore the DB: `heroku pg:backups:restore [previously found url] DATABASE_URL --app [APP_NAME]` Do not forget to correctly escape the db url, either with backslashes or with single quotes.
