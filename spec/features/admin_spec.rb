@@ -96,4 +96,83 @@ feature 'Admin features' do
       expect(find("tr##{dom_id(@user_1)}").text).to include 'Disable'
     end
   end
+
+  scenario 'Admin bulk transfers clients', :js do
+
+    step 'given a user with multiple clients' do
+      @user_1 = create :user
+      @user_2 = create :user
+
+      @client_1 = create :client, user: @user_1
+      @client_2 = create :client, user: @user_1
+      @client_3 = create :client, user: @user_1
+      @client_4 = create :client, user: @user_1
+    end
+
+    step 'log in to admin panel and go to the clients page' do
+      admin = create :admin_user
+      login_as(admin, scope: :admin_user)
+
+      visit admin_clients_path
+      expect(page).to have_content 'Clients'
+    end
+
+    step 'admin selects 3 clients to transfer' do
+      expect(page.find(".batch_actions_selector")).to have_css(".disabled")
+
+      within "tr##{dom_id(@client_1)}" do
+        check "batch_action_item_#{@client_1.id}"
+      end
+
+      within "tr##{dom_id(@client_2)}" do
+        check "batch_action_item_#{@client_2.id}"
+      end
+
+      within "tr##{dom_id(@client_3)}" do
+        check "batch_action_item_#{@client_3.id}"
+      end
+
+      expect(page.find(".batch_actions_selector")).to_not have_css(".disabled")
+    end
+
+    step 'admin clicks batch action button and selects transfer option' do
+      click_on 'Batch Actions'
+
+      expect(page).to have_css('.dropdown_menu_list_wrapper')
+
+      click_on 'Transfer Selected'
+    end
+
+    step 'admin selects user to recieve clients' do
+      expect(page).to have_content("Are you sure you want to do this?")
+
+      within "#dialog_confirm" do
+        select "#{@user_2.full_name}"
+      end
+
+      click_on 'OK'
+    end
+
+    step 'admin sees confirmation that users were transfered' do
+      expect(page).to have_content("Clients transferred: 3")
+    end
+
+    step 'client users are updated in the clients table' do
+      within "tr##{dom_id(@client_1)}" do
+        expect(page).to have_content @user_2.full_name
+      end
+
+      within "tr##{dom_id(@client_2)}" do
+        expect(page).to have_content @user_2.full_name
+      end
+
+      within "tr##{dom_id(@client_3)}" do
+        expect(page).to have_content @user_2.full_name
+      end
+
+      within "tr##{dom_id(@client_4)}" do
+        expect(page).to have_content @user_1.full_name
+      end
+    end
+  end
 end
