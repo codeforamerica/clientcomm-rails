@@ -49,7 +49,7 @@ class ClientsController < ApplicationController
 
     analytics_track(
       label: 'client_edit_view',
-      data: @client.analytics_tracker_data
+      data: @client.analytics_tracker_data.merge(source: request.referrer)
     )
   end
 
