@@ -68,7 +68,7 @@ class Message < ApplicationRecord
   private
 
   def time_buffer
-    Time.current - 1.minute
+    Time.current - 5.minutes
   end
 
   def max_future_date
