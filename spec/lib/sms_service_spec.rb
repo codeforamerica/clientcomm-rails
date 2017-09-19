@@ -13,10 +13,11 @@ describe SMSService do
     let(:response) { double('response', sid: 'some_sid', status: 'some_status') }
     let(:body) { 'zak and charlie rule' }
     let(:expected_number) { PhoneNumberParser.normalize(ENV['TWILIO_PHONE_NUMBER']) }
+    let(:api) { double('api', account: account) }
 
     before do
       allow(Twilio::REST::Client).to receive(:new).and_return(
-        instance_double(Twilio::REST::Client, account: account)
+        instance_double(Twilio::REST::Client, api: api)
       )
       allow(MessageBroadcastJob).to receive(:perform_now)
     end

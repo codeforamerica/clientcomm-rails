@@ -11,6 +11,10 @@ class FakeTwilioClient
   def initialize(_account_sid, _auth_token)
   end
 
+  def api
+    self
+  end
+
   def messages
     self
   end

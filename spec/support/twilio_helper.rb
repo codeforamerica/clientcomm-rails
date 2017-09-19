@@ -123,7 +123,7 @@ module TwilioHelper
   end
 
   def correct_signature(tw_params = twilio_new_message_params, post_path = '')
-    Twilio::Util::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
+    Twilio::Security::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
       .build_signature_for("#{myhost}#{post_path}", tw_params)
   end
 end

@@ -33,7 +33,7 @@ class SMSService
     # use the from in the ENV if one wasn't sent
     from ||= ENV['TWILIO_PHONE_NUMBER']
     from_clean = PhoneNumberParser.normalize(from)
-    @client.account.messages.create(
+    @client.api.account.messages.create(
         from: from_clean,
         to: to_clean,
         body: body,
