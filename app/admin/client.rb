@@ -1,6 +1,7 @@
 ActiveAdmin.register Client do
   permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active
   index do
+    selectable_column
     column :user
     column :full_name
     column :phone_number
@@ -29,6 +30,14 @@ ActiveAdmin.register Client do
     end
 
     f.actions
+  end
+
+  batch_action :transfer, form: -> { {user: User.pluck(:full_name, :id)} } do |ids, inputs|
+    number_of_clients = ids.length
+    Client.find(ids).each do |client|
+      client.update(user: User.find(inputs[:user]))
+    end
+    redirect_to admin_clients_path, alert: "Clients transferred: #{number_of_clients}."
   end
 
   controller do
