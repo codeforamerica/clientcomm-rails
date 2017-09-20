@@ -37,7 +37,7 @@ class SMSService
         from: from_clean,
         to: to_clean,
         body: body,
-        statusCallback: callback_url
+        status_callback: callback_url
     )
   end
 end

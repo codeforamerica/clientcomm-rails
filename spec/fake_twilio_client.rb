@@ -23,7 +23,7 @@ class FakeTwilioClient
     self
   end
 
-  def create(from:, to:, body:, statusCallback:)
+  def create(from:, to:, body:, status_callback:)
     self.class.messages << FakeMessage.new(from, to, body)
     # return a fake response
     # reply with a successful status if force_status hasn't been set

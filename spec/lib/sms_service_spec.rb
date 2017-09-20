@@ -28,7 +28,7 @@ describe SMSService do
           from:           expected_number,
           to:             factory_message.client.phone_number,
           body:           factory_message.body,
-          statusCallback: callback_url
+          status_callback: callback_url
         }
       ).and_return(response)
 
@@ -41,7 +41,7 @@ describe SMSService do
           from:           expected_number,
           to:             factory_message.client.phone_number,
           body:           factory_message.body,
-          statusCallback: callback_url
+          status_callback: callback_url
         }
       ).and_return(response)
 
