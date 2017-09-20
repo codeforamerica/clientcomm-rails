@@ -17,40 +17,55 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'POST#create' do
+      let(:first_name) { Faker::Name.first_name }
+      let(:phone_number) { '(466) 336-4863' }
+      let(:notes) { Faker::Lorem.sentence }
+      let(:last_name) { Faker::Name.last_name }
+
       before do
-        create_client client
+        post clients_path, params: {
+          client: {
+            first_name: first_name,
+            last_name: last_name,
+            phone_number: phone_number,
+            notes: notes
+          }
+        }
       end
 
-      context 'receives valid client parameters' do
-        let(:client) { build(:client) }
+      it 'creates a client' do
+        expect(response.code).to eq '302'
+        expect(response).to redirect_to clients_path
+        expect(Client.count).to eq 1
 
-        it 'creates a client' do
-          expect(response.code).to eq '302'
-          expect(response).to redirect_to clients_path
-          expect(Client.count).to eq 1
-        end
+        client = Client.first
+        expect(client.user).to eq user
+        expect(client.first_name).to eq first_name
+        expect(client.last_name).to eq last_name
+        expect(client.phone_number).to eq '+14663364863'
+        expect(client.notes).to eq notes
+        expect(client.last_contacted_at).to be_within(1.second).of Time.now
+      end
 
-        it 'tracks the creation of a new client' do
-          created_client = Client.find_by(phone_number: client.phone_number)
+      it 'tracks the creation of a new client' do
+        client = Client.first
 
-          expect_analytics_events(
-              {
-                  'client_create_success' => {
-                      'client_id' => created_client.id
-                  }
-              }
-          )
-        end
+        expect_analytics_events(
+          {
+            'client_create_success' => {
+              'client_id' => client.id
+            }
+          }
+        )
       end
 
       context 'receives invalid client parameters' do
-        let(:client) { build(:client, last_name: nil) }
+        let(:last_name) { nil }
 
         it 'renders new with validation errors' do
           expect(response.code).to eq '200'
+          expect(response.body).to include "can't be blank"
           expect(Client.count).to eq 0
-          expect(client.valid?).to be_falsey
-          expect([:last_name]).to eq client.errors.keys
         end
       end
     end
@@ -113,12 +128,12 @@ describe 'Clients requests', type: :request do
         expect(client.reload.active).to eq(false)
 
         expect_analytics_events(
-            {
-                'client_archive_success' => {
-                    'client_id' => client.id,
-                    'client_duration' => 82
-                }
+          {
+            'client_archive_success' => {
+              'client_id' => client.id,
+              'client_duration' => 82
             }
+          }
         )
       end
     end
