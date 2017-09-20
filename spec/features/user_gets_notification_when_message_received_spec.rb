@@ -44,7 +44,7 @@ feature "User receives a message from a client" do
       twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
 
       expect(page).to have_css '.flash p', text: "You have 3 unread messages"
-      expect(page).to have_css '.unread td', text: 'less than a minute'
+      expect(page).to have_css '.unread td', text: 'just now'
       expect(page.body.index(clienttwo.full_name)).to be < page.body.index(clientone.full_name)
     end
 

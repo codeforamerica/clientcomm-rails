@@ -33,3 +33,7 @@ en:
               send_at:
                 on_or_after: You can't schedule a message in the past.
                 before: You can't schedule a message more than a year in the future.
+  datetime:
+    distance_in_words:
+      less_than_x_minutes:
+        one: just now
