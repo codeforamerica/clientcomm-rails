@@ -157,6 +157,15 @@ feature 'Admin features' do
       expect(page).to have_content("Clients transferred: 3")
     end
 
+    step 'user_2 receives email for transfer' do
+      [@client_1, @client_2, @client_3].each_with_index do |client, i|
+        mail = ActionMailer::Base.deliveries.find { |mail| mail.html_part.to_s =~ /#{client.full_name}/ }
+        expect(mail).to_not be_nil
+        expect(mail.to).to contain_exactly @user_2.email
+        expect(mail.html_part.to_s).to include 'An administrator has transferred'
+      end
+    end
+
     step 'client users are updated in the clients table' do
       within "tr##{dom_id(@client_1)}" do
         expect(page).to have_content @user_2.full_name
