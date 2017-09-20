@@ -1,6 +1,6 @@
 class FakeTwilioClient
   # source: https://robots.thoughtbot.com/testing-sms-interactions
-  FakeMessage = Struct.new(:messaging_service_sid, :to, :body)
+  FakeMessage = Struct.new(:from, :to, :body)
   FakeResponse = Struct.new(:sid, :status)
 
   mattr_accessor :messages
@@ -9,10 +9,6 @@ class FakeTwilioClient
   self.force_status = nil
 
   def initialize(_account_sid, _auth_token)
-  end
-
-  def v2010
-    self
   end
 
   def api
@@ -27,8 +23,8 @@ class FakeTwilioClient
     self
   end
 
-  def create(messaging_service_sid:, to:, body:)
-    self.class.messages << FakeMessage.new(messaging_service_sid, to, body)
+  def create(from:, to:, body:, status_callback:)
+    self.class.messages << FakeMessage.new(from, to, body)
     # return a fake response
     # reply with a successful status if force_status hasn't been set
     status = self.force_status

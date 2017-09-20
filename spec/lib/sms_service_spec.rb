@@ -13,29 +13,22 @@ describe SMSService do
     let(:response) { double('response', sid: 'some_sid', status: 'some_status') }
     let(:body) { 'zak and charlie rule' }
     let(:expected_number) { PhoneNumberParser.normalize(ENV['TWILIO_PHONE_NUMBER']) }
-
-    let(:api) { double('api', v2010: v2010) }
-    let(:v2010) { double('2010', account: account)}
+    let(:api) { double('api', account: account) }
 
     before do
       allow(Twilio::REST::Client).to receive(:new).and_return(
         instance_double(Twilio::REST::Client, api: api)
       )
       allow(MessageBroadcastJob).to receive(:perform_now)
-      @old_messaging_sid = ENV['TWILIO_MESSAGING_SERVICE_SID']
-      ENV['TWILIO_MESSAGING_SERVICE_SID'] = 'example_sid'
-    end
-
-    after do
-      ENV['TWILIO_MESSAGING_SERVICE_SID'] = @old_messaging_sid
     end
 
     it 'sends twilio a message' do
       expect(messages).to receive(:create).with(
         {
+          from:           expected_number,
           to:             factory_message.client.phone_number,
           body:           factory_message.body,
-          messaging_service_sid: 'example_sid'
+          status_callback: callback_url
         }
       ).and_return(response)
 
@@ -45,9 +38,10 @@ describe SMSService do
     it 'updates the message with twilio info' do
       expect(messages).to receive(:create).with(
         {
+          from:           expected_number,
           to:             factory_message.client.phone_number,
           body:           factory_message.body,
-          messaging_service_sid: 'example_sid'
+          status_callback: callback_url
         }
       ).and_return(response)
 
