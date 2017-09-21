@@ -41,17 +41,9 @@
       top: .6em;
     }
 
-    h2 {
-      font-size: $font-size-h3;
-    }
-
     h2,
     p {
       margin-bottom: 0;
-    }
-
-    .client-name {
-      padding-right: .3em;
     }
   }
 
@@ -181,8 +173,8 @@
 }
 
 .chat--header {
-  padding-bottom: .2em;
-  padding-top: .6em;
+  z-index: 1;
+  background: $color-background;
 
   .header--paragraph {
     font-size: $font-size-small;
@@ -192,6 +184,21 @@
     &.no-margin {
       margin-top: 0px;
     }
+  }
+
+  h2.client-name {
+    font-size: $font-size-normal;
+    padding-right: .3em;
+
+    @include media($tablet-up){
+      font-size: $font-size-h3;
+    }
+  }
+
+  &.affix {
+    position: fixed;
+    width: 100%;
+    top: 0px;
   }
 
   #manage_client {
