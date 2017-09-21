@@ -9,8 +9,8 @@
       <% end %>
       <%= client.full_name %>
     </td>
-    <td class="timestamp" data-href="<%= client_messages_path(client.id) %>" data-timestamp="<%= client.last_contacted_at.to_time.to_i %>">
-      <%= time_ago_in_words(client.last_contacted_at) %>
+    <td class="timestamp" data-href="<%= client_messages_path(client.id) %>" data-timestamp="<%= client.timestamp %>">
+      <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
     </td>
     <td class="hidden-xs" data-href="<%= edit_client_path(client.id) %>">Manage</td>
   </tr>

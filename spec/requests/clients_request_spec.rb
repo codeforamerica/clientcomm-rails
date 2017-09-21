@@ -44,7 +44,6 @@ describe 'Clients requests', type: :request do
         expect(client.last_name).to eq last_name
         expect(client.phone_number).to eq '+14663364863'
         expect(client.notes).to eq notes
-        expect(client.last_contacted_at).to be_within(1.second).of Time.now
       end
 
       it 'tracks the creation of a new client' do

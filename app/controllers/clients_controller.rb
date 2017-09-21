@@ -29,8 +29,7 @@ class ClientsController < ApplicationController
       first_name: client_params[:first_name],
       last_name: client_params[:last_name],
       phone_number: client_params[:phone_number],
-      notes: client_params[:notes],
-      last_contacted_at: Time.now
+      notes: client_params[:notes]
     )
 
     if @client.valid?

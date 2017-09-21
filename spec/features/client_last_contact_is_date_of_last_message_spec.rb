@@ -41,7 +41,7 @@ feature "User schedules a message for later and submits it", :js, active_job: tr
 
       client_row = page.find('tr', text: client.full_name)
 
-      expect(client_row).to have_content('7 days')
+      expect(client_row).to have_content('--')
     end
 
   end

@@ -25,8 +25,8 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def hours_since_contact
-    ((Time.now - last_contacted_at) / 3600).round
+  def timestamp
+    (last_contacted_at || created_at).to_time.to_i
   end
 
   def inbound_messages_count
@@ -48,4 +48,9 @@ class Client < ApplicationRecord
     self[:phone_number] = PhoneNumberParser.normalize(number_input)
   end
 
+  private
+
+  def hours_since_contact
+    ((Time.now -  (last_contacted_at || created_at)) / 3600).round
+  end
 end

@@ -38,7 +38,7 @@ feature 'sending messages', active_job: true do
       savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number))
       savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number))
       expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'just now'
-      expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '7 days'
+      expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '--'
     end
   end
 
