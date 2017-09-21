@@ -43,8 +43,7 @@ resource "heroku_app" "clientcomm" {
     RAILS_ENV = "production"
     RAILS_LOG_TO_STDOUT = "enabled"
     RAILS_SERVE_STATIC_FILES = true
-    SCHEDULED_MESSAGES = true
-    SEARCH_AND_SORT = true
+    MASS_MESSAGES = true
     UNCLAIMED_EMAIL = clientcomm+unclaimed@codeforamerica.org
   }
 }

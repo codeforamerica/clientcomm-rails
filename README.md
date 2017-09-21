@@ -106,8 +106,7 @@ Save the lastpass note as [INSTALL_NAME]-clientcomm-terraform (e.g. pima-clientc
 |RAILS_ENV|production|
 |RAILS_LOG_TO_STDOUT|enabled|
 |RAILS_SERVE_STATIC_FILES|true|
-|SCHEDULED_MESSAGES|true|
-|SEARCH_AND_SORT|true|
+|MASS_MESSAGES|true|
 |UNCLAIMED_EMAIL|clientcomm+unclaimed@codeforamerica.org|
 
 4. You will need to set these Heroku config vars:

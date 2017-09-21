@@ -4,8 +4,6 @@ feature "search and sort clients" do
   let!(:myuser) { create :user }
 
   before do
-    ENV['SEARCH_AND_SORT'] = 'true'
-
     @clientone = build :client, user: myuser, first_name: 'Rachel', last_name: 'A'
     @clienttwo = build :client, user: myuser, first_name: 'Paras', last_name: 'B'
     @clientthree = build :client, user: myuser, first_name: 'Charlie', last_name: 'C'
