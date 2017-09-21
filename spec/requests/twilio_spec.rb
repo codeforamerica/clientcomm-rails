@@ -139,9 +139,10 @@ describe 'Twilio controller', type: :request do
     let!(:msgone) {
       create :message, client: client, inbound: false, twilio_status: 'queued'
     }
+    let(:sms_sid) { msgone.twilio_sid }
 
     before do
-      status_params = twilio_status_update_params to_number: phone_number, sms_sid: msgone.twilio_sid, sms_status: sms_status
+      status_params = twilio_status_update_params to_number: phone_number, sms_sid: sms_sid, sms_status: sms_status
       twilio_post_sms_status status_params
     end
 
@@ -154,6 +155,8 @@ describe 'Twilio controller', type: :request do
 
         # no failed analytics event
         expect_analytics_events_not_happened('message_send_failed')
+
+        expect(response.code).to eq '204'
       end
     end
 
@@ -191,6 +194,16 @@ describe 'Twilio controller', type: :request do
 
       it 'sets error true on associated client' do
         expect(client.reload.has_message_error).to be_truthy
+      end
+    end
+
+    context 'message not saved yet' do
+      let(:sms_sid) { 'invalid' }
+      let(:sms_status) { 'sent' }
+
+      it 'fails silently' do
+        expect(client.messages.last.twilio_status).to eq 'queued'
+        expect(response.code).to eq '204'
       end
     end
   end

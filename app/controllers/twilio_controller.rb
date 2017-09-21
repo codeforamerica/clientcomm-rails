@@ -42,8 +42,10 @@ class TwilioController < ApplicationController
   end
 
   def incoming_sms_status
+    message = Message.find_by twilio_sid: params[:SmsSid]
+    return if message.nil?
+
     # update the status of the corresponding message in the database
-    message = Message.find_by! twilio_sid: params[:SmsSid]
     message.update!(twilio_status: params[:SmsStatus])
 
     # put the message broadcast in the queue
@@ -58,8 +60,6 @@ class TwilioController < ApplicationController
         data: message.analytics_tracker_data
       )
     end
-
-    head :no_content
   end
 
   def incoming_voice
