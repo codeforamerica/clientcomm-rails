@@ -13,12 +13,16 @@ RSpec.describe Message, type: :model do
     end
 
     it 'should validate that a message is scheduled in the future' do
-      expect(Message.new(send_at: Time.current - 1.days).valid?).to be_falsey
-      expect(Message.new(send_at: Time.current - 6.minutes).valid?).to be_falsey
-      expect(Message.new(send_at: Time.current).valid?).to be_truthy
-      expect(Message.new(send_at: Time.current + 5.minutes).valid?).to be_truthy
-      expect(Message.new(send_at: Time.current + 8.hours).valid?).to be_truthy
-      expect(Message.new(send_at: Time.current + 8.days).valid?).to be_truthy
+      expect(Message.new(send_at: Time.current - 1.days).is_past_message).to be_truthy
+      expect(Message.new(send_at: Time.current - 6.minutes).is_past_message).to be_truthy
+      expect(Message.new(send_at: Time.current).is_past_message).to be_falsey
+      expect(Message.new(send_at: Time.current + 5.minutes).is_past_message).to be_falsey
+      expect(Message.new(send_at: Time.current + 8.hours).is_past_message).to be_falsey
+      expect(Message.new(send_at: Time.current + 8.days).is_past_message).to be_falsey
+
+      message = Message.new(send_at: Time.current - 1.days)
+      message.is_past_message
+      expect(message.errors[:send_at]).to include "You can't schedule a message in the past."
     end
 
     it 'should validate that a message is not scheduled more than a year in advance' do

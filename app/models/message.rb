@@ -4,7 +4,6 @@ class Message < ApplicationRecord
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
-  validates_datetime :send_at, :on_or_after => :time_buffer
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
@@ -63,6 +62,16 @@ class Message < ApplicationRecord
       message_date_created: self.created_at,
       client_active: self.client.active?
     }
+  end
+
+  def is_past_message
+    if self.send_at < time_buffer
+      errors.add(:send_at, I18n.t('activerecord.errors.models.message.attributes.send_at.on_or_after'))
+
+      true
+    else
+      false
+    end
   end
 
   private

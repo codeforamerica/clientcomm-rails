@@ -55,14 +55,14 @@ class MessagesController < ApplicationController
         read: true
     )
 
-    if message.invalid?
-        @message = message
-        @client = client
-        @messages = past_messages(client: @client)
-        @messages_scheduled = scheduled_messages(client: @client)
+    if message.invalid? || message.is_past_message
+      @message = message
+      @client = client
+      @messages = past_messages(client: @client)
+      @messages_scheduled = scheduled_messages(client: @client)
 
-        render :index
-        return
+      render :index
+      return
     end
 
     message.save!
@@ -114,7 +114,7 @@ class MessagesController < ApplicationController
     @message.body = param_body
     @message.send_at = param_send_at
 
-    if @message.invalid?
+    if @message.invalid? || @message.is_past_message
       @client = @message.client
 
       @messages = past_messages(client: @client)
