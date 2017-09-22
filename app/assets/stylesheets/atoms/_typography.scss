@@ -49,8 +49,13 @@ h4, .h4 {
 
 a {
   color: $color-teal;
+  text-decoration: underline;
   &:hover {
     color: shade($color-teal, 20%);
+  }
+
+  &.no-underline {
+    text-decoration: none;
   }
 }
 
