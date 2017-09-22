@@ -89,7 +89,7 @@
 @mixin break-words() {
   overflow-wrap: break-word;
   word-wrap: break-word;
-  -ms-word-break: break-all;
+  -ms-word-break: normal;
   -ms-hyphens: auto;
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
