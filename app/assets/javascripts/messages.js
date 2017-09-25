@@ -44,4 +44,33 @@ $(document).ready(function(){
     $('#full_note').hide();
     $('#truncated_note').show();
   });
+
+  characterCount($('.main-message-input'));
 });
+
+function characterCount(element) {
+
+  var initialLength;
+  if (element.length > 0) {
+    initialLength = $(element).val().length
+  } else {
+    initialLength = 0;
+  }
+
+  var
+    label = $("label[for='" + element.attr('id') + "']"),
+    counter = $('<span class="character-count pull-right">' + initialLength + '</span>');
+
+  if (label.length > 0) {
+    counter.addClass('pull-bottom');
+    label.wrap('<div class="relative-container"></div>').after(counter);
+  } else {
+    element.before(counter);
+  }
+
+  element.on('keydown keyup focus', function(){
+    var length = $(this).val().length;
+    counter.html(length);
+    counter.toggleClass('text--error', length > 160);
+  });
+}

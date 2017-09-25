@@ -5,4 +5,6 @@ $(document).ready(function(){
     e.preventDefault();
     window.location = $('.close').attr('href');
   });
+
+  characterCount($('.send-later-input'));
 });

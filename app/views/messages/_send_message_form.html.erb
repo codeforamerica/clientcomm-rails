@@ -13,7 +13,7 @@
         <div class="grid__item width-two-thirds-lg">
           <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
         </div>
-        <div class="grid__item width-one-third-lg">
+        <div id="sendbar-buttons" class="grid__item width-one-third-lg">
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
           <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
         </div>

@@ -2,6 +2,7 @@ require "rails_helper"
 
 feature 'sending mass messages', active_job: true do
   let(:message_body) {'You have an appointment tomorrow at 10am'}
+  let(:long_message_body) {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.'}
   let(:user) { create :user }
   let!(:client_1) { build :client }
   let!(:client_2) { build :client }
@@ -54,6 +55,19 @@ feature 'sending mass messages', active_job: true do
         expect(page.first('tr')).to have_content client_2.full_name
         expect(page.all('tr').last).to have_content client_1.full_name
       end
+    end
+
+    step 'user sees character count' do
+      expect(page.find('.new_mass_message .character-count')).to have_content(0)
+
+      fill_in 'Your message', with: message_body
+
+      expect(page.find('.new_mass_message .character-count')).to have_content(40)
+
+      fill_in 'Your message', with: long_message_body
+
+      expect(page.find('.new_mass_message .character-count')).to have_content(165)
+      expect(page.find('.relative-container')).to have_css('.character-count.text--error')
     end
 
     step 'then user fills in message text and recipients' do

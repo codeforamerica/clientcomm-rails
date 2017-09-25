@@ -2,6 +2,29 @@
   display: table;
   width: 100%;
   border-collapse: separate;
+
+  #sendbar-buttons {
+
+    @include media($tablet-up){
+      margin-top: 17px;
+    }
+  }
+}
+
+.character-count {
+  font-size: 12px;
+  line-height: 1em;
+  margin-bottom: 5px;
+}
+
+.relative-container {
+  position: relative;
+}
+
+.pull-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .sendbar__input {

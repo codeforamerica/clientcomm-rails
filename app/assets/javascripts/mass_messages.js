@@ -14,4 +14,6 @@ $(document).ready(function() {
       }).change();
     });
   });
+
+  characterCount($('.template--mass-messages #mass_message_message'));
 });
