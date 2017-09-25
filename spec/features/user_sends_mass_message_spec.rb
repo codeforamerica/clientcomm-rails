@@ -15,19 +15,15 @@ feature 'sending mass messages', active_job: true do
     end
 
     step 'user creates clients' do
-
       travel_to 7.days.ago do
-        visit new_client_path
         add_client(client_1)
       end
 
       travel_to 1.day.ago do
-        visit new_client_path
         add_client(client_2)
       end
 
       travel_to 1.hour.ago do
-        visit new_client_path
         add_client(client_3)
       end
     end
@@ -70,11 +66,30 @@ feature 'sending mass messages', active_job: true do
       expect(page.find('.relative-container')).to have_css('.character-count.text--error')
     end
 
+    step 'user can select all clients' do
+      check 'Select all'
+
+      expect(find('#select_all')['checked']).to eq true
+
+      id_1 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
+      id_2 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).id
+      id_3 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_3.phone_number)).id
+
+      expect(find("#mass_message_clients_#{id_1}")['checked']).to eq(true)
+      expect(find("#mass_message_clients_#{id_2}")['checked']).to eq(true)
+      expect(find("#mass_message_clients_#{id_3}")['checked']).to eq(true)
+
+      uncheck client_1.full_name
+      expect(find('#select_all')['checked']).to eq(false)
+    end
+
     step 'then user fills in message text and recipients' do
       fill_in 'Your message', with: message_body
 
       check client_1.full_name
+      uncheck client_2.full_name
       check client_3.full_name
+
       click_on 'Send'
 
       expect(page).to have_current_path(clients_path)
