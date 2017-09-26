@@ -61,10 +61,12 @@ ActiveAdmin.register User do
       end
     end
 
-    panel 'User Status' do
-      user.active ?
-        link_to('Disable', disable_admin_user_path(user)) :
-        link_to('Enable', enable_admin_user_path(user))
+    unless f.object.new_record?
+      panel 'User Status' do
+        user.active ?
+            link_to('Disable', disable_admin_user_path(user)) :
+            link_to('Enable', enable_admin_user_path(user))
+      end
     end
 
     f.actions
