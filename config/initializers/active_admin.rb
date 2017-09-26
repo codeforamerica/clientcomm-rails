@@ -112,7 +112,7 @@ ActiveAdmin.setup do |config|
   # roots for each namespace.
   #
   # Default:
-  # config.root_to = 'dashboard#index'
+  config.root_to = 'users#index'
 
   # == Admin Comments
   #
@@ -157,7 +157,7 @@ ActiveAdmin.setup do |config|
 
   # == Setting a Favicon
   #
-  # config.favicon = 'favicon.ico'
+  config.favicon = 'favicon.ico'
 
   # == Meta Tags
   #
@@ -256,7 +256,7 @@ ActiveAdmin.setup do |config|
   # Pagination is enabled by default for all resources.
   # You can control the default per page count for all resources here.
   #
-  # config.default_per_page = 30
+  config.default_per_page = 100
   #
   # You can control the max per page count too.
   #

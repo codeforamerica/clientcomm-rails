@@ -1,10 +1,13 @@
 ActiveAdmin.register User do
+  menu priority: 2
+
   permit_params :full_name, :email, :password, :password_confirmation
   index do
     selectable_column
-    id_column
     column :full_name
     column :email
+    column :active
+    column :created_at
 
     actions defaults: true do |user|
       user.active ?
@@ -39,6 +42,14 @@ ActiveAdmin.register User do
   filter :email
   filter :full_name
 
+  show do
+    panel 'View Clients' do
+      link_to 'Clients', admin_clients_path(q: {user_id_eq: user.id})
+    end
+
+    default_main_content
+  end
+
   form do |f|
     f.inputs "User Info" do
       f.input :full_name
@@ -48,6 +59,12 @@ ActiveAdmin.register User do
         f.input :password
         f.input :password_confirmation
       end
+    end
+
+    panel 'User Status' do
+      user.active ?
+        link_to('Disable', disable_admin_user_path(user)) :
+        link_to('Enable', enable_admin_user_path(user))
     end
 
     f.actions

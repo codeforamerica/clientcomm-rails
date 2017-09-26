@@ -15,3 +15,45 @@
 // For example, to change the default status-tag color:
 //
 //   .status_tag { background: #6090DB; }
+
+body {
+  font-size: 100%;
+}
+
+#title_bar .action_items span.action_item > a {
+
+    border:1px solid #A6005E;
+    text-shadow:none;
+    color: #FFFFFF;
+    background-color: #ED0086;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ED0086), to(#A6005E));
+    background-image: -webkit-linear-gradient(top, #ED0086, #A6005E);
+    background-image: -moz-linear-gradient(top, #ED0086, #A6005E);
+    background-image: -ms-linear-gradient(top, #ED0086, #A6005E);
+    background-image: -o-linear-gradient(top, #ED0086, #A6005E);
+    background-image: linear-gradient(to bottom, #ED0086, #A6005E);
+    filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ED0086, endColorstr=#A6005E);
+
+  &:not(.disabled):hover{
+    border:1px solid #87004c;
+    background-color: #ED42A2;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ED42A2), to(#B8337E));
+    background-image: -webkit-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -moz-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -ms-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -o-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: linear-gradient(to bottom, #ED42A2, #B8337E);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ED42A2, endColorstr=#B8337E);
+  }
+
+  &:not(.disabled):active {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22) inset, 0 1px 0 0px #EEE;
+    border:1px solid #87004c;
+    background-color: #ED42A2;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ED42A2), to(#B8337E));
+    background-image: -webkit-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -moz-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -ms-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: -o-linear-gradient(top, #ED42A2, #B8337E);
+    background-image: linear-gradient(to bottom, #ED42A2, #B8337E);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ED42A2, endColorstr=#B8337E);
+  }
+}

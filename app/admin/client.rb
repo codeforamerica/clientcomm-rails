@@ -1,9 +1,15 @@
 ActiveAdmin.register Client do
+  menu priority: 3
+
+  config.sort_order = 'last_name_asc'
+
   permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active
   index do
     selectable_column
-    column :user
-    column :full_name
+    column :full_name, sortable: :last_name
+    column :user do |client|
+      client.user.full_name
+    end
     column :phone_number
     column :active
     column :notes
@@ -13,14 +19,14 @@ ActiveAdmin.register Client do
   actions :all, :except => [:destroy]
 
   filter :user
-  filter :first_name, label: 'Client first name'
-  filter :last_name, label: 'Client last name'
-  filter :phone_number
+  filter :first_name_cont, label: 'Client first name'
+  filter :last_name_cont, label: 'Client last name'
+  filter :phone_number_cont, label: 'Phone Number'
   filter :active
   filter :notes_present, as: 'boolean'
 
   form do |f|
-    f.inputs "Client Info" do
+    f.inputs 'Client Info' do
       f.input :user_id, :label => 'User', :as => :select, :collection => User.all.order(full_name: :asc).map { |user| ["#{user.full_name}", user.id] }
       f.input :active
       f.input :first_name
@@ -52,6 +58,12 @@ ActiveAdmin.register Client do
   end
 
   controller do
+    def index
+      params[:q][:phone_number_cont] = params[:q][:phone_number_cont].gsub(/\D/, '') if params[:q].try(:[], :phone_number_cont)
+
+      super
+    end
+
     def update
       previous_user_id = resource.user_id
       super do |success, failure|
