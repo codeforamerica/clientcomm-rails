@@ -56,11 +56,11 @@
 
   .message--container {
     justify-content: space-between;
-    margin-bottom: 6em;
+    margin-bottom: 7em;
     max-width: 750px;
 
-    @include media($mobile-up) {
-      margin-bottom: 3em;
+    @include media($site-max-up) {
+      margin-bottom: 3.5em;
     }
 
     img {

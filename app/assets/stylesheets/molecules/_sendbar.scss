@@ -5,7 +5,7 @@
 
   #sendbar-buttons {
 
-    @include media($tablet-up){
+    @include media($site-max-up){
       margin-top: 17px;
     }
   }
