@@ -78,3 +78,27 @@ feature "User edits template" do
     expect(page).to have_content "Template can't be blank"
   end
 end
+
+feature "User deletes template" do
+  before do
+    myuser = create :user
+    login_as(myuser, :scope => :user)
+    visit templates_path
+  end
+
+  scenario 'successfully', :js do
+    template = build :template, title: 'Edit this template title', body: 'Edit this template body'
+    add_template(template)
+
+    find('a .icon-mode_edit').click
+
+    expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
+
+    accept_confirm do
+      click_on "Delete template"
+    end
+
+    expect(page).to have_current_path(templates_path)
+    expect(page).to have_content "Template deleted"
+  end
+end

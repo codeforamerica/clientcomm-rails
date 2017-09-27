@@ -45,6 +45,14 @@ class TemplatesController < ApplicationController
     end
   end
 
+  def destroy
+    @template = current_user.templates.find(params[:id])
+    @template.destroy
+
+    flash[:notice] = "Template deleted"
+    redirect_to templates_path
+  end
+
   private
 
   def template_params

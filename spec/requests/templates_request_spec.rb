@@ -82,8 +82,19 @@ describe 'Templates requests', type: :request do
         expect(response).to redirect_to templates_path
 
         get templates_path
+
         expect(Nokogiri.parse(response.body).to_s).to include("New title")
         expect(Nokogiri.parse(response.body).to_s).to include("New body")
+      end
+    end
+
+    describe 'DELETE#destroy' do
+      let!(:template) { create :template, user_id: user.id, title: 'Delete title', body: 'Delete body' }
+
+      it 'deletes the template' do
+        delete template_path(template)
+        expect(response.code).to eq '302'
+        expect(response).to redirect_to templates_path
       end
     end
   end
