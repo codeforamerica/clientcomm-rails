@@ -14,6 +14,8 @@ class TwilioController < ApplicationController
       has_message_error: false
     )
 
+    MessageRedactionJob.perform_later(message: new_message)
+
     # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message)
 

@@ -45,9 +45,6 @@ RSpec.configure do |config|
         @mixpanel_event_names << parsed['event']
       end
     end
-
-    # reset the fake Twilio client message queue
-    FakeTwilioClient.messages = []
   end
 
   config.after(:each) do

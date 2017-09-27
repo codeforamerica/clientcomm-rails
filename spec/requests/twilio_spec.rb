@@ -1,27 +1,26 @@
 require 'rails_helper'
 
-describe 'Twilio controller', type: :request do
-  include ActiveJob::TestHelper
-
+describe 'Twilio controller', type: :request, active_job: true do
   let(:phone_number) { '+15552345678' }
   let(:has_unread_messages) { false }
   let(:has_message_error) { false }
   let(:active) { true }
-  let!(:client) { create :client, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
+  let(:user) { create :user }
+  let!(:client) { create :client, user:user, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }
+    let(:sms_sid) { Faker::Crypto.sha1 }
     let(:message_params) {
       twilio_new_message_params(
           from_number: phone_number,
-          msg_txt: message_text
+          msg_txt: message_text,
+          sms_sid: sms_sid
       )
     }
 
     subject do
-      perform_enqueued_jobs do
-        twilio_post_sms message_params
-      end
+      twilio_post_sms message_params
     end
 
     it 'saves an incoming sms message' do
@@ -47,10 +46,35 @@ describe 'Twilio controller', type: :request do
     end
 
     it 'sends an email notification to user' do
-      subject
+      perform_enqueued_jobs { subject }
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.html_part.to_s).to include 'sent you a text message'
+    end
+
+    it 'enqueues a MessageBroadcastJob' do
+      subject
+
+      message = Message.find_by_twilio_sid(sms_sid)
+      expect(MessageBroadcastJob).to have_been_enqueued.with(message: message)
+    end
+
+    it 'enqueues a MessageRedactionJob' do
+      subject
+
+      message = Message.find_by_twilio_sid(sms_sid)
+      expect(MessageRedactionJob).to have_been_enqueued.with(message: message)
+    end
+
+    it 'enqueues a NotificationBroadcastJob' do
+      subject
+
+      expect(NotificationBroadcastJob).to have_been_enqueued.with(
+        channel_id: user.id,
+        properties: { client_id: client.id },
+        link_to: String,
+        text: String
+      )
     end
 
     context 'client has message error and no unread messages' do
@@ -71,7 +95,6 @@ describe 'Twilio controller', type: :request do
         expect(client.has_message_error).to eq false
       end
     end
-
 
     context 'the client was previously inactive' do
       let(:active) { false }

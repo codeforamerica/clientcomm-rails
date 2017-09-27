@@ -26,15 +26,24 @@ class SMSService
     MessageBroadcastJob.perform_now(message: message)
   end
 
+  def redact_message(message:)
+    message = @client.api.account.messages(message.twilio_sid).fetch
+    message.update(body: '')
+
+    true
+  rescue Twilio::REST::RestError => e
+    raise e unless e.code == 20009
+    false
+  end
+
   private
 
-  def send_twilio_message(from: nil, to:, body:, callback_url:)
+  def send_twilio_message(to:, body:, callback_url:)
     to_clean = PhoneNumberParser.normalize(to)
     # use the from in the ENV if one wasn't sent
-    from ||= ENV['TWILIO_PHONE_NUMBER']
-    from_clean = PhoneNumberParser.normalize(from)
+    from = PhoneNumberParser.normalize(ENV['TWILIO_PHONE_NUMBER'])
     @client.api.account.messages.create(
-        from: from_clean,
+        from: from,
         to: to_clean,
         body: body,
         status_callback: callback_url
