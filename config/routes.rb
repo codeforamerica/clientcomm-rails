@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     get 'messages/download', to: 'messages#download'
   end
 
+  resources :templates, only: [:index, :new, :create, :edit, :update]
+
   resources :messages, only: [:create, :edit, :update, :destroy] do
     scope module: :messages do
       resource :read, only: :create

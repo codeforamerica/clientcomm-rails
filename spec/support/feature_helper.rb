@@ -18,6 +18,14 @@ module FeatureHelper
     expect(page).to have_current_path(clients_path)
   end
 
+  def add_template(the_template)
+    visit new_template_path
+    fill_in "Template name", with: the_template.title
+    fill_in "Template", with: the_template.body
+    click_on "Save template"
+    expect(page).to have_current_path(templates_path)
+  end
+
   def wait_for(reason, timeout: Capybara.default_max_wait_time)
     Timeout.timeout(timeout) do
       loop do

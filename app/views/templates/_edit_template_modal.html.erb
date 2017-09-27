@@ -1,0 +1,29 @@
+<div class="modal" id="scheduled-list-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a href="<%= templates_path %>" class="close no-underline" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+        <h2 class="form-card__title" id="myModalLabel">Edit Template</h2>
+      </div>
+
+      <%= form_for @template, builder: GcfFormBuilder do |f| %>
+        <div class="modal-body">
+            <%= f.gcf_input_field :title, "Template name" %>
+            <%= f.gcf_textarea :body, "Template" %>
+        </div>
+        <div class="modal-footer">
+          <div class="toolbar">
+            <div class="toolbar__left"><%= f.submit 'Update', class: 'button button--cta', role: 'button' %></div>
+            <div class="toolbar__left"><%= f.submit 'Delete template', class: 'button button--danger', role: 'button' %></div>
+
+            <div class="toolbar__right">
+              <div class="toolbar__right-responsive">
+                <button type="button" class="button toolbar__item" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
