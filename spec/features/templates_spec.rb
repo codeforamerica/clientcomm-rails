@@ -74,7 +74,6 @@ feature "User edits template" do
     fill_in "Template", with: ''
     click_on "Update"
 
-    # expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
     expect(page).to have_content "Template can't be blank"
   end
 end

@@ -9,6 +9,25 @@
       margin-top: 17px;
     }
   }
+
+  #template-button {
+    position: absolute;
+    margin-top: 16px;
+    padding: 13px;
+    font-size: 24px;
+    color: $color-grey;
+    right: 0px;
+    top: 0px;
+    outline: 0;
+  }
+}
+
+.popover-content {
+  padding: 0px 0px 10px 0px;
+}
+
+.popover {
+  min-width: 300px;
 }
 
 .character-count {
@@ -31,7 +50,7 @@
   display: table-cell;
   width: 100%;
   border: 2px solid $color-grey;
-  padding: .5em .7em .5em .7em;
+  padding: .5em 2em .5em .7em;
   margin: 0;
   outline: 0;
   resize: none;

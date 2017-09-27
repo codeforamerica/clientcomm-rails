@@ -11,7 +11,18 @@
         <input name="client_id" type="hidden" value="<%= @client.id %>">
 
         <div class="grid__item width-two-thirds-lg">
-          <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+          <div class="inner-addon right-addon">
+            <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+            <a tabindex="0"
+              id="template-button"
+              class="no-underline"
+              role="button"
+              data-toggle="popover"
+              data-html="true" data-placement="top"
+              title="<strong>Templates</strong>"
+              data-content='<%= render 'templates' %>'>
+              <i class="icon-insert_comment"></i></a>
+          </div>
         </div>
         <div id="sendbar-buttons" class="grid__item width-one-third-lg">
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>

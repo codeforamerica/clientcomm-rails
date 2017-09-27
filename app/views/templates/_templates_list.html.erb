@@ -15,7 +15,7 @@
             </div>
           </div>
 
-          <table class="data-table data-table--selectable">
+          <table class="data-table">
             <thead>
               <tr>
                 <th class="sort" data-sort="lastname">
@@ -32,7 +32,7 @@
                 <% @templates.each do |template| %>
                   <tr id="<%= dom_id(template) %>">
                     <td>
-                      <%= template.title %>
+                      <strong><%= template.title %></strong>
                     </td>
                     <td>
                       <%= template.body %>

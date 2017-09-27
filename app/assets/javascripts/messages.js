@@ -1,4 +1,9 @@
 $(document).ready(function(){
+  // Enable the popover for templates
+  $('[data-toggle="popover"]').popover({
+    container: '.sendbar'
+  });
+
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
     $('#message_body').val('');
