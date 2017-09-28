@@ -34,6 +34,7 @@ feature "templates" do
 
     step "user adds template to main message input" do
       template = Template.first
+      expect(page).to have_css '.template-popover-active'
       find('tr', text: template.title).click
       expect(find('#message_body').value).to eq template.body
     end

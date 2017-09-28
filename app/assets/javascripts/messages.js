@@ -5,8 +5,7 @@ $(document).ready(function(){
   });
 
   $('[data-toggle="popover"]').on('shown.bs.popover', function () {
-
-    $('[data-toggle="popover"]').addClass('template-popover');
+    $('[data-toggle="popover"]').addClass('template-popover-active');
     makeTemplateRowsClickable();
   })
 

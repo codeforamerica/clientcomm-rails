@@ -4,6 +4,7 @@ class ScheduledMessagesController < ApplicationController
 
   def index
     @client = current_user.clients.find params[:client_id]
+    @templates = current_user.templates
 
     analytics_track(
       label: 'client_scheduled_messages_view',
