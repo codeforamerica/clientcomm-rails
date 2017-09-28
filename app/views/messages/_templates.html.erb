@@ -1,0 +1,23 @@
+<% if @templates.empty? %>
+  <div class="text-center">
+    <h1><i class="icon-move_to_inbox"></i></h1>
+    <p>Find yourself writing the same message over and over? Make it a reusable template!</p>
+  </div>
+<% else %>
+<div class="template-table-container">
+  <table class="template-table data-table data-table--selectable">
+    <tbody class="template-table">
+      <% @templates.each do |template| %>
+      <tr class="template-row" data-template-body="<%= template.body %>">
+        <td>
+          <strong><%= "#{template.title}"%></strong> • <%= "#{template.body}"%>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>
+<div class="template-popover-footer text-center">
+  <%= link_to "Manage templates", templates_path %>
+</div>
