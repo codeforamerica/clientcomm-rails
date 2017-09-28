@@ -11,8 +11,16 @@ variable "heroku_team" {}
 variable "mailgun_domain" {}
 variable "mailgun_smtp_password" {}
 
-
 variable "app_domain" {}
+variable "intercom_app_id" {}
+variable "mixpanel_token" {}
+variable "sentry_endpoint" {}
+variable "skylight_authentication" {}
+variable "time_zone" {}
+variable "twilio_account_sid" {}
+variable "twilio_auth_token" {}
+variable "twilio_phone_number" {}
+variable "typeform_link" {}
 
 
 # Configure the Heroku provider
@@ -36,14 +44,23 @@ resource "heroku_app" "clientcomm" {
 
   config_vars {
     DEPLOY_BASE_URL = "https://${var.app_domain}"
+    INTERCOM_APP_ID = "${var.intercom_app_id}"
+    LANG = "en_US.UTF-8"
     MAILGUN_DOMAIN = "${var.mailgun_domain}"
     MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
-    LANG = "en_US.UTF-8"
+    MASS_MESSAGES = "true"
+    MIXPANEL_TOKEN = "${var.mixpanel_token}"
     RACK_ENV = "production"
     RAILS_ENV = "production"
     RAILS_LOG_TO_STDOUT = "enabled"
-    RAILS_SERVE_STATIC_FILES = true
-    MASS_MESSAGES = true
+    RAILS_SERVE_STATIC_FILES = "true"
+    SENTRY_ENDPOINT = "${var.sentry_endpoint}"
+    SKYLIGHT_AUTHENTICATION = "${var.skylight_authentication}"
+    TIME_ZONE = "${var.time_zone}"
+    TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
+    TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"
+    TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
+    TYPEFORM_LINK = "${var.typeform_link}"
     UNCLAIMED_EMAIL = "clientcomm+unclaimed@codeforamerica.org"
   }
 }
