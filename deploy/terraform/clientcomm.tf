@@ -25,6 +25,10 @@ variable "mailgun_require_dkim" {
   default = true
 }
 
+terraform {
+  backend "s3" {}
+}
+
 # Modules
 module "app" {
   source = "./app"

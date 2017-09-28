@@ -44,13 +44,54 @@ resource "heroku_app" "clientcomm" {
     RAILS_LOG_TO_STDOUT = "enabled"
     RAILS_SERVE_STATIC_FILES = true
     MASS_MESSAGES = true
-    UNCLAIMED_EMAIL = clientcomm+unclaimed@codeforamerica.org
+    UNCLAIMED_EMAIL = "clientcomm+unclaimed@codeforamerica.org"
   }
 }
 
 resource "heroku_addon" "database" {
   app  = "${heroku_app.clientcomm.name}"
   plan = "heroku-postgresql:hobby-dev"
+}
+
+resource "heroku_addon" "logging" {
+  app  = "${heroku_app.clientcomm.name}"
+  plan = "papertrail:choklad"
+}
+
+resource "aws_s3_bucket" "logging_bucket" {
+  bucket = "${var.heroku_app_name}-logs"
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_s3_bucket_policy" "allow_papertrail" {
+  bucket = "${aws_s3_bucket.logging_bucket.id}"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PapertrailLogArchive",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::719734659904:root"
+                ]
+            },
+            "Action": [
+                "s3:DeleteObject",
+                "s3:PutObject"
+            ],
+            "Resource": [
+                "${aws_s3_bucket.logging_bucket.arn}/papertrail/logs/*"
+            ]
+        }
+    ]
+}
+POLICY
 }
 
 resource "heroku_pipeline_coupling" "production" {
@@ -60,6 +101,8 @@ resource "heroku_pipeline_coupling" "production" {
 }
 
 resource "null_resource" "provision_app" {
+  depends_on = ["heroku_pipeline_coupling.production"]
+
   provisioner "local-exec" {
     command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"
   }
