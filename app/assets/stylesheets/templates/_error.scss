@@ -7,3 +7,21 @@
   }
 
 }
+
+.form-group--error-modal {
+  @include full-bleed-modal();
+  .form-group--error:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -.5em;
+    bottom: -.5em;
+    left: 25px;
+    width: 4px;
+    background-color: pink;
+
+    @include media($tablet-up) {
+      width: 6px;
+    }
+  }
+}

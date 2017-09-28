@@ -8,8 +8,20 @@
 
       <%= form_for @template, builder: GcfFormBuilder do |f| %>
         <div class="modal-body">
-            <%= f.gcf_input_field :title, "Template name" %>
-            <%= f.gcf_textarea :body, "Template" %>
+          <div class="form-card__content">
+              <div class="grid">
+                <div class="form-group <%= 'form-group--error-modal' if @template.errors.any? %>">
+                  <div class="grid__item">
+                    <%= f.gcf_input_field :title, "Template name" %>
+                  </div>
+                </div>
+                <div class="form-group <%= 'form-group--error-modal' if @template.errors.any? %>">
+                  <div class="grid__item">
+                    <%= f.gcf_textarea :body, "Template" %>
+                  </div>
+                </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <div class="toolbar">
