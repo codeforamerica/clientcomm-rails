@@ -4,6 +4,12 @@ $(document).ready(function(){
     container: '.sendbar'
   });
 
+  $('[data-toggle="popover"]').on('shown.bs.popover', function () {
+
+    $('[data-toggle="popover"]').addClass('template-popover');
+    makeTemplateRowsClickable();
+  })
+
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
     $('#message_body').val('');
@@ -77,5 +83,11 @@ function characterCount(element) {
     var length = $(this).val().length;
     counter.html(length);
     counter.toggleClass('text--error', length > 160);
+  });
+}
+
+function makeTemplateRowsClickable(){
+  $('.template-row').click(function(){
+    $('#message_body').val($(this).data('template-body'))
   });
 }
