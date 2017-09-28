@@ -13,6 +13,7 @@ variable "mailgun_smtp_password" {}
 
 variable "app_domain" {}
 variable "intercom_app_id" {}
+variable "mass_messages" {}
 variable "mixpanel_token" {}
 variable "sentry_endpoint" {}
 variable "skylight_authentication" {}
@@ -48,7 +49,7 @@ resource "heroku_app" "clientcomm" {
     LANG = "en_US.UTF-8"
     MAILGUN_DOMAIN = "${var.mailgun_domain}"
     MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
-    MASS_MESSAGES = "true"
+    MASS_MESSAGES = "${var.mass_messages}"
     MIXPANEL_TOKEN = "${var.mixpanel_token}"
     RACK_ENV = "production"
     RAILS_ENV = "production"
