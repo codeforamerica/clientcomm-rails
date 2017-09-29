@@ -1,12 +1,13 @@
 $(document).ready(function(){
+  var sendInput = $('textarea.autosize');
   // Enable the popover for templates
-  $('[data-toggle="popover"]').popover({
+  $('#template-button').popover({
     container: '.sendbar'
   });
 
-  $('[data-toggle="popover"]').on('shown.bs.popover', function () {
-    $('[data-toggle="popover"]').addClass('template-popover-active');
-    makeTemplateRowsClickable();
+  $('#template-button').on('shown.bs.popover', function () {
+    $('#template-button').addClass('template-popover-active');
+    makeTemplateRowsClickable(sendInput);
   })
 
   $(document).on('submit', '#new_message', function(e) {
@@ -36,8 +37,6 @@ $(document).ready(function(){
 
   initializeDatepicker("#edit_message_send_at_date");
   initializeDatepicker("#new_message_send_at_date");
-
-  var sendInput = $('textarea.autosize');
 
   autosize(sendInput);
 
@@ -85,8 +84,9 @@ function characterCount(element) {
   });
 }
 
-function makeTemplateRowsClickable(){
+function makeTemplateRowsClickable(textarea){
   $('.template-row').click(function(){
-    $('#message_body').val($(this).data('template-body'))
+    $('#message_body').val($(this).data('template-body'));
+    autosize.update(textarea);
   });
 }
