@@ -8,6 +8,8 @@ variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
 
+variable "environment" {}
+
 variable "mailgun_domain" {}
 variable "mailgun_smtp_password" {}
 
@@ -51,8 +53,8 @@ resource "heroku_app" "clientcomm" {
     MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
     MASS_MESSAGES = "${var.mass_messages}"
     MIXPANEL_TOKEN = "${var.mixpanel_token}"
-    RACK_ENV = "production"
-    RAILS_ENV = "production"
+    RACK_ENV = "${var.environment}"
+    RAILS_ENV = "${var.environment}"
     RAILS_LOG_TO_STDOUT = "enabled"
     RAILS_SERVE_STATIC_FILES = "true"
     SENTRY_ENDPOINT = "${var.sentry_endpoint}"
@@ -112,14 +114,14 @@ resource "aws_s3_bucket_policy" "allow_papertrail" {
 POLICY
 }
 
-resource "heroku_pipeline_coupling" "production" {
+resource "heroku_pipeline_coupling" "coupling" {
   app      = "${heroku_app.clientcomm.name}"
   pipeline = "${var.heroku_pipeline_id}"
-  stage    = "production"
+  stage    = "${var.environment}"
 }
 
 resource "null_resource" "provision_app" {
-  depends_on = ["heroku_pipeline_coupling.production"]
+  depends_on = ["heroku_pipeline_coupling.coupling"]
 
   provisioner "local-exec" {
     command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"

@@ -10,6 +10,9 @@ variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
 variable "route53_app_zone_id" {}
 variable "app_domain" {}
+variable "environment" {
+  default = "production"
+}
 
 variable "intercom_app_id" {}
 variable "mass_messages" {
@@ -55,6 +58,8 @@ module "app" {
   heroku_app_name    = "${var.heroku_app_name}"
   heroku_pipeline_id = "${var.heroku_pipeline_id}"
   heroku_team        = "${var.heroku_team}"
+
+  environment = "${var.environment}"
 
   mailgun_domain        = "${var.mailgun_domain}"
   mailgun_smtp_password = "${var.mailgun_smtp_password}"
