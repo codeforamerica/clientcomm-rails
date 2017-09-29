@@ -18,7 +18,7 @@ describe GcfFormBuilder, type: :view do
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
-        <fieldset class="">
+        <fieldset class="form-group">
           <label for="client_first_name">
             <p class="form-question">Enter your first name in this unnecessarily BIG box!</p>
             <p class="text--help">This is a great note.</p>
@@ -39,7 +39,7 @@ describe GcfFormBuilder, type: :view do
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
-        <fieldset class="">
+        <fieldset class="form-group">
           <label for="client_first_name">
             <p class="form-question">Enter your first name in this unnecessarily BIG box!</p>
             <p class="text--help">This is a great note.</p>

@@ -17,6 +17,8 @@
 //= require autosize
 //= require lib/list.min
 //= require client_search
+//= require messages
+//= require templates
 //= require_tree .
 
 var incrementer = (function() {

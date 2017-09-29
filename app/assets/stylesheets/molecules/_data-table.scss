@@ -18,8 +18,8 @@
   border-collapse: collapse;
   border-bottom: 2px solid $color-tan;
   margin-bottom: 1em;
-
   th, td {
+    @include break-words();
     padding: {
       top: .5em;
       bottom: .5em;

@@ -1,11 +1,10 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  include FeatureFlagsHelper
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
   # GET /resource/sign_up
   def new
-    if ENV['ALLOW_SIGNUPS'] == 'true'
+    if FeatureFlag.enabled?("allow_signups")
       super
     else
       redirect_to new_user_session_path

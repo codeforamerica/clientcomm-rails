@@ -1,4 +1,15 @@
 $(document).ready(function(){
+  var sendInput = $('textarea.autosize');
+  // Enable the popover for templates
+  $('#template-button').popover({
+    container: '.sendbar'
+  });
+
+  $('#template-button').on('shown.bs.popover', function () {
+    $('#template-button').addClass('template-popover-active');
+    makeTemplateRowsClickable(sendInput);
+  })
+
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
     $('#message_body').val('');
@@ -26,8 +37,6 @@ $(document).ready(function(){
 
   initializeDatepicker("#edit_message_send_at_date");
   initializeDatepicker("#new_message_send_at_date");
-
-  var sendInput = $('textarea.autosize');
 
   autosize(sendInput);
 
@@ -72,5 +81,12 @@ function characterCount(element) {
     var length = $(this).val().length;
     counter.html(length);
     counter.toggleClass('text--error', length > 160);
+  });
+}
+
+function makeTemplateRowsClickable(textarea){
+  $('.template-row').click(function(){
+    $('#message_body').val($(this).data('template-body'));
+    autosize.update(textarea);
   });
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170920220501) do
+ActiveRecord::Schema.define(version: 20170929175554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,11 @@ ActiveRecord::Schema.define(version: 20170920220501) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
+  create_table "feature_flags", force: :cascade do |t|
+    t.string "flag"
+    t.boolean "enabled", null: false
+  end
+
   create_table "messages", id: :serial, force: :cascade do |t|
     t.integer "client_id"
     t.integer "user_id"
@@ -104,6 +109,13 @@ ActiveRecord::Schema.define(version: 20170920220501) do
     t.index ["client_id"], name: "index_messages_on_client_id"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "templates", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_templates_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -142,4 +154,5 @@ ActiveRecord::Schema.define(version: 20170920220501) do
   add_foreign_key "clients", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
+  add_foreign_key "templates", "users"
 end
