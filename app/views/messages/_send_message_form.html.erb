@@ -13,6 +13,7 @@
         <div class="grid__item width-two-thirds-lg">
           <div class="inner-addon right-addon">
             <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+            <% if FeatureFlag.enabled?('templates') %>
             <a tabindex="0"
               id="template-button"
               class="no-underline"
@@ -22,6 +23,7 @@
               title="<strong>Templates</strong>"
               data-content='<%= render 'messages/templates' %>'>
               <i class="icon-insert_comment"></i></a>
+            <% end %>
           </div>
         </div>
         <div id="sendbar-buttons" class="grid__item width-one-third-lg">

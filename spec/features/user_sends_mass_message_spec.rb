@@ -9,6 +9,10 @@ feature 'sending mass messages', active_job: true do
   let!(:client_3) { build :client }
   let!(:message) { build :message }
 
+  before do
+    FeatureFlag.create!(flag: 'mass_messages', enabled: true)
+  end
+
   scenario 'user sends mass message', :js do
     step 'when user logs' do
       login_as(user, scope: :user)

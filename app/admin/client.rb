@@ -1,5 +1,5 @@
 ActiveAdmin.register Client do
-  menu priority: 3
+  menu priority: 4
 
   config.sort_order = 'last_name_asc'
 

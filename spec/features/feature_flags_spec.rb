@@ -3,19 +3,7 @@ require 'rails_helper'
 feature 'feature flags' do
 
   describe 'signups' do
-    before do
-      @signups_value = ENV['ALLOW_SIGNUPS']
-    end
-
-    after do
-      ENV['ALLOW_SIGNUPS'] = @signups_value
-    end
-
     context 'disabled' do
-      before do
-        ENV['ALLOW_SIGNUPS'] = 'false'
-      end
-
       it 'redirects to the login page' do
         visit new_user_registration_path
         expect(page).to have_current_path(new_user_session_path)
@@ -24,7 +12,7 @@ feature 'feature flags' do
 
     context 'enabled' do
       before do
-        ENV['ALLOW_SIGNUPS'] = 'true'
+        FeatureFlag.create!(flag: "allow_signups", enabled: true)
       end
 
       let(:user_email) { 'some@email.com' }
@@ -51,20 +39,12 @@ feature 'feature flags' do
     let(:myuser) { create :user }
 
     before do
-      @mass_messages_value = ENV['MASS_MESSAGES']
-    end
-
-    after do
-      ENV['MASS_MESSAGES'] = @mass_messages_value
-    end
-
-    before do
       login_as(myuser, :scope => :user)
     end
 
     context 'enabled' do
       before do
-        ENV['MASS_MESSAGES'] = 'true'
+        FeatureFlag.create!(flag: "mass_messages", enabled: true)
       end
 
       it 'shows mass messages button' do
@@ -74,13 +54,36 @@ feature 'feature flags' do
     end
 
     context 'disabled' do
-      before do
-        ENV['MASS_MESSAGES'] = 'false'
-      end
-
       it 'does not show mass messages button' do
         visit clients_path
         expect(page).not_to have_content 'Mass message'
+      end
+    end
+  end
+
+  describe 'templates' do
+    let(:myuser) { create :user }
+    let(:client) { create :client, user: myuser }
+
+    before do
+      login_as(myuser, :scope => :user)
+    end
+
+    context 'enabled' do
+      before do
+        FeatureFlag.create!(flag: "templates", enabled: true)
+      end
+
+      it 'shows templates button' do
+        visit client_messages_path(client)
+        expect(page).to have_css '#template-button'
+      end
+    end
+
+    context 'disabled' do
+      it 'does not show templates button' do
+        visit client_messages_path(client)
+        expect(page).not_to have_css '#template-button'
       end
     end
   end

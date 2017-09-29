@@ -2,6 +2,8 @@ require "rails_helper"
 
 feature "templates" do
   before do
+    FeatureFlag.create!(flag: 'templates', enabled: true)
+
     user = create :user
     client = create :client, user: user
 
