@@ -76,7 +76,7 @@ feature "User edits template" do
     fill_in "Template", with: ''
     click_on "Update"
 
-    expect(page).to have_content "Template can't be blank"
+    expect(page).to have_content "can't be blank"
   end
 end
 

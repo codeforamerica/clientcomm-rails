@@ -17,7 +17,7 @@
                 </div>
                 <div class="form-group <%= 'form-group--error-modal' if @template.errors.any? %>">
                   <div class="grid__item">
-                    <%= f.gcf_textarea :body, "Template" %>
+                    <%= f.gcf_textarea :body, "Template", classes: ['new-template-textarea'] %>
                   </div>
                 </div>
             </div>

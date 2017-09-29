@@ -20,6 +20,7 @@ class TemplatesController < ApplicationController
     if @template.valid?
       redirect_to templates_path
     else
+      @templates = current_user.templates
       render :new
     end
   end
