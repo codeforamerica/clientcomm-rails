@@ -1,7 +1,7 @@
 <% if @templates.empty? %>
-  <div class="text-center">
-    <h1><i class="icon-move_to_inbox"></i></h1>
-    <p>Find yourself writing the same message over and over? Make it a reusable template!</p>
+  <div class="text-center no-templates">
+    <%= image_tag('empty_templates.png', size: "50x50") %>
+    <p class="text--help">Find yourself writing the same message over and over? Make it a reusable template!</p>
   </div>
 <% else %>
 <div class="template-table-container">

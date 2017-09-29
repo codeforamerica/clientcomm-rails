@@ -14,42 +14,41 @@
               <% end %>
             </div>
           </div>
-
             <% if @templates.empty? %>
               <div class="text-center col-md-8 col-md-offset-2">
                 <%= image_tag('empty_templates.png') %>
                 <p>Find yourself writing the same text over and over? Make a template!</p>
               </div>
             <% else %>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th class="sort" data-sort="lastname">
-                    Title
-                  </th>
-                  <th class="sort desc" data-sort="timestamp">
-                    Body
-                  </th>
-                  <th class="hidden-xs">Edit</th>
-                </tr>
-              </thead>
-              <tbody id="client-rows" class="list">
-                <% @templates.each do |template| %>
-                  <tr id="<%= dom_id(template) %>">
-                    <td>
-                      <strong><%= template.title %></strong>
-                    </td>
-                    <td>
-                      <%= template.body %>
-                    </td>
-                    <td class="hidden-xs"><a href="<%= edit_template_path(template) %>"><i class="icon-mode_edit"></i></a></td>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th class="sort" data-sort="lastname">
+                      Title
+                    </th>
+                    <th class="sort desc" data-sort="timestamp">
+                      Body
+                    </th>
+                    <th class="hidden-xs">Edit</th>
                   </tr>
-                <% end %>
-              </tbody>
-            <table>
-          <% end %>
+                </thead>
+                <tbody id="client-rows" class="list">
+                  <% @templates.each do |template| %>
+                    <tr id="<%= dom_id(template) %>">
+                      <td>
+                        <strong><%= template.title %></strong>
+                      </td>
+                      <td>
+                        <%= template.body %>
+                      </td>
+                      <td class="hidden-xs"><a href="<%= edit_template_path(template) %>"><i class="icon-mode_edit"></i></a></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 </section>
