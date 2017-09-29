@@ -10,7 +10,7 @@
       <% @templates.each do |template| %>
       <tr class="template-row" data-template-body="<%= template.body %>">
         <td>
-          <strong><%= "#{template.title}"%></strong> • <%= "#{template.body}"%>
+          <span class="truncated-text"><strong><%= "#{template.title}"%></strong> • <%= "#{template.body}"%></span>
         </td>
       </tr>
       <% end %>

@@ -20,65 +20,6 @@
     top: 0px;
     outline: 0;
   }
-
-  .popover {
-    min-width: 100%;
-
-    @include media($tablet-up) {
-      min-width: 350px;
-    }
-
-    border: 2px solid $color-tan;
-    padding: 0px;
-    border-radius: 0;
-
-    &.top {
-      .arrow {
-        border-top-color: $color-tan;
-      }
-    }
-
-    .popover-title {
-      font-size: $font-size-h3;
-      padding-top: 15px;
-      padding-bottom: 15px;
-      background: $color-background;
-      border-bottom: 2px solid $color-tan;
-    }
-
-    .template-table-container {
-      height: 250px;
-      overflow-y: scroll;
-      overflow-x: hidden;
-
-      .data-table {
-        table-layout:fixed;
-
-        .template-table {
-          td {
-            white-space: nowrap;
-          }
-          td:first-child {
-            padding-left: 14px;
-          }
-
-          td:last-child {
-            padding-right: 14px;
-          }
-        }
-      }
-    }
-
-    .popover-content {
-      padding: 0px 0px 10px 0px;
-    }
-
-    .template-popover-footer {
-      padding-top: 10px;
-      border-top: 2px solid $color-tan;
-    }
-
-  }
 }
 
 .character-count {
