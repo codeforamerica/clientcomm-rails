@@ -32,19 +32,18 @@ class TemplatesController < ApplicationController
 
   def update
     @template = current_user.templates.find(params[:id])
-    @templates = current_user.templates
 
     if @template.update_attributes(template_params)
       flash[:notice] = "Template updated"
       redirect_to templates_path
     else
+      @templates = current_user.templates
       render 'edit'
     end
   end
 
   def destroy
-    @template = current_user.templates.find(params[:id])
-    @template.destroy
+    current_user.templates.find(params[:id]).destroy!
 
     flash[:notice] = "Template deleted"
     redirect_to templates_path
@@ -53,7 +52,7 @@ class TemplatesController < ApplicationController
   private
 
   def template_params
-    params.fetch(:template, {})
+    params.fetch(:template)
       .permit(:title, :body)
   end
 end
