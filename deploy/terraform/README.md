@@ -10,12 +10,12 @@ bash substitute `=(command)` with `<(command)`
 
 For each production instance of ClientComm you must provide a backend that points
 to an s3 terraform backend provider. We use a backend file in lastpass:
-    ```
-    bucket = "[YOUR TERRAFORM STATE BUCKET]"
-    region     = "[REGION]"
-    access_key = "[ACCESS KEY]"
-    secret_key = "[SECRET KEY]"
-    ```
+```
+bucket     = "[YOUR TERRAFORM STATE BUCKET]"
+region     = "[REGION]"
+access_key = "[ACCESS KEY]"
+secret_key = "[SECRET KEY]"
+```
 
 On the command line, use the `terraform init` command to point to this backend
 and specify the key, or environment name, of the deployment you're managing
