@@ -37,9 +37,7 @@
                         <%= b.check_box %>
                       </td>
                       <td>
-                        <%= b.label do %>
-                          <%= b.object.full_name %>
-                        <% end %>
+                        <%= b.object.full_name %>
                       </td>
                       <td class="timestamp">
                         <%= b.object.last_contacted_at ? time_ago_in_words(b.object.last_contacted_at) : '--' %>

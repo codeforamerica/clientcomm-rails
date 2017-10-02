@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     $(checkbox).closest('tr').click(function(event) {
       // Prevent click handler from occurring multiple times due to event propagation
-      if ($(event.target).is(':checkbox, label')) {
+      if ($(event.target).is(':checkbox')) {
         return;
       }
 

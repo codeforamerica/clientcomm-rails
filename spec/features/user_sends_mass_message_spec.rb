@@ -83,21 +83,21 @@ feature 'sending mass messages', active_job: true do
       expect(find("#mass_message_clients_#{id_2}")['checked']).to eq(true)
       expect(find("#mass_message_clients_#{id_3}")['checked']).to eq(true)
 
-      uncheck client_1.full_name
+      find('tr', text: client_1.full_name).click
       expect(find('#select_all')['checked']).to eq(false)
     end
 
-    step 'then user fills in message text and recipients' do
-      fill_in 'Your message', with: message_body
-
-      check client_1.full_name
-      uncheck client_2.full_name
-      check client_3.full_name
-
+    step 'then user sends message' do
       click_on 'Send'
 
       expect(page).to have_current_path(clients_path)
       expect(page).to have_content 'Your mass message has been sent.'
+    end
+
+    step 'then messages were sent to client 1 and 3' do
+      expect(Message.where(body: long_message_body).count).to eq 2
+      expect(Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).messages.last.body).to eq long_message_body
+      expect(Client.find_by(phone_number: PhoneNumberParser.normalize(client_3.phone_number)).messages.last.body).to eq long_message_body
     end
   end
 end
