@@ -31,19 +31,25 @@
                   </tr>
                 </thead>
                 <tbody class="list">
-                  <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
+                <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
                     <tr id="<%= dom_id(b.object) %>">
-                      <td class="check-column">
-                        <%= b.check_box %>
+                      <td>
+                        <%= b.label(class: ['cell-content']) do %>
+                            <%= b.check_box %>
+                        <% end %>
                       </td>
                       <td>
-                        <%= b.object.full_name %>
+                        <%= b.label(class: ['cell-content']) do %>
+                            <%= b.object.full_name %>
+                        <% end %>
                       </td>
                       <td class="timestamp">
-                        <%= b.object.last_contacted_at ? time_ago_in_words(b.object.last_contacted_at) : '--' %>
+                        <%= b.label(class: ['cell-content']) do %>
+                            <%= b.object.last_contacted_at ? time_ago_in_words(b.object.last_contacted_at) : '--' %>
+                        <% end %>
                       </td>
                     </tr>
-                  <% end %>
+                <% end %>
                 </tbody>
               </table>
             </div>

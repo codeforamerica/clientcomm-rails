@@ -7,17 +7,6 @@ $(document).ready(function() {
         $('#select_all')[0].checked = false;
       }
     });
-
-    $(checkbox).closest('tr').click(function(event) {
-      // Prevent click handler from occurring multiple times due to event propagation
-      if ($(event.target).is(':checkbox')) {
-        return;
-      }
-
-      $(checkbox).prop('checked', function(index, oldProp) {
-        return !oldProp;
-      }).change();
-    });
   });
 
   characterCount($('.template--mass-messages #mass_message_message'));

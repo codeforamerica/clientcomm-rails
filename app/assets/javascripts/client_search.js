@@ -25,8 +25,4 @@ function clientListInit() {
     $('.search').val('');
     clientList.search();
   });
-
-  $('#client-list').find('td').click(function() {
-    window.location = $(this).attr('data-href');
-  });
 }

@@ -40,16 +40,18 @@
             display: block;
             overflow: hidden;
           }
-          td:first-child {
-            padding-left: 14px;
-            width:auto;
-            white-space: nowrap;
-            width: 1%;
-          }
+          .template-row {
+            .cell-content:first-child {
+              padding-left: 14px;
+              width:auto;
+              white-space: nowrap;
+              width: 100%;
+            }
 
-          td:last-child {
-            width: 2%;
-            padding-right: 14px;
+            .cell-content:last-child {
+              width: 100%;
+              padding-right: 14px;
+            }
           }
         }
       }

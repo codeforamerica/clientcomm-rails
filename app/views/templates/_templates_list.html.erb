@@ -20,7 +20,7 @@
                 <p>Find yourself writing the same text over and over? Make a template!</p>
               </div>
             <% else %>
-              <table class="data-table">
+              <table class="data-table data-table--selectable">
                 <thead>
                   <tr>
                     <th class="sort" data-sort="lastname">
@@ -36,12 +36,20 @@
                   <% @templates.each do |template| %>
                     <tr id="<%= dom_id(template) %>">
                       <td>
-                        <strong><%= template.title %></strong>
+                        <a class="cell-content" href="<%= edit_template_path(template) %>">
+                          <strong><%= template.title %></strong>
+                        </a>
                       </td>
                       <td>
-                        <%= template.body %>
+                        <a class="cell-content" href="<%= edit_template_path(template) %>">
+                          <%= template.body %>
+                        </a>
                       </td>
-                      <td class="hidden-xs"><a href="<%= edit_template_path(template) %>"><i class="icon-mode_edit"></i></a></td>
+                      <td class="hidden-xs">
+                        <a class="cell-content" href="<%= edit_template_path(template) %>">
+                          <i class="icon-mode_edit"></i>
+                        </a>
+                      </td>
                     </tr>
                   <% end %>
                 </tbody>
