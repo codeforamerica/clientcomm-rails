@@ -27,6 +27,10 @@ variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
 variable "typeform_link" {}
 
+variable "enable_papertrail" {
+  default = true
+}
+
 # Email Vars
 variable "mailgun_api_key" {}
 variable "mailgun_domain" {}
@@ -58,6 +62,8 @@ module "app" {
   heroku_app_name    = "${var.heroku_app_name}"
   heroku_pipeline_id = "${var.heroku_pipeline_id}"
   heroku_team        = "${var.heroku_team}"
+
+  enable_papertrail = "${var.enable_papertrail}"
 
   environment = "${var.environment}"
 

@@ -25,6 +25,7 @@ variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
 variable "typeform_link" {}
 
+variable "enable_papertrail" {}
 
 # Configure the Heroku provider
 provider "heroku" {
@@ -74,11 +75,13 @@ resource "heroku_addon" "database" {
 }
 
 resource "heroku_addon" "logging" {
+  count = "${var.enable_papertrail ? 1 : 0}"
   app  = "${heroku_app.clientcomm.name}"
   plan = "papertrail:choklad"
 }
 
 resource "aws_s3_bucket" "logging_bucket" {
+  count = "${var.enable_papertrail ? 1 : 0}"
   bucket = "${var.heroku_app_name}-logs"
 
   versioning {
@@ -87,6 +90,7 @@ resource "aws_s3_bucket" "logging_bucket" {
 }
 
 resource "aws_s3_bucket_policy" "allow_papertrail" {
+  count = "${var.enable_papertrail ? 1 : 0}"
   bucket = "${aws_s3_bucket.logging_bucket.id}"
 
   policy = <<POLICY
