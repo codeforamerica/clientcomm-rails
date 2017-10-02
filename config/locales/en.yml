@@ -37,3 +37,5 @@ en:
     distance_in_words:
       less_than_x_minutes:
         one: just now
+  template:
+    instructions: Templates are reusable messages. You can add and remove words before you send them, so try adding placeholders for names and dates.

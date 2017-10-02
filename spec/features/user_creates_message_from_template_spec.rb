@@ -16,9 +16,9 @@ feature "templates" do
 
   scenario "user fills message send box with template", :js do
     step "clicks on template button with no templates" do
-      expect(page).not_to have_content('Templates')
+      expect(page).not_to have_content('My templates')
       page.find('.icon-insert_comment').click
-      expect(page).to have_content('Templates')
+      expect(page).to have_content('My templates')
 
       expect(page).to have_content('Make it a reusable template!')
     end

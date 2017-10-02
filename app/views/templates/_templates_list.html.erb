@@ -14,6 +14,7 @@
               <% end %>
             </div>
           </div>
+          <p><%= t('template.instructions') %></p>
             <% if @templates.empty? %>
               <div class="text-center col-md-8 col-md-offset-2">
                 <%= image_tag('empty_templates.png') %>
@@ -56,6 +57,9 @@
               </table>
             <% end %>
           </div>
+          <%= link_to clients_path, class: 'button button--small button--cta nudge--med' do %>
+              <i class="button__icon--left icon-arrow_back"></i> Home
+          <% end %>
         </div>
       </div>
     </div>
