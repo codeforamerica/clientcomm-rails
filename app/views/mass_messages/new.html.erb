@@ -11,8 +11,15 @@
           <%= form_for @mass_message, builder: GcfFormBuilder do |f| %>
             <%= f.gcf_textarea :message, "Your message" %>
 
-            <div id="client-select-list" class="grid__item">
+            <div id="client-select-list" class="form-group <%= 'form-group--error' if @mass_message.errors[:clients].any? %>">
               <p class="form-question">Select recipients</p>
+
+              <% if @mass_message.errors[:clients].any? %>
+                  <div class="text--error">
+                    <i class="icon-warning"></i>
+                    <%= @mass_message.errors[:clients].first %>
+                  </div>
+              <% end %>
 
               <input type="checkbox" id="select_all" />
               <label for="select_all">Select all</label>

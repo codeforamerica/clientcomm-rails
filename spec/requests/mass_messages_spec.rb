@@ -12,12 +12,12 @@ describe 'Mass messages requests', type: :request, active_job: true do
     let!(:client_2) { create :client, user: user }
     let!(:client_3) { create :client, user: user }
     let(:message_body) { 'hello this is message one' }
-
+    let(:clients) { ['', client_1.id, client_3.id] }
     before do
       post mass_messages_path, params: {
         mass_message: {
           message: message_body,
-          clients: ['', client_1.id, client_3.id]
+          clients: clients
         }
       }
     end
@@ -54,6 +54,23 @@ describe 'Mass messages requests', type: :request, active_job: true do
           'recipients_count' => 2
         }
       )
+    end
+
+    context 'no message body inputted' do
+      let(:message_body) { '' }
+
+      it 're-renders the page with errors' do
+        expect(response.body).to include 'You need to add a message.'
+      end
+      end
+
+    context 'no message recipients selected' do
+      let(:message_body) { '' }
+      let(:clients) { [''] }
+
+      it 're-renders the page with errors' do
+        expect(response.body).to include 'You need to pick at least one recipient.'
+      end
     end
   end
 

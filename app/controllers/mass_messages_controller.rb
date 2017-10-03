@@ -17,6 +17,14 @@ class MassMessagesController < ApplicationController
     mass_message = MassMessage.new(mass_message_params.merge(user: current_user))
     mass_message.clients = mass_message.clients.reject(&:empty?)
 
+    if mass_message.invalid?
+      @mass_message = mass_message
+      @clients = SortClients.run(user: current_user)
+
+      render :new
+      return
+    end
+
     send_mass_message(mass_message)
 
     flash[:notice] = 'Your mass message has been sent.'

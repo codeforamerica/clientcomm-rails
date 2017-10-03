@@ -39,6 +39,15 @@ en:
                 blank: Give your template a name so you can find it in the list.
               body:
                 blank: Add a template.
+  activemodel:
+    errors:
+      models:
+        mass_message:
+          attributes:
+            message:
+              blank: You need to add a message.
+            clients:
+              blank: You need to pick at least one recipient.
   datetime:
     distance_in_words:
       less_than_x_minutes:

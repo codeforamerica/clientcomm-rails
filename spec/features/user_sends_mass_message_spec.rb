@@ -57,6 +57,11 @@ feature 'sending mass messages', active_job: true do
       end
     end
 
+    step 'user tries to submit invalid message' do
+      click_on 'Send'
+      expect(page).to have_content 'You need to add a message.'
+    end
+
     step 'user sees character count' do
       expect(page.find('.new_mass_message .character-count')).to have_content(0)
 
