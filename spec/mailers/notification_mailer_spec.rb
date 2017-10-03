@@ -4,8 +4,8 @@ describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
     let(:user) {build(:user)}
     let(:client) {build(:client, id: 123456789)}
-    let(:attachment) {build :attachment}
-    let(:message) {create(:message, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment])}
+    let(:attachment) {build :legacy_attachment}
+    let(:message) {create(:message, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), legacy_attachments: [attachment])}
     let(:mail) {NotificationMailer.message_notification(user, message)}
 
     shared_examples_for 'notification email' do

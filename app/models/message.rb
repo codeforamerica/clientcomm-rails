@@ -1,7 +1,7 @@
 class Message < ApplicationRecord
   belongs_to :client
   belongs_to :user
-  has_many :attachments
+  has_many :legacy_attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
   validates_datetime :send_at, :before => :max_future_date
@@ -42,7 +42,7 @@ class Message < ApplicationRecord
     )
 
     twilio_params[:NumMedia].to_i.times.each do |i|
-      new_message.attachments.create!({
+      new_message.legacy_attachments.create!({
         url: twilio_params["MediaUrl#{i}"],
         content_type: twilio_params["MediaContentType#{i}"]
       })
@@ -57,7 +57,7 @@ class Message < ApplicationRecord
       message_id: self.id,
       message_length: self.body.length,
       current_user_id: self.user.id,
-      attachments_count: self.attachments.count,
+      attachments_count: self.legacy_attachments.count,
       message_date_scheduled: self.send_at,
       message_date_created: self.created_at,
       client_active: self.client.active?

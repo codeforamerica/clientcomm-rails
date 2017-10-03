@@ -6,8 +6,8 @@ feature 'Twilio' do
   end
 
   describe 'POSTs to #incoming_sms' do
-    context 'with attachments' do
-      it 'displays the attachments on the page' do
+    context 'with legacy_attachments' do
+      it 'displays the legacy_attachments on the page' do
         user = create :user
         login_as(user, :scope => :user)
         twilio_params = twilio_new_message_params.merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'image/jpeg')

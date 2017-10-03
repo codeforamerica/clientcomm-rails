@@ -1,7 +1,7 @@
 class Client < ApplicationRecord
   belongs_to :user
   has_many :messages, -> { order(created_at: :asc) }
-  has_many :attachments, through: :messages
+  has_many :legacy_attachments, through: :messages
 
   validates :last_name, :presence => true
   validates :phone_number, presence: true
@@ -15,7 +15,7 @@ class Client < ApplicationRecord
       messages_all_count: messages.count,
       messages_received_count: inbound_messages_count,
       messages_sent_count: outbound_messages_count,
-      messages_attachments_count: attachments.count,
+      messages_attachments_count: legacy_attachments.count,
       messages_scheduled_count: scheduled_messages_count,
       has_client_notes: notes.present?
     }

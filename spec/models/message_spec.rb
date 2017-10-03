@@ -5,7 +5,7 @@ RSpec.describe Message, type: :model do
     it do
       should belong_to :client
       should belong_to :user
-      should have_many :attachments
+      should have_many :legacy_attachments
     end
 
     it do
@@ -63,14 +63,14 @@ RSpec.describe Message, type: :model do
         expect(client.messages.last).to eq msg
       end
 
-      it 'creates a message with attachments' do
+      it 'creates a message with legacy_attachments' do
         params = twilio_new_message_params(
             from_number: client.phone_number
         ).merge(NumMedia: 2, MediaUrl0: 'whocares.com', MediaUrl1: 'whocares2.com', MediaContentType0: 'text/jpeg', MediaContentType1: 'text/gif')
         msg = Message.create_from_twilio!(params)
         expect(msg).not_to eq nil
 
-        attachments = msg.attachments.all
+        attachments = msg.legacy_attachments.all
         expect(attachments.length).to eq 2
 
         urls = attachments.map(&:url)

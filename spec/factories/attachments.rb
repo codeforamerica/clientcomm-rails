@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :attachment do
+  factory :legacy_attachment do
     url { "https://api.twilio.com/2010-04-01/Accounts/" + SecureRandom.hex(17) +
       "/Messages/" + SecureRandom.hex(17) +
       "/Media/" + SecureRandom.hex(17) }

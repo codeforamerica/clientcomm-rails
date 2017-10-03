@@ -2,7 +2,7 @@
 class NotificationMailerPreview < ActionMailer::Preview
   def message_notification
     message = Message.first
-    # message = Message.find(Attachment.first.message_id)
+    # message = Message.find(LegacyAttachment.first.message_id)
     user = message.user
     NotificationMailer.message_notification(user, message)
   end

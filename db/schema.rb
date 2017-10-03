@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170929175554) do
+ActiveRecord::Schema.define(version: 20171003212709) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,15 +44,6 @@ ActiveRecord::Schema.define(version: 20170929175554) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
-  end
-
-  create_table "attachments", id: :serial, force: :cascade do |t|
-    t.string "url", null: false
-    t.string "content_type"
-    t.integer "message_id", null: false
-    t.integer "height"
-    t.integer "width"
-    t.index ["message_id"], name: "index_attachments_on_message_id"
   end
 
   create_table "clients", id: :serial, force: :cascade do |t|
@@ -89,6 +80,15 @@ ActiveRecord::Schema.define(version: 20170929175554) do
   create_table "feature_flags", force: :cascade do |t|
     t.string "flag"
     t.boolean "enabled", null: false
+  end
+
+  create_table "legacy_attachments", id: :serial, force: :cascade do |t|
+    t.string "url", null: false
+    t.string "content_type"
+    t.integer "message_id", null: false
+    t.integer "height"
+    t.integer "width"
+    t.index ["message_id"], name: "index_legacy_attachments_on_message_id"
   end
 
   create_table "messages", id: :serial, force: :cascade do |t|
@@ -150,8 +150,8 @@ ActiveRecord::Schema.define(version: 20170929175554) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "attachments", "messages"
   add_foreign_key "clients", "users"
+  add_foreign_key "legacy_attachments", "messages"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
   add_foreign_key "templates", "users"
