@@ -18,9 +18,9 @@
           <tbody id="scheduled-list">
           <% @messages_scheduled.each do |message| %>
             <tr id="<%= dom_id(message) %>">
-              <td><%= link_to truncate(message.body, length: 80), edit_message_path(message) %></td>
-              <td><%= link_to message.send_at.strftime("%m/%d/%Y %-l:%M%P"), edit_message_path(message) %></td>
-              <td><%= link_to 'Edit', edit_message_path(message) %></td>
+              <td><%= link_to truncate(message.body, length: 80), edit_message_path(message), class: 'cell-content' %></td>
+              <td><%= link_to message.send_at.strftime("%m/%d/%Y %-l:%M%P"), edit_message_path(message), class: 'cell-content' %></td>
+              <td><%= link_to 'Edit', edit_message_path(message), class: 'cell-content' %></td>
             </tr>
           <% end %>
           </tbody>
