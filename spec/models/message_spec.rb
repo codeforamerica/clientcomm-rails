@@ -65,8 +65,8 @@ RSpec.describe Message, type: :model do
 
       it 'creates a message with attachments' do
         params = twilio_new_message_params(
-            from_number: client.phone_number, media_count: 2
-        )
+            from_number: client.phone_number
+        ).merge(NumMedia: 2, MediaUrl0: 'whocares.com', MediaUrl1: 'whocares2.com', MediaContentType0: 'text/jpeg', MediaContentType1: 'text/gif')
         msg = Message.create_from_twilio!(params)
         expect(msg).not_to eq nil
 
@@ -74,10 +74,10 @@ RSpec.describe Message, type: :model do
         expect(attachments.length).to eq 2
 
         urls = attachments.map(&:url)
-        expect(urls).to match_array(params.fetch_values('MediaUrl0', 'MediaUrl1'))
+        expect(urls).to match_array(['whocares.com', 'whocares2.com'])
 
         types = attachments.map(&:content_type)
-        expect(types).to match_array(params.fetch_values('MediaContentType0', 'MediaContentType1'))
+        expect(types).to match_array(['text/jpeg', 'text/gif'])
       end
     end
   end

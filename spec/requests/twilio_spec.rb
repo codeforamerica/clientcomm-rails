@@ -134,13 +134,12 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'sms message contains an attachment' do
-      let(:message_params) {
+      let(:message_params) do
         twilio_new_message_params(
             from_number: phone_number,
-            msg_txt: message_text,
-            media_count: 1
-        )
-      }
+            msg_txt: message_text
+        ).merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'text/jpeg')
+      end
 
       it 'tracks an analytics event for the attachment' do
         subject

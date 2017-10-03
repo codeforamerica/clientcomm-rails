@@ -55,6 +55,9 @@ gem 'sentry-raven'
 # Use to import front users
 gem 'httparty'
 
+# Attached media files
+gem 'paperclip'
+
 group :test do
   gem 'launchy', require: false
   gem 'capybara-screenshot'
