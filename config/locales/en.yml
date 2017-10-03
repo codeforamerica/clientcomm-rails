@@ -33,9 +33,19 @@ en:
               send_at:
                 on_or_after: You can't schedule a message in the past.
                 before: You can't schedule a message more than a year in the future.
+          template:
+            attributes:
+              title:
+                blank: Give your template a name so you can find it in the list.
+              body:
+                blank: Add a template.
   datetime:
     distance_in_words:
       less_than_x_minutes:
         one: just now
   template:
     instructions: Templates are reusable messages. You can add and remove words before you send them, so try adding placeholders for names and dates.
+    title:
+      placeholder: "Example: Check-in"
+    body:
+      placeholder: "Example: Hi, how are you doing? Is there anything I can do to help?"

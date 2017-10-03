@@ -56,7 +56,7 @@ describe 'Templates requests', type: :request do
 
         it 'renders new with validation errors' do
           expect(response.code).to eq '200'
-          expect(response.body).to include "can't be blank"
+          expect(response.body).to include 'Give your template a name so you can find it in the list.'
           expect(Template.count).to eq 0
         end
       end

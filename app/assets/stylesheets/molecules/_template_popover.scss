@@ -4,8 +4,10 @@
 
     @include media($tablet-up) {
       min-width: 350px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2)
     }
 
+    box-shadow: 0 0 40px $color-dark-grey;
     border: 2px solid $color-tan;
     padding: 0px;
     border-radius: 0;
@@ -58,6 +60,7 @@
     }
 
     .no-templates {
+      background-color: $color-header;
       padding-top: 30px;
       padding-bottom: 30px;
       padding-left: 15px;

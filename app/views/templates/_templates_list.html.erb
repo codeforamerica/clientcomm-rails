@@ -17,8 +17,8 @@
           <p><%= t('template.instructions') %></p>
             <% if @templates.empty? %>
               <div class="text-center col-md-8 col-md-offset-2">
-                <%= image_tag('empty_templates.png') %>
-                <p>Find yourself writing the same text over and over? Make a template!</p>
+                <%= image_tag('empty_templates.png', class: 'with-padding-small') %>
+                <p class="text--help">Find yourself writing the same text over and over? Make a template!</p>
               </div>
             <% else %>
               <table class="data-table data-table--selectable">

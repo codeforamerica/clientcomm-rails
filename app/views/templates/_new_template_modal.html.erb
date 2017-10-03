@@ -12,12 +12,12 @@
               <div class="grid">
                 <div class="form-group <%= 'form-group--error-modal' if @template.errors.any? %>">
                   <div class="grid__item">
-                    <%= f.gcf_input_field :title, "Template name" %>
+                    <%= f.gcf_input_field :title, 'Template name', options: { placeholder: t('template.title.placeholder') } %>
                   </div>
                 </div>
                 <div class="form-group <%= 'form-group--error-modal' if @template.errors.any? %>">
                   <div class="grid__item">
-                    <%= f.gcf_textarea :body, "Template", classes: ['new-template-textarea'] %>
+                    <%= f.gcf_textarea :body, 'Template', classes: ['new-template-textarea'], placeholder: t('template.body.placeholder') %>
                   </div>
                 </div>
             </div>

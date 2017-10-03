@@ -35,7 +35,7 @@ feature "User creates template" do
     add_template(template)
 
     expect(page).to have_content 'New template'
-    expect(page).to have_content "Template name can't be blank"
+    expect(page).to have_content 'Give your template a name so you can find it in the list.'
   end
 end
 
@@ -72,11 +72,12 @@ feature "User edits template" do
 
     expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
 
-    fill_in "Template name", with: 'New template title'
+    fill_in 'Template name', with: ''
     fill_in "Template", with: ''
     click_on "Update"
 
-    expect(page).to have_content "can't be blank"
+    expect(page).to have_content "Give your template a name so you can find it in the list."
+    expect(page).to have_content "Add a template."
   end
 end
 

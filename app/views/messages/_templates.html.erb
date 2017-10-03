@@ -1,6 +1,6 @@
 <% if @templates.empty? %>
   <div class="text-center no-templates">
-    <%= image_tag('empty_templates.png', size: "50x50") %>
+    <%= image_tag('empty_templates.png', size: "50x50", class: 'with-padding-small') %>
     <p class="text--help">Find yourself writing the same message over and over? Make it a reusable template!</p>
   </div>
 <% else %>
@@ -19,5 +19,5 @@
 </div>
 <% end %>
 <div class="template-popover-footer text-center">
-  <%= link_to "Manage templates", templates_path %>
+  <%= link_to 'Manage templates', templates_path, class: ['text--small'] %>
 </div>
