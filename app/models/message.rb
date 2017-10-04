@@ -1,7 +1,6 @@
 class Message < ApplicationRecord
   belongs_to :client
   belongs_to :user
-  has_many :legacy_attachments
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."

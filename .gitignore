@@ -36,3 +36,6 @@
 *.pem
 
 tags
+
+# Paperclip
+/public/system/*

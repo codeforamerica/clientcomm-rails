@@ -5,7 +5,6 @@ RSpec.describe Message, type: :model do
     it do
       should belong_to :client
       should belong_to :user
-      should have_many :legacy_attachments
       should have_many :attachments
     end
 

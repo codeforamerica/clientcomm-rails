@@ -91,15 +91,6 @@ ActiveRecord::Schema.define(version: 20171003215315) do
     t.boolean "enabled", null: false
   end
 
-  create_table "legacy_attachments", id: :serial, force: :cascade do |t|
-    t.string "url", null: false
-    t.string "content_type"
-    t.integer "message_id", null: false
-    t.integer "height"
-    t.integer "width"
-    t.index ["message_id"], name: "index_legacy_attachments_on_message_id"
-  end
-
   create_table "messages", id: :serial, force: :cascade do |t|
     t.integer "client_id"
     t.integer "user_id"
@@ -161,7 +152,6 @@ ActiveRecord::Schema.define(version: 20171003215315) do
 
   add_foreign_key "attachments", "messages"
   add_foreign_key "clients", "users"
-  add_foreign_key "legacy_attachments", "messages"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
   add_foreign_key "templates", "users"
