@@ -138,7 +138,23 @@ describe 'Twilio controller', type: :request, active_job: true do
         twilio_new_message_params(
             from_number: phone_number,
             msg_txt: message_text
-        ).merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'text/jpeg')
+        ).merge(NumMedia: 1, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png')
+      end
+
+      before do
+        stub_request(:get, 'http://cats.com/fluffy_cat.png').
+            to_return(status: 200,
+                      body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                      headers: {'Accept-Ranges'=>'bytes', 'Content-Length'=>'4379330', 'Content-Type'=>'image/jpeg'})
+      end
+
+      it 'attaches the image to the message' do
+        subject
+
+        message = Message.last
+
+        expect(message.attachments.length).to eq(1)
+        expect(message.attachments.first.media.exists?).to eq(true)
       end
 
       it 'tracks an analytics event for the attachment' do

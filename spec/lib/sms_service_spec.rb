@@ -74,16 +74,34 @@ describe SMSService do
   end
 
   describe '#redact_message' do
-    let(:message) { instance_double(Message, twilio_sid: message_sid) }
+    let(:message) { double('twilio_message', twilio_sid: message_sid) }
+    let(:media_one) { double('media') }
+    let(:media_two) { double('media') }
+    let(:media_list) { [media_one, media_two] }
+
 
     subject { sms_service.redact_message(message: message) }
 
     before do
       allow(account).to receive(:messages).with(message_sid).and_return(double('message', fetch: message))
+      allow(message).to receive(:update)
+      allow(message).to receive(:media).and_return(double('list', list: media_list))
+      allow(media_one).to receive(:delete)
+      allow(media_two).to receive(:delete)
     end
 
     it 'calls redact on the message' do
       expect(message).to receive(:update).with(body: '')
+
+      expect(subject).to eq true
+    end
+
+    it 'deletes any associated media' do
+      expect(message).to receive(:media).and_return(double('list', list: media_list))
+
+      media_list.each do |media|
+        expect(media).to receive(:delete)
+      end
 
       expect(subject).to eq true
     end

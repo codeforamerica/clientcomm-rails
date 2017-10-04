@@ -6,6 +6,7 @@ RSpec.describe Message, type: :model do
       should belong_to :client
       should belong_to :user
       should have_many :legacy_attachments
+      should have_many :attachments
     end
 
     it do
@@ -20,11 +21,11 @@ RSpec.describe Message, type: :model do
 
       it 'validates empty body with attachment' do
         m = build :message, body: ''
-        m.legacy_attachments << build(:legacy_attachment)
+        m.attachments << build(:attachment)
         m.save!
 
         expect(m.save).to be_truthy
-        expect(m.legacy_attachments.count).to eq 1
+        expect(m.attachments.count).to eq 1
       end
     end
 
@@ -80,34 +81,48 @@ RSpec.describe Message, type: :model do
         expect(client.messages.last).to eq msg
       end
 
-      it 'creates a message with legacy_attachments' do
-        params = twilio_new_message_params(
-            from_number: client.phone_number
-        ).merge(NumMedia: 2, MediaUrl0: 'whocares.com', MediaUrl1: 'whocares2.com', MediaContentType0: 'text/jpeg', MediaContentType1: 'text/gif')
-        msg = Message.create_from_twilio!(params)
+      context 'there is an attachment' do
+        let(:params) {
+          twilio_new_message_params(
+              from_number: client.phone_number,
+              msg_txt: body
+          ).merge(NumMedia: 2, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaUrl1: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png', MediaContentType1: 'text/png')
+        }
 
-        attachments = msg.legacy_attachments.all
-        expect(attachments.length).to eq 2
+        before do
+          stub_request(:get, 'http://cats.com/fluffy_cat.png').
+              to_return(status: 200,
+                        body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                        headers: {'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg'})
+        end
 
-        urls = attachments.map(&:url)
-        expect(urls).to match_array(['whocares.com', 'whocares2.com'])
+        subject {Message.create_from_twilio!(params)}
 
-        types = attachments.map(&:content_type)
-        expect(types).to match_array(['text/jpeg', 'text/gif'])
-      end
+        context 'message body is present' do
+          let(:body) {'some_body'}
 
-      it 'creates a message with no body but an attachment' do
-        params = twilio_new_message_params(
-            from_number: client.phone_number,
-            msg_txt: ''
-        ).merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'text/jpeg')
-        msg = Message.create_from_twilio!(params)
+          it 'creates a message with legacy_attachments' do
+            attachments = subject.attachments.all
+            expect(attachments.length).to eq 2
 
-        expect(msg.legacy_attachments.count).to eq 1
-        attachment = msg.legacy_attachments.first
+            attachments.each do |attachment|
+              expect(attachment.media.exists?).to eq true
+            end
+          end
+        end
 
-        expect(attachment.url).to eq 'whocares.com'
-        expect(attachment.content_type).to eq 'text/jpeg'
+        context 'message body is not present' do
+          let(:body) {''}
+
+          it 'creates a message with no body but an attachment' do
+            attachments = subject.attachments.all
+            expect(attachments.length).to eq 2
+
+            attachments.each do |attachment|
+              expect(attachment.media.exists?).to eq true
+            end
+          end
+        end
       end
     end
   end

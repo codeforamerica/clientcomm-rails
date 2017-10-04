@@ -13,6 +13,14 @@ class FakeTwilioClient
     self
   end
 
+  def media
+    self
+  end
+
+  def list
+    []
+  end
+
   def account
     self
   end

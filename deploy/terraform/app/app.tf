@@ -63,10 +63,53 @@ resource "heroku_app" "clientcomm" {
     TIME_ZONE = "${var.time_zone}"
     TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
     TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"
+    AWS_SECRET_ACCESS_KEY = "${aws_iam_access_key.paperclip.secret}"
+    AWS_ACCESS_ID = "${aws_iam_access_key.paperclip.id}"
+    AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
     UNCLAIMED_EMAIL = "clientcomm+unclaimed@codeforamerica.org"
   }
+}
+
+resource "aws_s3_bucket" "paperclip" {
+  bucket = "${var.heroku_app_name}-attachments"
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_iam_user" "paperclip" {
+  name = "paperclip"
+}
+
+resource "aws_iam_access_key" "paperclip" {
+  user = "${aws_iam_user.paperclip.name}"
+}
+
+resource "aws_iam_user_policy" "paperclip" {
+  name = "paperclip_uploads"
+  user = "${aws_iam_user.paperclip.name}"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:PutObjectAcl"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "${aws_s3_bucket.paperclip.arn}/*"
+            ]
+        }
+    ]
+}
+POLICY
 }
 
 resource "heroku_addon" "database" {

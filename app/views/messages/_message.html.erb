@@ -1,6 +1,6 @@
 <div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
   <div class="message--content <%= message.twilio_status %>"><%= message.body %>
-  <%= render message.legacy_attachments %>
+  <%= render message.attachments %>
   </div>
   <p class="message--label <%= message.twilio_status %>">
     <% if message.twilio_status == 'undelivered' %>

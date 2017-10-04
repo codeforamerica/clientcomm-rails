@@ -5,6 +5,7 @@ RSpec.describe Client, type: :model do
     it {
       should belong_to(:user)
       should have_many(:messages)
+      should have_many(:attachments).through(:messages)
     }
   end
 

@@ -29,6 +29,9 @@ class SMSService
   def redact_message(message:)
     message = @client.api.account.messages(message.twilio_sid).fetch
     message.update(body: '')
+    message.media.list.each do |media|
+      media.delete
+    end
 
     true
   rescue Twilio::REST::RestError => e
