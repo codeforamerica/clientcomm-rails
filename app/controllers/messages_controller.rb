@@ -59,7 +59,7 @@ class MessagesController < ApplicationController
         read: true
     )
 
-    if message.invalid? || message.is_past_message
+    if message.invalid? | message.is_past_message
       @message = message
       @client = client
       @messages = past_messages(client: @client)

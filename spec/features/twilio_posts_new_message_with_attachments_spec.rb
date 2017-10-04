@@ -10,7 +10,7 @@ feature 'Twilio' do
       it 'displays the legacy_attachments on the page' do
         user = create :user
         login_as(user, :scope => :user)
-        twilio_params = twilio_new_message_params.merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'image/jpeg')
+        twilio_params = twilio_new_message_params(msg_txt: '').merge(NumMedia: 1, MediaUrl0: 'whocares.com', MediaContentType0: 'image/jpeg')
         client = create :client, user: user, phone_number: twilio_params['From']
         twilio_post_sms twilio_params
         expect(page).to have_http_status(:no_content)

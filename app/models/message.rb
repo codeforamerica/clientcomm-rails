@@ -4,6 +4,7 @@ class Message < ApplicationRecord
   has_many :legacy_attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
+  validates_presence_of :body, unless: ->(message){message.legacy_attachments.present?}
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
@@ -29,7 +30,7 @@ class Message < ApplicationRecord
       )
     end
 
-    new_message = Message.create!(
+    new_message = Message.new(
       client: client,
       user_id: client.user_id,
       number_to: ENV['TWILIO_PHONE_NUMBER'],
@@ -42,11 +43,13 @@ class Message < ApplicationRecord
     )
 
     twilio_params[:NumMedia].to_i.times.each do |i|
-      new_message.legacy_attachments.create!({
+      new_message.legacy_attachments << LegacyAttachment.new(
         url: twilio_params["MediaUrl#{i}"],
         content_type: twilio_params["MediaContentType#{i}"]
-      })
+      )
     end
+
+    new_message.save!
 
     new_message
   end
@@ -65,7 +68,9 @@ class Message < ApplicationRecord
   end
 
   def is_past_message
-    if self.send_at < time_buffer
+    return false if send_at.nil?
+
+    if send_at < time_buffer
       errors.add(:send_at, I18n.t('activerecord.errors.models.message.attributes.send_at.on_or_after'))
 
       true
