@@ -1,5 +1,6 @@
 class MigrateOldAttachments < ActiveRecord::Migration[5.1]
   def up
+    puts Rails.application.config.paperclip_defaults
     LegacyAttachment.all.each do |old_attachment|
       new_attachment = Attachment.new
       new_attachment.media_remote_url = old_attachment.url
