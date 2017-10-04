@@ -64,7 +64,7 @@ resource "heroku_app" "clientcomm" {
     TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
     TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"
     AWS_SECRET_ACCESS_KEY = "${aws_iam_access_key.paperclip.secret}"
-    AWS_ACCESS_ID = "${aws_iam_access_key.paperclip.id}"
+    AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
@@ -74,7 +74,7 @@ resource "heroku_app" "clientcomm" {
 
 resource "aws_s3_bucket" "paperclip" {
   bucket = "${var.heroku_app_name}-attachments"
-
+  region = "us-east-1"
   versioning {
     enabled = true
   }
