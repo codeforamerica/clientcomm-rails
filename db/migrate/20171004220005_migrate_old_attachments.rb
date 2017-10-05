@@ -9,4 +9,10 @@ class MigrateOldAttachments < ActiveRecord::Migration[5.1]
 
     drop_table :legacy_attachments
   end
+
+  private
+
+  class LegacyAttachment < ApplicationRecord
+
+  end
 end
