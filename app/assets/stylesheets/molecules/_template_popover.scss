@@ -68,12 +68,18 @@
     }
 
     .popover-content {
-      padding: 0px 0px 10px 0px;
+      padding: 0px;
     }
 
     .template-popover-footer {
-      padding-top: 10px;
       border-top: 2px solid $color-tan;
+
+      a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        display: inline-block;
+        width: 100%;
+      }
     }
   }
 }

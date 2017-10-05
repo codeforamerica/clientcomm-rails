@@ -18,3 +18,6 @@ end
 Client.all.each do |client|
   FactoryGirl.create_list :message, 10, user: client.user, client: client
 end
+
+FeatureFlag.find_by_flag('mass_messages').update!(enabled: true)
+FeatureFlag.find_by_flag('templates').update!(enabled: true)
