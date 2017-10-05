@@ -14,3 +14,7 @@ FactoryGirl.create_list :user, 3
 User.all.each do |user|
   FactoryGirl.create_list :client, 10, user: user
 end
+
+Client.all.each do |client|
+  FactoryGirl.create_list :message, 10, user: client.user, client: client
+end

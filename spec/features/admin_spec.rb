@@ -158,11 +158,14 @@ feature 'Admin features' do
     end
 
     step 'user_2 receives email for transfer' do
-      [@client_1, @client_2, @client_3].each_with_index do |client, i|
-        mail = ActionMailer::Base.deliveries.find { |mail| mail.html_part.to_s =~ /#{client.full_name}/ }
-        expect(mail).to_not be_nil
-        expect(mail.to).to contain_exactly @user_2.email
-        expect(mail.html_part.to_s).to include 'An administrator has transferred'
+      mail = ActionMailer::Base.deliveries.find { |mail| p mail.to.include? @user_2.email }
+
+      expect(mail).to_not be_nil
+      expect(mail.html_part.to_s).to include 'An administrator has transferred'
+
+      [@client_1, @client_2, @client_3].each do |client|
+        expect(mail.html_part.to_s).to include client.full_name
+        expect(mail.html_part.to_s).to include client.phone_number
       end
     end
 

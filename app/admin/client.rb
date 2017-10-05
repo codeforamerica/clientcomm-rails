@@ -39,20 +39,23 @@ ActiveAdmin.register Client do
   end
 
   batch_action :transfer, form: -> { {user: User.pluck(:full_name, :id)} } do |ids, inputs|
+    user = User.find(inputs[:user])
     number_of_clients = ids.length
+    transferred_clients = []
+
     Client.find(ids).each do |client|
       previous_user_id = client.user.id
-      client.update(user: User.find(inputs[:user]))
+      client.update(user: user)
 
       if inputs[:user] != previous_user_id
-        NotificationMailer.client_transfer_notification(
-          current_user: client.reload.user,
-          previous_user: User.find(previous_user_id),
-          client: client
-        ).deliver_later
+        transferred_clients << { client: client, previous_user: User.find(previous_user_id) }
       end
     end
 
+    NotificationMailer.batch_transfer_notification(
+      current_user: user,
+      transferred_clients: transferred_clients
+    ).deliver_later
 
     redirect_to admin_clients_path, alert: "Clients transferred: #{number_of_clients}."
   end
