@@ -81,7 +81,7 @@ resource "aws_s3_bucket" "paperclip" {
 }
 
 resource "aws_iam_user" "paperclip" {
-  name = "paperclip"
+  name = "${var.heroku_app_name}-paperclip"
 }
 
 resource "aws_iam_access_key" "paperclip" {

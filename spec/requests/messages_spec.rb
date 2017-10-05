@@ -74,6 +74,35 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(response.body).to include('2 messages scheduled')
         end
       end
+
+      context 'there are attachments' do
+        let(:attachment) {build :attachment, media: File.new(media_path)}
+
+        before do
+          create :message, user: user, client: client, attachments: [attachment], inbound: true
+          get client_messages_path(client)
+        end
+
+        context 'image files' do
+          let(:media_path) {'spec/fixtures/fluffy_cat.jpg'}
+
+          it 'displays files' do
+            parsed_response = Nokogiri.parse(response.body)
+
+            expect(parsed_response.css('.message--inbound img').attr('src').text).to include 'fluffy_cat.jpg'
+          end
+        end
+
+        context 'other file types' do
+          let(:media_path) {'spec/fixtures/cat_contact.vcf'}
+
+          it 'displays files' do
+            parsed_response = Nokogiri.parse(response.body)
+
+            expect(parsed_response.css('.message--inbound a').attr('href').text).to include 'cat_contact.vcf'
+          end
+        end
+      end
     end
 
     describe 'DELETE#destroy' do
@@ -96,7 +125,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#edit' do
       it 'renders the requested message template' do
-        message = create :message, user: user, client: client, inbound: true, send_at:  Time.zone.local(2018, 07, 11, 20, 30, 0)
+        message = create :message, user: user, client: client, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)
 
         get edit_message_path(message)
 
@@ -110,7 +139,7 @@ describe 'Messages requests', type: :request, active_job: true do
     describe 'POST#create' do
       let(:post_params) {
         {
-            message: {body: body, send_at: message_send_at},
+            message: { body: body, send_at: message_send_at },
             client_id: client.id
         }
       }
@@ -166,7 +195,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'past date' do
-        let(:time_in_past) {Time.now.yesterday.change(sec: 0)}
+        let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
               date: time_in_past.strftime("%m/%d/%Y"),
@@ -190,7 +219,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'valid date' do
-        let(:time_to_send) {Time.now.tomorrow.change(sec: 0)}
+        let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
         let(:message_send_at) {
           {
               date: time_to_send.strftime("%m/%d/%Y"),

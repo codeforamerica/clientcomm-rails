@@ -1,4 +1,5 @@
 require 'simplecov'
+require 'paperclip/matchers'
 
 # Run code coverage and save to CircleCI's artifacts directory if we're on CircleCI
 if ENV['CIRCLE_ARTIFACTS']
@@ -25,6 +26,8 @@ RSpec.configure do |config|
   if config.files_to_run.one?
     config.default_formatter = "doc"
   end
+
+  config.include Paperclip::Shoulda::Matchers
 
   config.order = :random
 
