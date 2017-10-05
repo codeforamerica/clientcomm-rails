@@ -168,6 +168,6 @@ class MessagesController < ApplicationController
     Message
         .where(client: client)
         .where('send_at < ?', Time.now)
-        .order('created_at ASC')
+        .order('send_at ASC')
   end
 end

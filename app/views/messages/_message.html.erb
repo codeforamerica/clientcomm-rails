@@ -6,7 +6,7 @@
     <% if message.twilio_status == 'undelivered' %>
       <%= t('message.status.undelivered') %>
     <% else %>
-      <%= message.twilio_status %> <%= message.created_at.to_s(:message_timestamp) %>
+      <%= message.twilio_status %> <%= message.send_at.to_s(:message_timestamp) %>
     <% end %>
   </p>
 </div>

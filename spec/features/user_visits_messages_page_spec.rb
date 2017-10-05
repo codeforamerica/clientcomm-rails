@@ -46,8 +46,32 @@ feature 'User clicks on client in list', :js do
         myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myclient.phone_number)).id
         expect(page).to have_current_path(client_messages_path(client_id: myclient_id))
       end
-    end
 
+      context 'sorting' do
+        let(:messageone) { build :message, user: myuser, client: myclient }
+        let(:messagetwo) { build :message, user: myuser, client: myclient }
+
+        before do
+          today = Time.now
+
+          travel_to 2.days.ago do
+            messageone.send_at = today
+            messageone.save
+          end
+
+          travel_to 1.day.ago do
+            messagetwo.send_at = Time.now
+            messagetwo.save
+          end
+
+          visit client_messages_path(myclient)
+        end
+
+        it 'sorts messages by send_at' do
+          expect(page).to have_content(/#{messagetwo.body}.*#{messageone.body}/)
+        end
+      end
+    end
   end
 end
 
