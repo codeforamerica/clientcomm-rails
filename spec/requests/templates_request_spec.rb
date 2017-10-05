@@ -30,12 +30,18 @@ describe 'Templates requests', type: :request do
           expect(Nokogiri.parse(response.body).to_s).to include("#{template.title}")
           expect(Nokogiri.parse(response.body).to_s).to include("#{template.body}")
         end
+
+        expect_analytics_events({
+          'template_page_view' => {
+            'templates_count' => 5
+          }
+        })
       end
     end
 
     describe 'POST#create' do
       let(:title) { Faker::Lorem.sentence }
-      let(:body) { Faker::Lorem.sentence }
+      let(:body) { Faker::Lorem.characters 50 }
 
       before do
         post templates_path, params: {
@@ -49,6 +55,12 @@ describe 'Templates requests', type: :request do
       it 'creates a template' do
         expect(response.code).to eq '302'
         expect(response).to redirect_to templates_path
+
+        expect_analytics_events({
+          'template_create_success' => {
+            'message_length' => 50
+          }
+        })
       end
 
       context 'receives invalid template parameters' do
@@ -95,6 +107,12 @@ describe 'Templates requests', type: :request do
         delete template_path(template)
         expect(response.code).to eq '302'
         expect(response).to redirect_to templates_path
+
+        expect_analytics_events({
+          'template_delete' => {
+            'templates_count' => 0
+          }
+        })
       end
     end
   end

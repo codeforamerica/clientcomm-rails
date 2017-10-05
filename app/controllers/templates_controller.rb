@@ -3,11 +3,18 @@ class TemplatesController < ApplicationController
 
   def index
     @templates = current_user.templates
+
+    analytics_track(
+      label: 'template_page_view',
+      data: { templates_count: @templates.count }
+    )
   end
 
   def new
     @template = Template.new
     @templates = current_user.templates
+
+    analytics_track(label: 'template_create_view')
   end
 
   def create
@@ -15,6 +22,11 @@ class TemplatesController < ApplicationController
       title: template_params[:title],
       body: template_params[:body],
       user_id: current_user.id
+    )
+
+    analytics_track(
+      label: 'template_create_success',
+      data: { message_length: @template.body.length }
     )
 
     if @template.valid?
@@ -28,6 +40,8 @@ class TemplatesController < ApplicationController
   def edit
     @template = current_user.templates.find(params[:id])
     @templates = current_user.templates
+
+    analytics_track(label: 'template_edit_view')
   end
 
   def update
@@ -44,6 +58,11 @@ class TemplatesController < ApplicationController
 
   def destroy
     current_user.templates.find(params[:id]).destroy!
+
+    analytics_track(
+      label: 'template_delete',
+      data: { templates_count: current_user.templates.count }
+    )
 
     flash[:notice] = "Template deleted"
     redirect_to templates_path
