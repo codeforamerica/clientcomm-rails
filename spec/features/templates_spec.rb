@@ -18,8 +18,6 @@ feature "User creates template" do
   end
 
   scenario 'successfully', :js do
-    expect(page).to have_content 'Make a template!'
-
     template = build :template, title: 'My template title', body: 'My template body'
 
     add_template(template)
