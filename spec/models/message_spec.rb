@@ -100,7 +100,7 @@ RSpec.describe Message, type: :model do
         context 'message body is present' do
           let(:body) {'some_body'}
 
-          it 'creates a message with legacy_attachments' do
+          it 'creates a message with attachments' do
             attachments = subject.attachments.all
             expect(attachments.length).to eq 2
 
