@@ -24,12 +24,7 @@
               <table class="data-table data-table--selectable">
                 <thead>
                   <tr>
-                    <th class="sort" data-sort="lastname">
-                      Title
-                    </th>
-                    <th class="sort desc" data-sort="timestamp">
-                      Body
-                    </th>
+                    <th>Template</th>
                     <th class="hidden-xs">Edit</th>
                   </tr>
                 </thead>
@@ -39,11 +34,7 @@
                       <td>
                         <a class="cell-content" href="<%= edit_template_path(template) %>">
                           <strong><%= template.title %></strong>
-                        </a>
-                      </td>
-                      <td>
-                        <a class="cell-content" href="<%= edit_template_path(template) %>">
-                          <%= template.body %>
+                          <p><%= template.body %></p>
                         </a>
                       </td>
                       <td class="hidden-xs">
