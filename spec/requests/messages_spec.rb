@@ -335,6 +335,23 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(response.body).to include(user.full_name)
         end
       end
+
+      it 'orders downloaded messages by send_at' do
+        msgs_count = 10
+        messages = create_list :message, msgs_count, user: user, client: client
+        messages.each_with_index do |message, i|
+          message.update(
+            created_at: message.created_at - (msgs_count - i).hours,
+            send_at: message.send_at - i.hours
+          )
+        end
+        get client_messages_download_path(client)
+        messages.each_with_index do |message, i|
+          if i < msgs_count - 1
+            expect(response.body.index(message.body)).to be > response.body.index(messages[i + 1].body)
+          end
+        end
+      end
     end
   end
 
