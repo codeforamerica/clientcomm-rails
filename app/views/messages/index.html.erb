@@ -4,7 +4,7 @@
   <div class="grid">
     <div class="row">
       <div class="col-md-2 col-sm-2 hidden-xs">
-        <%= link_to clients_path, class: 'button button--small pull-left' do %>
+        <%= link_to clients_path, class: 'button button--small pull-left nudge--small' do %>
             <i class="button__icon--left icon-arrow_back"></i><span class="hidden-sm">Home</span>
         <% end %>
       </div>
@@ -24,10 +24,10 @@
           </span>
       </div>
       <div class="col-sm-4 col-md-3 hidden-xs">
-        <%= link_to "Manage client", edit_client_path(@client), { id: 'manage_client', class: 'button button--small pull-right' } %>
+        <%= link_to "Manage client", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
       </div>
       <div class="col-xs-5 hidden-sm hidden-md hidden-lg">
-        <%= link_to "Manage", edit_client_path(@client), { id: 'manage_client', class: 'button button--small pull-right' } %>
+        <%= link_to "Manage", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
       </div>
     </div>
   </div>
