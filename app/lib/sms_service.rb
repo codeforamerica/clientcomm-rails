@@ -29,8 +29,11 @@ class SMSService
   def redact_message(message:)
     message = @client.api.account.messages(message.twilio_sid).fetch
     message.update(body: '')
-    message.media.list.each do |media|
-      media.delete
+
+    if message.num_media != '0'
+      message.media.list.each do |media|
+        media.delete
+      end
     end
 
     true

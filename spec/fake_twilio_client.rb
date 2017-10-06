@@ -13,6 +13,10 @@ class FakeTwilioClient
     self
   end
 
+  def num_media
+    '0'
+  end
+
   def media
     self
   end

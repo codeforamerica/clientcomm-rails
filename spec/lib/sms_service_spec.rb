@@ -85,7 +85,7 @@ describe SMSService do
     before do
       allow(account).to receive(:messages).with(message_sid).and_return(double('message', fetch: message))
       allow(message).to receive(:update)
-      allow(message).to receive(:media).and_return(double('list', list: media_list))
+      allow(message).to receive(:num_media).and_return('0')
       allow(media_one).to receive(:delete)
       allow(media_two).to receive(:delete)
     end
@@ -96,14 +96,20 @@ describe SMSService do
       expect(subject).to eq true
     end
 
-    it 'deletes any associated media' do
-      expect(message).to receive(:media).and_return(double('list', list: media_list))
-
-      media_list.each do |media|
-        expect(media).to receive(:delete)
+    context 'messages has attached media' do
+      before do
+        allow(message).to receive(:num_media).and_return('2')
       end
 
-      expect(subject).to eq true
+      it 'deletes any associated media' do
+        expect(message).to receive(:media).and_return(double('list', list: media_list))
+
+        media_list.each do |media|
+          expect(media).to receive(:delete)
+        end
+
+        expect(subject).to eq true
+      end
     end
 
     context 'message fails to update' do
