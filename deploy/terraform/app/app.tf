@@ -114,7 +114,7 @@ POLICY
 
 resource "heroku_addon" "database" {
   app  = "${heroku_app.clientcomm.name}"
-  plan = "heroku-postgresql:hobby-dev"
+  plan = "heroku-postgresql:standard-0"
 }
 
 resource "heroku_addon" "logging" {
