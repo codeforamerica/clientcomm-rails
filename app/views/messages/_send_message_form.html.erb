@@ -23,7 +23,10 @@
               data-html="true"
               data-placement="top"
               title="<strong>My templates</strong>"
-              data-content='<%= render 'messages/templates' %>'>
+              data-template-count="<%= @templates.count %>"
+              data-client-id="<%= @client.id %>"
+              data-content='<%= render 'messages/templates' %>'
+            >
               <i class="icon-insert_comment"></i></a>
             <% end %>
           </div>

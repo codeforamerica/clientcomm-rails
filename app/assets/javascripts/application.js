@@ -15,6 +15,7 @@
 //= require bootstrap-sprockets
 //= require jquery_ujs
 //= require autosize
+//= require lib/mixpanel.min
 //= require lib/list.min
 //= require client_search
 //= require messages

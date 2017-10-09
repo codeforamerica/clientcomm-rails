@@ -7,8 +7,35 @@ $(document).ready(function(){
 
   $('#template-button').on('shown.bs.popover', function () {
     $('#template-button').addClass('template-popover-active');
-    makeTemplateRowsClickable(sendInput);
-  })
+
+    $('.template-row').click(selectTemplate);
+
+    mixpanel.track(
+      "template_popover_view",
+      {
+        templates_count: $(this).data('template-count'),
+        visitor_id: $('meta[name=visitor_id]').attr("content"),
+        client_id: $(this).data('client-id')
+      }
+    );
+  });
+
+  function selectTemplate() {
+    mixpanel.track(
+      "template_insert",
+      {
+        visitor_id: $('meta[name=visitor_id]').attr("content"),
+        client_id: $('#template-button').data('client-id')
+      }
+    );
+
+    populateTextarea(this);
+  }
+
+  function populateTextarea(context) {
+    $('#message_body').val($(context).data('template-body'));
+    autosize.update(sendInput);
+  }
 
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
@@ -81,12 +108,5 @@ function characterCount(element) {
     var length = $(this).val().length;
     counter.html(length);
     counter.toggleClass('text--error', length > 160);
-  });
-}
-
-function makeTemplateRowsClickable(textarea){
-  $('.template-row').click(function(){
-    $('#message_body').val($(this).data('template-body'));
-    autosize.update(textarea);
   });
 }
