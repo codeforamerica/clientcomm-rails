@@ -24,7 +24,7 @@ class ClientsController < ApplicationController
   end
 
   def create
-    @client = Client.create(
+    @client = Client.new(
       user: current_user,
       first_name: client_params[:first_name],
       last_name: client_params[:last_name],
@@ -32,7 +32,7 @@ class ClientsController < ApplicationController
       notes: client_params[:notes]
     )
 
-    if @client.valid?
+    if @client.save
       analytics_track(
           label: 'client_create_success',
           data: @client.reload.analytics_tracker_data

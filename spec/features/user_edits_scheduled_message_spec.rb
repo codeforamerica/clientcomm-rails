@@ -15,7 +15,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      clientone_id = Client.find_by(phone_number: PhoneNumberParser.normalize(clientone.phone_number)).id
+      clientone_id = Client.find_by(phone_number: clientone.phone_number).id
       visit client_messages_path(client_id: clientone_id)
       expect(page).not_to have_content '1 message scheduled'
     end

@@ -4,6 +4,8 @@ class SMSService
   include AnalyticsHelper
   include Singleton
 
+  class NumberNotFound < StandardError; end
+
   def initialize
     sid = ENV['TWILIO_ACCOUNT_SID']
     token = ENV['TWILIO_AUTH_TOKEN']
@@ -42,15 +44,19 @@ class SMSService
     false
   end
 
+  def number_lookup(phone_number:)
+    @client.lookups.v1.phone_numbers(phone_number).fetch.phone_number
+  rescue Twilio::REST::RestError => e
+    raise e unless e.code == 20404
+    raise NumberNotFound
+  end
+
   private
 
   def send_twilio_message(to:, body:, callback_url:)
-    to_clean = PhoneNumberParser.normalize(to)
-    # use the from in the ENV if one wasn't sent
-    from = PhoneNumberParser.normalize(ENV['TWILIO_PHONE_NUMBER'])
     @client.api.account.messages.create(
-        from: from,
-        to: to_clean,
+        from: ENV['TWILIO_PHONE_NUMBER'],
+        to: to,
         body: body,
         status_callback: callback_url
     )

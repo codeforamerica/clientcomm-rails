@@ -11,7 +11,7 @@ feature "User receives a message from a client" do
   context "while on the client's messages page" do
     it "marks the message as read", :js do
       # go to the messages page
-      clientone_phone = PhoneNumberParser.normalize(clientone.phone_number)
+      clientone_phone = clientone.phone_number
       clientone_id = Client.find_by(phone_number: clientone_phone).id
       visit client_messages_path(client_id: clientone_id)
       # post a message to the twilio endpoint from the user

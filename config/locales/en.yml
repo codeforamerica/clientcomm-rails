@@ -28,6 +28,10 @@ en:
   activerecord:
     errors:
         models:
+          client:
+            attributes:
+              phone_number:
+                invalid: "This is not a valid phone number."
           message:
             attributes:
               send_at:

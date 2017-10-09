@@ -29,12 +29,29 @@ class FakeTwilioClient
     self
   end
 
-  def fetch
+  def fetch(params = nil)
     self
   end
 
   def update(params)
     nil
+  end
+
+  def lookups
+    self
+  end
+
+  def v1
+    self
+  end
+
+  def phone_numbers(phone_number)
+    @phone_number = phone_number
+    self
+  end
+
+  def phone_number
+    @phone_number
   end
 
   def create(from:, to:, body:, status_callback:)

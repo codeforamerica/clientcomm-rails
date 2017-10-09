@@ -7,6 +7,9 @@ class Client < ApplicationRecord
   validates :phone_number, presence: true
   validates_uniqueness_of :phone_number, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
 
+  validate :service_accepts_phone_number
+  after_validation :normalize_phone_number
+
   def analytics_tracker_data
     {
       client_id: self.id,
@@ -43,12 +46,17 @@ class Client < ApplicationRecord
     messages.scheduled.count
   end
 
-  # override default accessors
-  def phone_number=(number_input)
-    self[:phone_number] = PhoneNumberParser.normalize(number_input)
+  private
+
+  def normalize_phone_number
+    self.phone_number = @normal_phone_number if @normal_phone_number
   end
 
-  private
+  def service_accepts_phone_number
+    @normal_phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
+  rescue SMSService::NumberNotFound
+    errors.add(:phone_number, I18n.t('activerecord.errors.models.client.attributes.phone_number.invalid'))
+  end
 
   def hours_since_contact
     ((Time.now -  (last_contacted_at || created_at)) / 3600).round

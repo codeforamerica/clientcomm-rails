@@ -72,7 +72,7 @@ feature "User receives a message from a client" do
   context "while on the clients' messages page" do
     it "doesn't see a notification for a new message", :js do
       # go to messages page
-      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(clientone.phone_number)).id
+      myclient_id = Client.find_by(phone_number: clientone.phone_number).id
       visit client_messages_path(client_id: myclient_id)
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))

@@ -19,7 +19,7 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
+      myclient_id = Client.find_by(phone_number: client_1.phone_number).id
       visit client_messages_path(client_id: myclient_id)
     end
 
@@ -49,8 +49,8 @@ feature 'sending messages', active_job: true do
     end
 
     step 'then user sees clients sorted by last contact time' do
-      savedfirstclient = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number))
-      savedsecondclient = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number))
+      savedfirstclient = Client.find_by(phone_number: client_1.phone_number)
+      savedsecondclient = Client.find_by(phone_number: client_2.phone_number)
       expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'just now'
       expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '--'
     end
@@ -69,7 +69,7 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
+      myclient_id = Client.find_by(phone_number: client_1.phone_number).id
       visit client_messages_path(client_id: myclient_id)
     end
 

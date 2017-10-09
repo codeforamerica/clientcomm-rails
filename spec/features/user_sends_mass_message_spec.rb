@@ -33,7 +33,7 @@ feature 'sending mass messages', active_job: true do
     end
 
     step 'user sends message to client' do
-      client_id = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).id
+      client_id = Client.find_by(phone_number: client_2.phone_number).id
       visit client_messages_path(client_id)
       fill_in "Send a text message", with: message.body
 
@@ -80,9 +80,9 @@ feature 'sending mass messages', active_job: true do
 
       expect(find('#select_all')['checked']).to eq true
 
-      id_1 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_1.phone_number)).id
-      id_2 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).id
-      id_3 = Client.find_by(phone_number: PhoneNumberParser.normalize(client_3.phone_number)).id
+      id_1 = Client.find_by(phone_number: client_1.phone_number).id
+      id_2 = Client.find_by(phone_number: client_2.phone_number).id
+      id_3 = Client.find_by(phone_number: client_3.phone_number).id
 
       expect(find("#mass_message_clients_#{id_1}")['checked']).to eq(true)
       expect(find("#mass_message_clients_#{id_2}")['checked']).to eq(true)
@@ -101,8 +101,8 @@ feature 'sending mass messages', active_job: true do
 
     step 'then messages were sent to client 1 and 3' do
       expect(Message.where(body: long_message_body).count).to eq 2
-      expect(Client.find_by(phone_number: PhoneNumberParser.normalize(client_2.phone_number)).messages.last.body).to eq long_message_body
-      expect(Client.find_by(phone_number: PhoneNumberParser.normalize(client_3.phone_number)).messages.last.body).to eq long_message_body
+      expect(Client.find_by(phone_number: client_2.phone_number).messages.last.body).to eq long_message_body
+      expect(Client.find_by(phone_number: client_3.phone_number).messages.last.body).to eq long_message_body
     end
   end
 end

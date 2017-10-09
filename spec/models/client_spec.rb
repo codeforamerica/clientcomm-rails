@@ -17,12 +17,21 @@ RSpec.describe Client, type: :model do
         expect(subject.full_name).to eq(subject.first_name + " " + subject.last_name)
       end
     end
+  end
 
-    describe '#phone_number=' do
-      it 'normalizes phone number' do
-        subject.phone_number = '2435551212'
-        expect(subject.phone_number).to eq '+12435551212'
-      end
+  describe 'normalizing' do
+    let(:input_phone_number) { '(760) 555-7890' }
+    let(:normalized_phone_number) { '+17605557890' }
+    before do
+      allow(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: input_phone_number)
+        .and_return(normalized_phone_number)
+    end
+
+    subject { create :client, phone_number: input_phone_number }
+
+    it 'formats the phone number' do
+      expect(subject.reload.phone_number).to eq(normalized_phone_number)
     end
   end
 
@@ -33,15 +42,26 @@ RSpec.describe Client, type: :model do
 
     it 'validates presence of phone_number' do
       client = Client.new(last_name: 'Last')
-      expect(client.valid?).to be_falsey
-      expect([:phone_number]).to eq client.errors.keys
+      expect(client.valid?).to eq(false)
+      expect(client.errors.keys).to contain_exactly(:phone_number)
     end
 
     it 'validates uniqueness of phone_number' do
       old_client = create(:client)
       new_client = build(:client, phone_number: old_client.phone_number)
-      expect(new_client.valid?).to be_falsey
-      expect([:phone_number]).to eq new_client.errors.keys
+      expect(new_client.valid?).to eq(false)
+      expect(new_client.errors.keys).to contain_exactly(:phone_number)
+    end
+
+    it 'validates correctness of phone_number' do
+      bad_number = '(212) 55-5236'
+      allow(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: bad_number)
+        .and_raise(SMSService::NumberNotFound)
+
+      new_client = build(:client, phone_number: bad_number)
+      expect(new_client.valid?).to eq(false)
+      expect(new_client.errors.keys).to contain_exactly(:phone_number)
     end
   end
 

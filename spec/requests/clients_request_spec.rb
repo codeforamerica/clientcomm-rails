@@ -19,10 +19,17 @@ describe 'Clients requests', type: :request do
     describe 'POST#create' do
       let(:first_name) { Faker::Name.first_name }
       let(:phone_number) { '(466) 336-4863' }
+      let(:normal_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
 
       before do
+        allow(SMSService.instance).to receive(:number_lookup)
+          .with(phone_number: phone_number)
+          .and_return(normal_number)
+      end
+
+      subject do
         post clients_path, params: {
           client: {
             first_name: first_name,
@@ -34,6 +41,8 @@ describe 'Clients requests', type: :request do
       end
 
       it 'creates a client' do
+        subject
+
         expect(response.code).to eq '302'
         expect(response).to redirect_to clients_path
         expect(Client.count).to eq 1
@@ -42,11 +51,13 @@ describe 'Clients requests', type: :request do
         expect(client.user).to eq user
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name
-        expect(client.phone_number).to eq '+14663364863'
+        expect(client.phone_number).to eq normal_number
         expect(client.notes).to eq notes
       end
 
       it 'tracks the creation of a new client' do
+        subject
+
         client = Client.first
 
         expect_analytics_events(
@@ -62,8 +73,28 @@ describe 'Clients requests', type: :request do
         let(:last_name) { nil }
 
         it 'renders new with validation errors' do
+          subject
+
           expect(response.code).to eq '200'
           expect(response.body).to include "can't be blank"
+          expect(Client.count).to eq 0
+        end
+      end
+
+      context 'the phone number does not exist' do
+        let(:phone_number) { '(212) 555-236' }
+
+        before do
+          allow(SMSService.instance).to receive(:number_lookup)
+            .with(phone_number: phone_number)
+            .and_raise(SMSService::NumberNotFound)
+        end
+
+        it 'renders with validation errors' do
+          subject
+
+          expect(response.code).to eq '200'
+          expect(response.body).to include 'valid phone number'
           expect(Client.count).to eq 0
         end
       end

@@ -132,4 +132,48 @@ describe SMSService do
       end
     end
   end
+
+  describe '#number_lookup' do
+    let(:lookups) { double('lookups') }
+    let(:v1) { double('v1') }
+    let(:phone_numbers) { double('phone_numbers') }
+    let(:phone_number) { '12345678910' }
+
+    before do
+      allow(client).to receive(:lookups).and_return(lookups)
+      allow(lookups).to receive(:v1).and_return(v1)
+    end
+
+    subject { sms_service.number_lookup(phone_number: phone_number) }
+
+    it 'looks up the phone number' do
+      expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+      expect(phone_numbers).to receive(:fetch)
+        .with(no_args)
+        .and_return(double('phone_number', phone_number: 'some phone number'))
+
+      expect(subject).to eq('some phone number')
+    end
+
+    context 'the number does not exist' do
+      let(:error) { Twilio::REST::RestError.new('Unable to fetch record', 20404, 404) }
+      it 'throws a number not found error' do
+        expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+        expect(phone_numbers).to receive(:fetch).and_raise(error)
+
+        expect { subject }.to raise_error(SMSService::NumberNotFound)
+      end
+
+      context 'an unknown twilio error occurs' do
+        let(:error) { Twilio::REST::RestError.new('some other error', 20010, 500) }
+
+        it 'reraises the error' do
+          expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+          expect(phone_numbers).to receive(:fetch).and_raise(error)
+
+          expect{ subject }.to raise_error(error)
+        end
+      end
+    end
+  end
 end

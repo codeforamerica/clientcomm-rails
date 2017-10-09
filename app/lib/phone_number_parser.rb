@@ -7,12 +7,6 @@ module PhoneNumberParser
     stripped[[-10, -1 * stripped.length].max..-1]
   end
 
-  def self.normalize(phone_number)
-    # prepend the US country code if necessary
-    bare = self.make_bare(phone_number)
-    "+1#{bare}"
-  end
-
   def self.format_for_display(phone_number)
     # format for display, like: "(243) 555-1212"
     bare = self.make_bare(phone_number)

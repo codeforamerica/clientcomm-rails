@@ -43,7 +43,7 @@ feature 'User clicks on client in list', :js do
 
       # get the id from the saved client record
       it 'has the correct path for the client' do
-        myclient_id = Client.find_by(phone_number: PhoneNumberParser.normalize(myclient.phone_number)).id
+        myclient_id = Client.find_by(phone_number: myclient.phone_number).id
         expect(page).to have_current_path(client_messages_path(client_id: myclient_id))
       end
 
