@@ -7,19 +7,4 @@ describe 'Tracking of registration analytics events', type: :request do
       expect(response).to redirect_to '/users/sign_in'
     end
   end
-
-  context 'POST#resource' do
-    it 'tracks a user successfully creating an account' do
-      userone = build :user
-      create_user userone
-      expect_analytics_events_happened('signup_success')
-    end
-
-    it 'tracks a user erroring when trying to create an account' do
-      # an empty email field should error
-      userone = build :user, email: ""
-      create_user userone
-      expect_analytics_events_happened('signup_error')
-    end
-  end
 end
