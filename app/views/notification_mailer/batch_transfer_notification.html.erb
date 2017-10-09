@@ -87,21 +87,23 @@
                     <p style="font-family:sans-serif;font-size:19px;font-weight:bold;color:#666666;margin:0;Margin-bottom:15px;">ClientComm</p>
                     <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">Hi <%= @current_user.full_name %>,</p>
                     <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">An administrator has transferred <%= @transferred_clients.count %> new clients to your client list. Be sure to introduce yourself!</p>
-                    <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;box-sizing:border-box;width:100%;">
-                      <tbody>
-                      <tr>
-                        <td align="left" style="font-family:sans-serif;font-size:14px;vertical-align:top;padding-bottom:15px;">
-                          <table border="0" cellpadding="0" cellspacing="0" style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;width:auto;">
-                            <tbody>
-                            <tr>
-                              <td style="font-family:sans-serif;font-size:14px;vertical-align:top;background-color:#ffffff;border-radius:5px;text-align:center;background-color:#019C86;"> <%= link_to('Mass Message them now', new_mass_message_url, { target: '_blank', style: 'text-decoration:underline;background-color:#ffffff;border:solid 1px #019C86;border-radius:5px;box-sizing:border-box;color:#019C86;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;background-color:#019C86;border-color:#019C86;color:#ffffff;' }) %></td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
+                    <% if FeatureFlag.enabled?("mass_messages") %>
+                      <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;box-sizing:border-box;width:100%;">
+                        <tbody>
+                        <tr>
+                          <td align="left" style="font-family:sans-serif;font-size:14px;vertical-align:top;padding-bottom:15px;">
+                            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;width:auto;">
+                              <tbody>
+                              <tr>
+                                <td style="font-family:sans-serif;font-size:14px;vertical-align:top;background-color:#ffffff;border-radius:5px;text-align:center;background-color:#019C86;"> <%= link_to('Mass Message them now', new_mass_message_url, { target: '_blank', style: 'text-decoration:underline;background-color:#ffffff;border:solid 1px #019C86;border-radius:5px;box-sizing:border-box;color:#019C86;cursor:pointer;display:inline-block;font-size:14px;font-weight:bold;margin:0;padding:12px 25px;text-decoration:none;background-color:#019C86;border-color:#019C86;color:#ffffff;' }) %></td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    <% end %>
                     <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">Your new clients are:</p>
                     <% @transferred_clients.each do |hash| %>
                       <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;"><%= link_to "#{hash[:client].full_name}, #{hash[:client].phone_number}, from #{hash[:previous_user].full_name}.", client_messages_url(hash[:client]) %>.</p>
