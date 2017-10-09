@@ -1,26 +1,57 @@
-<tbody id="client-rows" class="list">
-<% @clients.each do |client| %>
-    <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(client) %>">
-      <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
-        <a class="cell-content" href="<%= client_messages_path(client.id) %>">
-          <% if client_messages_status(client) == 'unread' %>
-              <i class="message-status-icon hidden-xs"></i>
-          <% elsif client_messages_status(client) == 'error' %>
-              <i class="icon-warning hidden-xs"></i>
-          <% end %>
-          <%= client.full_name %>
-        </a>
-      </td>
-      <td class="timestamp" data-timestamp="<%= client.timestamp %>">
-        <a class="cell-content" href="<%= client_messages_path(client.id) %>">
-          <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
-        </a>
-      </td>
-      <td class="hidden-xs">
-        <a class="cell-content" href="<%= edit_client_path(client.id) %>">
-          Manage
-        </a>
-      </td>
+<div id="client-list" class="grid__item">
+  <div class="input-group client-search-input">
+    <div class="inner-addon left-addon">
+      <input type="text" class="searchbar__input search" placeholder="Search clients by name"/>
+      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    </div>
+    <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="icon-close"></i></button></span>
+  </div>
+  <table class="data-table data-table--selectable">
+    <thead>
+    <tr>
+      <th class="sort" data-sort="lastname">
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        Name
+      </th>
+      <th class="sort desc" data-sort="timestamp">
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        Last contact
+      </th>
+      <th class="hidden-xs">Action</th>
     </tr>
-<% end %>
-</tbody>
+    </thead>
+    <tbody class="list">
+    <% @clients.each do |client| %>
+        <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(client) %>">
+          <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
+            <a class="cell-content" href="<%= client_messages_path(client.id) %>">
+              <% if client_messages_status(client) == 'unread' %>
+                  <i class="message-status-icon hidden-xs"></i>
+              <% elsif client_messages_status(client) == 'error' %>
+                  <i class="icon-warning hidden-xs"></i>
+              <% end %>
+              <%= client.full_name %>
+            </a>
+          </td>
+          <td class="timestamp" data-timestamp="<%= client.timestamp %>">
+            <a class="cell-content" href="<%= client_messages_path(client.id) %>">
+              <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
+            </a>
+          </td>
+          <td class="hidden-xs">
+            <a class="cell-content" href="<%= edit_client_path(client.id) %>">
+              Manage
+            </a>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <div id="no-search-results" class="notice" role="alert" style="display: none;">
+    Your search didn't return any results. Clear your search to view all clients.
+  </div>
+</div>

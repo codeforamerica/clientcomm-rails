@@ -21,40 +21,7 @@
               <% end %>
             </div>
           </div>
-
-          <div id="client-list" class="grid__item">
-            <div class="input-group client-search-input">
-              <div class="inner-addon left-addon">
-                <input type="text" class="searchbar__input search" placeholder="Search clients by name"/>
-                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-              </div>
-              <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="icon-close"></i></button></span>
-            </div>
-            <table class="data-table data-table--selectable">
-              <thead>
-                <tr>
-                  <th class="sort" data-sort="lastname">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                    <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-                    Name
-                  </th>
-                  <th class="sort desc" data-sort="timestamp">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                    <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-                    Last contact
-                  </th>
-                  <th class="hidden-xs">Action</th>
-                </tr>
-              </thead>
-              <%= render "clients/clients" %>
-            </table>
-            <div id="no-search-results" class="notice" role="alert" style="display: none;">
-              Your search didn't return any results. Clear your search to view all clients.
-            </div>
-          </div>
-
+          <%= render "clients/clients" %>
         </div>
       </div>
     </div>
