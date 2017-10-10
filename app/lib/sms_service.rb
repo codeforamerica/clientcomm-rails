@@ -1,4 +1,5 @@
 require 'singleton'
+require 'erb'
 
 class SMSService
   include AnalyticsHelper
@@ -45,7 +46,7 @@ class SMSService
   end
 
   def number_lookup(phone_number:)
-    @client.lookups.v1.phone_numbers(phone_number).fetch.phone_number
+    @client.lookups.v1.phone_numbers(ERB::Util.url_encode(phone_number)).fetch.phone_number
   rescue Twilio::REST::RestError => e
     raise e unless e.code == 20404
     raise NumberNotFound

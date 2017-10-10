@@ -53,6 +53,8 @@ class Client < ApplicationRecord
   end
 
   def service_accepts_phone_number
+    return unless self.phone_number
+
     @normal_phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
   rescue SMSService::NumberNotFound
     errors.add(:phone_number, I18n.t('activerecord.errors.models.client.attributes.phone_number.invalid'))

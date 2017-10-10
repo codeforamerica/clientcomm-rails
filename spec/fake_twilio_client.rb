@@ -1,3 +1,5 @@
+require 'cgi'
+
 class FakeTwilioClient
   # source: https://robots.thoughtbot.com/testing-sms-interactions
   FakeResponse = Struct.new(:sid, :status)
@@ -46,7 +48,7 @@ class FakeTwilioClient
   end
 
   def phone_numbers(phone_number)
-    @phone_number = phone_number
+    @phone_number = CGI.unescape(phone_number)
     self
   end
 

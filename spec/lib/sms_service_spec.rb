@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'cgi'
 
 describe SMSService do
   let(:account) { double('account') }
@@ -147,7 +148,7 @@ describe SMSService do
     subject { sms_service.number_lookup(phone_number: phone_number) }
 
     it 'looks up the phone number' do
-      expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+      expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
       expect(phone_numbers).to receive(:fetch)
         .with(no_args)
         .and_return(double('phone_number', phone_number: 'some phone number'))
@@ -158,7 +159,7 @@ describe SMSService do
     context 'the number does not exist' do
       let(:error) { Twilio::REST::RestError.new('Unable to fetch record', 20404, 404) }
       it 'throws a number not found error' do
-        expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+        expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
         expect(phone_numbers).to receive(:fetch).and_raise(error)
 
         expect { subject }.to raise_error(SMSService::NumberNotFound)
@@ -168,7 +169,7 @@ describe SMSService do
         let(:error) { Twilio::REST::RestError.new('some other error', 20010, 500) }
 
         it 'reraises the error' do
-          expect(v1).to receive(:phone_numbers).with(phone_number).and_return(phone_numbers)
+          expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
           expect(phone_numbers).to receive(:fetch).and_raise(error)
 
           expect{ subject }.to raise_error(error)
