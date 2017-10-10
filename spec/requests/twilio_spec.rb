@@ -261,8 +261,9 @@ describe 'Twilio controller', type: :request, active_job: true do
   end
 
   context 'POST#incoming_voice' do
-    context 'defaults to reading a message' do
-      it 'responds to an incoming call with xml' do
+
+    shared_examples 'valid xml response' do
+      it 'responds with xml' do
         twilio_post_voice()
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
@@ -270,9 +271,25 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
     end
 
-    context 'client is in a user case load' do
+    context 'defaults to reading a message' do
+      it_behaves_like 'valid xml response'
+    end
 
-      let!(:user) { create :user, desk_phone: '+19999999999' }
+    context 'client is in a user case load but user does not have a desk phone' do
+      let!(:user) { create :user, desk_phone_number: '' }
+      let!(:client) { create :client, user: user, phone_number: '+12425551212' }
+
+      it_behaves_like 'valid xml response'
+    end
+
+    context 'client is not associated with a user' do
+      let!(:client) { create :client, user: nil, phone_number: '+12425551212' }
+
+      it_behaves_like 'valid xml response'
+    end
+
+    context 'client is in a user case load' do
+      let!(:user) { create :user, desk_phone_number: '+19999999999' }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call' do
@@ -282,5 +299,6 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.body).to include '<Number>+19999999999</Number>'
       end
     end
+
   end
 end

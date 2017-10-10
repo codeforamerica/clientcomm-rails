@@ -10,11 +10,11 @@ RSpec.describe User, type: :model do
       should validate_presence_of :full_name
     }
 
-    it 'validates uniqueness of desk_phone' do
+    it 'validates uniqueness of desk_phone_number' do
       existing_user = create(:user)
-      new_user = build(:user, desk_phone: existing_user.desk_phone)
+      new_user = build(:user, desk_phone_number: existing_user.desk_phone_number)
       expect(new_user.valid?).to eq(false)
-      expect(new_user.errors.keys).to contain_exactly(:desk_phone)
+      expect(new_user.errors.keys).to contain_exactly(:desk_phone_number)
     end
   end
 

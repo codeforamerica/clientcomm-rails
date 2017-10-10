@@ -10,7 +10,7 @@ describe VoiceService do
   end
 
   describe '#dial_number' do
-    it 'takes a phone number and response with twiml to dial that number' do
+    it 'takes a phone number and responds with twiml to dial that number' do
       response = subject.dial_number(phone_number: '+12425551212')
       expect(response).to eq '<?xml version="1.0" encoding="UTF-8"?><Response><Dial><Number>+12425551212</Number></Dial></Response>'
     end
