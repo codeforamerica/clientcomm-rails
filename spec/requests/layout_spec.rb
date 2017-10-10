@@ -7,24 +7,12 @@ describe 'layout logic', type: :request do
     end
 
     describe 'clients#index' do
-      context 'user has full name' do
-        let(:user) { create(:user, full_name: 'some name') }
+      let(:user) { create(:user) }
 
-        it 'displays the full name' do
-          get clients_path
+      it 'displays the full name' do
+        get clients_path
 
-          expect(response.body).to include(user.full_name)
-        end
-      end
-
-      context 'user does not have full name' do
-        let(:user) { create(:user, full_name: '') }
-
-        it 'displays user email address' do
-          get clients_path
-
-          expect(response.body).to include(user.email)
-        end
+        expect(response.body).to include(user.full_name)
       end
     end
   end

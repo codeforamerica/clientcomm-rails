@@ -34,7 +34,7 @@
           </div>
           <div class="toolbar__right text--small">
             <% if user_signed_in? %>
-            <span class="toolbar__item is-mobile-hidden--inline"><%= current_user.full_name != "" ? current_user.full_name : current_user.email %></span>
+            <span class="toolbar__item is-mobile-hidden--inline"><%= current_user.full_name %></span>
             <span class="toolbar__item"><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></span>
             <% end %>
           </div>

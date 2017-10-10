@@ -5,6 +5,12 @@ RSpec.describe User, type: :model do
   let!(:client) { create :client, :user => user }
   let!(:message) { create :message, :user => user, :client => client}
 
+  describe 'validations' do
+    it {
+      should validate_presence_of :full_name
+    }
+  end
+
   describe 'relationship to client' do
     it 'has a client' do
       expect(client.user).to eq(user)
