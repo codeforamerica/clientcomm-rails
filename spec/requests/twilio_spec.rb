@@ -261,11 +261,26 @@ describe 'Twilio controller', type: :request, active_job: true do
   end
 
   context 'POST#incoming_voice' do
-    it 'responds to an incoming call with xml' do
-      twilio_post_voice()
-      expect(response.status).to eq 200
-      expect(response.content_type).to eq 'application/xml'
-      expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
+    context 'defaults to reading a message' do
+      it 'responds to an incoming call with xml' do
+        twilio_post_voice()
+        expect(response.status).to eq 200
+        expect(response.content_type).to eq 'application/xml'
+        expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
+      end
+    end
+
+    context 'client is in a user case load' do
+
+      let!(:user) { create :user, desk_phone: '+19999999999' }
+      let!(:client) { create :client, user: user, phone_number: '+12425551212' }
+
+      it 'responds with xml that connects the call' do
+        twilio_post_voice()
+        expect(response.status).to eq 200
+        expect(response.content_type).to eq 'application/xml'
+        expect(response.body).to include '<Number>+19999999999</Number>'
+      end
     end
   end
 end

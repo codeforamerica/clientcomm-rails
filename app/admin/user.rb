@@ -1,11 +1,12 @@
 ActiveAdmin.register User do
   menu priority: 3
 
-  permit_params :full_name, :email, :password, :password_confirmation
+  permit_params :full_name, :email, :desk_phone, :password, :password_confirmation
   index do
     selectable_column
     column :full_name
     column :email
+    column :desk_phone
     column :active
     column :created_at
 
@@ -54,6 +55,7 @@ ActiveAdmin.register User do
     f.inputs "User Info" do
       f.input :full_name
       f.input :email
+      f.input :desk_phone
 
       if f.object.new_record?
         f.input :password
