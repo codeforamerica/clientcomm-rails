@@ -4,4 +4,3 @@
 --format documentation
 --format RspecJunitFormatter
 --out results/rspec/junit.xml
---tag '~front'

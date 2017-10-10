@@ -51,9 +51,6 @@ gem 'activeadmin'
 gem 'skylight'
 gem 'sentry-raven'
 
-# Use to import front users
-gem 'httparty'
-
 # Attached media files
 gem 'paperclip'
 
