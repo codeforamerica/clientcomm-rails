@@ -5,17 +5,19 @@ $(document).ready(function(){
     container: '.sendbar'
   });
 
-  $('#template-button').on('shown.bs.popover', function () {
-    $('#template-button').addClass('template-popover-active');
-
-    $('.template-row').click(selectTemplate);
-
+  $('#template-button').click(function(){
     mixpanelTrack(
       "template_popover_view", {
         templates_count: $(this).data('template-count'),
         client_id: $(this).data('client-id')
       }
     );
+  });
+
+  $('#template-button').on('shown.bs.popover', function () {
+    $('#template-button').addClass('template-popover-active');
+
+    $('.template-row').click(selectTemplate);
   });
 
   function selectTemplate() {
