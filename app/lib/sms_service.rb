@@ -48,8 +48,11 @@ class SMSService
   def number_lookup(phone_number:)
     @client.lookups.v1.phone_numbers(ERB::Util.url_encode(phone_number)).fetch.phone_number
   rescue Twilio::REST::RestError => e
-    raise e unless e.code == 20404
-    raise NumberNotFound
+    if e.code == 20404
+      raise NumberNotFound
+    else
+      raise e
+    end
   end
 
   private

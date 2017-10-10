@@ -1,0 +1,29 @@
+.DS_Store
+
+# no bundler config
+/.bundle
+
+# no logfiles or tempfiles
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/coverage/*
+/results/*
+
+# JetBrains RubyMine
+.idea/*
+
+# no byebug command history file
+.byebug_history
+
+# no private environment variables
+.env
+.env-*
+
+# no private keys
+*.pem
+
+tags
+
+.floo
