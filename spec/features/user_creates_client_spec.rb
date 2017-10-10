@@ -18,12 +18,9 @@ feature "User creates client" do
   end
 
   scenario 'successfully', :js do
-    myclient = build :client, notes: 'some note'
+    myclient = build :client, notes: 'some note', first_name: 'Jean', last_name: 'Grey'
     add_client(myclient)
-    expect(page).to have_css '.data-table td', text: myclient.full_name
-    expect(page).to have_current_path(clients_path)
-
-    find('td', text: "#{myclient.first_name} #{myclient.last_name}").click
+    expect(page).to have_content 'Jean Grey'
     click_on 'Manage client'
 
     expect(find_field('Notes').value).to eq myclient.notes
@@ -32,7 +29,11 @@ feature "User creates client" do
   scenario 'unsuccessfully' do
     myclient = build :client, last_name: nil
 
-    add_client(myclient)
+    fill_in 'First name', with: myclient.first_name
+    fill_in 'Last name', with: myclient.last_name
+    fill_in 'Phone number', with: myclient.phone_number
+    fill_in 'Notes', with: myclient.notes
+    click_on 'Save new client'
     expect(page).to have_content 'Add a new client'
     expect(page).to have_content "Last name can't be blank"
   end

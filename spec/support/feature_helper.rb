@@ -15,7 +15,7 @@ module FeatureHelper
     fill_in "Phone number", with: the_client.phone_number
     fill_in 'Notes', with: the_client.notes
     click_on "Save new client"
-    expect(page).to have_current_path(clients_path)
+    expect(page).to have_content('Manage client')
   end
 
   def add_template(the_template)

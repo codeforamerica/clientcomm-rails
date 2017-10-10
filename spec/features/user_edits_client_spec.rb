@@ -34,12 +34,11 @@ feature "user edits client", :js do
     fill_in 'Notes', with: note
 
     click_on 'Save changes'
-    expect(page).to have_current_path(clients_path)
+    expect(page).to have_current_path(client_messages_path(clientone))
+
     expect(page).to have_content "#{new_first_name} #{new_last_name}"
 
-    within "#client_#{clientone.id}" do
-      find('td', text: 'Manage').click
-    end
+    click_on 'Manage client'
 
     expect(find_field('Notes').value).to eq note
   end

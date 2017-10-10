@@ -37,7 +37,7 @@ class ClientsController < ApplicationController
           label: 'client_create_success',
           data: @client.reload.analytics_tracker_data
       )
-      redirect_to clients_path
+      redirect_to client_messages_path(@client)
     else
       render :new
     end
@@ -62,7 +62,7 @@ class ClientsController < ApplicationController
         data: @client.analytics_tracker_data
       )
 
-      redirect_to clients_path
+    redirect_to client_messages_path(@client)
     else
       render 'edit'
     end
@@ -71,7 +71,7 @@ class ClientsController < ApplicationController
   private
 
   def client_params
-    params.fetch(:client, {})
+    params.fetch(:client)
       .permit(:first_name, :last_name, :phone_number, :notes)
   end
 end

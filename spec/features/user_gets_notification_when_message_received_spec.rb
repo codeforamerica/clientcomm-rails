@@ -9,12 +9,10 @@ feature "User receives a message from a client" do
     myuser = create :user
     login_as(myuser, scope: :user)
     # create a new client
-    visit new_client_path
     add_client(clientone)
-    visit new_client_path
     add_client(clienttwo)
-    # end up on the clients page
-    expect(current_path).to eq clients_path
+
+    visit clients_path
   end
 
   context "while on the clients page" do

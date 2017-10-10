@@ -13,10 +13,6 @@ feature "User schedules a message for later and submits it", :js, active_job: tr
       add_client(client)
     end
 
-    step 'when user goes to messages page' do
-      page.find('td', text: client.full_name).click
-    end
-
     step 'when user clicks on send later button' do
       click_button 'Send later'
     end
