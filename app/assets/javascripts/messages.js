@@ -10,21 +10,17 @@ $(document).ready(function(){
 
     $('.template-row').click(selectTemplate);
 
-    mixpanel.track(
-      "template_popover_view",
-      {
+    mixpanelTrack(
+      "template_popover_view", {
         templates_count: $(this).data('template-count'),
-        visitor_id: $('meta[name=visitor_id]').attr("content"),
         client_id: $(this).data('client-id')
       }
     );
   });
 
   function selectTemplate() {
-    mixpanel.track(
-      "template_insert",
-      {
-        visitor_id: $('meta[name=visitor_id]').attr("content"),
+    mixpanelTrack(
+      "template_insert", {
         client_id: $('#template-button').data('client-id')
       }
     );
@@ -109,4 +105,14 @@ function characterCount(element) {
     counter.html(length);
     counter.toggleClass('text--error', length > 160);
   });
+}
+
+function mixpanelTrack(event, params) {
+  var meta_tags = {
+    visitor_id: $('meta[name=visitor_id]').attr("content"),
+    deploy: $('meta[name=deploy]').attr("content")
+  };
+
+  $.extend(params, meta_tags);
+  mixpanel.track(event, params);
 }

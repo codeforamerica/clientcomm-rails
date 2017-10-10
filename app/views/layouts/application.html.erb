@@ -8,6 +8,7 @@
     <%= action_cable_meta_tag %>
     <meta name="mixpanel_token" content="<%= ENV['MIXPANEL_TOKEN'] %>">
     <meta name="visitor_id" content="<%= visitor_id %>">
+    <meta name="deploy" content="<%= deploy_prefix %>">
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
     <%= content_for(:head) if content_for?(:head) %>     
