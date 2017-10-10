@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :templates
 
   validates :full_name, :presence => true
+  validates_uniqueness_of :desk_phone, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
