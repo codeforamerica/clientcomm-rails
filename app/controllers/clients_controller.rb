@@ -34,13 +34,29 @@ class ClientsController < ApplicationController
 
     if @client.save
       analytics_track(
-          label: 'client_create_success',
-          data: @client.reload.analytics_tracker_data
+        label: 'client_create_success',
+        data: @client.reload.analytics_tracker_data
       )
       redirect_to client_messages_path(@client)
-    else
-      render :new
+      return
     end
+
+    if @client.errors.added? :phone_number, :taken
+      client = current_user.clients.find_by_phone_number(@client.phone_number)
+      flash[:notice] = 'You already have a client with this number.'
+      redirect_to client_messages_path(client)
+      return
+    end
+
+    if @client.errors.added? :phone_number, :inactive_taken
+      client = current_user.clients.find_by_phone_number(@client.phone_number)
+      client.update!(active: true)
+      flash[:notice] = "This client has been restored. If you didn't mean to do this, please contact us."
+      redirect_to client_messages_path(client)
+      return
+    end
+
+    render :new
   end
 
   def edit
@@ -62,7 +78,7 @@ class ClientsController < ApplicationController
         data: @client.analytics_tracker_data
       )
 
-    redirect_to client_messages_path(@client)
+      redirect_to client_messages_path(@client)
     else
       render 'edit'
     end

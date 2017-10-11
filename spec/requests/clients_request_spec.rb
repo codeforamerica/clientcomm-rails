@@ -73,6 +73,36 @@ describe 'Clients requests', type: :request do
           expect(Client.count).to eq 0
         end
       end
+
+      context 'client already exists under this user' do
+        let!(:client) { create :client, user: user, phone_number: phone_number, active: active }
+
+        context 'client is archived' do
+          let(:active) { false }
+
+          it 'redirects to messages page with a flash message' do
+            subject
+            expect(flash[:notice]).to eq "This client has been restored. If you didn't mean to do this, please contact us."
+            expect(response).to redirect_to(client_messages_path(client))
+          end
+
+          it 'unarchives client' do
+            subject
+
+            expect(client.reload).to be_active
+          end
+        end
+
+        context 'client is active' do
+          let(:active) { true }
+
+          it 'redirects to messages page with a flash message' do
+            subject
+            expect(flash[:notice]).to eq 'You already have a client with this number.'
+            expect(response).to redirect_to(client_messages_path(client))
+          end
+        end
+      end
     end
 
     describe 'POST#update' do
@@ -85,12 +115,12 @@ describe 'Clients requests', type: :request do
         client = create :client, user: user
 
         put client_path(client), params: {
-            client: {
-                first_name: first_name,
-                last_name: last_name,
-                phone_number: phone_number,
-                notes: notes
-            }
+          client: {
+            first_name: first_name,
+            last_name: last_name,
+            phone_number: phone_number,
+            notes: notes
+          }
         }
       end
 
@@ -113,11 +143,11 @@ describe 'Clients requests', type: :request do
         client = Client.first
 
         expect_analytics_events(
-            {
-                'client_edit_success' => {
-                    'client_id' => client.id
-                }
+          {
+            'client_edit_success' => {
+              'client_id' => client.id
             }
+          }
         )
       end
 

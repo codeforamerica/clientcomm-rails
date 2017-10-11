@@ -5,9 +5,9 @@ class Client < ApplicationRecord
 
   validates :last_name, :presence => true
   validates :phone_number, presence: true
-  validates_uniqueness_of :phone_number, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
+  validate :phone_number_is_unused, if: :phone_number_changed?
 
-  validate :service_accepts_phone_number
+  validate :service_accepts_phone_number, if: :phone_number_changed?
   after_validation :normalize_phone_number
 
   def analytics_tracker_data
@@ -48,6 +48,23 @@ class Client < ApplicationRecord
 
   private
 
+  def phone_number_is_unused
+    return unless user
+
+    client = Client.find_by_phone_number(phone_number)
+    if client
+      if client.user != user
+        errors.add(:phone_number, :external_user_taken, user_full_name: client.user.full_name)
+      else
+        if client.active
+          errors.add(:phone_number, :taken)
+        else
+          errors.add(:phone_number, :inactive_taken)
+        end
+      end
+    end
+  end
+
   def normalize_phone_number
     self.phone_number = @normal_phone_number if @normal_phone_number
   end
@@ -57,10 +74,10 @@ class Client < ApplicationRecord
 
     @normal_phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
   rescue SMSService::NumberNotFound
-    errors.add(:phone_number, I18n.t('activerecord.errors.models.client.attributes.phone_number.invalid'))
+    errors.add(:phone_number, :invalid)
   end
 
   def hours_since_contact
-    ((Time.now -  (last_contacted_at || created_at)) / 3600).round
+    ((Time.now - (last_contacted_at || created_at)) / 3600).round
   end
 end

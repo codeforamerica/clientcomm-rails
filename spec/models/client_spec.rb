@@ -36,21 +36,40 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'validations' do
-    it {
-      should validate_presence_of(:last_name)
-    }
+    it { should validate_presence_of(:last_name) }
+    it { should validate_presence_of(:phone_number) }
 
-    it 'validates presence of phone_number' do
-      client = Client.new(last_name: 'Last')
-      expect(client.valid?).to eq(false)
-      expect(client.errors.keys).to contain_exactly(:phone_number)
+    context 'the phone number is taken by a client on a different user' do
+      it 'displays help text for transferring a client from another user' do
+        old_client = create(:client, user: create(:user, full_name: 'Case Manager'))
+        new_client = build(:client, phone_number: old_client.phone_number)
+
+        expect(new_client.valid?).to eq(false)
+
+        expect(new_client.errors.added?(:phone_number, 'This user already exists and belongs to Case Manager. Contact your ClientComm administrator and request that they be transferred to you.')).to eq(true)
+      end
     end
 
-    it 'validates uniqueness of phone_number' do
-      old_client = create(:client)
-      new_client = build(:client, phone_number: old_client.phone_number)
-      expect(new_client.valid?).to eq(false)
-      expect(new_client.errors.keys).to contain_exactly(:phone_number)
+    context 'the phone number is taken by another client on the same user' do
+      it 'displays an error that the number is taken'do
+        old_client = create(:client)
+        new_client = build(:client, user: old_client.user, phone_number: old_client.phone_number)
+
+        expect(new_client.valid?).to eq(false)
+
+        expect(new_client.errors.added?(:phone_number, :taken)).to eq(true)
+      end
+
+      context 'the phone number is taken by an archived client' do
+        it 'displays help text for restoring an inactive client' do
+          old_client = create(:client, active: false)
+          new_client = build(:client, user: old_client.user, phone_number: old_client.phone_number)
+
+          expect(new_client.valid?).to eq(false)
+
+          expect(new_client.errors.added?(:phone_number, :inactive_taken)).to eq(true)
+        end
+      end
     end
 
     it 'validates correctness of phone_number' do
@@ -62,6 +81,13 @@ RSpec.describe Client, type: :model do
       new_client = build(:client, phone_number: bad_number)
       expect(new_client.valid?).to eq(false)
       expect(new_client.errors.keys).to contain_exactly(:phone_number)
+    end
+
+    it 'does not validate correctness of phone_number if phone number unchanged' do
+      client = create :client
+      allow(SMSService.instance).to receive(:number_lookup)
+      client.update!(first_name: 'some other name')
+      expect(SMSService.instance).to_not have_received(:number_lookup)
     end
   end
 
