@@ -18,9 +18,16 @@ describe 'Clients requests', type: :request do
 
     describe 'POST#create' do
       let(:first_name) { Faker::Name.first_name }
-      let(:phone_number) { '+14663364863' }
+      let(:normalized_phone_number) { '+14663364863' }
+      let(:phone_number) { '1-466-336-4863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
+
+      before do
+        allow(SMSService.instance).to receive(:number_lookup)
+                                        .with(phone_number: phone_number)
+                                        .and_return(normalized_phone_number)
+      end
 
       subject do
         post clients_path, params: {
@@ -44,7 +51,7 @@ describe 'Clients requests', type: :request do
         expect(client.user).to eq user
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name
-        expect(client.phone_number).to eq phone_number
+        expect(client.phone_number).to eq normalized_phone_number
         expect(client.notes).to eq notes
       end
 
