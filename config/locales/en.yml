@@ -28,6 +28,11 @@ en:
   activerecord:
     errors:
         models:
+          user:
+            attributes:
+              desk_phone_number:
+                taken: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
+                invalid: "This is not a valid phone number."
           client:
             attributes:
               phone_number:

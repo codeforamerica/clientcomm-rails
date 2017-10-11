@@ -22,13 +22,18 @@ RSpec.describe Client, type: :model do
   describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }
     let(:normalized_phone_number) { '+17605557890' }
+    let(:user_number) { 'fake_phone_number' }
+
     before do
+      allow(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: user_number)
+        .and_return('fake_normal_number')
       allow(SMSService.instance).to receive(:number_lookup)
         .with(phone_number: input_phone_number)
         .and_return(normalized_phone_number)
     end
 
-    subject { create :client, phone_number: input_phone_number }
+    subject { create :client, phone_number: input_phone_number, user: create(:user, desk_phone_number: user_number) }
 
     it 'formats the phone number' do
       expect(subject.reload.phone_number).to eq(normalized_phone_number)
@@ -36,6 +41,8 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'validations' do
+    let(:user) { create :user, desk_phone_number: 'fake_phone_number' }
+
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:phone_number) }
 
@@ -75,10 +82,14 @@ RSpec.describe Client, type: :model do
     it 'validates correctness of phone_number' do
       bad_number = '(212) 55-5236'
       allow(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: 'fake_phone_number')
+        .and_return('fake_normal_number')
+
+      allow(SMSService.instance).to receive(:number_lookup)
         .with(phone_number: bad_number)
         .and_raise(SMSService::NumberNotFound)
 
-      new_client = build(:client, phone_number: bad_number)
+      new_client = build(:client, phone_number: bad_number, user: user)
       expect(new_client.valid?).to eq(false)
       expect(new_client.errors.keys).to contain_exactly(:phone_number)
     end

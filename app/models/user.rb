@@ -3,8 +3,11 @@ class User < ApplicationRecord
   has_many :messages
   has_many :templates
 
-  validates :full_name, :presence => true
-  validates_uniqueness_of :desk_phone_number, message: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
+  before_validation :normalize_desk_phone_number, if: :desk_phone_number_changed?
+  validate :service_accepts_desk_phone_number, if: :desk_phone_number_changed?
+
+  validates_presence_of :full_name
+  validates_uniqueness_of :desk_phone_number
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -35,5 +38,19 @@ class User < ApplicationRecord
 
   def inactive_message
     'Sorry, this account has been disabled. Please contact an administrator.'
+  end
+
+  private
+
+  def normalize_desk_phone_number
+    return unless self.desk_phone_number
+
+    self.desk_phone_number = SMSService.instance.number_lookup(phone_number: self.desk_phone_number)
+  rescue SMSService::NumberNotFound
+    @bad_number = true
+  end
+
+  def service_accepts_desk_phone_number
+    errors.add(:desk_phone_number, :invalid) if @bad_number
   end
 end
