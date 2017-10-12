@@ -20,7 +20,10 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  flash:
+    errors:
+      client:
+        invalid: "There was a problem saving this client."
   voice_response: 'This phone number can only receive text messages. Please hang up and send a text message.'
   message:
     status:

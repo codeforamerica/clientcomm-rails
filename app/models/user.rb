@@ -7,7 +7,6 @@ class User < ApplicationRecord
   validate :service_accepts_desk_phone_number, if: :desk_phone_number_changed?
 
   validates_presence_of :full_name
-  validates_uniqueness_of :desk_phone_number
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

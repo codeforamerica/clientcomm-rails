@@ -56,6 +56,7 @@ class ClientsController < ApplicationController
       return
     end
 
+    flash[:alert] = t('flash.errors.client.invalid')
     render :new
   end
 
@@ -80,6 +81,7 @@ class ClientsController < ApplicationController
 
       redirect_to client_messages_path(@client)
     else
+      flash[:alert] = t('flash.errors.client.invalid')
       render 'edit'
     end
   end

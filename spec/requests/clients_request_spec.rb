@@ -75,6 +75,7 @@ describe 'Clients requests', type: :request do
         it 'renders new with validation errors' do
           subject
 
+          expect(flash[:alert]).to include "There was a problem"
           expect(response.code).to eq '200'
           expect(response.body).to include "can't be blank"
           expect(Client.count).to eq 0
@@ -161,9 +162,10 @@ describe 'Clients requests', type: :request do
       context 'receives invalid client parameters' do
         let(:last_name) { nil }
 
-        it 'renders new with validation errors' do
+        it 'renders edit with validation errors' do
           subject
 
+          expect(flash[:alert]).to include "There was a problem"
           expect(response.code).to eq '200'
           expect(response.body).to include "can't be blank"
         end

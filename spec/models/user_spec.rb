@@ -22,16 +22,7 @@ RSpec.describe User, type: :model do
   end
 
   describe 'validations' do
-    it {
-      should validate_presence_of :full_name
-    }
-
-    it 'validates uniqueness of desk_phone_number' do
-      existing_user = create(:user)
-      new_user = build(:user, desk_phone_number: existing_user.desk_phone_number)
-      expect(new_user.valid?).to eq(false)
-      expect(new_user.errors.keys).to contain_exactly(:desk_phone_number)
-    end
+    it { should validate_presence_of :full_name }
 
     it 'validates correctness of phone_number' do
       bad_number = '(212) 55-5236'
