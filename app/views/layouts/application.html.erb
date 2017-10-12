@@ -23,9 +23,9 @@
     <% end %>
 
     <nav class="navbar navbar-default navbar-static-top" role="navigation">
-      <div class="toolbar">
-        <div class="main-header__title">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+      <div class="container">
+        <div class="navbar-header main-header__title">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-nav-dropdown" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             Menu
           </button>
@@ -37,9 +37,9 @@
           </div>
         </div>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="collapse navbar-collapse" id="mobile-nav-dropdown">
           <% if current_user %>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right text--small">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                 <ul class="dropdown-menu">

@@ -87,7 +87,7 @@ feature 'User sees client notes on messages page', :js do
     end
 
     after do
-      resize_window_default
+      resize_window_to_default
     end
 
     it 'hides notes on mobile' do
@@ -99,7 +99,7 @@ feature 'User sees client notes on messages page', :js do
 
   context 'visits clients page on desktop' do
     before do
-      resize_window_default
+      resize_window_to_default
     end
 
     it 'shows notes on desktop' do

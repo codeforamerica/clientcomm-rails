@@ -8,7 +8,7 @@ module ResponsiveHelper
     resize_window_by([960, 640])
   end
 
-  def resize_window_default
+  def resize_window_to_default
     resize_window_by([1024, 768])
   end
 

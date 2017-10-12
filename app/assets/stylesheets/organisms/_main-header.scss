@@ -90,7 +90,25 @@
     line-height: inherit;
   }
 
-  li > a {
-    line-height: inherit;
+  .navbar-nav {
+    li > a {
+      line-height: inherit;
+      color: $color-teal;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-dark-teal;
+      }
+    }
+    .dropdown.open .caret {
+      border-right: 4px solid transparent;
+      border-left: 4px solid transparent;
+      border-bottom: 4px dashed;
+      border-top: none;
+    }
   }
+}
+
+.container {
+  max-width: $site-max-up;
 }

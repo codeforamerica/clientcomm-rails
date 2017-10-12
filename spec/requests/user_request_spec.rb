@@ -23,12 +23,12 @@ describe 'User requests', type: :request do
     end
 
     describe 'PUT#udpate' do
-      context "update account information" do
+      context 'update account information' do
         let(:new_name) { Faker::Name.name }
         let(:new_email) { Faker::Internet.unique.email }
         let(:new_desk_phone) { '(466) 336-4863' }
 
-        before do
+        subject do
           patch user_registration_path, params: {
             user: {
               full_name: new_name,
@@ -40,52 +40,57 @@ describe 'User requests', type: :request do
         end
 
         it 'updates user account information' do
+          subject
+
           expect(response.code).to eq '302'
           expect(response).to redirect_to(edit_user_registration_path)
           expect(user.reload.full_name).to eq new_name
         end
+
+        context 'missing email' do
+          let(:new_email) { '' }
+
+
+          it 'fails to update settings' do
+            subject
+            expect(response.code).to eq '200'
+            expect(response.body).to include "can't be blank"
+          end
+        end
       end
 
-      context "successfully" do
+      context 'password changes' do
         let(:password) { 'newpassword' }
+        let(:password_confirmation) { password }
 
-        before do
+        subject do
           patch user_registration_path, params: {
             user: {
               current_password: user.password,
               password: password,
-              password_confirmation: password
+              password_confirmation: password_confirmation
             },
             change_password: ""
           }
         end
 
         it 'updates password' do
+          subject
+
           expect(response.code).to eq '302'
         end
-      end
 
-      context "unsuccessfuly" do
-        let(:password) { 'newpassword' }
+        context 'with mismatched confirmation' do
+          let(:password_confirmation) { password + 'bad' }
 
-        before do
-          patch user_registration_path, params: {
-            user: {
-              current_password: 'badpassword',
-              password: 'worsepassword',
-              password_confirmation: 'worstpassword'
-            },
-            change_password: ""
-          }
-        end
+          it 'fails to update password' do
+            subject
 
-        it 'fails to update password' do
-          expect(response.code).to eq '200'
-          expect(response.body).to include 'is invalid'
-          expect(response.body).to include "doesn't match Password"
+            expect(response.code).to eq '200'
+            expect(response.body).to include "doesn't match Password"
+          end
         end
       end
     end
   end
-
 end
