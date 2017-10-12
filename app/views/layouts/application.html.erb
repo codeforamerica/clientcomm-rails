@@ -11,7 +11,7 @@
     <meta name="deploy" content="<%= deploy_prefix %>">
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
-    <%= content_for(:head) if content_for?(:head) %>     
+    <%= content_for(:head) if content_for?(:head) %>
   </head>
   <body<% if content_for?(:template_name) %> class="template--<%= content_for(:template_name) %>"<% end %><% if user_signed_in? %> data-user-id="<%= current_user.id %>"<% end %>>
     <% if notice %>
@@ -22,26 +22,40 @@
     <%= render partial: "layouts/flash", locals: {classes: ['flash', 'flash--error'], body: alert} %>
     <% end %>
 
-    <div class="page-wrapper">
-      <header class="main-header">
-        <div class="toolbar">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="toolbar">
+        <div class="main-header__title">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            Menu
+          </button>
           <div class="toolbar__left">
-            <h1 class="toolbar__item main-header__title">
-              <a class="main-header__site-title" href="/">
-                ClientComm <span class="label label--magenta">Beta</span>
-              </a>
-              <span class="user-phone-number is-mobile-hidden--inline"><%= @clientcomm_phone_number %></span>
-            </h1>
-          </div>
-          <div class="toolbar__right text--small">
-            <% if user_signed_in? %>
-            <span class="toolbar__item is-mobile-hidden--inline"><%= current_user.full_name %></span>
-            <span class="toolbar__item"><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></span>
-            <% end %>
+            <a class="navbar-brand main-header__site-title" href="/">
+              ClientComm
+            </a>
+            <p class="navbar-text user-phone-number hidden-xs"><%= @clientcomm_phone_number %></p>
           </div>
         </div>
-      </header>
 
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <% if current_user %>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
+                  <li><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
+                  <li role="separator" class="divider"></li>
+                  <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
+                </ul>
+              </li>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <div class="page-wrapper">
       <%= content_for?(:content) ? yield(:content) : yield %>
     </div>
   </body>

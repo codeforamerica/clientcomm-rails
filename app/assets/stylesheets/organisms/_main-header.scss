@@ -79,3 +79,18 @@
     }
   }
 }
+
+.navbar-default {
+  background-color: $color-header;
+  border-bottom: 1px solid $color-tan;
+  margin-bottom: 0;
+  z-index: 9;
+
+  .navbar-brand {
+    line-height: inherit;
+  }
+
+  li > a {
+    line-height: inherit;
+  }
+}

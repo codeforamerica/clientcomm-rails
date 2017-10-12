@@ -1,20 +1,35 @@
 <div class="slab">
   <div class="grid">
-    <div class="grid__item width-one-half shift-one-fourth">
+    <div class="grid__item width-seven-twelfths">
       <div class="form-card form-card--compact">
         <div class="form-card__header">
-          <h1 class="form-card__title">Change password</h1>
+          <h1 class="form-card__title"><i class="icon-settings"></i> Edit account settings</h1>
         </div>
         <div class="form-card__content">
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-
-            <%= f.gcf_input_field(:current_password, "Current password", type: "password", classes: ["form-width--med"], autofocus: true) %>
-            <%= f.gcf_input_field(:password, "New password", type: "password", classes: ["form-width--med"], notes: "This should be at least 6 characters.") %>
-            <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password", classes: ["form-width--med"], autofocus: true) %>
-
-            <div class="form-card__footer">
-              <%= f.continue "Update" %>
-            </div>
+              <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
+              <%= f.gcf_input_field :email, "Email" %>
+              <%= f.gcf_input_field :desk_phone_number, "Desk phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
+              <div class="form-card__footer">
+                <%= f.continue_named "Update settings", "update_settings" %>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="grid__item width-five-twelfths">
+      <div class="form-card form-card--compact">
+        <div class="form-card__header">
+          <h1 class="form-card__title"><i class="icon-lock_outline"></i> Change password</h1>
+        </div>
+        <div class="form-card__content">
+          <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
+              <%= f.gcf_input_field(:current_password, "Current password", type: "password", classes: ["form-width--med"]) %>
+              <%= f.gcf_input_field(:password, "New password", type: "password", classes: ["form-width--med"], notes: "This should be at least 6 characters.") %>
+              <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password", classes: ["form-width--med"]) %>
+              <div class="form-card__footer">
+                <%= f.continue_named "Change password", "change_password" %>
+              </div>
           <% end %>
         </div>
       </div>

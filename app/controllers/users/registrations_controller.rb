@@ -1,36 +1,43 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
+  before_action :configure_account_update_params, only: [:update]
 
   def new
     redirect_to new_user_session_path
   end
 
-  def create
+  def update
+    @user = User.find(current_user.id)
+    updated = false
+
+    if not form_params[:update_settings].nil?
+      updated = @user.update_attributes(user_params)
+    elsif not form_params[:change_password].nil?
+      updated = update_resource(@user, user_params)
+    end
+
+    if updated
+      flash[:notice] = "Profile updated"
+      sign_in(@user, :bypass => true)
+      redirect_to edit_user_registration_path
+    else
+      render 'edit'
+    end
   end
 
   def destroy
   end
 
-  # protected
+  protected
 
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_up_params
-  #   devise_parameter_sanitizer.permit(:sign_up, keys: [:attribute])
-  # end
+  def configure_account_update_params
+    devise_parameter_sanitizer.permit(:account_update, keys: [:full_name, :desk_phone_number])
+  end
 
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
-  # end
+  def user_params
+    devise_parameter_sanitizer.sanitize(:account_update)
+  end
 
-  # The path used after sign up.
-  # def after_sign_up_path_for(resource)
-  #   super(resource)
-  # end
-
-  # The path used after sign up for inactive accounts.
-  # def after_inactive_sign_up_path_for(resource)
-  #   super(resource)
-  # end
+  def form_params
+    params.permit(:update_settings, :change_password)
+  end
 end

@@ -13,6 +13,8 @@ feature "user wants to log in, check clients, and log out, so they" do
 
     step "log out and are redirected to login form" do
       visit root_path
+      click_on "Account"
+      expect(page).to have_text "Sign out"
       click_on "Sign out"
       expect(page).to have_text "Log in"
       expect(page).to have_current_path(root_path)
@@ -23,9 +25,7 @@ feature "user wants to log in, check clients, and log out, so they" do
       fill_in "Password", with: user_password
       click_on "Sign in"
       expect(page).to have_text "My clients"
-      expect(page).to have_text user_full_name
       expect(page).to have_current_path(root_path)
     end
-
   end
 end
