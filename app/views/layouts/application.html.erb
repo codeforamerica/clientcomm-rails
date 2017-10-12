@@ -39,16 +39,26 @@
 
         <div class="collapse navbar-collapse" id="mobile-nav-dropdown">
           <% if current_user %>
-            <ul class="nav navbar-nav navbar-right text--small">
-              <li class="dropdown">
+            <ul class="nav navbar-nav navbar-right text--small hidden-xs">
+              <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
+              <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
+              <li class="dropdown <%= 'active' if controller_name == 'registrations'%>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
-                  <li><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
-                  <li role="separator" class="divider"></li>
-                  <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
-                </ul>
+                    <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
+                    <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
+                  </ul>
               </li>
+            </ul>
+            <ul class="nav navbar-nav text--small hidden-sm hidden-md hidden-lg">
+              <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
+              <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
+              <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
+              <hr>
+              <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
+              <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
             </ul>
           <% end %>
         </div>

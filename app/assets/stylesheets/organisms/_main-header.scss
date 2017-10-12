@@ -100,11 +100,25 @@
         color: $color-dark-teal;
       }
     }
-    .dropdown.open .caret {
-      border-right: 4px solid transparent;
-      border-left: 4px solid transparent;
-      border-bottom: 4px dashed;
-      border-top: none;
+    .dropdown {
+      .dropdown-menu {
+        li {
+          &.active a{
+            background-color: $color-light-grey;
+          }
+        }
+      }
+
+      &.open .caret {
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        border-bottom: 4px dashed;
+        border-top: none;
+      }
+    }
+
+    hr {
+      margin: inherit;
     }
   }
 }
