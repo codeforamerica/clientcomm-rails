@@ -47,8 +47,7 @@
                 <ul class="dropdown-menu">
                     <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
                     <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
-                    <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
+                    <li><%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
                   </ul>
               </li>
             </ul>
@@ -57,8 +56,7 @@
               <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
               <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
               <hr>
-              <li class="dropdown-header">Logged in as <%= current_user.full_name %></li>
-              <li><%= link_to "Sign out", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
+              <li><%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
             </ul>
           <% end %>
         </div>

@@ -115,23 +115,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <i class="button__icon icon-arrow_forward" aria-hidden='true'></i>
     HTML
 
-    button(button_body(text), class: "button button--primary", data: { disable_with: button_body(text) })
-  end
-
-  def continue_named(text = I18n.t('general.continue'), name = 'button')
-    button_body = <<-HTML.html_safe
-      #{text}
-      <i class="button__icon icon-arrow_forward" aria-hidden='true'></i>
-    HTML
-
-    button(button_body(text), class: "button button--primary", name: name, data: { disable_with: button_body(text) })
-  end
-
-  def button_body(text)
-    <<-HTML.html_safe
-      #{text}
-      <i class="button__icon icon-arrow_forward" aria-hidden='true'></i>
-    HTML
+    button(button_body, class: "button button--primary", data: { disable_with: button_body })
   end
 
   def yes_no

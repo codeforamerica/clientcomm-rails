@@ -1,35 +1,49 @@
 <div class="slab">
   <div class="grid">
-    <div class="grid__item width-seven-twelfths">
+    <div class="grid__item width-one-half">
       <div class="form-card form-card--compact">
         <div class="form-card__header">
-          <h1 class="form-card__title"><i class="icon-settings"></i> Edit account settings</h1>
+          <h1 class="form-card__title">Edit account settings</h1>
         </div>
         <div class="form-card__content">
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-              <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
-              <%= f.gcf_input_field :email, "Email" %>
-              <%= f.gcf_input_field :desk_phone_number, "Desk phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
-              <div class="form-card__footer">
-                <%= f.continue_named "Update settings", "update_settings" %>
+            <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
+            <%= f.gcf_input_field :email, "Email" %>
+            <%= f.gcf_input_field :desk_phone_number, "Desk phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
+            <div class="form-card__footer">
+              <div class="toolbar">
+                <div class="toolbar__left"><%= f.submit 'Update settings', class: 'button button--cta', role: 'button', name: 'update_settings' %></div>
+                <div class="toolbar__right-responsive">
+                  <%= link_to :back, class: "button" do %>
+                    Cancel
+                  <% end %>
+                </div>
               </div>
+            </div>
           <% end %>
         </div>
       </div>
     </div>
-    <div class="grid__item width-five-twelfths">
+    <div class="grid__item width-one-half">
       <div class="form-card form-card--compact">
         <div class="form-card__header">
-          <h1 class="form-card__title"><i class="icon-lock_outline"></i> Change password</h1>
+          <h1 class="form-card__title">Change password</h1>
         </div>
         <div class="form-card__content">
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-              <%= f.gcf_input_field(:current_password, "Current password", type: "password", classes: ["form-width--med"]) %>
-              <%= f.gcf_input_field(:password, "New password", type: "password", classes: ["form-width--med"], notes: "This should be at least 6 characters.") %>
-              <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password", classes: ["form-width--med"]) %>
-              <div class="form-card__footer">
-                <%= f.continue_named "Change password", "change_password" %>
+            <%= f.gcf_input_field(:current_password, "Current password", type: "password") %>
+            <%= f.gcf_input_field(:password, "New password", type: "password", notes: "This should be at least 6 characters.") %>
+            <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password") %>
+            <div class="form-card__footer">
+              <div class="toolbar">
+                <div class="toolbar__left"><%= f.submit 'Change password', class: 'button button--cta', role: 'button', name: 'change_password' %></div>
+                <div class="toolbar__right-responsive">
+                  <%= link_to :back, class: "button" do %>
+                    Cancel
+                  <% end %>
+                </div>
               </div>
+            </div>
           <% end %>
         </div>
       </div>

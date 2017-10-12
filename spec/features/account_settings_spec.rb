@@ -4,7 +4,7 @@ user_full_name = 'Tesfalem Medhanie'
 user_email = 'me@example.com'
 user_password = 'paassswoord'
 
-feature "user wants to update their account settings, so they" do
+feature "user wants to update their account settings, so they", :js do
   before do
     step 'user logs in' do
       existing_user = create :user, full_name: user_full_name, email: user_email, password: user_password
@@ -26,7 +26,7 @@ feature "user wants to update their account settings, so they" do
     end
   end
 
-  context 'mobile views', :js do
+  context 'mobile views' do
 
     before do
       resize_window_to_mobile
@@ -40,11 +40,6 @@ feature "user wants to update their account settings, so they" do
       step 'clicks on menu button' do
         visit root_path
         click_on 'Menu'
-      end
-
-      step "clicks on account button in navbar" do
-        click_on "Account"
-        expect(page).to have_text "Account settings"
       end
 
       step "clicks on account menu item" do
