@@ -217,6 +217,6 @@ resource "null_resource" "ssl" {
 
 resource "null_resource" "unclaimed_account" {
   provisioner "local-exec" {
-    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake setup:unclaimed_account['${var.unclaimed_email}', '${var.unclaimed_password}', '${var.unclaimed_phone_number}']"
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}, ${var.unclaimed_phone_number}]'"
   }
 }
