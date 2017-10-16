@@ -37,6 +37,12 @@ variable "mailgun_domain" {}
 variable "mailgun_smtp_password" {}
 variable "route53_email_zone_id" {}
 
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
+variable "unclaimed_phone_number" {
+  default = ""
+}
+
 variable "aws_route53_ttl" {
   default = "300"
 }
@@ -63,6 +69,10 @@ module "app" {
   heroku_pipeline_id   = "${var.heroku_pipeline_id}"
   heroku_team          = "${var.heroku_team}"
   heroku_database_plan = "${var.heroku_database_plan}"
+
+  unclaimed_email        = "${var.unclaimed_email}"
+  unclaimed_password     = "${var.unclaimed_password}"
+  unclaimed_phone_number = "${var.unclaimed_phone_number}"
 
   enable_papertrail = "${var.enable_papertrail}"
 

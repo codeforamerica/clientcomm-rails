@@ -27,6 +27,10 @@ variable "typeform_link" {}
 
 variable "enable_papertrail" {}
 
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
+variable "unclaimed_phone_number" {}
+
 # Configure the Heroku provider
 provider "heroku" {
   email   = "${var.heroku_email}"
@@ -67,7 +71,7 @@ resource "heroku_app" "clientcomm" {
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
-    UNCLAIMED_EMAIL = "clientcomm+unclaimed@codeforamerica.org"
+    UNCLAIMED_EMAIL = "${var.unclaimed_email}"
   }
 }
 
@@ -208,5 +212,11 @@ resource "null_resource" "ssl" {
 
   provisioner "local-exec" {
     command = "heroku certs:auto:enable --app ${heroku_app.clientcomm.name}"
+  }
+}
+
+resource "null_resource" "unclaimed_account" {
+  provisioner "local-exec" {
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake setup:unclaimed_account['${var.unclaimed_email}', '${var.unclaimed_password}', '${var.unclaimed_phone_number}']"
   }
 }
