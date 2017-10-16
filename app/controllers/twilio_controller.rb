@@ -70,8 +70,8 @@ class TwilioController < ApplicationController
     voice_client = VoiceService.new
     user = Client.find_by(phone_number: params['From']).try(:user)
 
-    if user.try(:desk_phone_number).present?
-      render :xml => voice_client.dial_number(phone_number: user.desk_phone_number)
+    if user.try(:phone_number).present?
+      render :xml => voice_client.dial_number(phone_number: user.phone_number)
     else
       render :xml => voice_client.generate_text_response(message: t('voice_response'))
     end

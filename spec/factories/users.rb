@@ -3,6 +3,6 @@ FactoryGirl.define do
     sequence(:email) { Faker::Internet.unique.email }
     sequence(:password) { Faker::Internet.unique.password }
     sequence(:full_name) { Faker::Name.name }
-    sequence(:desk_phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
+    sequence(:phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
   end
 end

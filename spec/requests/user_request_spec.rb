@@ -33,7 +33,7 @@ describe 'User requests', type: :request do
             user: {
               full_name: new_name,
               email: new_email,
-              desk_phone_number: new_desk_phone
+              phone_number: new_desk_phone
             },
             update_settings: ""
           }

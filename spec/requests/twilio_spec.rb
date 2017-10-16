@@ -276,7 +276,7 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'client is in a user case load but user does not have a desk phone' do
-      let!(:user) { create :user, desk_phone_number: '' }
+      let!(:user) { create :user, phone_number: '' }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it_behaves_like 'valid xml response'
@@ -289,7 +289,7 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'client is in a user case load' do
-      let!(:user) { create :user, desk_phone_number: '+19999999999' }
+      let!(:user) { create :user, phone_number: '+19999999999' }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call' do

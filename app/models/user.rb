@@ -3,8 +3,8 @@ class User < ApplicationRecord
   has_many :messages
   has_many :templates
 
-  before_validation :normalize_desk_phone_number, if: :desk_phone_number_changed?
-  validate :service_accepts_desk_phone_number, if: :desk_phone_number_changed?
+  before_validation :normalize_phone_number, if: :phone_number_changed?
+  validate :service_accepts_phone_number, if: :phone_number_changed?
 
   validates_presence_of :full_name
 
@@ -41,15 +41,15 @@ class User < ApplicationRecord
 
   private
 
-  def normalize_desk_phone_number
-    return unless self.desk_phone_number
+  def normalize_phone_number
+    return unless self.phone_number
 
-    self.desk_phone_number = SMSService.instance.number_lookup(phone_number: self.desk_phone_number)
+    self.phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
   rescue SMSService::NumberNotFound
     @bad_number = true
   end
 
-  def service_accepts_desk_phone_number
-    errors.add(:desk_phone_number, :invalid) if @bad_number
+  def service_accepts_phone_number
+    errors.add(:phone_number, :invalid) if @bad_number
   end
 end

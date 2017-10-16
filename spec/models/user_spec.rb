@@ -14,10 +14,10 @@ RSpec.describe User, type: :model do
         .and_return(normalized_phone_number)
     end
 
-    subject { create :user, desk_phone_number: input_phone_number }
+    subject { create :user, phone_number: input_phone_number }
 
     it 'formats the phone number' do
-      expect(subject.reload.desk_phone_number).to eq(normalized_phone_number)
+      expect(subject.reload.phone_number).to eq(normalized_phone_number)
     end
   end
 
@@ -30,9 +30,9 @@ RSpec.describe User, type: :model do
         .with(phone_number: bad_number)
         .and_raise(SMSService::NumberNotFound)
 
-      new_user = build(:user, desk_phone_number: bad_number)
+      new_user = build(:user, phone_number: bad_number)
       expect(new_user.valid?).to eq(false)
-      expect(new_user.errors.keys).to contain_exactly(:desk_phone_number)
+      expect(new_user.errors.keys).to contain_exactly(:phone_number)
     end
 
     it 'does not validate correctness of phone_number if phone number unchanged' do
