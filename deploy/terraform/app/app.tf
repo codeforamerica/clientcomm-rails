@@ -7,6 +7,7 @@ variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
+variable "heroku_database_plan" {}
 
 variable "environment" {}
 
@@ -52,7 +53,6 @@ resource "heroku_app" "clientcomm" {
     LANG = "en_US.UTF-8"
     MAILGUN_DOMAIN = "${var.mailgun_domain}"
     MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
-    MASS_MESSAGES = "${var.mass_messages}"
     MIXPANEL_TOKEN = "${var.mixpanel_token}"
     RACK_ENV = "${var.environment}"
     RAILS_ENV = "${var.environment}"
@@ -114,7 +114,7 @@ POLICY
 
 resource "heroku_addon" "database" {
   app  = "${heroku_app.clientcomm.name}"
-  plan = "heroku-postgresql:standard-0"
+  plan = "${var.heroku_database_plan}"
 }
 
 resource "heroku_addon" "logging" {
@@ -176,6 +176,14 @@ resource "null_resource" "provision_app" {
 
   provisioner "local-exec" {
     command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
+  }
+}
+
+resource "null_resource" "schedule_backups" {
+  depends_on = ["heroku_addon.database"]
+
+  provisioner "local-exec" {
+    command = "heroku pg:backups:schedule DATABASE_URL --at '02:00 America/Los_Angeles' --app ${heroku_app.clientcomm.name}"
   }
 }
 

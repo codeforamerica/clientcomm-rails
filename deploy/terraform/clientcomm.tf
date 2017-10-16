@@ -8,6 +8,9 @@ variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
+variable "heroku_database_plan" {
+  default = "heroku-postgresql:standard-0"
+}
 variable "route53_app_zone_id" {}
 variable "app_domain" {}
 variable "environment" {
@@ -57,11 +60,12 @@ module "app" {
   aws_secret_key  = "${var.aws_secret_key}"
   route53_zone_id = "${var.route53_app_zone_id}"
 
-  heroku_email       = "${var.heroku_email}"
-  heroku_api_key     = "${var.heroku_api_key}"
-  heroku_app_name    = "${var.heroku_app_name}"
-  heroku_pipeline_id = "${var.heroku_pipeline_id}"
-  heroku_team        = "${var.heroku_team}"
+  heroku_email         = "${var.heroku_email}"
+  heroku_api_key       = "${var.heroku_api_key}"
+  heroku_app_name      = "${var.heroku_app_name}"
+  heroku_pipeline_id   = "${var.heroku_pipeline_id}"
+  heroku_team          = "${var.heroku_team}"
+  heroku_database_plan = "${var.heroku_database_plan}"
 
   enable_papertrail = "${var.enable_papertrail}"
 
