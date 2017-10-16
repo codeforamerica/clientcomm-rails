@@ -72,6 +72,8 @@ class TwilioController < ApplicationController
 
     if user.try(:phone_number).present?
       render :xml => voice_client.dial_number(phone_number: user.phone_number)
+    elsif (unclaimed_number = User.find_by_email(ENV['UNCLAIMED_EMAIL']).try(:phone_number))
+      render :xml => voice_client.dial_number(phone_number: unclaimed_number)
     else
       render :xml => voice_client.generate_text_response(message: t('voice_response'))
     end

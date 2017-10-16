@@ -275,11 +275,55 @@ describe 'Twilio controller', type: :request, active_job: true do
       it_behaves_like 'valid xml response'
     end
 
+    context 'client does not exist' do
+      before do
+        @old_unclaimed = ENV['UNCLAIMED_EMAIL']
+        ENV['UNCLAIMED_EMAIL'] = 'unclaimed@test.com'
+      end
+
+      after do
+        ENV['UNCLAIMED_EMAIL'] = @old_unclaimed
+      end
+
+      let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
+      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
+
+      it 'responds with xml that connects the call to the unclaimed user' do
+        twilio_post_voice()
+        expect(response.status).to eq 200
+        expect(response.content_type).to eq 'application/xml'
+        expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
+      end
+    end
+
     context 'client is in a user case load but user does not have a desk phone' do
+      before do
+        @old_unclaimed = ENV['UNCLAIMED_EMAIL']
+        ENV['UNCLAIMED_EMAIL'] = 'unclaimed@test.com'
+      end
+
+      after do
+        ENV['UNCLAIMED_EMAIL'] = @old_unclaimed
+      end
+
+      let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
       let!(:user) { create :user, phone_number: '' }
+      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
-      it_behaves_like 'valid xml response'
+      it 'responds with xml that connects the call to the unclaimed user' do
+        twilio_post_voice()
+        expect(response.status).to eq 200
+        expect(response.content_type).to eq 'application/xml'
+        expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
+      end
+
+      context 'admin phone number not set' do
+        let(:unclaimed_number) { nil }
+
+        it_behaves_like 'valid xml response'
+      end
+
     end
 
     context 'client is in a user case load' do
