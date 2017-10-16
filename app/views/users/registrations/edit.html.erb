@@ -3,20 +3,18 @@
     <div class="grid__item width-one-half">
       <div class="form-card form-card--compact">
         <div class="form-card__header">
-          <h1 class="form-card__title">Edit account settings</h1>
+          <h1 class="form-card__title"><%= t('views.users.registrations.edit.settings.title') %></h1>
         </div>
         <div class="form-card__content">
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-            <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
-            <%= f.gcf_input_field :email, "Email" %>
-            <%= f.gcf_input_field :phone_number, "Desk Phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
+            <%= f.gcf_input_field :full_name, t('activemodel.forms.models.user.attributes.full_name'), autofocus: true %>
+            <%= f.gcf_input_field :email, t('activemodel.forms.models.user.attributes.email') %>
+            <%= f.gcf_input_field :phone_number, t('activemodel.forms.models.user.attributes.phone_number'), notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
             <div class="form-card__footer">
               <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Update settings', class: 'button button--cta', role: 'button', name: 'update_settings' %></div>
+                <div class="toolbar__left"><%= f.submit t('views.users.registrations.edit.settings.submit'), class: 'button button--cta', role: 'button', name: 'update_settings' %></div>
                 <div class="toolbar__right-responsive">
-                  <%= link_to :back, class: "button" do %>
-                    Cancel
-                  <% end %>
+                  <%= link_to t('views.shared.cancel'), :back, class: "button" %>
                 </div>
               </div>
             </div>
@@ -27,20 +25,18 @@
     <div class="grid__item width-one-half">
       <div class="form-card form-card--compact">
         <div class="form-card__header">
-          <h1 class="form-card__title">Change password</h1>
+          <h1 class="form-card__title"><%= t('views.users.registrations.edit.password.title') %></h1>
         </div>
         <div class="form-card__content">
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-            <%= f.gcf_input_field(:current_password, "Current password", type: "password") %>
-            <%= f.gcf_input_field(:password, "New password", type: "password", notes: "This should be at least 6 characters.") %>
-            <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password") %>
+            <%= f.gcf_input_field(:current_password, t('activemodel.forms.models.user.attributes.current_password'), type: "password") %>
+            <%= f.gcf_input_field(:password, t('activemodel.forms.models.user.attributes.password'), type: "password", notes: "This should be at least 6 characters.") %>
+            <%= f.gcf_input_field(:password_confirmation, t('activemodel.forms.models.user.attributes.password_confirmation'), type: "password") %>
             <div class="form-card__footer">
               <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Change password', class: 'button button--cta', role: 'button', name: 'change_password' %></div>
+                <div class="toolbar__left"><%= f.submit t('views.users.registrations.edit.password.submit'), class: 'button button--cta', role: 'button', name: 'change_password' %></div>
                 <div class="toolbar__right-responsive">
-                  <%= link_to :back, class: "button" do %>
-                    Cancel
-                  <% end %>
+                  <%= link_to t('views.shared.cancel'), :back, class: "button" %>
                 </div>
               </div>
             </div>

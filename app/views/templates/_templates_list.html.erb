@@ -6,15 +6,15 @@
 
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">
-              <h1>My templates</h1>
+              <h1><%= t('views.templates.index.title') %></h1>
             </div>
             <div class="toolbar__right-responsive">
               <%= link_to new_template_path, class: "button button--small button--cta" do %>
-                <i class="button__icon--left icon-add"></i> New template
+                <i class="button__icon--left icon-add"></i> <%= t('views.templates.index.new_template') %>
               <% end %>
             </div>
           </div>
-          <p><%= t('template.instructions') %></p>
+          <p><%= t('views.templates.index.instructions') %></p>
             <% if @templates.empty? %>
               <div class="text-center col-md-8 col-md-offset-2">
                 <%= image_tag('empty_templates.png', class: 'with-padding-small') %>
@@ -23,8 +23,8 @@
               <table class="data-table data-table--selectable">
                 <thead>
                   <tr>
-                    <th>Template</th>
-                    <th class="hidden-xs">Edit</th>
+                    <th><%= t('views.templates.index.table_headers.template') %></th>
+                    <th class="hidden-xs"><%= t('views.templates.index.table_headers.edit') %></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,7 +48,7 @@
             <% end %>
           </div>
           <%= link_to clients_path, class: 'button button--small nudge--med' do %>
-              <i class="button__icon--left icon-arrow_back"></i> Home
+              <i class="button__icon--left icon-arrow_back"></i> <%= t('views.shared.home') %>
           <% end %>
         </div>
       </div>

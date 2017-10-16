@@ -57,6 +57,16 @@ en:
               body:
                 blank: Add a template.
   activemodel:
+    forms:
+      models:
+        user:
+          attributes:
+            full_name: Full name
+            email: Email
+            phone_number: Desk phone number
+            current_password: Current password
+            password: New password
+            password_confirmation: Confirm new password
     errors:
       models:
         mass_message:
@@ -69,9 +79,34 @@ en:
     distance_in_words:
       less_than_x_minutes:
         one: just now
-  template:
-    instructions: Templates are reusable messages. You can add and remove words before you send them, so try adding placeholders for names and dates.
-    title:
-      placeholder: "Example: Check-in"
-    body:
-      placeholder: "Example: Hi, how are you doing? Is there anything I can do to help?"
+  views:
+    shared:
+      cancel: Cancel
+      home: Home
+    templates:
+      index:
+        title: My templates
+        new_template: New template
+        table_headers:
+          template: Template
+          edit: Edit
+        instructions: Templates are reusable messages. You can add and remove words before you send them, so try adding placeholders for names and dates.
+      new:
+        modal:
+          title: New template
+        form:
+          title:
+            placeholder: "Example: Check-in"
+          body:
+            placeholder: "Example: Hi, how are you doing? Is there anything I can do to help?"
+          submit: Save template
+
+    users:
+      registrations:
+        edit:
+          settings:
+            title: Edit account settings
+            submit: Update settings
+          password:
+            title: Change password
+            submit: Change password
