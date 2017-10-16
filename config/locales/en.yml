@@ -96,10 +96,24 @@ en:
           title: New template
         form:
           title:
+            label: Template name
             placeholder: "Example: Check-in"
           body:
+            label: Template
             placeholder: "Example: Hi, how are you doing? Is there anything I can do to help?"
           submit: Save template
+      edit:
+        modal:
+          title: Edit template
+        form:
+          title:
+            label: Template name
+          body:
+            label: Template
+          delete: Delete template
+          delete_confirmation: "Are you sure you want to delete this template?"
+          submit: Update
+
 
     users:
       registrations:
