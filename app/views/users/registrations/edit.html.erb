@@ -9,7 +9,7 @@
           <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
             <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
             <%= f.gcf_input_field :email, "Email" %>
-            <%= f.gcf_input_field :phone_number, "Phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
+            <%= f.gcf_input_field :phone_number, "Desk Phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
             <div class="form-card__footer">
               <div class="toolbar">
                 <div class="toolbar__left"><%= f.submit 'Update settings', class: 'button button--cta', role: 'button', name: 'update_settings' %></div>

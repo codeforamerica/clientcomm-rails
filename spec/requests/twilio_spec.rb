@@ -282,12 +282,6 @@ describe 'Twilio controller', type: :request, active_job: true do
       it_behaves_like 'valid xml response'
     end
 
-    context 'client is not associated with a user' do
-      let!(:client) { create :client, user: nil, phone_number: '+12425551212' }
-
-      it_behaves_like 'valid xml response'
-    end
-
     context 'client is in a user case load' do
       let!(:user) { create :user, phone_number: '+19999999999' }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }

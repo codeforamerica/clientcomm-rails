@@ -7,6 +7,7 @@ class Client < ApplicationRecord
   validate :phone_number_is_unused, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
+  validates_presence_of :user
   validates_presence_of :last_name, :phone_number
 
   def analytics_tracker_data
