@@ -23,6 +23,14 @@ and specify the key, or environment name, of the deployment you're managing
 terraform init -backend-config =(lpass show --notes terraform-backend) -backend-config 'key=[DEPLOYMENT NAME]'
 ```
 
+## Prepping a Twilio account
+
+After buying a phone number navigate to: https://www.twilio.com/console/runtime/triggers/alert/create
+We create the following triggers but by no means are they the only ones worth creating
+
+* Trigger on ANY alert, at value 1 (First alert of the day)
+* Trigger on ANY alert, at value 10 (Alert after 10 issues in a single day)
+
 ## Managing a ClientComm deployment
 
 Once you have set your backend you are ready to manage a production deployment.
@@ -44,8 +52,7 @@ heroku_app_name = ""
 app_domain = ""
 heroku_pipeline_id = ""
 heroku_team = ""
-
-mass_messages = ""
+heroku_database_plan = "heroku-postgresql:standard-0"
 
 intercom_app_id = ""
 mixpanel_token = ""

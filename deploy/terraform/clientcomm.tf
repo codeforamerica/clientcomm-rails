@@ -18,9 +18,6 @@ variable "environment" {
 }
 
 variable "intercom_app_id" {}
-variable "mass_messages" {
-  default = "false"
-}
 variable "mixpanel_token" {}
 variable "sentry_endpoint" {}
 variable "skylight_authentication" {}
@@ -77,7 +74,6 @@ module "app" {
   app_domain = "${var.app_domain}"
 
   intercom_app_id         = "${var.intercom_app_id}"
-  mass_messages           = "${var.mass_messages}"
   mixpanel_token          = "${var.mixpanel_token}"
   sentry_endpoint         = "${var.sentry_endpoint}"
   skylight_authentication = "${var.skylight_authentication}"

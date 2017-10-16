@@ -16,7 +16,6 @@ variable "mailgun_smtp_password" {}
 
 variable "app_domain" {}
 variable "intercom_app_id" {}
-variable "mass_messages" {}
 variable "mixpanel_token" {}
 variable "sentry_endpoint" {}
 variable "skylight_authentication" {}
