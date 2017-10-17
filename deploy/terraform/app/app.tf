@@ -171,7 +171,7 @@ resource "heroku_pipeline_coupling" "coupling" {
 }
 
 resource "null_resource" "provision_app" {
-  depends_on = ["heroku_pipeline_coupling.coupling"]
+  depends_on = ["heroku_pipeline_coupling.coupling", "heroku_addon.database"]
 
   provisioner "local-exec" {
     command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"
@@ -216,6 +216,8 @@ resource "null_resource" "ssl" {
 }
 
 resource "null_resource" "unclaimed_account" {
+  depends_on = ["null_resource.provision_app"]
+
   provisioner "local-exec" {
     command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}, ${var.unclaimed_phone_number}]'"
   }

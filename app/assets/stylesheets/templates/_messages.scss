@@ -168,6 +168,10 @@
     }
   }
 
+  &.affix + #scroller-target {
+    padding-top: 130px;
+  }
+
   h2.client-name {
     font-size: $font-size-normal;
     padding-right: .3em;
