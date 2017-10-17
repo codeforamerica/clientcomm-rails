@@ -35,6 +35,9 @@
                     <th>
                       Last contact
                     </th>
+                    <% if FeatureFlag.enabled? 'client_status' %>
+                      <th>Status</th>
+                    <% end %>
                   </tr>
                 </thead>
                 <tbody class="list">
@@ -53,6 +56,12 @@
                       <td class="timestamp">
                         <%= b.label(class: ['cell-content']) do %>
                             <%= b.object.last_contacted_at ? time_ago_in_words(b.object.last_contacted_at) : '--' %>
+                        <% end %>
+                      </td>
+                      <td>
+                        <%= b.label(class: ['cell-content']) do %>
+                            <i class="hidden-xs status-icon <%= b.object.client_status.name.downcase if b.object.client_status %>"></i>
+                            <%= b.object.client_status ? b.object.client_status.name : '--' %>
                         <% end %>
                       </td>
                     </tr>

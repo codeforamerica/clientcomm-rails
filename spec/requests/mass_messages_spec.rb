@@ -13,6 +13,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     let!(:client_3) { create :client, user: user }
     let(:message_body) { 'hello this is message one' }
     let(:clients) { ['', client_1.id, client_3.id] }
+
     before do
       post mass_messages_path, params: {
         mass_message: {
@@ -75,31 +76,53 @@ describe 'Mass messages requests', type: :request, active_job: true do
   end
 
   describe 'GET#new' do
-    it 'tracks a visit to the new mass message page' do
-      create_list :client, 5, user: user
+    let(:params) { nil }
 
-      get new_mass_message_path
+    before do
+      create_list :client, 3, user: user
+    end
+
+    subject { get new_mass_message_path, params: params }
+
+    it 'tracks a visit to the new mass message page' do
+      subject
 
       expect(response.code).to eq '200'
       expect_analytics_events(
         'mass_message_compose_view' => {
-          'clients_count' => 5
+          'clients_count' => 3
         }
       )
     end
 
     context 'using a url to pre-populate' do
-      before do
-        create_list :client, 3, user: user
-      end
+      let(:params) { {clients: [user.clients[0].id, user.clients[2].id]} }
 
       it 'renders checkboxes selected correctly' do
+        subject
+
         clients = user.clients
-        get new_mass_message_path, params: {clients: [clients[0].id, clients[2].id]}
 
         expect(response.body).to include("value=\"#{clients[0].id}\" checked=\"checked\"")
         expect(response.body).to include("value=\"#{clients[2].id}\" checked=\"checked\"")
         expect(response.body).to include("value=\"#{clients[1].id}\" name")
+      end
+    end
+
+    context 'client status feature flag enabled' do
+      let(:status) { create :client_status }
+
+      before do
+        FeatureFlag.create!(flag: 'client_status', enabled: true)
+      end
+
+      it 'renders client list with status column' do
+        create :client, client_status: status, user: user
+
+        get new_mass_message_path
+
+        expect(response.body).to include 'Status'
+        expect(response.body).to include status.name
       end
     end
   end
