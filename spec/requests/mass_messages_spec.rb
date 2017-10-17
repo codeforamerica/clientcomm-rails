@@ -87,5 +87,20 @@ describe 'Mass messages requests', type: :request, active_job: true do
         }
       )
     end
+
+    context 'using a url to pre-populate' do
+      before do
+        create_list :client, 3, user: user
+      end
+
+      it 'renders checkboxes selected correctly' do
+        clients = user.clients
+        get new_mass_message_path, params: {clients: [clients[0].id, clients[2].id]}
+
+        expect(response.body).to include("value=\"#{clients[0].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{clients[2].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{clients[1].id}\" name")
+      end
+    end
   end
 end

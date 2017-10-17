@@ -2,7 +2,7 @@ class MassMessagesController < ApplicationController
   before_action :authenticate_user!
 
   def new
-    @mass_message = MassMessage.new
+    @mass_message = MassMessage.new(params.permit(clients: []))
     @clients = SortClients.run(user: current_user)
 
     analytics_track(
@@ -15,7 +15,7 @@ class MassMessagesController < ApplicationController
 
   def create
     mass_message = MassMessage.new(mass_message_params.merge(user: current_user))
-    mass_message.clients = mass_message.clients.reject(&:empty?)
+    mass_message.clients = mass_message.clients.reject(&:zero?)
 
     if mass_message.invalid?
       @mass_message = mass_message
@@ -43,7 +43,7 @@ class MassMessagesController < ApplicationController
 
   def send_mass_message(mass_message)
     mass_message.clients.each do |client_id|
-      client = Client.find(client_id)
+      client = current_user.clients.find(client_id)
 
       message = Message.create!(
         body: mass_message.message,

@@ -7,4 +7,10 @@ class MassMessage
 
   attr_accessor :user, :message, :clients
 
+  def initialize(attributes={})
+    super
+    @clients ||= []
+    @clients.map!(&:to_i)
+  end
+
 end
