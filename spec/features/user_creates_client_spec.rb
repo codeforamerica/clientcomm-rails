@@ -37,4 +37,30 @@ feature "User creates client" do
     expect(page).to have_content 'Add a new client'
     expect(page).to have_content "Last name can't be blank"
   end
+
+  context 'client status feature flag enabled' do
+    before do
+      FeatureFlag.create!(flag: 'client_status', enabled: true)
+    end
+
+    scenario 'client status is selected' do
+      ClientStatus.create!(name: 'Active')
+      ClientStatus.create!(name: 'Training')
+      ClientStatus.create!(name: 'Exited')
+
+      myclient = build :client, client_status: ClientStatus.find_by_name('Exited')
+
+      visit new_client_path
+
+      fill_in 'First name', with: myclient.first_name
+      fill_in 'Last name', with: myclient.last_name
+      fill_in 'Phone number', with: myclient.phone_number
+      choose myclient.client_status.name
+      click_on 'Save new client'
+
+      expect(page).to have_content myclient.first_name
+      click_on 'Manage client'
+      expect(find_field('Exited')).to be_checked
+    end
+  end
 end

@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :user
+  belongs_to :client_status
   has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 

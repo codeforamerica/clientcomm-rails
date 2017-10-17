@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Client, type: :model do
   describe 'relationships' do
     it { should belong_to :user }
+    it { should belong_to :client_status }
     it { should validate_presence_of :user }
     it { should have_many :messages }
     it { should have_many(:attachments).through(:messages) }

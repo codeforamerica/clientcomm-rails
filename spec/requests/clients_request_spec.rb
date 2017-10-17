@@ -22,6 +22,7 @@ describe 'Clients requests', type: :request do
       let(:phone_number) { '1-466-336-4863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
+      let!(:client_status) { create :client_status }
 
       before do
         allow(SMSService.instance).to receive(:number_lookup)
@@ -35,7 +36,8 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
-            notes: notes
+            notes: notes,
+            client_status_id: client_status.id.to_s
           }
         }
       end
@@ -53,6 +55,7 @@ describe 'Clients requests', type: :request do
         expect(client.last_name).to eq last_name
         expect(client.phone_number).to eq normalized_phone_number
         expect(client.notes).to eq notes
+        expect(client.client_status).to eq client_status
       end
 
       it 'tracks the creation of a new client' do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171016173705) do
+ActiveRecord::Schema.define(version: 20171017184404) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,10 @@ ActiveRecord::Schema.define(version: 20171016173705) do
     t.index ["message_id"], name: "index_attachments_on_message_id"
   end
 
+  create_table "client_statuses", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
   create_table "clients", id: :serial, force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -67,6 +71,8 @@ ActiveRecord::Schema.define(version: 20171016173705) do
     t.datetime "last_contacted_at"
     t.boolean "has_unread_messages", default: false, null: false
     t.boolean "has_message_error", default: false, null: false
+    t.bigint "client_status_id"
+    t.index ["client_status_id"], name: "index_clients_on_client_status_id"
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
@@ -140,6 +146,7 @@ ActiveRecord::Schema.define(version: 20171016173705) do
   end
 
   add_foreign_key "attachments", "messages"
+  add_foreign_key "clients", "client_statuses"
   add_foreign_key "clients", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"

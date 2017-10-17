@@ -29,7 +29,8 @@ class ClientsController < ApplicationController
       first_name: client_params[:first_name],
       last_name: client_params[:last_name],
       phone_number: client_params[:phone_number],
-      notes: client_params[:notes]
+      notes: client_params[:notes],
+      client_status_id: client_params[:client_status_id]
     )
 
     if @client.save
@@ -90,6 +91,6 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client)
-      .permit(:first_name, :last_name, :phone_number, :notes)
+      .permit(:first_name, :last_name, :client_status_id, :phone_number, :notes)
   end
 end

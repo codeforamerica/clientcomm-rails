@@ -53,10 +53,11 @@ label {
   border-radius: $border-radius;
   input[type='radio'] {
     position: absolute;
-    top: .75em;
+    top: .6em;
     left: .7em;
     appearance: none;
     outline: none;
+    margin-top: 0;
     display: inline-block;
     background-color: #fff;
     border: 1px solid $color-darkest-grey;

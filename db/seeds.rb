@@ -21,3 +21,7 @@ end
 
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
+
+ClientStatus.find_or_create_by(name: 'Exited')
+ClientStatus.find_or_create_by(name: 'Training')
+ClientStatus.find_or_create_by(name: 'Active')
