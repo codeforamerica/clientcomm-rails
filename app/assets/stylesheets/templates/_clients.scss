@@ -11,11 +11,26 @@
     color: $color-red;
   }
 
-  .message-status-icon {
+  .status-icon {
     display: inline-block;
     height: 10px;
     width: 10px;
     border-radius: 50%;
-    background-color: $color-green;
+
+    &.unread-message {
+      background-color: $color-green;
+    }
+
+    &.active {
+      background-color: $color-green;
+    }
+
+    &.training {
+      background-color: $color-green;
+    }
+
+    &.exited {
+      background-color: $color-orange;
+    }
   }
 }

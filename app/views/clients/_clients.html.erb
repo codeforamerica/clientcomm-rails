@@ -21,7 +21,9 @@
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
         Last contact
       </th>
-      <th class="hidden-xs">Action</th>
+      <th class="hidden-xs">
+        <%= FeatureFlag.enabled?('client_status') ? 'Status' : 'Action' %>
+      </th>
     </tr>
     </thead>
     <tbody class="list">
@@ -30,7 +32,7 @@
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
             <a class="cell-content" href="<%= client_messages_path(client.id) %>">
               <% if client_messages_status(client) == 'unread' %>
-                  <i class="message-status-icon hidden-xs"></i>
+                  <i class="status-icon unread-message hidden-xs"></i>
               <% elsif client_messages_status(client) == 'error' %>
                   <i class="icon-warning hidden-xs"></i>
               <% end %>
@@ -43,9 +45,17 @@
             </a>
           </td>
           <td class="hidden-xs">
-            <a class="cell-content" href="<%= edit_client_path(client.id) %>">
-              Manage
-            </a>
+            <% if FeatureFlag.enabled? 'client_status' %>
+                <a class="cell-content"
+                   href="<%= client_messages_path(client.id) %>">
+                  <i class="hidden-xs status-icon <%= client.client_status.name.downcase if client.client_status %>"></i>
+                  <%= client.client_status ? client.client_status.name : '--' %>
+                </a>
+            <% else %>
+                <a class="cell-content" href="<%= edit_client_path(client.id) %>">
+                  Manage
+                </a>
+            <% end %>
           </td>
         </tr>
     <% end %>

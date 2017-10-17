@@ -60,6 +60,7 @@ feature 'feature flags' do
 
     before do
       login_as(myuser, :scope => :user)
+      create :client, user: myuser, client_status: status
     end
 
     context 'enabled' do
@@ -71,12 +72,24 @@ feature 'feature flags' do
         visit new_client_path
         expect(page).to have_css '.radio-button', text: status.name
       end
+
+      it 'shows status on the clients list' do
+        visit clients_path
+        expect(page).to have_css 'th', text: 'Status'
+        expect(page).to have_css 'td', text: status.name
+      end
     end
 
     context 'disabled' do
       it 'does not show templates button' do
         visit new_client_path
         expect(page).not_to have_css '.radio-button'
+      end
+
+      it 'shows status on the clients list' do
+        visit clients_path
+        expect(page).to have_css 'th', text: 'Action'
+        expect(page).to have_css 'td', text: 'Manage'
       end
     end
   end
