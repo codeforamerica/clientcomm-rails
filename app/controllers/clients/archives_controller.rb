@@ -16,11 +16,11 @@ class Clients::ArchivesController < ApplicationController
       }
     )
 
-    if typeform_link
+    if typeform_link.present?
       IntercomRails.config.hide_default_launcher = true
       render :show, locals: { typeform_link: typeform_link }
     else
-      redirect_to clients_path
+      redirect_to clients_path, notice: "#{client.full_name} has been successfully deleted"
     end
   end
 

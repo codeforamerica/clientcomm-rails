@@ -242,6 +242,23 @@ describe 'Clients requests', type: :request do
           }
         )
       end
+
+      context 'there is no survey link' do
+        before do
+          @survey = ENV['TYPEFORM_LINK']
+          ENV['TYPEFORM_LINK'] = ""
+        end
+
+        after do
+          ENV['TYPEFORM_LINK'] = @survey
+        end
+
+        it 'redirects to the client list with a flash' do
+          subject
+
+          expect(flash[:notice]).to include('successfully deleted')
+        end
+      end
     end
   end
 end
