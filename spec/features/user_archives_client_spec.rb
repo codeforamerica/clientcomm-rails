@@ -1,6 +1,15 @@
 require "rails_helper"
 
 feature "user archives client", :js do
+  before do
+    @survey = ENV['TYPEFORM_LINK']
+    ENV['TYPEFORM_LINK'] = 'candy'
+  end
+
+  after do
+    ENV['TYPEFORM_LINK'] = @survey
+  end
+
   scenario "user clicks archive client button" do
     # log in with a fake user
     myuser = create :user
