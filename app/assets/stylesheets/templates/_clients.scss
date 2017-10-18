@@ -22,15 +22,15 @@
     }
 
     &.active {
-      background-color: $color-green;
+      background-color: #007bff;
     }
 
     &.training {
-      background-color: $color-green;
+      background-color: #e83e8c;
     }
 
     &.exited {
-      background-color: $color-orange;
+      background-color: #d48c00;
     }
   }
 }
