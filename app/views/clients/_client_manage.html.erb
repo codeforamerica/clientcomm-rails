@@ -15,10 +15,12 @@
     </p>
     <p class="text--danger"><i class="icon-report"></i> Once you delete a client you won't be able to undo it</p>
     <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), class: :button, data: { confirm: 'Are you sure you want to delete this client?' }, params: { client: { active: false } } %>
-    <h4>Transfer Client</h4>
-    <p>
-      A client can only be assigned to one user at a time. If someone else needs to text <%= @client.full_name %>, request a transfer by letting us know.
-    </p>
-    <button class="button" id="transfer-button" data-client-name="<%= @client.full_name %>">Request transfer</button>
+    <% if ENV['INTERCOM_APP_ID'].present? %>
+      <h4>Transfer Client</h4>
+      <p>
+        A client can only be assigned to one user at a time. If someone else needs to text <%= @client.full_name %>, request a transfer by letting us know.
+      </p>
+      <button class="button" id="transfer-button" data-client-name="<%= @client.full_name %>">Request transfer</button>
+    <% end %>
   </div>
 </div>

@@ -222,5 +222,38 @@ describe 'Clients requests', type: :request do
         end
       end
     end
+
+    describe 'GET#edit' do
+      let(:client) { create :client, user: user }
+
+      subject { get edit_client_path(client) }
+
+      context 'intercom' do
+        before do
+          @intercom = ENV['INTERCOM_APP_ID']
+          ENV['INTERCOM_APP_ID'] = 'test'
+        end
+
+        after do
+          ENV['INTERCOM_APP_ID'] = @intercom
+        end
+
+        it 'shows the transfer client section' do
+          subject
+
+          expect(response.body).to include('Transfer Client')
+        end
+
+        context 'no intercom app ID is set' do
+          before { ENV['INTERCOM_APP_ID'] = '' }
+
+          it 'does not show the transfer client section' do
+            subject
+
+            expect(response.body).to_not include('Transfer Client')
+          end
+        end
+      end
+    end
   end
 end
