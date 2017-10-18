@@ -48,10 +48,27 @@ ActiveAdmin.register User do
       link_to 'Clients', admin_clients_path(q: {user_id_eq: user.id})
     end
 
-    default_main_content
+    panel 'User Details' do
+      attributes_table_for user do
+        row :full_name
+        row :email
+        row :phone_number
+        row :active
+        row :email_subscribe
+        row :current_sign_in_at
+        row :current_sign_in_ip
+        row :updated_at
+        row :created_at
+        row :reset_password_sent_at
+      end
+    end
   end
 
   form do |f|
+    panel 'View Clients' do
+      link_to 'Clients', admin_clients_path(q: {user_id_eq: user.id})
+    end
+
     f.inputs "User Info" do
       f.input :full_name
       f.input :email
