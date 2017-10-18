@@ -18,7 +18,7 @@ ActiveAdmin.register Client do
 
   actions :all, :except => [:destroy]
 
-  filter :user, collection: User.all.order(full_name: :asc).pluck(:full_name, :id)
+  filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
