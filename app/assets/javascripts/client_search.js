@@ -7,7 +7,8 @@ function clientListInit() {
     valueNames: [
       { attr: 'data-fullname', name: 'fullname' },
       { attr: 'data-lastname', name: 'lastname' },
-      { attr: 'data-timestamp', name: 'timestamp' }
+      { attr: 'data-timestamp', name: 'timestamp' },
+      { attr: 'data-client-status', name: 'client-status' }
     ]
   };
 
