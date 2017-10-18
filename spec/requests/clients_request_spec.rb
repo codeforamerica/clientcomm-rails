@@ -229,9 +229,11 @@ describe 'Clients requests', type: :request do
       subject { get edit_client_path(client) }
 
       context 'intercom' do
+        let(:app_id) { 'test' }
+
         before do
           @intercom = ENV['INTERCOM_APP_ID']
-          ENV['INTERCOM_APP_ID'] = 'test'
+          ENV['INTERCOM_APP_ID'] = app_id
         end
 
         after do
@@ -245,7 +247,7 @@ describe 'Clients requests', type: :request do
         end
 
         context 'no intercom app ID is set' do
-          before { ENV['INTERCOM_APP_ID'] = '' }
+          let(:app_id) { '' }
 
           it 'does not show the transfer client section' do
             subject
