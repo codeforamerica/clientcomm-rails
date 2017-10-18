@@ -17,8 +17,8 @@
     <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), class: :button, data: { confirm: 'Are you sure you want to delete this client?' }, params: { client: { active: false } } %>
     <h4>Transfer Client</h4>
     <p>
-      A client can only be assigned to one user at a time. If someone else needs to text John Doe, request a transfer. Let us know the other user's name.
+      A client can only be assigned to one user at a time. If someone else needs to text <%= @client.full_name %>, request a transfer by letting us know.
     </p>
-    <button class="button intercom-activate">Request transfer</button>
+    <button class="button" id="transfer-button" data-client-name="<%= @client.full_name %>">Request transfer</button>
   </div>
 </div>
