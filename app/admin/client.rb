@@ -28,7 +28,7 @@ ActiveAdmin.register Client do
   form do |f|
     f.inputs 'Client Info' do
       f.input :user_id, :label => 'User', :as => :select, :collection => User.all.order(full_name: :asc).map { |user| ["#{user.full_name}", user.id] }
-      f.input :active
+      f.input :active, as: :radio
       f.input :first_name
       f.input :last_name
       f.input :phone_number
