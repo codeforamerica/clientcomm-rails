@@ -18,7 +18,7 @@ ActiveAdmin.register Client do
 
   actions :all, :except => [:destroy]
 
-  filter :user
+  filter :user, collection: User.all.order(full_name: :asc).pluck(:full_name, :id)
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
@@ -27,8 +27,8 @@ ActiveAdmin.register Client do
 
   form do |f|
     f.inputs 'Client Info' do
-      f.input :user_id, :label => 'User', :as => :select, :collection => User.all.order(full_name: :asc).map { |user| ["#{user.full_name}", user.id] }
-      f.input :active, as: :radio
+      f.input :user_id, label: 'User', as: :select, collection: User.all.order(full_name: :asc).pluck(:full_name, :id), include_blank: false
+      f.input :active, as: :radio unless f.object.new_record?
       f.input :first_name
       f.input :last_name
       f.input :phone_number
@@ -38,7 +38,7 @@ ActiveAdmin.register Client do
     f.actions
   end
 
-  batch_action :transfer, form: -> { {user: User.pluck(:full_name, :id)} } do |ids, inputs|
+  batch_action :transfer, form: -> { {user: User.all.order(full_name: :asc).pluck(:full_name, :id)} } do |ids, inputs|
     user = User.find(inputs[:user])
     number_of_clients = ids.length
     transferred_clients = []

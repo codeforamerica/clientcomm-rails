@@ -73,6 +73,7 @@ ActiveAdmin.register User do
       f.input :full_name
       f.input :email
       f.input :phone_number
+      f.input :email_subscribe, label: 'Subscribed to emails', as: :radio unless f.object.new_record?
 
       if f.object.new_record?
         f.input :password
