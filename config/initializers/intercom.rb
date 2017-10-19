@@ -27,7 +27,6 @@ IntercomRails.config do |config|
   # == Include for logged out Users
   # If set to true, include the Intercom messenger on all pages, regardless of whether
   # The user model class (set below) is present. Only available for Apps on the Acquire plan.
-  config.include_for_logged_out_users = true
 
   # == User model class
   # The class which defines your user model
@@ -53,16 +52,17 @@ IntercomRails.config do |config|
   # user object, or a Proc which will be passed the current user.
   #
   config.user.custom_data = {
-    user_id: Proc.new { |user| user.email }
+    user_id: proc { |user| user.email },
+    name: proc { |user| user.full_name }
   }
 
   # == Current company method/variable
   # The method/variable that contains the current company for the current user,
   # in your controllers. 'Companies' are generic groupings of users, so this
   # could be a company, app or group.
-  #
-  # config.company.current = Proc.new { current_company }
-  #
+
+  config.company.current = Proc.new { ENV['DEPLOYMENT'] }
+
   # Or if you are using devise you can just use the following config
   #
   # config.company.current = Proc.new { current_user.company }
