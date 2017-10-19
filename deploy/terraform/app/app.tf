@@ -51,6 +51,7 @@ resource "heroku_app" "clientcomm" {
   }
 
   config_vars {
+    DEPLOYMENT = "${var.heroku_app_name}"
     DEPLOY_BASE_URL = "https://${var.app_domain}"
     INTERCOM_APP_ID = "${var.intercom_app_id}"
     LANG = "en_US.UTF-8"
@@ -116,6 +117,10 @@ POLICY
 }
 
 resource "heroku_addon" "database" {
+  lifecycle = {
+    prevent_destroy = true
+  }
+
   app  = "${heroku_app.clientcomm.name}"
   plan = "${var.heroku_database_plan}"
 }
