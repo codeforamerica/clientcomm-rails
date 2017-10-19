@@ -240,9 +240,11 @@ describe 'Clients requests', type: :request do
           let(:exited_contacted_at) { nil }
 
           it "shows active followup banner" do
+            client_id = Client.find_by_client_status_id(ClientStatus.find_by_name("Active").id).id
             subject
 
             expect(response.body).to include ("You have 1 active client due for follow up")
+            expect(response.body).to include ('clients%5B%5D=' + client_id.to_s)
           end
         end
 
@@ -252,10 +254,11 @@ describe 'Clients requests', type: :request do
           let(:exited_contacted_at) { nil }
 
           it "shows training followup banner" do
-
+            client_id = Client.find_by_client_status_id(ClientStatus.find_by_name("Training").id).id
             subject
 
             expect(response.body).to include ("You have 1 training client due for follow up")
+            expect(response.body).to include ('clients%5B%5D=' + client_id.to_s)
           end
 
         end
@@ -265,10 +268,11 @@ describe 'Clients requests', type: :request do
           let(:active_contacted_at) { nil }
           let(:training_contacted_at) { nil }
           it "shows exited followup banner" do
-
+            client_id = Client.find_by_client_status_id(ClientStatus.find_by_name("Exited").id).id
             subject
 
             expect(response.body).to include ("You have 1 exited client due for follow up")
+            expect(response.body).to include ('clients%5B%5D=' + client_id.to_s)
           end
         end
       end
