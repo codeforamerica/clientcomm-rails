@@ -17,7 +17,7 @@ ClientStatus.find_or_create_by(name: 'Training')
 ClientStatus.find_or_create_by(name: 'Active')
 
 puts "Creating Admin User"
-AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'password', password_confirmation: 'password') if Rails.env.development?
+AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?
 
 puts "Creating Test Users"
 User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')

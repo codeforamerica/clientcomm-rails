@@ -16,6 +16,8 @@ ActiveAdmin.register Client do
     actions
   end
 
+  action_item only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
+
   actions :all, :except => [:destroy]
 
   filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }
@@ -38,7 +40,7 @@ ActiveAdmin.register Client do
     f.actions
   end
 
-  batch_action :transfer, form: -> { {user: User.all.order(full_name: :asc).pluck(:full_name, :id)} } do |ids, inputs|
+  batch_action :transfer, form: -> { { user: User.all.order(full_name: :asc).pluck(:full_name, :id) } } do |ids, inputs|
     user = User.find(inputs[:user])
     number_of_clients = ids.length
     transferred_clients = []
