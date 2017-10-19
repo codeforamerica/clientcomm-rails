@@ -6,5 +6,6 @@ FactoryGirl.define do
     sequence(:phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
     sequence(:notes) { Faker::Lorem.sentence }
     active true
+    client_status { ClientStatus.all.sample }
   end
 end

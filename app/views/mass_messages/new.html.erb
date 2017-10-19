@@ -79,7 +79,7 @@
                         <% end %>
                       </td>
                       <% if FeatureFlag.enabled? 'client_status' %>
-                        <td class="hidden-xs" data-client-status="<%= client.client_status ? client.client_status.name : '--' %>">
+                        <td class="hidden-xs client-status" data-client-status="<%= client.client_status ? client.client_status.name : '--' %>">
                           <%= b.label(class: ['cell-content']) do %>
                             <i class="status-icon <%= client.client_status.name.downcase if client.client_status %>"></i>
                             <%= client.client_status ? client.client_status.name : '--' %>

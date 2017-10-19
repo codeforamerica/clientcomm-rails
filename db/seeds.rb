@@ -6,23 +6,32 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')
-User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
-AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'password', password_confirmation: 'password') if Rails.env.development?
-
-FactoryGirl.create_list :user, 3
-User.all.each do |user|
-  FactoryGirl.create_list :client, 10, user: user
-end
-
-Client.all.each do |client|
-  FactoryGirl.create_list :message, 10, user: client.user, client: client
-end
-
+puts "Populating Feature Flags"
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'client_status').update!(enabled: true)
 
+puts "Populating Client Statuses"
 ClientStatus.find_or_create_by(name: 'Exited')
 ClientStatus.find_or_create_by(name: 'Training')
 ClientStatus.find_or_create_by(name: 'Active')
+
+puts "Creating Admin User"
+AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'password', password_confirmation: 'password') if Rails.env.development?
+
+puts "Creating Test Users"
+User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')
+User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
+
+puts "Creating Sample Users"
+FactoryGirl.create_list :user, 3
+
+puts "Creating Clients"
+User.all.each do |user|
+  FactoryGirl.create_list :client, 10, user: user
+end
+
+puts "Creating Messages"
+Client.all.each do |client|
+  FactoryGirl.create_list :message, 10, user: client.user, client: client
+end
