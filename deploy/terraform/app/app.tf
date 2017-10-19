@@ -26,6 +26,7 @@ variable "twilio_phone_number" {}
 variable "typeform_link" {}
 
 variable "enable_papertrail" {}
+variable "sentry_deploy_hook" {}
 
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
@@ -123,6 +124,15 @@ resource "heroku_addon" "database" {
 
   app  = "${heroku_app.clientcomm.name}"
   plan = "${var.heroku_database_plan}"
+}
+
+resource "heroku_addon" "sentry_deploy_hook" {
+  app = "${heroku_app.clientcomm.name}"
+  plan = "deployhooks:http"
+
+  config = {
+    url = "${var.sentry_deploy_hook}"
+  }
 }
 
 resource "heroku_addon" "logging" {

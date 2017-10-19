@@ -30,6 +30,7 @@ variable "typeform_link" {}
 variable "enable_papertrail" {
   default = true
 }
+variable "sentry_deploy_hook" {}
 
 # Email Vars
 variable "mailgun_api_key" {}
@@ -74,7 +75,8 @@ module "app" {
   unclaimed_password     = "${var.unclaimed_password}"
   unclaimed_phone_number = "${var.unclaimed_phone_number}"
 
-  enable_papertrail = "${var.enable_papertrail}"
+  enable_papertrail  = "${var.enable_papertrail}"
+  sentry_deploy_hook = "${var.sentry_deploy_hook}"
 
   environment = "${var.environment}"
 

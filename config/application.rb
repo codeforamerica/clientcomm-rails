@@ -34,6 +34,7 @@ module Clientcomm
     if ENV['SENTRY_ENDPOINT']
       Raven.configure do |config|
         config.dsn = ENV['SENTRY_ENDPOINT']
+        config.tags = { server_name: ENV['DEPLOYMENT'] }
       end
     end
 
