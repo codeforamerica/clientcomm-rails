@@ -5,6 +5,9 @@
     <div class="grid__item width-two-thirds shift-one-sixth">
       <div class="media-box--bleed media-box">
         <div class="media-box__content">
+          <% if FeatureFlag.enabled?("client_status") %>
+            <%= render "clients/client_status" %>
+          <% end %>
 
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">

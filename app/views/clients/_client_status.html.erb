@@ -1,0 +1,14 @@
+<div class="status-banner-container with-padding-large">
+  <% @clients_by_status.each do |key, hash| %>
+    <div class="notice">
+      <div class="toolbar-responsive">
+        <div class="toolbar__left-responsive">
+          <span class="text-with-button"><%= "You have #{pluralize(hash['clients'].count, "#{key.downcase} client")} due for follow up" %></span>
+        </div>
+        <div class="toolbar__right-responsive">
+          <%= link_to "Message them", new_mass_message_path(clients: hash['client_ids']), class: "button button--small with-no-padding" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

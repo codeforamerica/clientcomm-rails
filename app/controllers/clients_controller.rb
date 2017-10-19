@@ -1,8 +1,10 @@
 class ClientsController < ApplicationController
+  include ClientStatusHelper
   before_action :authenticate_user!
 
   def index
     @clients = SortClients.run(user: current_user)
+    @clients_by_status = client_statuses() if FeatureFlag.enabled?('client_status')
 
     analytics_track(
       label: 'clients_view',

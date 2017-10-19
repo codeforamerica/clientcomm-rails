@@ -6,9 +6,9 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.create!(full_name: 'Test Example', email: 'test@example.com', password: 'changeme')
-User.create!(full_name: 'Unclaimed Email', email: ENV['UNCLAIMED_EMAIL'], password: 'changeme')
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')
+User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
+AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'password', password_confirmation: 'password') if Rails.env.development?
 
 FactoryGirl.create_list :user, 3
 User.all.each do |user|

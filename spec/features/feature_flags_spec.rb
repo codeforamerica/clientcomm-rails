@@ -75,6 +75,7 @@ feature 'feature flags' do
 
       it 'shows status on the clients list' do
         visit clients_path
+        expect(page).to have_css '.status-banner-container'
         expect(page).to have_css 'th', text: 'Status'
         expect(page).to have_css 'td', text: status.name
       end
@@ -88,6 +89,7 @@ feature 'feature flags' do
 
       it 'shows status on the clients list' do
         visit clients_path
+        expect(page).not_to have_css '.status-banner-container'
         expect(page).to have_css 'th', text: 'Action'
         expect(page).to have_css 'td', text: 'Manage'
       end

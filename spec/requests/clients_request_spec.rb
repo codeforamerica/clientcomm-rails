@@ -175,7 +175,7 @@ describe 'Clients requests', type: :request do
       end
     end
 
-    describe 'get#index' do
+    describe 'GET#index' do
       let!(:another_client) { create :client }
 
       before do
@@ -205,6 +205,71 @@ describe 'Clients requests', type: :request do
           subject
 
           expect(response.body).to_not include("#{archived_client.first_name} #{archived_client.last_name}")
+        end
+      end
+
+      context 'client status enabled' do
+        before do
+          FeatureFlag.create!(flag: 'client_status', enabled: true)
+          ClientStatus.create!(name: 'Active')
+          ClientStatus.create!(name: 'Training')
+          ClientStatus.create!(name: 'Exited')
+
+          create :client, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: active_contacted_at
+          create :client, user: user, client_status: ClientStatus.find_by_name('Training'), last_contacted_at: training_contacted_at
+          create :client, user: user, client_status: ClientStatus.find_by_name('Exited'), last_contacted_at: exited_contacted_at
+        end
+
+        subject { get clients_path }
+
+        context 'no clients require followups' do
+          let(:training_contacted_at) { Time.now - 1.day }
+          let(:active_contacted_at) { Time.now - 1.day }
+          let(:exited_contacted_at) { Time.now - 1.day }
+
+          it "no follow up banners are rendered" do
+            subject
+
+            expect(response.body).to_not include("due for follow up")
+          end
+        end
+
+        context 'clients with active statuses require follow ups' do
+          let(:active_contacted_at) { Time.now - 26.days }
+          let(:training_contacted_at) { nil }
+          let(:exited_contacted_at) { nil }
+
+          it "shows active followup banner" do
+            subject
+
+            expect(response.body).to include ("You have 1 active client due for follow up")
+          end
+        end
+
+        context 'clients with training statuses require follow ups' do
+          let(:training_contacted_at) { Time.now - 26.days }
+          let(:active_contacted_at) { nil }
+          let(:exited_contacted_at) { nil }
+
+          it "shows training followup banner" do
+
+            subject
+
+            expect(response.body).to include ("You have 1 training client due for follow up")
+          end
+
+        end
+
+        context 'clients with exited status requires follow up' do
+          let(:exited_contacted_at) { Time.now - 86.days }
+          let(:active_contacted_at) { nil }
+          let(:training_contacted_at) { nil }
+          it "shows exited followup banner" do
+
+            subject
+
+            expect(response.body).to include ("You have 1 exited client due for follow up")
+          end
         end
       end
 
