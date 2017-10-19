@@ -4,9 +4,9 @@ feature 'sending mass messages', active_job: true do
   let(:message_body) {'You have an appointment tomorrow at 10am'}
   let(:long_message_body) {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.'}
   let(:user) { create :user }
-  let!(:client_1) { build :client }
-  let!(:client_2) { build :client }
-  let!(:client_3) { build :client }
+  let!(:client_1) { build :client, first_name: 'a', last_name: 'a' }
+  let!(:client_2) { build :client, first_name: 'b', last_name: 'b' }
+  let!(:client_3) { build :client, first_name: 'c', last_name: 'c' }
   let!(:message) { build :message }
 
   before do
@@ -90,6 +90,25 @@ feature 'sending mass messages', active_job: true do
 
       find('tr', text: client_1.full_name).click
       expect(find('#select_all')['checked']).to eq(false)
+    end
+
+    step 'user can sort clients' do
+      find('th', text: 'Name').click
+      expect(page).to have_content /#{client_1.full_name}.*#{client_2.full_name}.*#{client_3.full_name}/
+      find('th', text: 'Name').click
+      expect(page).to have_content /#{client_3.full_name}.*#{client_2.full_name}.*#{client_1.full_name}/
+    end
+
+    step 'user can search for clients' do
+      fill_in 'Search clients by name', with: 'a'
+      expect(page).to have_content client_1.full_name
+      expect(page).to_not have_content client_2.full_name
+      expect(page).to_not have_content client_3.full_name
+
+      click_on 'clear_search'
+      expect(page).to have_content client_1.full_name
+      expect(page).to have_content client_2.full_name
+      expect(page).to have_content client_3.full_name
     end
 
     step 'then user sends message' do

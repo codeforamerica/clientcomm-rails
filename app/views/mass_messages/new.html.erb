@@ -11,7 +11,7 @@
           <%= form_for @mass_message, builder: GcfFormBuilder do |f| %>
             <%= f.gcf_textarea :message, "Your message" %>
 
-            <div id="client-select-list" class="form-group <%= 'form-group--error' if @mass_message.errors[:clients].any? %>">
+            <div id="client-list" class="form-group <%= 'form-group--error' if @mass_message.errors[:clients].any? %>">
               <p class="form-question">Select recipients</p>
 
               <% if @mass_message.errors[:clients].any? %>
@@ -21,6 +21,14 @@
                   </div>
               <% end %>
 
+              <div class="input-group client-search-input">
+                <div class="inner-addon left-addon">
+                  <input type="text" class="searchbar__input search" placeholder="Search clients by name"/>
+                  <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </div>
+                <span class="input-group-btn"><button id="clear_search" class="btn btn-default" type="button"><i class="icon-close"></i></button></span>
+              </div>
+
               <input type="checkbox" id="select_all" />
               <label for="select_all">Select all</label>
 
@@ -29,47 +37,62 @@
                   <tr>
                     <th class="check-column">
                     </th>
-                    <th>
+                    <th class="sort" data-sort="lastname">
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
                       Name
                     </th>
-                    <th>
+                    <th class="sort desc" data-sort="timestamp">
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
                       Last contact
                     </th>
                     <% if FeatureFlag.enabled? 'client_status' %>
-                      <th class="hidden-xs">Status</th>
+                      <th class="sort hidden-xs" data-sort="client-status">
+                          <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                          <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                          <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                          Status
+                      </th>
                     <% end %>
                   </tr>
                 </thead>
                 <tbody class="list">
-                <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
-                    <tr id="<%= dom_id(b.object) %>">
+                  <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
+                    <% client = b.object %>
+                    <tr id="<%= dom_id(client) %>">
                       <td>
                         <%= b.label(class: ['cell-content']) do %>
-                            <%= b.check_box %>
+                          <%= b.check_box %>
                         <% end %>
                       </td>
-                      <td>
+                      <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
                         <%= b.label(class: ['cell-content']) do %>
-                            <%= b.object.full_name %>
+                          <%= client.full_name %>
                         <% end %>
                       </td>
-                      <td class="timestamp">
+                      <td data-timestamp="<%= client.timestamp %>" class="timestamp">
                         <%= b.label(class: ['cell-content']) do %>
-                            <%= b.object.last_contacted_at ? time_ago_in_words(b.object.last_contacted_at) : '--' %>
+                          <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
                         <% end %>
                       </td>
                       <% if FeatureFlag.enabled? 'client_status' %>
-                          <td class="hidden-xs">
-                            <%= b.label(class: ['cell-content']) do %>
-                                <i class="status-icon <%= b.object.client_status.name.downcase if b.object.client_status %>"></i>
-                                <%= b.object.client_status ? b.object.client_status.name : '--' %>
-                            <% end %>
-                          </td>
+                        <td class="hidden-xs" data-client-status="<%= client.client_status ? client.client_status.name : '--' %>">
+                          <%= b.label(class: ['cell-content']) do %>
+                            <i class="status-icon <%= client.client_status.name.downcase if client.client_status %>"></i>
+                            <%= client.client_status ? client.client_status.name : '--' %>
+                          <% end %>
+                        </td>
                       <% end %>
                     </tr>
-                <% end %>
+                  <% end %>
                 </tbody>
               </table>
+              <div id="no-search-results" class="notice" role="alert" style="display: none;">
+                Your search didn't return any results. Clear your search to view all clients.
+              </div>
             </div>
 
             <div class="form-card__footer">
