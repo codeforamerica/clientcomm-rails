@@ -3,7 +3,7 @@
     <div class="notice">
       <div class="toolbar-responsive">
         <div class="toolbar__left-responsive">
-          <span class="text-with-button"><%= "You have #{pluralize(ids.count, "#{status.downcase} client")} due for follow up" %></span>
+          <span class="text-with-button">You have <%= ids.count %> <strong><%= status.downcase %></strong> <%= 'client'.pluralize(ids.count) %> due for follow up.</span>
         </div>
         <div class="toolbar__right-responsive">
           <%= link_to "Message them", new_mass_message_path(clients: ids), class: "button button--small with-no-padding" %>
