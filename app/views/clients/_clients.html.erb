@@ -54,7 +54,7 @@
             <% if FeatureFlag.enabled? 'client_status' %>
               <td class="hidden-xs client-status" data-client-status="<%= client.client_status ? client.client_status.name : '--' %>">
                 <a class="cell-content"
-                   href="<%= client_messages_path(client.id) %>">
+                   href="<%= edit_client_path(client.id) %>">
                   <i class="hidden-xs status-icon <%= client.client_status.name.downcase if client.client_status %>"></i>
                   <%= client.client_status ? client.client_status.name : '--' %>
                 </a>
