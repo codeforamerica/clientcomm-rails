@@ -3,7 +3,7 @@ ActiveAdmin.register Client do
 
   config.sort_order = 'last_name_asc'
 
-  permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active
+  permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active, :client_status_id
   index do
     selectable_column
     column :full_name, sortable: :last_name
@@ -12,11 +12,12 @@ ActiveAdmin.register Client do
     end
     column :phone_number
     column :active
+    column :client_status
     column :notes
     actions
   end
 
-  action_item only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
+  action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
 
   actions :all, :except => [:destroy]
 
@@ -34,6 +35,7 @@ ActiveAdmin.register Client do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
+      f.input :client_status
       f.input :notes
     end
 
