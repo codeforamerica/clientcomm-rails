@@ -44,9 +44,9 @@ feature "User creates client" do
     end
 
     scenario 'client status is selected' do
-      ClientStatus.create!(name: 'Active')
-      ClientStatus.create!(name: 'Training')
-      ClientStatus.create!(name: 'Exited')
+      create :client_status, name: 'Active'
+      create :client_status, name: 'Training'
+      create :client_status, name: 'Exited'
 
       myclient = build :client, client_status: ClientStatus.find_by_name('Exited')
 

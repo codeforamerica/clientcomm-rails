@@ -1,24 +1,17 @@
 module ClientStatusHelper
-  def client_statuses
-    @output = {}
+  def client_statuses(user:)
+    output = {}
 
-    days_lookup = { 'Active' => 30, 'Training' => 30, 'Exited' => 90 }
-    notice_days = 5
+    ClientStatus.all.map do |status|
+      followup_date = Time.now - status.followup_date.days
+      found_clients = user.clients
+                        .where(active: true)
+                        .where(client_status: status)
+                        .where('last_contacted_at < ?', followup_date)
 
-    ClientStatus.all.each do |status|
-      if (due_date = days_lookup.fetch(status.name, nil))
-        followup_date = Time.now - (due_date - notice_days).days
-        found_clients = Client.where(["client_status_id = :id and last_contacted_at < :followup_date", {id: status.id, followup_date: followup_date}])
-
-        if found_clients.count > 0
-          @output[status.name] = {
-            clients: found_clients,
-            client_ids: found_clients.each { |c| c.id }
-          }
-        end
-      end
+      output[status.name] = found_clients.pluck(:id) if found_clients.present?
     end
 
-    @output
+    output
   end
 end

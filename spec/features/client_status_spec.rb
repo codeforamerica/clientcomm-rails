@@ -3,9 +3,7 @@ require 'rails_helper'
 feature "Client status banner" do
   before do
     FeatureFlag.create!(flag: 'client_status', enabled: true)
-    ClientStatus.create!(name: 'Active')
-    ClientStatus.create!(name: 'Training')
-    ClientStatus.create!(name: 'Exited')
+    ClientStatus.create!(name: 'Active', followup_date: 25)
 
     user = create :user
     login_as(user, :scope => :user)
@@ -15,7 +13,6 @@ feature "Client status banner" do
   end
 
   scenario "user sees banner and messages clients" do
-
     step "view banner on clients page" do
       visit clients_path
 
