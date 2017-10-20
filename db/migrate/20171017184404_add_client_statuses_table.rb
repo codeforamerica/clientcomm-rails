@@ -13,3 +13,5 @@ class AddClientStatusesTable < ActiveRecord::Migration[5.1]
     FeatureFlag.create!(flag: 'client_status', enabled: false)
   end
 end
+
+class ClientStatus < ApplicationRecord; end
