@@ -1,7 +1,7 @@
 ActiveAdmin.register User do
   menu priority: 3
 
-  permit_params :full_name, :email, :phone_number, :password, :password_confirmation, :email_subscribe
+  permit_params :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails
   index do
     selectable_column
     column :full_name
@@ -54,7 +54,7 @@ ActiveAdmin.register User do
         row :email
         row :phone_number
         row :active
-        row :email_subscribe
+        row :message_notification_emails
         row :current_sign_in_at
         row :current_sign_in_ip
         row :updated_at
@@ -73,7 +73,7 @@ ActiveAdmin.register User do
       f.input :full_name
       f.input :email
       f.input :phone_number, label: 'Desk phone number'
-      f.input :email_subscribe, label: 'Subscribed to emails', as: :radio unless f.object.new_record?
+      f.input :message_notification_emails, as: :radio unless f.object.new_record?
 
       if f.object.new_record?
         f.input :password

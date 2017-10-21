@@ -123,7 +123,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
     context 'a user has opted out of emails' do
       before do
-        client.user.update!(email_subscribe: false)
+        client.user.update!(message_notification_emails: false)
       end
 
       it 'should not send an email' do
