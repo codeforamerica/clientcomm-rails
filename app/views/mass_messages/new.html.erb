@@ -62,7 +62,7 @@
                 <tbody class="list">
                   <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
                     <% client = b.object %>
-                    <tr id="<%= dom_id(client) %>">
+                    <tr id="<%= dom_id(client) %>" class="<%= 'row--warning' if @mass_message.clients.include? b.value %>">
                       <td>
                         <%= b.label(class: ['cell-content']) do %>
                           <%= b.check_box %>
