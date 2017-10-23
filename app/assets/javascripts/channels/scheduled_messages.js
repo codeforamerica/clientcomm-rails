@@ -14,7 +14,7 @@ var ScheduledMessages = {
 };
 
 $(document).ready(function() {
-  const clientId = $('#message-list').data('client-id');
+  var clientId = $('#message-list').data('client-id');
 
   // only subscribe if we're on a message page
   if (!clientId) {

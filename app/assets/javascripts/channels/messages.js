@@ -41,7 +41,7 @@ var Messages = {
 
 $(document).ready(function() {
   Messages.init();
-  const clientId = Messages.msgs.data('client-id');
+  var clientId = Messages.msgs.data('client-id');
   Messages.messagesToBottom();
 
   // only subscribe if we're on a message page

@@ -2,7 +2,7 @@
 //= require_self
 //= require_tree .
 
-const Notifications = {
+var Notifications = {
   init: function(client_id_selector) {
     this.clientId = $(client_id_selector).data('client-id');
     this.userId = $(document.body).data('user-id');
