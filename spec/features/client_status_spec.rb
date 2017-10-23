@@ -3,7 +3,7 @@ require 'rails_helper'
 feature "Client status banner" do
   before do
     FeatureFlag.create!(flag: 'client_status', enabled: true)
-    ClientStatus.create!(name: 'Active', followup_date: 25)
+    ClientStatus.create!(name: 'Active', followup_date: 30)
 
     user = create :user
     login_as(user, :scope => :user)

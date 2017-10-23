@@ -211,9 +211,7 @@ describe 'Clients requests', type: :request do
       context 'client status enabled' do
         before do
           FeatureFlag.create!(flag: 'client_status', enabled: true)
-          ClientStatus.create!(name: 'Active', followup_date: 25)
-          ClientStatus.create!(name: 'Training', followup_date: 25)
-          ClientStatus.create!(name: 'Exited', followup_date: 85)
+          ClientStatus.create!(name: 'Active', followup_date: 30)
 
           create :client, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: active_contacted_at
           create :client, user: user, client_status: ClientStatus.find_by_name('Training'), last_contacted_at: training_contacted_at

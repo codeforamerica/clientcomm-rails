@@ -9,7 +9,7 @@
         <%= f.gcf_input_field :last_name, "Last name", classes: ['form-width--name'] %>
 
         <% if FeatureFlag.enabled? 'client_status' %>
-          <%= f.gcf_radio_set :client_status_id, "Client status", ClientStatus.all.map { |status| { value: status.id, label: status.name } } %>
+          <%= f.gcf_radio_set :client_status_id, "Client status", ClientStatus.all.map { |status| { value: status.id, label: status.name, notes: status.followup_date } } %>
         <% end %>
 
         <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'] %>

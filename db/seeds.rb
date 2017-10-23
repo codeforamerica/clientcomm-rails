@@ -12,9 +12,9 @@ FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'client_status').update!(enabled: true)
 
 puts "Populating Client Statuses"
-ClientStatus.find_or_create_by(name: 'Exited')
-ClientStatus.find_or_create_by(name: 'Training')
-ClientStatus.find_or_create_by(name: 'Active')
+ClientStatus.find_or_create_by!(name: 'Exited', followup_date: 90)
+ClientStatus.find_or_create_by!(name: 'Training', followup_date: 30)
+ClientStatus.find_or_create_by!(name: 'Active', followup_date: 30)
 
 puts "Creating Admin User"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?

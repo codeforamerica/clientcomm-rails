@@ -4,10 +4,12 @@ module ClientStatusHelper
 
     ClientStatus.all.map do |status|
       followup_date = Time.now - status.followup_date.days
+      warning_period = 5.days
+
       found_clients = user.clients
                         .where(active: true)
                         .where(client_status: status)
-                        .where('last_contacted_at < ?', followup_date)
+                        .where('last_contacted_at < ?', followup_date + warning_period)
 
       output[status.name] = found_clients.pluck(:id) if found_clients.present?
     end

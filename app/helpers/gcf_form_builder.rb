@@ -171,16 +171,19 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <radiogroup class="input-group--#{layout}#{variant_class}">
     HTML
     collection.map do |item|
-      item = { value: item, label: item } unless item.is_a?(Hash)
-
       input_html = item.fetch(:input_html, {})
-
       radio_html << <<-HTML.html_safe
         <label class="radio-button">
           #{radio_button(method, item[:value], input_html)}
           #{item[:label]}
         </label>
       HTML
+
+      if item[:notes]
+        radio_html << <<-HTML.html_safe
+        <p class="text--help with-padding-med">You'll be prompted to contact this client <strong>every #{item[:notes]} days</strong></p>
+        HTML
+      end
     end
     radio_html << <<-HTML
       </radiogroup>

@@ -4,9 +4,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
     let(:user) { create :user }
 
     before do
-      ClientStatus.create!(name: 'Active', followup_date: 25)
-      ClientStatus.create!(name: 'Training', followup_date: 25)
-      ClientStatus.create!(name: 'Exited', followup_date: 85)
+      ClientStatus.create!(name: 'Exited', followup_date: 90)
 
       @client_1 = create :client, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: active_contacted_at
       @client_2 = create :client, user: user, client_status: ClientStatus.find_by_name('Training'), last_contacted_at: training_contacted_at

@@ -259,29 +259,7 @@ describe GcfFormBuilder, type: :view do
   end
 
   describe "#gcf_radio_set" do
-    it "render a set of radio buttons" do
-      user = create :user
-      client = create :client, :user => user
-      form_builder = GcfFormBuilder.new(:client, client, template, {})
-
-      output = form_builder.gcf_radio_set(:last_name, "If your last name were a single digit, what would it be?", 1..2)
-      expect(output).to be_html_safe
-      expect(output).to match_html <<~HTML
-        <fieldset class="form-group">
-          <p class="form-question">If your last name were a single digit, what would it be?</p>
-          <radiogroup class="input-group--block">
-            <label class="radio-button">
-              <input type="radio" value="1" name="client[last_name]" id="client_last_name_1" /> 1
-            </label>
-            <label class="radio-button">
-              <input type="radio" value="2" name="client[last_name]" id="client_last_name_2" /> 2
-            </label>
-          </radiogroup>
-        </fieldset>
-      HTML
-    end
-
-    it "renders a set of radio buttons with labels that differ from values" do
+    it "renders a set of radio buttons" do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
