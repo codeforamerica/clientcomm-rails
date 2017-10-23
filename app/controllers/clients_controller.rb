@@ -3,7 +3,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = SortClients.run(user: current_user)
+    @clients = SortClients.clients_list(user: current_user)
     @clients_by_status = client_statuses(user: current_user) if FeatureFlag.enabled?('client_status')
 
     analytics_track(

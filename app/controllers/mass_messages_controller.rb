@@ -3,7 +3,7 @@ class MassMessagesController < ApplicationController
 
   def new
     @mass_message = MassMessage.new(params.permit(clients: []))
-    @clients = SortClients.run(user: current_user)
+    @clients = SortClients.mass_messages_list(user: current_user, selected_clients: @mass_message.clients)
 
     analytics_track(
       label: 'mass_message_compose_view',
@@ -19,7 +19,7 @@ class MassMessagesController < ApplicationController
 
     if mass_message.invalid?
       @mass_message = mass_message
-      @clients = SortClients.run(user: current_user)
+      @clients = SortClients.mass_messages_list(user: current_user)
 
       render :new
       return
