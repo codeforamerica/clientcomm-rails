@@ -48,6 +48,16 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#create_from_twilio' do
+
+    before do
+      @unclaimed_email = ENV['UNCLAIMED_EMAIL']
+      ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
+    end
+
+    after do
+      ENV['UNCLAIMED_EMAIL'] = @unclaimed_email
+    end
+
     context 'client does not exist' do
       let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL']) }
 
