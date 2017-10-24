@@ -83,13 +83,9 @@ $(document).ready(function(){
 });
 
 function characterCount(element) {
+  if(element.length === 0) { return }
 
-  var initialLength;
-  if (element.length > 0) {
-    initialLength = $(element).val().length
-  } else {
-    initialLength = 0;
-  }
+  var initialLength = $(element).val().length
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
@@ -102,10 +98,20 @@ function characterCount(element) {
     element.before(counter);
   }
 
-  element.on('keydown keyup focus', function(){
-    var length = $(this).val().length;
-    counter.html(length);
+  var form = element.prop('form')
+
+  $(form).on('ajax:complete', function () {
+    var length = $(element).val().length;
+    counter.html(length)
     counter.toggleClass('text--error', length > 160);
+  })
+
+  element.on('keydown keyup focus paste', function(e){
+    setTimeout(function(){
+      var length = $(element).val().length;
+      counter.html(length);
+      counter.toggleClass('text--error', length > 160);
+    });
   });
 }
 

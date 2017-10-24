@@ -25,21 +25,22 @@ feature 'sending messages', active_job: true do
 
     step 'when user sends a message' do
 
-      expect(page.find('.sendbar .character-count')).to have_content(0)
+      expect(page.find('.sendbar .character-count')).to have_content(/^0$/)
 
       fill_in 'Send a text message', with: message_body
 
-      expect(page.find('.sendbar .character-count')).to have_content(40)
+      expect(page.find('.sendbar .character-count')).to have_content(/^40$/)
 
       fill_in 'Send a text message', with: long_message_body
 
-      expect(page.find('.sendbar .character-count')).to have_content(165)
+      expect(page.find('.sendbar .character-count')).to have_content(/^165$/)
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
 
       fill_in 'Send a text message', with: message_body
 
       perform_enqueued_jobs do
         click_on 'send_message'
+        expect(page.find('.sendbar .character-count')).to have_content(/^0$/)
         expect(page).to have_css '.message--outbound div', text: message_body
       end
     end
@@ -94,7 +95,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Your message text', with: message_body
 
-      future_date = Time.now + 7.days
+      future_date = (Date.today + 1.month).beginning_of_month
 
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
