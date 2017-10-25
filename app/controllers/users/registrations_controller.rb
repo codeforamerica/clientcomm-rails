@@ -5,6 +5,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     redirect_to new_user_session_path
   end
 
+  def create
+    flash[:notice] = 'Contact an administrator for an account'
+    redirect_to new_user_session_path
+  end
+
   def update
     @user = User.find(current_user.id)
     updated = false
