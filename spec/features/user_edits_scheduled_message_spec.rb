@@ -5,6 +5,7 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:truncated_message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at ...'}
   let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
   let(:userone) { create :user }
+  let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }
   let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
   let(:new_future_date) { future_date.change(min: 0, day: 4) }
@@ -15,8 +16,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      clientone_id = Client.find_by(phone_number: clientone.phone_number).id
-      visit client_messages_path(client_id: clientone_id)
+      visit client_messages_path(client_id: clientone.id)
       expect(page).not_to have_content '1 message scheduled'
     end
 

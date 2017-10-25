@@ -50,6 +50,7 @@ ActiveAdmin.register Client do
     Client.find(ids).each do |client|
       previous_user_id = client.user.id
       client.update(user: user)
+      client.messages.scheduled.update_all(user_id: user.id)
 
       if inputs[:user] != previous_user_id
         transferred_clients << { client: client, previous_user: User.find(previous_user_id) }
@@ -75,6 +76,7 @@ ActiveAdmin.register Client do
       previous_user_id = resource.user_id
       super do |success, failure|
         success.html do
+          resource.messages.scheduled.update_all(user_id: params[:client][:user_id])
           if params[:client][:user_id] != previous_user_id
             NotificationMailer.client_transfer_notification(
               current_user: resource.user,
