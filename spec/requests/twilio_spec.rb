@@ -273,6 +273,19 @@ describe 'Twilio controller', type: :request, active_job: true do
 
     context 'defaults to reading a message' do
       it_behaves_like 'valid xml response'
+      it 'sends the correct analytics event' do
+        twilio_post_voice
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => 'no client',
+              'client_identified' => false,
+              'call_routed' => false,
+              'has_desk_phone' => false
+            }
+          }
+        )
+      end
     end
 
     context 'client does not exist' do
@@ -293,6 +306,16 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => 'no client',
+              'client_identified' => false,
+              'call_routed' => true,
+              'has_desk_phone' => false
+            }
+          }
+        )
       end
     end
 
@@ -316,14 +339,37 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
+
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => true,
+              'call_routed' => true,
+              'has_desk_phone' => false
+            }
+          }
+        )
       end
 
       context 'admin phone number not set' do
         let(:unclaimed_number) { nil }
 
         it_behaves_like 'valid xml response'
+        it 'sends the correct analytics event' do
+          twilio_post_voice
+          expect_analytics_events(
+            {
+              'phonecall_receive' => {
+                'client_id' => client.id,
+                'client_identified' => true,
+                'call_routed' => false,
+                'has_desk_phone' => false
+              }
+            }
+          )
+        end
       end
-
     end
 
     context 'client is in a user case load' do
@@ -335,8 +381,37 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include '<Number>+19999999999</Number>'
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => true,
+              'call_routed' => true,
+              'has_desk_phone' => true
+            }
+          }
+        )
       end
     end
 
+    context 'the client is in the unclaimed caseload' do
+      let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
+      let(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
+      let!(:client) { create :client, user: unclaimed_user, phone_number: '+12425551212' }
+
+      it 'sends the correct analytics event' do
+        twilio_post_voice
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => false,
+              'call_routed' => true,
+              'has_desk_phone' => true
+            }
+          }
+        )
+      end
+    end
   end
 end

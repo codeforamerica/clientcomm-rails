@@ -68,14 +68,43 @@ class TwilioController < ApplicationController
 
   def incoming_voice
     voice_client = VoiceService.new
-    user = Client.find_by(phone_number: params['From']).try(:user)
+    client = Client.find_by(phone_number: params['From'])
+    client_id = client.try(:id) || 'no client'
+    user = client.try(:user)
 
     if user.try(:phone_number).present?
       render :xml => voice_client.dial_number(phone_number: user.phone_number)
+      analytics_track(
+        label: 'phonecall_receive',
+        data: {
+          client_id: client_id,
+          client_identified: user.present? && (user.email != ENV['UNCLAIMED_EMAIL']),
+          call_routed: true,
+          has_desk_phone: true
+        }
+      )
     elsif (unclaimed_number = User.find_by_email(ENV['UNCLAIMED_EMAIL']).try(:phone_number))
       render :xml => voice_client.dial_number(phone_number: unclaimed_number)
+      analytics_track(
+        label: 'phonecall_receive',
+        data: {
+          client_id: client_id,
+          client_identified: user.present?,
+          call_routed: true,
+          has_desk_phone: false
+        }
+      )
     else
       render :xml => voice_client.generate_text_response(message: t('voice_response'))
+      analytics_track(
+        label: 'phonecall_receive',
+        data: {
+          client_id: client_id,
+          client_identified: user.present?,
+          call_routed: false,
+          has_desk_phone: false
+        }
+      )
     end
   end
 
