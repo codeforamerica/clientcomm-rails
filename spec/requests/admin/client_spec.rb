@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'batch import', type: :request do
+describe 'Clients', type: :request, active_job: true do
   let(:user) { create :user }
   let(:user_2) { create :user }
   let(:clients) { create_list :client, 5, user: user }
@@ -39,17 +39,44 @@ describe 'batch import', type: :request do
       create_list :message, 5, client: clients.first, user: user, send_at: Time.now + 1.day
     end
 
-    it 'transfers scheduled messages' do
-      client = clients.first
+    context 'transferring a client' do
+      it 'transfers scheduled messages' do
+        client = clients.first
 
-      put admin_client_path(client), params: {
-        client: {
-          user_id: user_2.id
-        }
-      }
+        perform_enqueued_jobs do
+          put admin_client_path(client), params: {
+            client: {
+              user_id: user_2.id
+            }
+          }
+        end
 
-      expect(client.reload.user).to eq(user_2)
-      expect(user_2.messages.scheduled).to include(*client.messages.scheduled)
+        expect(client.reload.user).to eq(user_2)
+        expect(user_2.messages.scheduled).to include(*client.messages.scheduled)
+
+        expect(ActionMailer::Base.deliveries).to_not be_empty
+      end
+    end
+
+    context 'unarchiving a client' do
+      before do
+        clients.first.update(active: false)
+      end
+
+      it 'does not send a transfer email' do
+        client = clients.first
+
+        perform_enqueued_jobs do
+          put admin_client_path(client), params: {
+            client: {
+              user_id: client.user.id,
+              active: true
+            }
+          }
+        end
+
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
     end
   end
 end

@@ -77,7 +77,7 @@ ActiveAdmin.register Client do
       super do |success, failure|
         success.html do
           resource.messages.scheduled.update_all(user_id: params[:client][:user_id])
-          if params[:client][:user_id] != previous_user_id
+          if params[:client][:user_id] != previous_user_id.to_s
             NotificationMailer.client_transfer_notification(
               current_user: resource.user,
               previous_user: User.find(previous_user_id),
