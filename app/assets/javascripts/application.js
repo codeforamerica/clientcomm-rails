@@ -17,8 +17,11 @@
 //= require autosize
 //= require lib/mixpanel.min
 //= require lib/list.min
-//= require client_search
+//= require cable
+//= require clients
+//= require errors
+//= require mass_messages
 //= require messages
+//= require scheduled_messages
 //= require templates
-//= require_tree .
 

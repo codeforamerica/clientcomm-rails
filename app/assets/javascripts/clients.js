@@ -1,3 +1,6 @@
+//= require client_search
+//= require clients/archives
+
 $(document).ready(function() {
 
   $("#transfer-button").click(function() {
