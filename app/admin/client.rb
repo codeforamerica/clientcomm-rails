@@ -17,8 +17,6 @@ ActiveAdmin.register Client do
     actions
   end
 
-  action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
-
   actions :all, :except => [:destroy]
 
   filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }

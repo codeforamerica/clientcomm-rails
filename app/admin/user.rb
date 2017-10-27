@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  menu priority: 3
+  menu priority: 3,  label: 'Case Managers'
 
   permit_params :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails
   index do
@@ -9,6 +9,7 @@ ActiveAdmin.register User do
     column :phone_number
     column :active
     column :created_at
+    column :current_sign_in_at
 
     actions defaults: true do |user|
       user.active ?
