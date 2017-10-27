@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :template do
     user { create :user }
     sequence(:title) { Faker::Lorem.sentence(4, false, 0) }

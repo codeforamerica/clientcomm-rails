@@ -24,7 +24,10 @@ gem 'device_detector'
 gem 'twilio-ruby'
 gem 'intercom-rails'
 gem 'devise'
-gem 'aws-sdk'
+
+# Dependency for Paperclip. Pinned to 2 due to changes in gem architecture on versions 3+.
+gem 'aws-sdk', '~> 2'
+
 gem 'autosize'
 
 gem 'timeliness'
@@ -58,7 +61,7 @@ group :development, :test do
   gem 'capybara'
   gem 'database_cleaner'
   gem 'dotenv-rails'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'faraday'
   gem 'poltergeist'
   gem 'pry-rails'

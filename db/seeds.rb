@@ -24,14 +24,14 @@ User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Examp
 User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
 
 puts "Creating Sample Users"
-FactoryGirl.create_list :user, 3
+FactoryBot.create_list :user, 3
 
 puts "Creating Clients"
 User.all.each do |user|
-  FactoryGirl.create_list :client, 10, user: user
+  FactoryBot.create_list :client, 10, user: user
 end
 
 puts "Creating Messages"
 Client.all.each do |client|
-  FactoryGirl.create_list :message, 10, user: client.user, client: client
+  FactoryBot.create_list :message, 10, user: client.user, client: client
 end

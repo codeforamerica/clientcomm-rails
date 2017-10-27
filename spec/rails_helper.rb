@@ -49,8 +49,8 @@ RSpec.configure do |config|
   config.include TwilioHelper
   config.include FeatureHelper, type: :feature
   config.include RequestHelper, type: :request
-  # FactoryGirl methods
-  config.include FactoryGirl::Syntax::Methods
+  # FactoryBot methods
+  config.include FactoryBot::Syntax::Methods
   # Devise setup
   config.include Warden::Test::Helpers
   config.include Devise::Test::ControllerHelpers, type: :controller
