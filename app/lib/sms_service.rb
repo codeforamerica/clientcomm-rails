@@ -17,6 +17,7 @@ class SMSService
     # send the message via Twilio
     response = send_twilio_message(
       to: message.client.phone_number,
+      from: message.number_from,
       body: message.body,
       callback_url: callback_url
     )
@@ -57,9 +58,9 @@ class SMSService
 
   private
 
-  def send_twilio_message(to:, body:, callback_url:)
+  def send_twilio_message(to:, from:, body:, callback_url:)
     @client.api.account.messages.create(
-        from: ENV['TWILIO_PHONE_NUMBER'],
+        from: from,
         to: to,
         body: body,
         status_callback: callback_url

@@ -2,9 +2,7 @@ require 'rails_helper'
 require 'cgi'
 
 describe SMSService do
-  let(:account) { double('account') }
-  let(:client) { instance_double(Twilio::REST::Client, api: double('api', account: account)) }
-  let(:message) { double('message') }
+  let(:twilio_client) { FakeTwilioClient.new sid, token }
   let(:message_sid) { Faker::Crypto.sha1 }
   let(:sid) { 'some_sid' }
   let(:token) { 'some_token' }
@@ -18,7 +16,7 @@ describe SMSService do
     ENV['TWILIO_ACCOUNT_SID'] = sid
     ENV['TWILIO_AUTH_TOKEN'] = token
 
-    allow(Twilio::REST::Client).to receive(:new).with(sid, token).and_return(client)
+    allow(Twilio::REST::Client).to receive(:new).with(sid, token).and_return(twilio_client)
   end
 
   after do
@@ -31,27 +29,19 @@ describe SMSService do
 
     let(:callback_url) { 'whocares.com' }
     let(:expected_number) { '+11234567890' }
-    let(:factory_message) { create :message, twilio_sid: nil, twilio_status: nil }
+    let(:factory_message) { create :message, twilio_sid: nil, twilio_status: nil, number_from: expected_number }
     let(:message_status) { ["accepted", "queued", "sending", "sent", "receiving", "received", "delivered"].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
 
     before do
-      @twilio_number = ENV['TWILIO_PHONE_NUMBER']
-      ENV['TWILIO_PHONE_NUMBER'] = expected_number
-
       allow(MessageBroadcastJob).to receive(:perform_now)
-      allow(account).to receive(:messages).and_return(message)
-      allow(message).to receive(:create).and_return(response)
-    end
-
-    after do
-      ENV['TWILIO_PHONE_NUMBER'] = @twilio_number
+      allow(twilio_client).to receive(:create).and_return(response)
     end
 
     it 'updates the message with twilio info' do
       subject
 
-      expect(message).to have_received(:create).with(
+      expect(twilio_client).to have_received(:create).with(
         {
           from:           expected_number,
           to:             factory_message.client.phone_number,
@@ -84,7 +74,8 @@ describe SMSService do
     subject { sms_service.redact_message(message: message) }
 
     before do
-      allow(account).to receive(:messages).with(message_sid).and_return(double('message', fetch: message))
+      allow(twilio_client).to receive(:messages).with(message_sid).and_return(twilio_client)
+      allow(twilio_client).to receive(:fetch).and_return(message)
       allow(message).to receive(:update)
       allow(message).to receive(:num_media).and_return('0')
       allow(media_one).to receive(:delete)
@@ -135,20 +126,13 @@ describe SMSService do
   end
 
   describe '#number_lookup' do
-    let(:lookups) { double('lookups') }
-    let(:v1) { double('v1') }
     let(:phone_numbers) { double('phone_numbers') }
     let(:phone_number) { '12345678910' }
-
-    before do
-      allow(client).to receive(:lookups).and_return(lookups)
-      allow(lookups).to receive(:v1).and_return(v1)
-    end
 
     subject { sms_service.number_lookup(phone_number: phone_number) }
 
     it 'looks up the phone number' do
-      expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
+      expect(twilio_client).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
       expect(phone_numbers).to receive(:fetch)
         .with(no_args)
         .and_return(double('phone_number', phone_number: 'some phone number'))
@@ -159,7 +143,7 @@ describe SMSService do
     context 'the number does not exist' do
       let(:error) { Twilio::REST::RestError.new('Unable to fetch record', 20404, 404) }
       it 'throws a number not found error' do
-        expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
+        expect(twilio_client).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
         expect(phone_numbers).to receive(:fetch).and_raise(error)
 
         expect { subject }.to raise_error(SMSService::NumberNotFound)
@@ -169,7 +153,7 @@ describe SMSService do
         let(:error) { Twilio::REST::RestError.new('some other error', 20010, 500) }
 
         it 'reraises the error' do
-          expect(v1).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
+          expect(twilio_client).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
           expect(phone_numbers).to receive(:fetch).and_raise(error)
 
           expect{ subject }.to raise_error(error)
