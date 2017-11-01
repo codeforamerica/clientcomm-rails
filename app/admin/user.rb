@@ -3,7 +3,6 @@ ActiveAdmin.register User do
 
   permit_params :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails
   index do
-    selectable_column
     column :full_name
     column :email
     column :phone_number
