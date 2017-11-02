@@ -51,6 +51,10 @@ jobs:
       - store_artifacts:
           path: tmp/capybara/artifacts
 
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
+
       - run:
           name: codeclimate
           command: 'bin/codeclimate'
