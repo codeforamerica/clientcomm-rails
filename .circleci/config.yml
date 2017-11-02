@@ -14,7 +14,7 @@ jobs:
           UNCLAIMED_EMAIL: unclaimed@example.com
           TYPEFORM_LINK: example.com
           MASS_MESSAGES: 'true'
-      - image: circleci/postgres:9.4.12-alpine
+      - image: circleci/postgres:9.6.5-alpine
         environment:
           POSTGRES_USER: clientcomm
           POSTGRES_GB: clientcomm-test
@@ -36,7 +36,7 @@ jobs:
 
       # Prepare db
       - run: bundle exec rails db:create
-      - run: bundle exec rails db:migrate
+      - run: bundle exec rails db:schema:load
 
       #Run tests
       - run:
