@@ -53,7 +53,7 @@ RSpec.describe Client, type: :model do
 
         expect(new_client.valid?).to eq(false)
 
-        expect(new_client.errors.added?(:phone_number, 'This user already exists and belongs to Case Manager. Contact your ClientComm administrator and request that they be transferred to you.')).to eq(true)
+        expect(new_client.errors.added?(:phone_number, 'This client already exists and belongs to Case Manager. Contact your ClientComm administrator and request that they be transferred to you.')).to eq(true)
       end
     end
 

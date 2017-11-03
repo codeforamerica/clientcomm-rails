@@ -55,7 +55,7 @@ class Client < ApplicationRecord
     client = Client.find_by_phone_number(phone_number)
     if client
       if client.user != user
-        errors.add(:phone_number, :external_user_taken, user_full_name: client.user.full_name)
+        errors.add(:phone_number, :external_client_taken, user_full_name: client.user.full_name)
       else
         if client.active
           errors.add(:phone_number, :taken)

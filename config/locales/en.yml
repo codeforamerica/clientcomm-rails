@@ -41,8 +41,8 @@ en:
               phone_number:
                 invalid: "This is not a valid phone number."
                 taken: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
-                external_user_taken: 'This user already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
                 inactive_taken: 'This user has been deleted. Please use the Add Client button to recover them.'
+                external_client_taken: "This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you."
           message:
             attributes:
               send_at:
