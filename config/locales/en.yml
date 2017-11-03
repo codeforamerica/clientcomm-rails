@@ -23,31 +23,31 @@ en:
   flash:
     errors:
       client:
-        invalid: "There was a problem saving this client."
-  voice_response: 'This phone number can only receive text messages. Please hang up and send a text message.'
+        invalid: There was a problem saving this client.
+  voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   message:
     status:
-      undelivered: "Message could not be delivered. Please check this is a working cell phone number and try again."
+      undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
   activerecord:
     errors:
         models:
           user:
             attributes:
               phone_number:
-                taken: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
-                invalid: "This is not a valid phone number."
+                taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
+                invalid: This is not a valid phone number.
           client:
             attributes:
               phone_number:
-                invalid: "This is not a valid phone number."
-                taken: 'Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.'
-                inactive_taken: 'This user has been deleted. Please use the Add Client button to recover them.'
+                invalid: This is not a valid phone number.
+                taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
                 external_client_taken: "This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you."
+                inactive_taken: This client has been deleted. Please use the Add Client button to recover them.
           message:
             attributes:
               send_at:
-                on_or_after: You can't schedule a message in the past.
-                before: You can't schedule a message more than a year in the future.
+                on_or_after: "You can't schedule a message in the past."
+                before: "You can't schedule a message more than a year in the future."
               body:
                 blank: You need to add a message.
           template:
@@ -111,7 +111,7 @@ en:
           body:
             label: Template
           delete: Delete template
-          delete_confirmation: "Are you sure you want to delete this template?"
+          delete_confirmation: Are you sure you want to delete this template?
           submit: Update
 
 
