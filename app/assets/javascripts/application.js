@@ -10,6 +10,7 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require modernizr-custom
 //= require jquery3
 //= require jquery-ui/widgets/datepicker
 //= require bootstrap-sprockets
@@ -24,4 +25,6 @@
 //= require messages
 //= require scheduled_messages
 //= require templates
+//= require twemoji
+//= require twemoji-init
 

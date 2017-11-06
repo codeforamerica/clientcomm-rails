@@ -10,6 +10,8 @@ var Messages = {
     // append the message to the bottom of the list
     this.msgs.append(message_html);
     this.messagesToBottom();
+
+    parseEmoji(message_html);
   },
   updateMessage: function(dom_id, message_id, message_html) {
     // update the message in place, if it's on the page
