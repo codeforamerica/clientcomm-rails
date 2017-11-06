@@ -53,7 +53,8 @@ IntercomRails.config do |config|
   #
   config.user.custom_data = {
     user_id: proc { |user| user.email },
-    name: proc { |user| user.full_name }
+    name: proc { |user| user.full_name },
+    phone: proc { |user| user.phone_number }
   }
 
   # == Current company method/variable
