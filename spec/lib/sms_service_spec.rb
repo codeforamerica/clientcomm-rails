@@ -70,7 +70,6 @@ describe SMSService do
     let(:media_two) { double('media') }
     let(:media_list) { [media_one, media_two] }
 
-
     subject { sms_service.redact_message(message: message) }
 
     before do

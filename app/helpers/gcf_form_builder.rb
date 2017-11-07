@@ -86,7 +86,9 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
   # { label: "Click me!", value: 'some_value' }
   def gcf_collection_check_boxes(method, collection)
     collection_check_boxes method,
-      collection, -> (obj) { obj[:value] }, -> (obj) { obj[:label] } do |b|
+                           collection,
+                           -> (obj) { obj[:value] },
+                           -> (obj) { obj[:label] } do |b|
       b.label(class: "checkbox") { b.check_box + b.text  }
     end.html_safe
   end

@@ -3,6 +3,7 @@ class Users::PasswordsController < Devise::PasswordsController
   append_before_action :assert_reset_token_valid, :only => :update
 
   protected
+
   # Check the password token is valid
   def assert_reset_link_valid
     if !find_user_by_token(params[:reset_password_token])

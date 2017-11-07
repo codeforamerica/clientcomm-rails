@@ -191,7 +191,6 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(response_body).to include "That date didn't look right."
           expect(response_body).to include body
         end
-
       end
 
       context 'past date' do
@@ -354,5 +353,4 @@ describe 'Messages requests', type: :request, active_job: true do
       end
     end
   end
-
 end

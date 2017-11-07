@@ -50,7 +50,6 @@ describe 'User requests', type: :request do
         context 'missing email' do
           let(:new_email) { '' }
 
-
           it 'fails to update settings' do
             subject
             expect(response.code).to eq '200'

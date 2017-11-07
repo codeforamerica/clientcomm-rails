@@ -59,7 +59,6 @@ feature "User edits template" do
     expect(page).to have_current_path(templates_path)
     expect(page).to have_content 'New template title'
     expect(page).to have_content 'New template body'
-
   end
 
   scenario 'unsuccessfully', :js do

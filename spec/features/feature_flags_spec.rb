@@ -95,5 +95,4 @@ feature 'feature flags' do
       end
     end
   end
-
 end

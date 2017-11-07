@@ -48,7 +48,6 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#create_from_twilio' do
-
     before do
       @unclaimed_email = ENV['UNCLAIMED_EMAIL']
       ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
@@ -99,10 +98,10 @@ RSpec.describe Message, type: :model do
         }
 
         before do
-          stub_request(:get, 'http://cats.com/fluffy_cat.png').
-              to_return(status: 200,
-                        body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                        headers: {'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg'})
+          stub_request(:get, 'http://cats.com/fluffy_cat.png')
+            .to_return(status: 200,
+                       body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                       headers: {'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg'})
         end
 
         subject {Message.create_from_twilio!(params)}
@@ -135,5 +134,4 @@ RSpec.describe Message, type: :model do
       end
     end
   end
-
 end

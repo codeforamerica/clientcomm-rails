@@ -35,5 +35,4 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
       end
     end
   end
-
 end

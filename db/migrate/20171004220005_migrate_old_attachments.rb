@@ -12,7 +12,5 @@ class MigrateOldAttachments < ActiveRecord::Migration[5.1]
 
   private
 
-  class LegacyAttachment < ApplicationRecord
-
-  end
+  class LegacyAttachment < ApplicationRecord; end
 end

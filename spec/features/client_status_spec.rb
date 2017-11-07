@@ -17,7 +17,6 @@ feature "Client status banner" do
       visit clients_path
 
       expect(page).to have_content "You have 3 active clients due for follow up"
-
     end
 
     step "click on button and go to mass message page" do

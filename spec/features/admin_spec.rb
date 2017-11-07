@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 feature 'Admin features' do
-
   before do
     @unclaimed_email = ENV['UNCLAIMED_EMAIL']
     ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
@@ -108,7 +107,6 @@ feature 'Admin features' do
   end
 
   scenario 'Admin bulk transfers clients', :js do
-
     step 'given a user with multiple clients' do
       @user_1 = create :user
       @user_2 = create :user

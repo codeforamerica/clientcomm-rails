@@ -2,7 +2,6 @@ require 'rails_helper'
 
 describe 'Layouts', type: :request do
   describe 'Navigation bar' do
-
     context 'help link' do
       let(:help_link) { 'help me omg' }
 

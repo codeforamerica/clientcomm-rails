@@ -24,7 +24,6 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user sends a message' do
-
       expect(page.find('.sendbar .character-count')).to have_content(/^0$/)
 
       fill_in 'Send a text message', with: message_body
@@ -117,6 +116,5 @@ feature 'sending messages', active_job: true do
       expect(page).to have_css '.flash__message', text: 'Your message has been scheduled'
       expect(page).to have_content '1 message scheduled'
     end
-
   end
 end

@@ -6,7 +6,6 @@ feature 'Twilio', :js do
   end
 
   describe 'POSTs to #incoming_sms' do
-
     before do
       @unclaimed_email = ENV['UNCLAIMED_EMAIL']
       ENV['UNCLAIMED_EMAIL'] = 'example@example.com'

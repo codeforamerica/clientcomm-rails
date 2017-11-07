@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe PhoneNumberParser do
-
   describe '#make_bare' do
     subject { described_class.make_bare(input) }
 
@@ -39,5 +38,4 @@ describe PhoneNumberParser do
       it { expect(subject).to eq '(555) 121-2' }
     end
   end
-
 end

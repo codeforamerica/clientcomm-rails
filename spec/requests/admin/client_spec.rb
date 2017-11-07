@@ -47,7 +47,6 @@ describe 'Clients', type: :request, active_job: true do
   end
 
   describe 'PUT#update' do
-
     before do
       create_list :message, 5, client: clients.first, user: user, send_at: Time.now + 1.day
     end

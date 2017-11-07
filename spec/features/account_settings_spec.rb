@@ -27,7 +27,6 @@ feature "user wants to update their account settings, so they", :js do
   end
 
   context 'mobile views' do
-
     before do
       resize_window_to_mobile
     end

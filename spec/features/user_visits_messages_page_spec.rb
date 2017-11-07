@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 feature 'User clicks on client in list', :js do
-
   describe "and sees the messages page" do
     let!(:myuser) { create :user }
     let!(:myclient) { create :client, user: myuser }
@@ -27,7 +26,6 @@ feature 'User clicks on client in list', :js do
     end
 
     context "on the messages page" do
-
       before do
         login_as(myuser, :scope => :user)
         visit client_messages_path(myclient)
@@ -120,7 +118,6 @@ feature 'User sees client notes on messages page', :js do
 
     it 'has show more button' do
       expect(page).to have_content 'More'
-
     end
 
     it 'shows full note when show more button is clicked' do
@@ -137,6 +134,5 @@ feature 'User sees client notes on messages page', :js do
       expect(page).to have_selector('#truncated_note', visible: true)
       expect(page).to have_selector('#full_note', visible: false)
     end
-
   end
 end

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe VoiceService do
-
   describe '#generate_text_response' do
     it 'takes a string and responds with twiml' do
       response = subject.generate_text_response(message: 'Hello there')
@@ -15,5 +14,4 @@ describe VoiceService do
       expect(response).to eq '<?xml version="1.0" encoding="UTF-8"?><Response><Dial><Number>+12425551212</Number></Dial></Response>'
     end
   end
-
 end

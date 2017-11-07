@@ -37,6 +37,5 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
         expect(data[:message_html]).to eq message_partial
       end
     end
-
   end
 end

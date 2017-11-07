@@ -20,5 +20,4 @@ class ScheduledMessagesController < ApplicationController
 
     @messages_scheduled = current_user.clients.find(params["client_id"]).messages.scheduled
   end
-
 end

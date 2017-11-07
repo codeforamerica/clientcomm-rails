@@ -291,7 +291,6 @@ ActiveAdmin.setup do |config|
   #
   # config.order_clause = MyOrderClause
 
-
   # Monkeypatch hardcoded sort order
   module ActiveAdmin
     module Views

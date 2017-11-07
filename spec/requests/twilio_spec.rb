@@ -142,10 +142,10 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
 
       before do
-        stub_request(:get, 'http://cats.com/fluffy_cat.png').
-            to_return(status: 200,
-                      body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                      headers: {'Accept-Ranges'=>'bytes', 'Content-Length'=>'4379330', 'Content-Type'=>'image/jpeg'})
+        stub_request(:get, 'http://cats.com/fluffy_cat.png')
+          .to_return(status: 200,
+                     body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                     headers: {'Accept-Ranges'=>'bytes', 'Content-Length'=>'4379330', 'Content-Type'=>'image/jpeg'})
       end
 
       it 'attaches the image to the message' do
@@ -261,7 +261,6 @@ describe 'Twilio controller', type: :request, active_job: true do
   end
 
   context 'POST#incoming_voice' do
-
     shared_examples 'valid xml response' do
       it 'responds with xml' do
         twilio_post_voice()

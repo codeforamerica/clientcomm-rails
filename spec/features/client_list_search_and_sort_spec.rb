@@ -23,7 +23,6 @@ feature "search and sort clients" do
   end
 
   describe "user searches by name" do
-
     it "filters client list to match input", js: true do
       expect(page).to have_css '.data-table td', text: @clientone.full_name
       expect(page).to have_css '.data-table td', text: @clienttwo.full_name
@@ -68,7 +67,6 @@ feature "search and sort clients" do
   end
 
   describe "user sorts clients" do
-
     it "sorts by most recent contact by default", js: true do
       expect(page).to have_css('.glyphicon-arrow-down')
       expect(page).to have_css('tr:first-child', text: @clientthree.full_name)

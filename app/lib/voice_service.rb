@@ -1,7 +1,6 @@
 require 'singleton'
 
 class VoiceService
-
   def generate_text_response(message:)
     twiml = Twilio::TwiML::VoiceResponse.new
     twiml.say(message, voice: 'woman')
@@ -15,5 +14,4 @@ class VoiceService
     end
     twiml.to_s
   end
-
 end

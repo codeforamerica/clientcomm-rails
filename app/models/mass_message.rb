@@ -12,5 +12,4 @@ class MassMessage
     @clients ||= []
     @clients.map!(&:to_i)
   end
-
 end

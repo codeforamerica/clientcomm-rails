@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe MessageAlertBuilder do
-
   describe '#build' do
     let(:client_messages_path) { 'some client messages path' }
     let(:clients_path) { 'all clients path' }
@@ -66,6 +65,5 @@ describe MessageAlertBuilder do
       create :message, user: other_user, client: client, inbound: true, read: false
       expect(subject).to eq nil
     end
-
   end
 end

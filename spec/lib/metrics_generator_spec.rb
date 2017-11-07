@@ -39,7 +39,6 @@ describe MetricsGenerator do
       create :message, client: client5, created_at: Time.now.last_month
       create :message, client: client5, created_at: Time.now.yesterday
 
-
       expect(subject).to include 'New conversations in last week: 3'
     end
 
@@ -51,7 +50,6 @@ describe MetricsGenerator do
       create_list :message, 30, client: client1
       create_list :message, 15, client: client2
       create_list :message, 10, client: client3
-
 
       expect(subject).to include 'Average number of messages per conversation: 18'
     end

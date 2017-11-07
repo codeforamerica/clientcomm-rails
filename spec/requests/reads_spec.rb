@@ -4,7 +4,6 @@ describe 'reads', type: :request do
   let(:correct_user) { create :user }
   let(:invalid_user) { create :user }
 
-
   context 'authenticated' do
     before do
       sign_in correct_user
