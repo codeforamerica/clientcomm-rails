@@ -5,11 +5,13 @@ describe MessageAlertBuilder do
     let(:client_messages_path) { 'some client messages path' }
     let(:clients_path) { 'all clients path' }
     let(:user) { create :user }
-    subject { described_class.build_alert(
+    subject do
+      described_class.build_alert(
         user: user,
         client_messages_path: client_messages_path,
-        clients_path: clients_path )
-    }
+        clients_path: clients_path
+      )
+    end
 
     specify 'when there are no unread messages' do
       expect(subject).to be_nil
@@ -20,9 +22,9 @@ describe MessageAlertBuilder do
       create :message, user: user, client: client, inbound: true, read: false
 
       expect(subject).to eq({
-        text: 'You have 1 unread message from Senay Haylom',
-        link_to: client_messages_path
-      })
+                              text: 'You have 1 unread message from Senay Haylom',
+                              link_to: client_messages_path
+                            })
     end
 
     specify 'when there is more than one unread message from the same client' do
@@ -31,9 +33,9 @@ describe MessageAlertBuilder do
       create :message, user: user, client: client, inbound: true, read: false
 
       expect(subject).to eq({
-        text: 'You have 2 unread messages from Anna Futsum',
-        link_to: client_messages_path
-      })
+                              text: 'You have 2 unread messages from Anna Futsum',
+                              link_to: client_messages_path
+                            })
     end
 
     specify 'when there is more than one unread message from multiple clients' do
@@ -42,9 +44,9 @@ describe MessageAlertBuilder do
       create :message, user: user, client: clientone, inbound: true, read: false
       create :message, user: user, client: clienttwo, inbound: true, read: false
       expect(subject).to eq({
-        text: 'You have 2 unread messages',
-        link_to: clients_path
-      })
+                              text: 'You have 2 unread messages',
+                              link_to: clients_path
+                            })
     end
 
     specify 'when there are a mixture of read and unread messages from a client' do
@@ -53,9 +55,9 @@ describe MessageAlertBuilder do
       create :message, user: user, client: client, inbound: true, read: true
       create :message, user: user, client: client, inbound: true, read: false
       expect(subject).to eq({
-        text: "You have 1 unread message from Luwam Sayid",
-        link_to: client_messages_path
-      })
+                              text: "You have 1 unread message from Luwam Sayid",
+                              link_to: client_messages_path
+                            })
     end
 
     specify "when there are unread messages for a different user's clients" do

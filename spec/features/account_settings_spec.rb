@@ -12,7 +12,7 @@ feature "user wants to update their account settings, so they", :js do
     end
   end
 
-  scenario 'navigating to account settings'  do
+  scenario 'navigating to account settings' do
     step "clicks on account button in navbar" do
       visit root_path
       click_on "Account"

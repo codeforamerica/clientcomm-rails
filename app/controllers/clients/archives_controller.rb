@@ -32,7 +32,6 @@ class Clients::ArchivesController < ApplicationController
 
   def client_params
     params.require(:client)
-      .permit(:active)
+          .permit(:active)
   end
 end
-

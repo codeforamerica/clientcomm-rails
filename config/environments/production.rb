@@ -47,7 +47,7 @@ Rails.application.configure do
   config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -73,13 +73,13 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      domain: ENV['MAILGUN_DOMAIN'],
-      address: 'smtp.mailgun.org',
-      port: 587,
-      user_name: "postmaster@#{ENV['MAILGUN_DOMAIN']}",
-      password: ENV['MAILGUN_PASSWORD'],
-      authentication: 'plain',
-      enable_starttls_auto: true
+    domain: ENV['MAILGUN_DOMAIN'],
+    address: 'smtp.mailgun.org',
+    port: 587,
+    user_name: "postmaster@#{ENV['MAILGUN_DOMAIN']}",
+    password: ENV['MAILGUN_PASSWORD'],
+    authentication: 'plain',
+    enable_starttls_auto: true
   }
 
   # Send deprecation notices to registered listeners.
@@ -102,14 +102,14 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.paperclip_defaults = {
-      storage: :s3,
-      s3_protocol: :https,
-      s3_region: 'us-east-1',
-      s3_host_name: 's3.amazonaws.com',
-      s3_credentials: {
-          access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-          bucket: ENV['AWS_ATTACHMENTS_BUCKET']
-      }
+    storage: :s3,
+    s3_protocol: :https,
+    s3_region: 'us-east-1',
+    s3_host_name: 's3.amazonaws.com',
+    s3_credentials: {
+      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+      bucket: ENV['AWS_ATTACHMENTS_BUCKET']
+    }
   }
 end

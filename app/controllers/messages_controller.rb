@@ -30,15 +30,15 @@ class MessagesController < ApplicationController
     @client = current_user.clients.find params[:client_id]
 
     analytics_track(
-        label: 'client_messages_transcript_download',
-        data: @client.analytics_tracker_data
+      label: 'client_messages_transcript_download',
+      data: @client.analytics_tracker_data
     )
 
     # the list of past messages
     @messages = current_user.messages
-                    .where(client_id: params["client_id"])
-                    .where('send_at < ?', Time.now)
-                    .order('send_at ASC')
+                            .where(client_id: params["client_id"])
+                            .where('send_at < ?', Time.now)
+                            .order('send_at ASC')
 
     transcript = render_to_string file: 'messages/transcript_download.txt'
     send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
@@ -50,13 +50,13 @@ class MessagesController < ApplicationController
     @templates = current_user.templates
 
     message = Message.new(
-        body: message_params[:body],
-        user: current_user,
-        client: client,
-        number_from: ENV['TWILIO_PHONE_NUMBER'],
-        number_to: client.phone_number,
-        send_at: send_at,
-        read: true
+      body: message_params[:body],
+      user: current_user,
+      client: client,
+      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      number_to: client.phone_number,
+      send_at: send_at,
+      read: true
     )
 
     if message.invalid? | message.is_past_message
@@ -165,9 +165,8 @@ class MessagesController < ApplicationController
   end
 
   def past_messages(client:)
-    Message
-        .where(client: client)
-        .where('send_at < ?', Time.now)
-        .order('send_at ASC')
+    Message.where(client: client)
+           .where('send_at < ?', Time.now)
+           .order('send_at ASC')
   end
 end

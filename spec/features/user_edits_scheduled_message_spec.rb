@@ -1,9 +1,9 @@
 require "rails_helper"
 
 feature 'creating and editing scheduled messages', active_job: true do
-  let(:message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.'}
-  let(:truncated_message_body) {'You have an appointment tomorrow at 10am.You have an appointment tomorrow at ...'}
-  let(:new_message_body) {'Your appointment tomorrow has been cancelled'}
+  let(:message_body) { 'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.' }
+  let(:truncated_message_body) { 'You have an appointment tomorrow at 10am.You have an appointment tomorrow at ...' }
+  let(:new_message_body) { 'Your appointment tomorrow has been cancelled' }
   let(:userone) { create :user }
   let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }

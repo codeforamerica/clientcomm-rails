@@ -31,7 +31,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
       let(:active_contacted_at) { nil }
       let(:training_contacted_at) { nil }
       it 'returns the client requiring follow-up' do
-        expect(subject).to eq({'Exited' => [@client_3.id] })
+        expect(subject).to eq({ 'Exited' => [@client_3.id] })
       end
     end
   end

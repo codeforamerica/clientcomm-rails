@@ -1,8 +1,8 @@
 require "rails_helper"
 
 feature 'sending mass messages', active_job: true do
-  let(:message_body) {'You have an appointment tomorrow at 10am'}
-  let(:long_message_body) {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.'}
+  let(:message_body) { 'You have an appointment tomorrow at 10am' }
+  let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:user) { create :user }
   let!(:client_1) { build :client, first_name: 'a', last_name: 'a' }
   let!(:client_2) { build :client, first_name: 'b', last_name: 'b' }
@@ -94,9 +94,9 @@ feature 'sending mass messages', active_job: true do
 
     step 'user can sort clients' do
       find('th', text: 'Name').click
-      expect(page).to have_content /#{client_1.full_name}.*#{client_2.full_name}.*#{client_3.full_name}/
+      expect(page).to have_content(/#{client_1.full_name}.*#{client_2.full_name}.*#{client_3.full_name}/)
       find('th', text: 'Name').click
-      expect(page).to have_content /#{client_3.full_name}.*#{client_2.full_name}.*#{client_1.full_name}/
+      expect(page).to have_content(/#{client_3.full_name}.*#{client_2.full_name}.*#{client_1.full_name}/)
     end
 
     step 'user can search for clients' do

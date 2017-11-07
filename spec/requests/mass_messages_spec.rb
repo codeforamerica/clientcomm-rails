@@ -63,7 +63,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       it 're-renders the page with errors' do
         expect(response.body).to include 'You need to add a message.'
       end
-      end
+    end
 
     context 'no message recipients selected' do
       let(:message_body) { '' }
@@ -96,7 +96,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     context 'using a url to pre-populate' do
-      let(:params) { {clients: [user.clients[0].id, user.clients[2].id]} }
+      let(:params) { { clients: [user.clients[0].id, user.clients[2].id] } }
 
       it 'renders checkboxes selected correctly' do
         subject

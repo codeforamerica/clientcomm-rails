@@ -26,8 +26,8 @@ describe 'Clients requests', type: :request do
 
       before do
         allow(SMSService.instance).to receive(:number_lookup)
-                                        .with(phone_number: phone_number)
-                                        .and_return(normalized_phone_number)
+          .with(phone_number: phone_number)
+          .and_return(normalized_phone_number)
       end
 
       subject do
@@ -229,8 +229,10 @@ describe 'Clients requests', type: :request do
             client_id = Client.find_by_client_status_id(ClientStatus.find_by_name("Active").id).id
             subject
 
-            expect(Nokogiri.parse(response.body).text).to include ('You have 1 active client due for follow up')
-            expect(Nokogiri.parse(response.body).to_s).to include ('clients%5B%5D=' + client_id.to_s)
+            expect(Nokogiri.parse(response.body).text)
+              .to include('You have 1 active client due for follow up')
+            expect(Nokogiri.parse(response.body).to_s)
+              .to include('clients%5B%5D=' + client_id.to_s)
           end
         end
       end

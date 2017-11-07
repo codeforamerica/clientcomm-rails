@@ -21,7 +21,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
 
   def gcf_radio_set(method, label_text, collection, notes: [], layout: "block", variant: "", classes: [])
     <<-HTML.html_safe
-      <fieldset class="form-group#{error_state(object, method)}#{ (' ' + classes.join(' ')).strip }">
+      <fieldset class="form-group#{error_state(object, method)}#{(' ' + classes.join(' ')).strip}">
         #{label_contents(label_text, notes)}
         #{radio_buttons(method, collection, layout, variant)}
         #{errors_for(object, method)}
@@ -34,7 +34,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <fieldset class="form-group#{error_state(object, method)}">
         #{label(method, label_contents(label_text, notes))}
         <div class="select">
-          #{select(method, collection, { include_blank: include_blank, prompt: false }, class: 'select__element')}
+          #{select(method, collection, { include_blank: include_blank, prompt: prompt }, class: 'select__element')}
         </div>
         #{errors_for(object, method)}
       </fieldset>
@@ -87,9 +87,9 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
   def gcf_collection_check_boxes(method, collection)
     collection_check_boxes method,
                            collection,
-                           -> (obj) { obj[:value] },
-                           -> (obj) { obj[:label] } do |b|
-      b.label(class: "checkbox") { b.check_box + b.text  }
+                           ->(obj) { obj[:value] },
+                           ->(obj) { obj[:label] } do |b|
+      b.label(class: "checkbox") { b.check_box + b.text }
     end.html_safe
   end
 

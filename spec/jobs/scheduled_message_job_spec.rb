@@ -5,7 +5,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
   let(:send_at_time) { Time.now.tomorrow }
-  let(:message) {create :message, send_at: send_at_time}
+  let(:message) { create :message, send_at: send_at_time }
 
   subject do
     perform_enqueued_jobs { ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
@@ -18,7 +18,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
       .and_return(scheduled_messages)
 
     expect(MessagesController).to receive(:render)
-      .with(partial: 'messages/scheduled_messages_link', locals: {count: count, client: message.client})
+      .with(partial: 'messages/scheduled_messages_link', locals: { count: count, client: message.client })
       .and_return(link_html)
 
     expect(ActionCable.server).to receive(:broadcast)

@@ -38,7 +38,7 @@ class AnalyticsService
       data[:locale] = I18n.locale
       @tracker.track(distinct_id, label, data)
     end
-  rescue => err
+  rescue StandardError => err
     Rails.logger.error "Error tracking analytics event #{err}"
   end
 

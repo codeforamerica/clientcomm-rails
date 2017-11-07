@@ -6,16 +6,16 @@ describe 'Twilio controller', type: :request, active_job: true do
   let(:has_message_error) { false }
   let(:active) { true }
   let(:user) { create :user }
-  let!(:client) { create :client, user:user, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
+  let!(:client) { create :client, user: user, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }
     let(:sms_sid) { Faker::Crypto.sha1 }
     let(:message_params) {
       twilio_new_message_params(
-          from_number: phone_number,
-          msg_txt: message_text,
-          sms_sid: sms_sid
+        from_number: phone_number,
+        msg_txt: message_text,
+        sms_sid: sms_sid
       )
     }
 
@@ -34,14 +34,14 @@ describe 'Twilio controller', type: :request, active_job: true do
       subject
 
       expect_analytics_events(
-          {
-              'message_receive' => {
-                  'client_id' => client.id,
-                  'message_length' => message_text.length,
-                  'attachments_count' => 0,
-                  'client_active' => true
-              }
+        {
+          'message_receive' => {
+            'client_id' => client.id,
+            'message_length' => message_text.length,
+            'attachments_count' => 0,
+            'client_active' => true
           }
+        }
       )
     end
 
@@ -109,14 +109,14 @@ describe 'Twilio controller', type: :request, active_job: true do
         subject
 
         expect_analytics_events(
-            {
-                'message_receive' => {
-                    'client_id' => client.id,
-                    'message_length' => message_text.length,
-                    'attachments_count' => 0,
-                    'client_active' => false
-                }
+          {
+            'message_receive' => {
+              'client_id' => client.id,
+              'message_length' => message_text.length,
+              'attachments_count' => 0,
+              'client_active' => false
             }
+          }
         )
       end
     end
@@ -136,8 +136,8 @@ describe 'Twilio controller', type: :request, active_job: true do
     context 'sms message contains an attachment' do
       let(:message_params) do
         twilio_new_message_params(
-            from_number: phone_number,
-            msg_txt: message_text
+          from_number: phone_number,
+          msg_txt: message_text
         ).merge(NumMedia: 1, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png')
       end
 
@@ -145,7 +145,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         stub_request(:get, 'http://cats.com/fluffy_cat.png')
           .to_return(status: 200,
                      body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                     headers: {'Accept-Ranges'=>'bytes', 'Content-Length'=>'4379330', 'Content-Type'=>'image/jpeg'})
+                     headers: {
+                       'Accept-Ranges' => 'bytes',
+                       'Content-Length' => '4379330',
+                       'Content-Type' => 'image/jpeg'
+                     })
       end
 
       it 'attaches the image to the message' do
@@ -161,13 +165,13 @@ describe 'Twilio controller', type: :request, active_job: true do
         subject
 
         expect_analytics_events(
-            {
-                'message_receive' => {
-                    'client_id' => client.id,
-                    'message_length' => message_text.length,
-                    'attachments_count' => 1
-                }
+          {
+            'message_receive' => {
+              'client_id' => client.id,
+              'message_length' => message_text.length,
+              'attachments_count' => 1
             }
+          }
         )
       end
     end
@@ -225,13 +229,13 @@ describe 'Twilio controller', type: :request, active_job: true do
 
         # failed analytics event
         expect_analytics_events({
-          'message_send_failed' => {
-            'client_id' => client.id,
-            'message_id' => msgone.id,
-            'message_length' => msgone.body.length,
-            'attachments_count' => 0,
-          }
-        })
+                                  'message_send_failed' => {
+                                    'client_id' => client.id,
+                                    'message_id' => msgone.id,
+                                    'message_length' => msgone.body.length,
+                                    'attachments_count' => 0,
+                                  }
+                                })
 
         expect_analytics_events_with_keys(
           {

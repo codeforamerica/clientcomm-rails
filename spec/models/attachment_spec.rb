@@ -8,8 +8,8 @@ RSpec.describe Attachment, type: :model do
   describe 'paperclip content type validations' do
     it {
       should validate_attachment_content_type(:media)
-                 .allowing('text/vcard')
-                 .rejecting('png/whatever')
+        .allowing('text/vcard')
+        .rejecting('png/whatever')
     }
   end
 

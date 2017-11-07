@@ -4,7 +4,7 @@ class Message < ApplicationRecord
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
-  validates_presence_of :body, unless: ->(message){message.attachments.present?}
+  validates_presence_of :body, unless: ->(message) { message.attachments.present? }
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
@@ -24,9 +24,9 @@ class Message < ApplicationRecord
     client = Client.find_by(phone_number: phone_number)
     if client.nil?
       client = Client.create!(
-          phone_number: phone_number,
-          last_name: phone_number,
-          user:  User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
+        phone_number: phone_number,
+        last_name: phone_number,
+        user:  User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
       )
     end
 

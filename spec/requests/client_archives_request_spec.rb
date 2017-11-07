@@ -30,12 +30,12 @@ describe 'Clients requests', type: :request do
       expect(client.reload.active).to eq(false)
 
       expect_analytics_events(
-          {
-              'client_archive_success' => {
-                  'client_id' => client.id,
-                  'client_duration' => 82
-              }
+        {
+          'client_archive_success' => {
+            'client_id' => client.id,
+            'client_duration' => 82
           }
+        }
       )
     end
 

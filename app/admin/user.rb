@@ -44,7 +44,7 @@ ActiveAdmin.register User do
 
   show do
     panel 'View Clients' do
-      link_to 'Clients', admin_clients_path(q: {user_id_eq: user.id})
+      link_to 'Clients', admin_clients_path(q: { user_id_eq: user.id })
     end
 
     panel 'User Details' do
@@ -65,7 +65,7 @@ ActiveAdmin.register User do
 
   form do |f|
     panel 'View Clients' do
-      link_to 'Clients', admin_clients_path(q: {user_id_eq: user.id})
+      link_to 'Clients', admin_clients_path(q: { user_id_eq: user.id })
     end
 
     f.inputs "User Info" do

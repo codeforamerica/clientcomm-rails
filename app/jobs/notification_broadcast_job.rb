@@ -14,7 +14,7 @@ class NotificationBroadcastJob < ApplicationJob
   def render_notification_partial(text, link_to)
     ClientsController.render(
       partial: 'layouts/flash',
-      locals: {classes: ['flash'], body: text, link_to: link_to}
+      locals: { classes: ['flash'], body: text, link_to: link_to }
     )
   end
 end

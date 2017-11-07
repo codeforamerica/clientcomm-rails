@@ -12,31 +12,33 @@ Total number of messages sent: #{sent_messages}
     )
   end
 
-  private
+  class << self
+    private
 
-  def self.sent_messages
-    Message.where(inbound: false).count
-  end
+    def sent_messages
+      Message.where(inbound: false).count
+    end
 
-  def self.received_messages
-    Message.where(inbound: true).count
-  end
+    def received_messages
+      Message.where(inbound: true).count
+    end
 
-  def self.clients_with_messages
-    Message.distinct.pluck(:client_id)
-  end
+    def clients_with_messages
+      Message.distinct.pluck(:client_id)
+    end
 
-  def self.average_messages_in_conversation
-    return 0 if Message.count == 0
+    def average_messages_in_conversation
+      return 0 if Message.count == 0
 
-    Message.count / clients_with_messages.size
-  end
+      Message.count / clients_with_messages.size
+    end
 
-  def self.new_conversations
-    clients_with_messages.map do |client|
-      Client.find(client).messages.sort_by(&:created_at).first.created_at
-    end.select do |time|
-      time > Time.now.last_week
-    end.count
+    def new_conversations
+      clients_with_messages.map do |client|
+        Client.find(client).messages.sort_by(&:created_at).first.created_at
+      end.select do |time|
+        time > Time.now.last_week
+      end.count
+    end
   end
 end

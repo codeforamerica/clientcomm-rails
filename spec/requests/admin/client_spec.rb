@@ -38,11 +38,11 @@ describe 'Clients', type: :request, active_job: true do
       post '/admin/clients/batch_action', params: params
 
       expect_analytics_events({
-        'client_transfer' => {
-          'admin_id' => @admin_user.id,
-          'clients_transferred_count' => 5
-        }
-      })
+                                'client_transfer' => {
+                                  'admin_id' => @admin_user.id,
+                                  'clients_transferred_count' => 5
+                                }
+                              })
     end
   end
 
@@ -83,11 +83,11 @@ describe 'Clients', type: :request, active_job: true do
         end
 
         expect_analytics_events({
-          'client_transfer' => {
-            'admin_id' => @admin_user.id,
-            'clients_transferred_count' => 1
-          }
-        })
+                                  'client_transfer' => {
+                                    'admin_id' => @admin_user.id,
+                                    'clients_transferred_count' => 1
+                                  }
+                                })
       end
     end
 

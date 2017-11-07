@@ -63,12 +63,12 @@ ActiveAdmin.register Client do
     ).deliver_later
 
     analytics_track({
-      label: :client_transfer,
-      data: {
-        admin_id: current_admin_user.id,
-        clients_transferred_count: number_of_clients
-      }
-    })
+                      label: :client_transfer,
+                      data: {
+                        admin_id: current_admin_user.id,
+                        clients_transferred_count: number_of_clients
+                      }
+                    })
 
     redirect_to admin_clients_path, alert: "Clients transferred: #{number_of_clients}."
   end
@@ -93,12 +93,12 @@ ActiveAdmin.register Client do
             ).deliver_later
 
             analytics_track({
-              label: :client_transfer,
-              data: {
-                admin_id: current_admin_user.id,
-                clients_transferred_count: 1
-              }
-            })
+                              label: :client_transfer,
+                              data: {
+                                admin_id: current_admin_user.id,
+                                clients_transferred_count: 1
+                              }
+                            })
           end
           render :show
         end

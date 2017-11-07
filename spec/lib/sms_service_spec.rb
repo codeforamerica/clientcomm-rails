@@ -119,7 +119,7 @@ describe SMSService do
       it 'reraises the error' do
         expect(message).to receive(:update).with(body: '').and_raise(error)
 
-        expect{ subject }.to raise_error(error)
+        expect { subject }.to raise_error(error)
       end
     end
   end
@@ -155,7 +155,7 @@ describe SMSService do
           expect(twilio_client).to receive(:phone_numbers).with(ERB::Util.url_encode(phone_number)).and_return(phone_numbers)
           expect(phone_numbers).to receive(:fetch).and_raise(error)
 
-          expect{ subject }.to raise_error(error)
+          expect { subject }.to raise_error(error)
         end
       end
     end

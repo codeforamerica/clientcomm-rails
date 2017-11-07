@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe DateParser do
-  subject {described_class.parse(date, time)}
+  subject { described_class.parse(date, time) }
 
   context 'with invalid year' do
-    let(:date) {'12/03/'}
-    let(:time) {'9:30pm'}
+    let(:date) { '12/03/' }
+    let(:time) { '9:30pm' }
 
     it 'returns nil' do
       expect(subject).to be_nil
@@ -13,8 +13,8 @@ describe DateParser do
   end
 
   context 'with two digit year' do
-    let(:date) {'12/03/02'}
-    let(:time) {'9:30pm'}
+    let(:date) { '12/03/02' }
+    let(:time) { '9:30pm' }
 
     it 'returns nil' do
       expect(subject).to be_nil
@@ -22,8 +22,8 @@ describe DateParser do
   end
 
   context 'with valid date and time and one digit hour' do
-    let(:date) {'12/03/2002'}
-    let(:time) {'9:30pm'}
+    let(:date) { '12/03/2002' }
+    let(:time) { '9:30pm' }
 
     it 'returns valid date' do
       expect(subject).to eq Time.zone.local(2002, 12, 03, 21, 30)
@@ -31,8 +31,8 @@ describe DateParser do
   end
 
   context 'with valid date and time and two digit hour' do
-    let(:date) {'12/03/2002'}
-    let(:time) {'12:30pm'}
+    let(:date) { '12/03/2002' }
+    let(:time) { '12:30pm' }
 
     it 'returns valid date' do
       expect(subject).to eq Time.zone.local(2002, 12, 03, 12, 30)
@@ -40,7 +40,7 @@ describe DateParser do
   end
 
   context 'with valid date and nil time' do
-    let(:date) {'12/03/2002'}
+    let(:date) { '12/03/2002' }
     let(:time) { nil }
 
     it 'returns valid date' do

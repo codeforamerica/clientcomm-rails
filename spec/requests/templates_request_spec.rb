@@ -32,10 +32,10 @@ describe 'Templates requests', type: :request do
         end
 
         expect_analytics_events({
-          'template_page_view' => {
-            'templates_count' => 5
-          }
-        })
+                                  'template_page_view' => {
+                                    'templates_count' => 5
+                                  }
+                                })
       end
     end
 
@@ -57,10 +57,10 @@ describe 'Templates requests', type: :request do
         expect(response).to redirect_to templates_path
 
         expect_analytics_events({
-          'template_create_success' => {
-            'message_length' => 50
-          }
-        })
+                                  'template_create_success' => {
+                                    'message_length' => 50
+                                  }
+                                })
       end
 
       context 'receives invalid template parameters' do
@@ -109,10 +109,10 @@ describe 'Templates requests', type: :request do
         expect(response).to redirect_to templates_path
 
         expect_analytics_events({
-          'template_delete' => {
-            'templates_count' => 0
-          }
-        })
+                                  'template_delete' => {
+                                    'templates_count' => 0
+                                  }
+                                })
       end
     end
   end

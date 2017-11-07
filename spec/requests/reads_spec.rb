@@ -16,10 +16,10 @@ describe 'reads', type: :request do
 
       subject do
         post message_read_path(message, {
-          message: {
-            read: true
-          }
-        })
+                                 message: {
+                                   read: true
+                                 }
+                               })
       end
 
       it 'updates message read' do

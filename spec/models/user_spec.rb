@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let!(:user) { create :user }
   let!(:client) { create :client, :user => user }
-  let!(:message) { create :message, :user => user, :client => client}
+  let!(:message) { create :message, :user => user, :client => client }
 
   describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }

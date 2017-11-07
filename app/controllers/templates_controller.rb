@@ -72,6 +72,6 @@ class TemplatesController < ApplicationController
 
   def template_params
     params.fetch(:template)
-      .permit(:title, :body)
+          .permit(:title, :body)
   end
 end

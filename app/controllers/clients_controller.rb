@@ -93,6 +93,6 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client)
-      .permit(:first_name, :last_name, :client_status_id, :phone_number, :notes)
+          .permit(:first_name, :last_name, :client_status_id, :phone_number, :notes)
   end
 end

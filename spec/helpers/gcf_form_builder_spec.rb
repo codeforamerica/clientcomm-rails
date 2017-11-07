@@ -26,7 +26,7 @@ describe GcfFormBuilder, type: :view do
           </label>
           <textarea class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name">
           #{client.first_name}</textarea>
-      </fieldset>
+        </fieldset>
       HTML
     end
 
@@ -47,7 +47,7 @@ describe GcfFormBuilder, type: :view do
           </label>
           <textarea autofocus="autofocus" class="textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="client[first_name]" id="client_first_name">
           #{client.first_name}</textarea>
-      </fieldset>
+        </fieldset>
       HTML
     end
   end

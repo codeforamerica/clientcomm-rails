@@ -166,9 +166,9 @@ feature 'Admin features' do
     end
 
     step 'user_2 receives email for transfer' do
-      mail = ActionMailer::Base.deliveries.find { |mail| p mail.to.include? @user_2.email }
-      parsed_mail = Nokogiri.parse(mail.html_part.to_s).to_s
-      expect(mail).to_not be_nil
+      transfer_notification = ActionMailer::Base.deliveries.find { |mail| p mail.to.include? @user_2.email }
+      parsed_mail = Nokogiri.parse(transfer_notification.html_part.to_s).to_s
+      expect(transfer_notification).to_not be_nil
       expect(parsed_mail).to include 'An administrator has transferred'
 
       [@client_1, @client_2, @client_3].each do |client|

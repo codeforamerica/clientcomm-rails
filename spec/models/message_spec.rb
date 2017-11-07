@@ -92,8 +92,8 @@ RSpec.describe Message, type: :model do
       context 'there is an attachment' do
         let(:params) {
           twilio_new_message_params(
-              from_number: client.phone_number,
-              msg_txt: body
+            from_number: client.phone_number,
+            msg_txt: body
           ).merge(NumMedia: 2, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaUrl1: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png', MediaContentType1: 'text/png')
         }
 
@@ -101,13 +101,13 @@ RSpec.describe Message, type: :model do
           stub_request(:get, 'http://cats.com/fluffy_cat.png')
             .to_return(status: 200,
                        body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                       headers: {'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg'})
+                       headers: { 'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg' })
         end
 
-        subject {Message.create_from_twilio!(params)}
+        subject { Message.create_from_twilio!(params) }
 
         context 'message body is present' do
-          let(:body) {'some_body'}
+          let(:body) { 'some_body' }
 
           it 'creates a message with attachments' do
             attachments = subject.attachments.all
@@ -120,7 +120,7 @@ RSpec.describe Message, type: :model do
         end
 
         context 'message body is not present' do
-          let(:body) {''}
+          let(:body) { '' }
 
           it 'creates a message with no body but an attachment' do
             attachments = subject.attachments.all

@@ -11,7 +11,7 @@ class FakeTwilioClient
     self
   end
 
-  def messages(sid = nil)
+  def messages(_sid = nil)
     self
   end
 
@@ -31,11 +31,11 @@ class FakeTwilioClient
     self
   end
 
-  def fetch(params = nil)
+  def fetch(_params = nil)
     self
   end
 
-  def update(params)
+  def update(_params)
     nil
   end
 
@@ -56,7 +56,9 @@ class FakeTwilioClient
     @phone_number
   end
 
+  # rubocop:disable Lint/UnusedMethodArgument
   def create(from:, to:, body:, status_callback:)
     FakeResponse.new(SecureRandom.hex(17), 'delivered')
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 end

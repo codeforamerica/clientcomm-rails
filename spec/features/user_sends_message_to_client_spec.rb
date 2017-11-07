@@ -1,7 +1,7 @@
 require "rails_helper"
 feature 'sending messages', active_job: true do
-  let(:message_body) {'You have an appointment tomorrow at 10am'}
-  let(:long_message_body) {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.'}
+  let(:message_body) { 'You have an appointment tomorrow at 10am' }
+  let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:client_1) { build :client }
   let(:client_2) { build :client }
 

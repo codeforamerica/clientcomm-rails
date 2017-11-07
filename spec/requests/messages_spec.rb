@@ -67,8 +67,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         it 'shows a link when scheduled messages exist' do
-          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
-          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+          create_list :message, 2, user: user, client: client, send_at: Time.now.tomorrow
 
           get client_messages_path(client)
           expect(response.body).to include('2 messages scheduled')
@@ -76,7 +75,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'there are attachments' do
-        let(:attachment) {build :attachment, media: File.new(media_path)}
+        let(:attachment) { build :attachment, media: File.new(media_path) }
 
         before do
           create :message, user: user, client: client, attachments: [attachment], inbound: true
@@ -84,7 +83,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         context 'image files' do
-          let(:media_path) {'spec/fixtures/fluffy_cat.jpg'}
+          let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
 
           it 'displays files' do
             parsed_response = Nokogiri.parse(response.body)
@@ -94,7 +93,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         context 'other file types' do
-          let(:media_path) {'spec/fixtures/cat_contact.vcf'}
+          let(:media_path) { 'spec/fixtures/cat_contact.vcf' }
 
           it 'displays files' do
             parsed_response = Nokogiri.parse(response.body)
@@ -139,8 +138,8 @@ describe 'Messages requests', type: :request, active_job: true do
     describe 'POST#create' do
       let(:post_params) {
         {
-            message: { body: body, send_at: message_send_at },
-            client_id: client.id
+          message: { body: body, send_at: message_send_at },
+          client_id: client.id
         }
       }
 
@@ -160,13 +159,13 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(created_message.send_at).to_not be_nil
 
           expect_most_recent_analytics_event(
-              {
-                  'message_send' => {
-                      'client_id' => client.id,
-                      'message_id' => message.id,
-                      'message_length' => body.length
-                  }
+            {
+              'message_send' => {
+                'client_id' => client.id,
+                'message_id' => message.id,
+                'message_length' => body.length
               }
+            }
           )
         end
       end
@@ -174,15 +173,15 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'invalid date' do
         let(:message_send_at) {
           {
-              date: '2011/02/',
-              time: '9:30pm'
+            date: '2011/02/',
+            time: '9:30pm'
           }
         }
 
         it 'does not create a new message' do
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(nil)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(nil)
 
           post messages_path, params: post_params
 
@@ -197,15 +196,15 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
-              date: time_in_past.strftime("%m/%d/%Y"),
-              time: time_in_past.strftime("%-l:%M%P")
+            date: time_in_past.strftime("%m/%d/%Y"),
+            time: time_in_past.strftime("%-l:%M%P")
           }
         }
 
         it 'does not create a new message' do
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(time_in_past)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(time_in_past)
 
           post messages_path, params: post_params
 
@@ -221,15 +220,15 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
         let(:message_send_at) {
           {
-              date: time_to_send.strftime("%m/%d/%Y"),
-              time: time_to_send.strftime("%-l:%M%P")
+            date: time_to_send.strftime("%m/%d/%Y"),
+            time: time_to_send.strftime("%-l:%M%P")
           }
         }
 
         it 'creates a Scheduled Message' do
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(time_to_send)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(time_to_send)
 
           post messages_path, params: post_params
 
@@ -240,21 +239,22 @@ describe 'Messages requests', type: :request, active_job: true do
 
           expect(client.messages.last.id).to eq message.id
           expect_analytics_events_with_keys(
-              {
-                  'message_scheduled' => [
-                    'client_id',
-                    'message_id',
-                    'message_length',
-                    'message_date_scheduled',
-                    'message_date_created'
-                  ]
-              })
+            {
+              'message_scheduled' => [
+                'client_id',
+                'message_id',
+                'message_length',
+                'message_date_scheduled',
+                'message_date_created'
+              ]
+            }
+          )
         end
       end
     end
 
     describe 'PUT#update' do
-      let!(:message) {create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0))}
+      let!(:message) { create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
       let(:post_params) {
         {
           message: { body: new_body, send_at: message_send_at }
@@ -268,8 +268,8 @@ describe 'Messages requests', type: :request, active_job: true do
         it 'updates the message model' do
           new_time_to_send = Time.now.change(sec: 0)
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(new_time_to_send)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(new_time_to_send)
 
           old_message_id = Message.find_by_body(body).id
 
@@ -284,18 +284,18 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'invalid update' do
-        let(:time_in_past) {Time.now.yesterday.change(sec: 0)}
+        let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
-              date: time_in_past.strftime("%m/%d/%Y"),
-              time: time_in_past.strftime("%-l:%M%P")
+            date: time_in_past.strftime("%m/%d/%Y"),
+            time: time_in_past.strftime("%-l:%M%P")
           }
         }
 
         it 'fails if date is invalid' do
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(nil)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(nil)
 
           put message_path(message), params: post_params
           expect(ScheduledMessageJob).to_not have_been_enqueued
@@ -306,8 +306,8 @@ describe 'Messages requests', type: :request, active_job: true do
 
         it 'fails if date is in the past' do
           allow(DateParser).to receive(:parse)
-                                   .with(message_send_at[:date], message_send_at[:time])
-                                   .and_return(time_in_past)
+            .with(message_send_at[:date], message_send_at[:time])
+            .and_return(time_in_past)
 
           put message_path(message), params: post_params
           expect(ScheduledMessageJob).to_not have_been_enqueued

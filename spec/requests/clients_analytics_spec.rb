@@ -9,12 +9,12 @@ describe 'Tracking of client analytics events', type: :request do
       expect(response.code).to eq '200'
 
       expect_analytics_events({
-        'clients_view' => {
-          'has_unread_messages' => false,
-          'unread_messages_count' => 0,
-          'clients_count' => 0
-        }
-      })
+                                'clients_view' => {
+                                  'has_unread_messages' => false,
+                                  'unread_messages_count' => 0,
+                                  'clients_count' => 0
+                                }
+                              })
     end
 
     it 'tracks a visit to the client index with clients and messages' do
@@ -28,12 +28,12 @@ describe 'Tracking of client analytics events', type: :request do
       get clients_path
       expect(response.code).to eq '200'
       expect_analytics_events({
-        'clients_view' => {
-          'has_unread_messages' => true,
-          'unread_messages_count' => 3,
-          'clients_count' => 2
-        }
-      })
+                                'clients_view' => {
+                                  'has_unread_messages' => true,
+                                  'unread_messages_count' => 3,
+                                  'clients_count' => 2
+                                }
+                              })
     end
   end
 
@@ -68,10 +68,10 @@ describe 'Tracking of client analytics events', type: :request do
       edit_client clientone.id, clientedit
       expect(response.code).to eq '302'
       expect_analytics_events({
-        'client_edit_success' => {
-          'client_id' => clientone.id
-        }
-      })
+                                'client_edit_success' => {
+                                  'client_id' => clientone.id
+                                }
+                              })
     end
   end
 end

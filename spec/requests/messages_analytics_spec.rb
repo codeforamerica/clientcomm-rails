@@ -11,10 +11,10 @@ describe 'Tracking of message analytics events', type: :request do
       expect(response.code).to eq '200'
 
       expect_analytics_events({
-        'client_messages_view' => {
-          'client_id' => client.id,
-        }
-      })
+                                'client_messages_view' => {
+                                  'client_id' => client.id,
+                                }
+                              })
     end
   end
 end

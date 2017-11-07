@@ -2,7 +2,7 @@ require 'rails_helper'
 RSpec.describe ScheduledMessagesHelper, type: :helper do
   context 'Scheduled Messages' do
     let(:user) { create :user }
-    let(:client) {create :client, user: user}
+    let(:client) { create :client, user: user }
     let!(:scheduled_messages) { create_list(:message, 5, user: user, client: client, send_at: Time.now.tomorrow) }
     let!(:sent_messages) { create_list(:message, 5, user: user, client: client) }
     let!(:unrelated_messages) { create_list(:message, 5, user: user) }

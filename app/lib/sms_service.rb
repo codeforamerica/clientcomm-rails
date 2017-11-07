@@ -60,10 +60,10 @@ class SMSService
 
   def send_twilio_message(to:, from:, body:, callback_url:)
     @client.api.account.messages.create(
-        from: from,
-        to: to,
-        body: body,
-        status_callback: callback_url
+      from: from,
+      to: to,
+      body: body,
+      status_callback: callback_url
     )
   end
 end

@@ -19,8 +19,8 @@ class ScheduledMessageJob < ApplicationJob
     message.client.update!(last_contacted_at: message.send_at)
 
     SMSService.instance.send_message(
-        message: message,
-        callback_url: callback_url
+      message: message,
+      callback_url: callback_url
     )
 
     broadcast(
@@ -38,7 +38,7 @@ class ScheduledMessageJob < ApplicationJob
   def render_scheduled_message_link(count:, client:)
     MessagesController.render(
       partial: 'messages/scheduled_messages_link',
-      locals: {count: count, client: client}
+      locals: { count: count, client: client }
     )
   end
 end

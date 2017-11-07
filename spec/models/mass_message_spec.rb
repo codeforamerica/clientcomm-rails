@@ -6,10 +6,10 @@ RSpec.describe MassMessage, type: :model do
 
   it 'converts client ids to ints' do
     message = MassMessage.new(clients: %w(1 2 3))
-    expect(message.clients).to contain_exactly(1,2,3)
+    expect(message.clients).to contain_exactly(1, 2, 3)
   end
 
   it 'can be instiantiated with nil clients' do
-    expect{ MassMessage.new }.to_not raise_error
+    expect { MassMessage.new }.to_not raise_error
   end
 end

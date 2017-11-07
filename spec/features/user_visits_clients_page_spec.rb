@@ -12,7 +12,7 @@ end
 feature "manage action is hidden on mobile", js: true do
   scenario "user visits client list on mobile" do
     myuser = create :user
-    client = create :client, user: myuser
+    create :client, user: myuser
     login_as(myuser, :scope => :user)
 
     visit clients_path

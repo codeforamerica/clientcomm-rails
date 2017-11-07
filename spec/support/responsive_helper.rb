@@ -1,5 +1,4 @@
 module ResponsiveHelper
-
   def resize_window_to_mobile
     resize_window_by([640, 480])
   end
@@ -17,5 +16,4 @@ module ResponsiveHelper
   def resize_window_by(size)
     Capybara.page.driver.resize(size[0], size[1])
   end
-
 end

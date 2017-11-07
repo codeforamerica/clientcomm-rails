@@ -4,7 +4,7 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
   describe '#perform' do
     let!(:user) { create :user }
     let!(:client) { create :client, :user => user }
-    let!(:message) { create :message, :user => user, :client => client}
+    let!(:message) { create :message, :user => user, :client => client }
 
     it 'queues a job' do
       described_class.perform_later(message: message)
@@ -28,7 +28,7 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
       # validate the data that was sent to our mock server
       message_partial = MessagesController.render(
         partial: 'messages/message',
-        locals: {message: message}
+        locals: { message: message }
       )
 
       expect(mock_server).to have_received(:broadcast) do |channel, data|

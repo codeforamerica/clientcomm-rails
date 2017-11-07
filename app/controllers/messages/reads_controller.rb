@@ -13,6 +13,6 @@ class Messages::ReadsController < ApplicationController
 
   def message_params
     params.require(:message)
-      .permit(:read)
+          .permit(:read)
   end
 end

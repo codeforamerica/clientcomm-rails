@@ -30,5 +30,4 @@ module RequestHelper
     # return the edited client record
     Client.find(client_id)
   end
-
 end
