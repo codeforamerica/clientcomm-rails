@@ -25,11 +25,21 @@ terraform init -backend-config =(lpass show --notes terraform-backend) -backend-
 
 ## Prepping a Twilio account
 
-After buying a phone number navigate to: https://www.twilio.com/console/runtime/triggers/alert/create
-We create the following triggers but by no means are they the only ones worth creating
+In Twilio, buy a phone number in the appropriate area code. Configure the _A CALL COMES IN_ webhook
+to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/voice/` and the _A MESSAGE COMES IN_
+webhook to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/sms/`.
+
+On the [Alert Triggers](https://www.twilio.com/console/runtime/triggers/alert/create) page, set up
+the following triggers to email `clientcomm-alerts@codeforamerica.org`:
 
 * Trigger on ANY alert, at value 1 (First alert of the day)
 * Trigger on ANY alert, at value 10 (Alert after 10 issues in a single day)
+
+## Set up Pingdom
+
+On [Pingdom](https://my.pingdom.com/newchecks/checks), create a new uptime check to point to the
+new deploy's front page. It should check once a minute and alert Mikela and Tomas; it should alert
+after 2 minutes down; and the Slack webhook integration should be checked.
 
 ## Managing a ClientComm deployment
 
