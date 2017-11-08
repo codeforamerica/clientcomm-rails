@@ -66,7 +66,7 @@ class Message < ApplicationRecord
     }
   end
 
-  def is_past_message
+  def past_message?
     return false if send_at.nil?
 
     if send_at < time_buffer

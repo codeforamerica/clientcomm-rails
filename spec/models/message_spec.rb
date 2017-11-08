@@ -9,7 +9,8 @@ RSpec.describe Message, type: :model do
     end
 
     it do
-      should validate_presence_of(:send_at).with_message("That date didn't look right.")
+      should validate_presence_of(:send_at)
+        .with_message("That date didn't look right.")
     end
 
     context 'validating body of message' do
@@ -29,20 +30,20 @@ RSpec.describe Message, type: :model do
     end
 
     it 'should validate that a message is scheduled in the future' do
-      expect(Message.new.is_past_message).to be_falsey
-      expect(Message.new(send_at: Time.current - 1.days).is_past_message).to be_truthy
-      expect(Message.new(send_at: Time.current - 6.minutes).is_past_message).to be_truthy
-      expect(Message.new(send_at: Time.current).is_past_message).to be_falsey
-      expect(Message.new(send_at: Time.current + 5.minutes).is_past_message).to be_falsey
-      expect(Message.new(send_at: Time.current + 8.hours).is_past_message).to be_falsey
-      expect(Message.new(send_at: Time.current + 8.days).is_past_message).to be_falsey
+      expect(Message.new.past_message?).to be_falsey
+
+      expect(Message.new(send_at: Time.current - 1.days).past_message?).to be_truthy
+
+      expect(Message.new(send_at: Time.current).past_message?).to be_falsey
+      expect(Message.new(send_at: Time.current + 5.minutes).past_message?).to be_falsey
 
       message = Message.new(send_at: Time.current - 1.days)
-      message.is_past_message
-      expect(message.errors[:send_at]).to include "You can't schedule a message in the past."
+      message.past_message?
+      expect(message.errors[:send_at])
+        .to include "You can't schedule a message in the past."
     end
 
-    it 'should validate that a message is not scheduled more than a year in advance' do
+    it 'validates that a messages cannot be scheduled a year in advance' do
       expect(Message.new(send_at: Time.current + 2.years).valid?).to be_falsey
     end
   end
@@ -90,18 +91,26 @@ RSpec.describe Message, type: :model do
       end
 
       context 'there is an attachment' do
-        let(:params) {
+        let(:params) do
           twilio_new_message_params(
             from_number: client.phone_number,
             msg_txt: body
-          ).merge(NumMedia: 2, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaUrl1: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png', MediaContentType1: 'text/png')
-        }
+          ).merge(NumMedia: 2,
+                  MediaUrl0: 'http://cats.com/fluffy_cat.png',
+                  MediaUrl1: 'http://cats.com/fluffy_cat.png',
+                  MediaContentType0: 'text/png',
+                  MediaContentType1: 'text/png')
+        end
 
         before do
           stub_request(:get, 'http://cats.com/fluffy_cat.png')
             .to_return(status: 200,
                        body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                       headers: { 'Accept-Ranges' => 'bytes', 'Content-Length' => '4379330', 'Content-Type' => 'image/jpeg' })
+                       headers: {
+                         'Accept-Ranges' => 'bytes',
+                         'Content-Length' => '4379330',
+                         'Content-Type' => 'image/jpeg'
+                       })
         end
 
         subject { Message.create_from_twilio!(params) }

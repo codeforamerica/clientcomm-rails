@@ -11,7 +11,7 @@ class Attachment < ApplicationRecord
     @media_remote_url = url_value
   end
 
-  def is_image?
+  def image?
     media_content_type =~ /image\/.*/ ? true : false
   end
 end

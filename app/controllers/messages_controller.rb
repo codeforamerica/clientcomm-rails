@@ -59,7 +59,7 @@ class MessagesController < ApplicationController
       read: true
     )
 
-    if message.invalid? | message.is_past_message
+    if message.invalid? | message.past_message?
       @message = message
       @client = client
       @messages = past_messages(client: @client)
@@ -121,7 +121,7 @@ class MessagesController < ApplicationController
     @message.body = param_body
     @message.send_at = param_send_at
 
-    if @message.invalid? || @message.is_past_message
+    if @message.invalid? || @message.past_message?
       @client = @message.client
 
       @messages = past_messages(client: @client)

@@ -13,11 +13,11 @@ RSpec.describe Attachment, type: :model do
     }
   end
 
-  describe '#is_image?' do
+  describe '#image?' do
     let(:attachment) {
       create :attachment, media: File.new(media_path)
     }
-    subject { attachment.is_image? }
+    subject { attachment.image? }
 
     context 'image' do
       let(:media_path) { './spec/fixtures/fluffy_cat.jpg' }
