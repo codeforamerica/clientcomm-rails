@@ -49,10 +49,12 @@ group :development, :test do
   gem 'faker'
   gem 'faraday'
   gem 'jasmine'
+  gem 'overcommit'
   gem 'poltergeist'
   gem 'pry-byebug'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
+  gem 'rubocop'
   gem 'selenium-webdriver'
   gem 'webmock'
 end
