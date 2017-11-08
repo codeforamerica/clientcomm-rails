@@ -32,9 +32,9 @@ gem 'paperclip'
 
 group :test do
   gem 'capybara-screenshot'
-  gem 'codeclimate-test-reporter', require: false
+  gem 'codeclimate-test-reporter', '1.0.8', require: false
   gem 'launchy', require: false
-  gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'
+  gem 'shoulda-matchers'
   gem 'simplecov', require: false
 end
 
@@ -60,10 +60,10 @@ group :development, :test do
 end
 
 group :development do
-  gem 'listen', '~> 3.0.5'
+  gem 'listen'
   gem 'spring'
   gem 'spring-commands-rspec'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen'
   gem 'web-console'
 end
 
