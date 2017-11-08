@@ -34,6 +34,11 @@ jobs:
         paths:
           - vendor/bundle
 
+      #Run rubocop
+      - run:
+          name: rubocop
+          command: 'bundle exec rubocop -R'
+
       # Prepare db
       - run: bundle exec rails db:create
       - run: bundle exec rails db:schema:load
