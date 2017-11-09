@@ -48,7 +48,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'faraday'
-  gem 'jasmine'
+  gem 'jasmine-rails'
   gem 'overcommit'
   gem 'poltergeist'
   gem 'pry-byebug'
