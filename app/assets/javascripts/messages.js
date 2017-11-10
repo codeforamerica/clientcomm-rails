@@ -66,12 +66,12 @@ $(document).ready(function(){
   autosize(sendInput);
 
   $('form#new_message').on('ajax:success', function(e) {
-      autosize.update(sendInput);
+    autosize.update(sendInput);
   });
 
   $('#show_note').click(function(){
-    $('#truncated_note').hide();
     $('#full_note').show();
+    $('#truncated_note').hide();
   });
 
   $('#hide_note').click(function(){
