@@ -1,9 +1,10 @@
-function parseEmoji(element) {
+function replaceEmoji(element) {
   if (!Modernizr.emoji) {
     twemoji.parse(element)
   }
 }
 
 $(document).ready(function () {
-  parseEmoji(document.getElementById('message-list'))
+  var messageList = document.getElementById('message-list')
+  if (messageList) { replaceEmoji(messageList) }
 })

@@ -12,8 +12,8 @@ describe('Messages', function() {
     });
 
     it('creates and modifies the counter', function() {
-      $page = $('<body></body>');
-      $element = $("<input type='text'></input>");
+      var $page = $('<body></body>');
+      var $element = $("<input type='text'></input>");
 
       $page.append($element);
 
