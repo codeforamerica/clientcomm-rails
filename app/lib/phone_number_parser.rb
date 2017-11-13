@@ -3,7 +3,7 @@ module PhoneNumberParser
 
   def self.make_bare(phone_number)
     # return the phone number without country code or non-numeric characters
-    stripped = phone_number.to_s.gsub(/\D+/, "")
+    stripped = phone_number.to_s.gsub(/\D+/, '')
     stripped[[-10, -1 * stripped.length].max..-1]
   end
 

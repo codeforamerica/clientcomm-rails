@@ -11,10 +11,8 @@
 # SupportedStyles: snake_case, normalcase, non_integer
 Naming/VariableNumber:
   Exclude:
-    - 'spec/features/admin_spec.rb'
     - 'spec/features/user_sends_mass_message_spec.rb'
     - 'spec/helpers/client_status_helper_spec.rb'
-    - 'spec/lib/sort_clients_spec.rb'
     - 'spec/requests/admin/import_csv_request_spec.rb'
     - 'spec/requests/messages_spec.rb'
 
@@ -262,13 +260,6 @@ Style/IfUnlessModifier:
     - 'spec/spec_helper.rb'
     - 'spec/support/twilio_helper.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/MethodCallWithoutArgsParentheses:
-  Exclude:
-    - 'spec/features/user_edits_scheduled_message_spec.rb'
-    - 'spec/requests/twilio_spec.rb'
-
 # Offense count: 1
 Style/MultilineBlockChain:
   Exclude:
@@ -300,13 +291,6 @@ Style/NegatedIf:
 Style/Next:
   Exclude:
     - 'app/helpers/gcf_form_builder.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/Not:
-  Exclude:
-    - 'app/controllers/users/registrations_controller.rb'
-    - 'app/controllers/users/sessions_controller.rb'
 
 # Offense count: 12
 # Cop supports --auto-correct.
@@ -344,20 +328,6 @@ Style/PercentLiteralDelimiters:
     - 'config/spring.rb'
     - 'spec/helpers/gcf_form_builder_spec.rb'
     - 'spec/models/mass_message_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: short, verbose
-Style/PreferredHashMethods:
-  Exclude:
-    - 'spec/support/analytics_helper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/Proc:
-  Exclude:
-    - 'config/initializers/intercom.rb'
 
 # Offense count: 15
 # Cop supports --auto-correct.
@@ -405,7 +375,9 @@ Style/StderrPuts:
 # Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiterals:
-  Enabled: false
+  Exclude:
+    - 'db/migrate/*'
+    - 'db/schema.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

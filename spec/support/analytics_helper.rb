@@ -31,7 +31,7 @@ module AnalyticsHelper
     event_hashes.each do |event_description|
       event_name = event_description.keys.first
       event_properties = event_description.values.first
-      found_request = @mixpanel_requests.find { |req| req.has_key? event_name }
+      found_request = @mixpanel_requests.find { |req| req.key? event_name }
       fail "Could not find #{event_name} in the requests" unless found_request
       expect(found_request[event_name]).to include event_properties
     end
@@ -43,7 +43,7 @@ module AnalyticsHelper
     event_arrays.each do |event_names|
       event_name = event_names.keys.first
       event_properties = event_names.values.first
-      found_request = @mixpanel_requests.find { |req| req.has_key? event_name }
+      found_request = @mixpanel_requests.find { |req| req.key? event_name }
       fail "Could not find #{event_name} in the requests" unless found_request
       # byebug
       event_properties.each do |key|

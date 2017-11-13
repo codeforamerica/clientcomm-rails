@@ -1,20 +1,20 @@
-require "rails_helper"
+require 'rails_helper'
 
 describe GcfFormBuilder, type: :view do
   let(:template) do
-    template = OpenStruct.new(output_buffer: "")
+    template = OpenStruct.new(output_buffer: '')
     template.extend ActionView::Helpers::FormHelper
     template.extend ActionView::Helpers::FormTagHelper
     template.extend ActionView::Helpers::FormOptionsHelper
   end
 
-  describe "#gcf_textarea" do
-    it "renders a text area" do
+  describe '#gcf_textarea' do
+    it 'renders a text area' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_textarea(:first_name, "Enter your first name in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"])
+      output = form_builder.gcf_textarea(:first_name, 'Enter your first name in this unnecessarily BIG box!', notes: ['This is a great note.', 'Applause, please!'])
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
@@ -30,12 +30,12 @@ describe GcfFormBuilder, type: :view do
       HTML
     end
 
-    it "renders with autofocus" do
+    it 'renders with autofocus' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_textarea(:first_name, "Enter your first name in this unnecessarily BIG box!", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
+      output = form_builder.gcf_textarea(:first_name, 'Enter your first name in this unnecessarily BIG box!', notes: ['This is a great note.', 'Applause, please!'], autofocus: true)
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
@@ -52,13 +52,13 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#gcf_input_field" do
-    it "renders an input field" do
+  describe '#gcf_input_field' do
+    it 'renders an input field' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: ["This is a great note.", "Applause, please!"])
+      output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: ['This is a great note.', 'Applause, please!'])
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group">
@@ -72,12 +72,12 @@ describe GcfFormBuilder, type: :view do
       HTML
     end
 
-    it "renders with autofocus" do
+    it 'renders with autofocus' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: ["This is a great note.", "Applause, please!"], autofocus: true)
+      output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: ['This is a great note.', 'Applause, please!'], autofocus: true)
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group">
@@ -92,12 +92,12 @@ describe GcfFormBuilder, type: :view do
     end
 
     context 'with no note' do
-      it "renders an input field" do
+      it 'renders an input field' do
         user = create :user
         client = create :client, :user => user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: nil)
+        output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: nil)
         expect(output).to be_html_safe
         expect(output).to match_html <<~HTML
           <fieldset class="form-group">
@@ -111,12 +111,12 @@ describe GcfFormBuilder, type: :view do
     end
 
     context 'with a string supplied as a note' do
-      it "renders an input field" do
+      it 'renders an input field' do
         user = create :user
         client = create :client, :user => user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: "This is a great note.")
+        output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: 'This is a great note.')
         expect(output).to be_html_safe
         expect(output).to match_html <<~HTML
           <fieldset class="form-group">
@@ -131,12 +131,12 @@ describe GcfFormBuilder, type: :view do
     end
 
     context 'with a $ prefix' do
-      it "renders the input prefix" do
+      it 'renders the input prefix' do
         user = create :user
         client = create :client, :user => user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-        output = form_builder.gcf_input_field(:first_name, "Enter your first name", type: "text", notes: nil, prefix: "$")
+        output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: nil, prefix: '$')
         expect(output).to be_html_safe
         expect(output).to match_html <<~HTML
           <fieldset class="form-group">
@@ -152,13 +152,13 @@ describe GcfFormBuilder, type: :view do
       end
     end
 
-    it "renders errors" do
+    it 'renders errors' do
       user = create :user
       client = build :client, last_name: '', :user => user
       client.valid?
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_input_field(:last_name, "Enter your last name", type: "text")
+      output = form_builder.gcf_input_field(:last_name, 'Enter your last name', type: 'text')
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group form-group--error">
@@ -176,13 +176,13 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#gcf_select_field" do
-    it "renders a select field" do
+  describe '#gcf_select_field' do
+    it 'renders a select field' do
       user = create :user
       client = create :client, active: true, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_select(:active, "Is this client active?", %w(Yes No))
+      output = form_builder.gcf_select(:active, 'Is this client active?', %w(Yes No))
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group">
@@ -200,13 +200,13 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#gcf_checkbox_set" do
-    it "renders a check box set" do
+  describe '#gcf_checkbox_set' do
+    it 'renders a check box set' do
       user = create :user
       client = create :client, active: true, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_checkbox_set([{ label: "Active", method: :active }, { label: "Still Active", method: :active }], label_text: "TEST LABEL")
+      output = form_builder.gcf_checkbox_set([{ label: 'Active', method: :active }, { label: 'Still Active', method: :active }], label_text: 'TEST LABEL')
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <p class="form-question">TEST LABEL</p>
@@ -224,13 +224,13 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#gcf_checkbox" do
-    it "renders a check box that is not checked if the preference is false" do
+  describe '#gcf_checkbox' do
+    it 'renders a check box that is not checked if the preference is false' do
       user = create :user
       client = create :client, active: false, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_checkbox(:active, "Active")
+      output = form_builder.gcf_checkbox(:active, 'Active')
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
@@ -241,12 +241,12 @@ describe GcfFormBuilder, type: :view do
       HTML
     end
 
-    it "renders a check box that is checked when the subscription preference is true" do
+    it 'renders a check box that is checked when the subscription preference is true' do
       user = create :user
       client = create :client, active: true, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_checkbox(:active, "Active")
+      output = form_builder.gcf_checkbox(:active, 'Active')
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
@@ -258,13 +258,13 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#gcf_radio_set" do
-    it "renders a set of radio buttons" do
+  describe '#gcf_radio_set' do
+    it 'renders a set of radio buttons' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
-      output = form_builder.gcf_radio_set(:last_name, "What's your last name?", [{ value: 1, label: "Gutierrez" }, { value: 2, label: "Livingston" }])
+      output = form_builder.gcf_radio_set(:last_name, "What's your last name?", [{ value: 1, label: 'Gutierrez' }, { value: 2, label: 'Livingston' }])
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group">
@@ -282,8 +282,8 @@ describe GcfFormBuilder, type: :view do
     end
   end
 
-  describe "#continue" do
-    it "renders a continue button" do
+  describe '#continue' do
+    it 'renders a continue button' do
       user = create :user
       client = create :client, :user => user
       form_builder = GcfFormBuilder.new(:client, client, template, {})

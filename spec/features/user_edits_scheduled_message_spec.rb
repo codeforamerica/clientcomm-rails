@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 feature 'creating and editing scheduled messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.' }
@@ -29,11 +29,11 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'when user creates a scheduled message' do
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
-      fill_in 'Date', with: ""
+      fill_in 'Date', with: ''
       find('.ui-datepicker-next').click
-      click_on future_date.strftime("%-d")
+      click_on future_date.strftime('%-d')
 
-      select future_date.strftime("%-l:%M%P"), from: 'Time'
+      select future_date.strftime('%-l:%M%P'), from: 'Time'
       fill_in 'scheduled_message_body', with: message_body
 
       perform_enqueued_jobs do
@@ -51,23 +51,23 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user clicks on edit message' do
-      messageone_id = Message.last().id
+      messageone_id = Message.last.id
       click_on 'Edit'
       expect(page).to have_current_path(edit_message_path(messageone_id))
       expect(page).to have_content 'Edit your message'
       expect(page).to have_css('.send-later-input', text: message_body, visible: :all)
-      expect(page).to have_field('Date', with: future_date.strftime("%m/%d/%Y"))
-      expect(page).to have_select('Time', selected: future_date.strftime("%-l:%M%P"))
+      expect(page).to have_field('Date', with: future_date.strftime('%m/%d/%Y'))
+      expect(page).to have_select('Time', selected: future_date.strftime('%-l:%M%P'))
       expect(page).to have_content 'Delete message'
     end
 
     step 'when user edits a message' do
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
-      fill_in 'Date', with: ""
-      click_on new_future_date.strftime("%-d")
+      fill_in 'Date', with: ''
+      click_on new_future_date.strftime('%-d')
 
-      select new_future_date.strftime("%-l:%M%P"), from: 'Time'
+      select new_future_date.strftime('%-l:%M%P'), from: 'Time'
 
       expect(page.find('form.edit_message .character-count')).to have_content(123)
 
@@ -82,7 +82,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'then when user edits the message again' do
-      messageone_id = Message.last().id
+      messageone_id = Message.last.id
       click_on '1 message scheduled'
       expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
       expect(page).to have_content 'Manage scheduled messages'
@@ -93,8 +93,8 @@ feature 'creating and editing scheduled messages', active_job: true do
       expect(page).to have_content 'Edit your message'
       # TODO flakes because modal animation doesn't finish
       expect(page).to have_css('.send-later-input', text: new_message_body, visible: :all)
-      expect(page).to have_field('Date', with: new_future_date.strftime("%m/%d/%Y"))
-      expect(page).to have_select('Time', selected: new_future_date.strftime("%-l:%M%P"))
+      expect(page).to have_field('Date', with: new_future_date.strftime('%m/%d/%Y'))
+      expect(page).to have_select('Time', selected: new_future_date.strftime('%-l:%M%P'))
     end
 
     step 'when the user clicks the button to dismiss the modal' do
@@ -115,7 +115,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'then when user edits the message again' do
-      messageone_id = Message.last().id
+      messageone_id = Message.last.id
       click_on '1 message scheduled'
       expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
       expect(page).to have_content 'Manage scheduled messages'
@@ -126,8 +126,8 @@ feature 'creating and editing scheduled messages', active_job: true do
       expect(page).to have_content 'Edit your message'
       # TODO flakes because modal animation doesn't finish
       expect(page).to have_css('.send-later-input', text: new_message_body, visible: :all)
-      expect(page).to have_field('Date', with: new_future_date.strftime("%m/%d/%Y"))
-      expect(page).to have_select('Time', selected: new_future_date.strftime("%-l:%M%P"))
+      expect(page).to have_field('Date', with: new_future_date.strftime('%m/%d/%Y'))
+      expect(page).to have_select('Time', selected: new_future_date.strftime('%-l:%M%P'))
     end
 
     step 'when the user clicks the delete button' do

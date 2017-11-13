@@ -68,7 +68,7 @@ ActiveAdmin.register User do
       link_to 'Clients', admin_clients_path(q: { user_id_eq: user.id })
     end
 
-    f.inputs "User Info" do
+    f.inputs 'User Info' do
       f.input :full_name
       f.input :email
       f.input :phone_number, label: 'Desk phone number'

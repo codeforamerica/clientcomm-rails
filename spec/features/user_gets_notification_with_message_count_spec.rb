@@ -1,6 +1,6 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "User receives messages from clients" do
+feature 'User receives messages from clients' do
   let(:clientone) { build :client, phone_number: '+12431551212' }
   let(:clienttwo) { build :client, phone_number: '+12432551212' }
 
@@ -12,8 +12,8 @@ feature "User receives messages from clients" do
     visit clients_path
   end
 
-  context "while on the clients page" do
-    it "sees a notification for new messages from one client", :js do
+  context 'while on the clients page' do
+    it 'sees a notification for new messages from one client', :js do
       # post messages to the twilio endpoint from a user
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))

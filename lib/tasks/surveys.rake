@@ -10,7 +10,7 @@ namespace :surveys do
       puts "#{user[:full_name]} <#{user[:email]}>"
       puts "message: #{user[:body]}..."
       puts "on: #{user[:send_at].in_time_zone(Time.zone).strftime('%A, %B %-d, %-l:%M%p; %Z')}"
-      puts "################################"
+      puts '################################'
     end
   end
 end

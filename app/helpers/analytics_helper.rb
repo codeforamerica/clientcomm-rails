@@ -49,7 +49,7 @@ module AnalyticsHelper
   end
 
   def deploy_prefix
-    URI.parse(id_base).hostname.split(".")[0..1].join("_")
+    URI.parse(id_base).hostname.split('.')[0..1].join('_')
   end
 
   def id_base

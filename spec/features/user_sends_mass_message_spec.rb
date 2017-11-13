@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 feature 'sending mass messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
@@ -35,7 +35,7 @@ feature 'sending mass messages', active_job: true do
     step 'user sends message to client' do
       client_id = Client.find_by(phone_number: client_2.phone_number).id
       visit client_messages_path(client_id)
-      fill_in "Send a text message", with: message.body
+      fill_in 'Send a text message', with: message.body
 
       perform_enqueued_jobs do
         click_on 'Send'
@@ -71,7 +71,7 @@ feature 'sending mass messages', active_job: true do
 
       fill_in 'Your message', with: long_message_body
 
-      expect(page.find('.new_mass_message .character-count')).to have_content("This message may be sent as 2 texts.")
+      expect(page.find('.new_mass_message .character-count')).to have_content('This message may be sent as 2 texts.')
       expect(page.find('.relative-container')).to have_css('.character-count.text--error')
     end
 

@@ -1,14 +1,14 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "logged-out user visits create template page" do
-  scenario "and is redirected to the login form" do
+feature 'logged-out user visits create template page' do
+  scenario 'and is redirected to the login form' do
     visit new_template_path
-    expect(page).to have_text "Log in"
+    expect(page).to have_text 'Log in'
     expect(page).to have_current_path(new_user_session_path)
   end
 end
 
-feature "User creates template" do
+feature 'User creates template' do
   before do
     myuser = create :user
     login_as(myuser, :scope => :user)
@@ -37,7 +37,7 @@ feature "User creates template" do
   end
 end
 
-feature "User edits template" do
+feature 'User edits template' do
   before do
     myuser = create :user
     login_as(myuser, :scope => :user)
@@ -52,9 +52,9 @@ feature "User edits template" do
 
     expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
 
-    fill_in "Template name", with: 'New template title'
-    fill_in "Template", with: 'New template body'
-    click_on "Update"
+    fill_in 'Template name', with: 'New template title'
+    fill_in 'Template', with: 'New template body'
+    click_on 'Update'
 
     expect(page).to have_current_path(templates_path)
     expect(page).to have_content 'New template title'
@@ -70,15 +70,15 @@ feature "User edits template" do
     expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
 
     fill_in 'Template name', with: ''
-    fill_in "Template", with: ''
-    click_on "Update"
+    fill_in 'Template', with: ''
+    click_on 'Update'
 
-    expect(page).to have_content "Give your template a name so you can find it in the list."
-    expect(page).to have_content "Add a template."
+    expect(page).to have_content 'Give your template a name so you can find it in the list.'
+    expect(page).to have_content 'Add a template.'
   end
 end
 
-feature "User deletes template" do
+feature 'User deletes template' do
   before do
     myuser = create :user
     login_as(myuser, :scope => :user)
@@ -94,15 +94,15 @@ feature "User deletes template" do
     expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
 
     accept_confirm do
-      click_on "Delete template"
+      click_on 'Delete template'
     end
 
     expect(page).to have_current_path(templates_path)
-    expect(page).to have_content "Template deleted"
+    expect(page).to have_content 'Template deleted'
   end
 end
 
-feature "templates" do
+feature 'templates' do
   before do
     FeatureFlag.create!(flag: 'templates', enabled: true)
 
@@ -116,8 +116,8 @@ feature "templates" do
     expect(page).to have_current_path(client_messages_path(saved_client))
   end
 
-  scenario "user fills message send box with template", :js do
-    step "clicks on template button with no templates" do
+  scenario 'user fills message send box with template', :js do
+    step 'clicks on template button with no templates' do
       expect(page).not_to have_content('My templates')
       page.find('.icon-insert_comment').click
       expect(page).to have_content('My templates')
@@ -125,7 +125,7 @@ feature "templates" do
       expect(page).to have_content('Make it a reusable template!')
     end
 
-    step "user sees template in list" do
+    step 'user sees template in list' do
       template = create :template
       add_template(template)
 
@@ -136,7 +136,7 @@ feature "templates" do
       expect(page).to have_content(template.body)
     end
 
-    step "user adds template to main message input" do
+    step 'user adds template to main message input' do
       template = Template.first
       expect(page).to have_css '.template-popover-active'
       find('tr', text: template.title).click

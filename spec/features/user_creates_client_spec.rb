@@ -1,14 +1,14 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "logged-out user visits create client page" do
-  scenario "and is redirected to the login form" do
+feature 'logged-out user visits create client page' do
+  scenario 'and is redirected to the login form' do
     visit new_client_path
-    expect(page).to have_text "Log in"
+    expect(page).to have_text 'Log in'
     expect(page).to have_current_path(new_user_session_path)
   end
 end
 
-feature "User creates client" do
+feature 'User creates client' do
   before do
     myuser = create :user
     login_as(myuser, :scope => :user)

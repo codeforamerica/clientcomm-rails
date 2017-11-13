@@ -30,7 +30,7 @@ describe SMSService do
     let(:callback_url) { 'whocares.com' }
     let(:expected_number) { '+11234567890' }
     let(:factory_message) { create :message, twilio_sid: nil, twilio_status: nil, number_from: expected_number }
-    let(:message_status) { ["accepted", "queued", "sending", "sent", "receiving", "received", "delivered"].sample }
+    let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
 
     before do

@@ -18,7 +18,7 @@ describe MessageAlertBuilder do
     end
 
     specify 'when there is one unread message' do
-      client = create :client, user: user, first_name: "Senay", last_name: "Haylom"
+      client = create :client, user: user, first_name: 'Senay', last_name: 'Haylom'
       create :message, user: user, client: client, inbound: true, read: false
 
       expect(subject).to eq({
@@ -28,7 +28,7 @@ describe MessageAlertBuilder do
     end
 
     specify 'when there is more than one unread message from the same client' do
-      client = create :client, user: user, first_name: "Anna", last_name: "Futsum"
+      client = create :client, user: user, first_name: 'Anna', last_name: 'Futsum'
       create :message, user: user, client: client, inbound: true, read: false
       create :message, user: user, client: client, inbound: true, read: false
 
@@ -39,8 +39,8 @@ describe MessageAlertBuilder do
     end
 
     specify 'when there is more than one unread message from multiple clients' do
-      clientone = create :client, user: user, first_name: "Aziz", last_name: "Yonas"
-      clienttwo = create :client, user: user, first_name: "Mustafa", last_name: "Semhar"
+      clientone = create :client, user: user, first_name: 'Aziz', last_name: 'Yonas'
+      clienttwo = create :client, user: user, first_name: 'Mustafa', last_name: 'Semhar'
       create :message, user: user, client: clientone, inbound: true, read: false
       create :message, user: user, client: clienttwo, inbound: true, read: false
       expect(subject).to eq({
@@ -50,12 +50,12 @@ describe MessageAlertBuilder do
     end
 
     specify 'when there are a mixture of read and unread messages from a client' do
-      client = create :client, user: user, first_name: "Luwam", last_name: "Sayid"
+      client = create :client, user: user, first_name: 'Luwam', last_name: 'Sayid'
       create :message, user: user, client: client, inbound: true, read: true
       create :message, user: user, client: client, inbound: true, read: true
       create :message, user: user, client: client, inbound: true, read: false
       expect(subject).to eq({
-                              text: "You have 1 unread message from Luwam Sayid",
+                              text: 'You have 1 unread message from Luwam Sayid',
                               link_to: client_messages_path
                             })
     end

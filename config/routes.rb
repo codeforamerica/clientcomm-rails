@@ -54,7 +54,7 @@ Rails.application.routes.draw do
 
   # DELAYED JOB WEB
   authenticated :user do
-    match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
+    match '/delayed_job' => DelayedJobWeb, :anchor => false, :via => [:get, :post]
   end
 
   match '/404', to: 'errors#not_found', via: :all

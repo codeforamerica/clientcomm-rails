@@ -14,14 +14,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
     @user = User.find(current_user.id)
     updated = false
 
-    if not form_params[:update_settings].nil?
+    if !form_params[:update_settings].nil?
       updated = @user.update_attributes(user_params)
-    elsif not form_params[:change_password].nil?
+    elsif !form_params[:change_password].nil?
       updated = update_resource(@user, user_params)
     end
 
     if updated
-      flash[:notice] = "Profile updated"
+      flash[:notice] = 'Profile updated'
       sign_in(@user, :bypass => true)
       redirect_to edit_user_registration_path
     else

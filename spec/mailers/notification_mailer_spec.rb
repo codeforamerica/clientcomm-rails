@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 describe NotificationMailer, type: :mailer do
   describe '#message_notification' do

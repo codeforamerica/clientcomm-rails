@@ -35,7 +35,7 @@ describe 'User requests', type: :request do
               email: new_email,
               phone_number: new_desk_phone
             },
-            update_settings: ""
+            update_settings: ''
           }
         end
 
@@ -69,7 +69,7 @@ describe 'User requests', type: :request do
               password: password,
               password_confirmation: password_confirmation
             },
-            change_password: ""
+            change_password: ''
           }
         end
 

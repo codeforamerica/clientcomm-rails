@@ -1,5 +1,5 @@
 class GcfFormBuilder < ActionView::Helpers::FormBuilder
-  def gcf_input_field(method, label_text, type: "text", notes: [], options: {}, classes: [], prefix: nil, autofocus: nil)
+  def gcf_input_field(method, label_text, type: 'text', notes: [], options: {}, classes: [], prefix: nil, autofocus: nil)
     classes = classes.append(%w[text-input])
     <<-HTML.html_safe
       <fieldset class="form-group#{error_state(object, method)}">
@@ -19,7 +19,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     HTML
   end
 
-  def gcf_radio_set(method, label_text, collection, notes: [], layout: "block", variant: "", classes: [])
+  def gcf_radio_set(method, label_text, collection, notes: [], layout: 'block', variant: '', classes: [])
     <<-HTML.html_safe
       <fieldset class="form-group#{error_state(object, method)}#{(' ' + classes.join(' ')).strip}">
         #{label_contents(label_text, notes)}
@@ -57,7 +57,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
 
   # Expecting the following hash for each item:
   # {label: "Click me!", method: :some_attribute}
-  def gcf_checkbox_set(collection, label_text: nil, notes: [], layout: "block")
+  def gcf_checkbox_set(collection, label_text: nil, notes: [], layout: 'block')
     checkbox_html = <<-HTML.html_safe
       <fieldset class="input-group--#{layout}">
     HTML
@@ -89,7 +89,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
                            collection,
                            ->(obj) { obj[:value] },
                            ->(obj) { obj[:label] } do |b|
-      b.label(class: "checkbox") { b.check_box + b.text }
+      b.label(class: 'checkbox') { b.check_box + b.text }
     end.html_safe
   end
 
@@ -117,7 +117,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <i class="button__icon icon-arrow_forward" aria-hidden='true'></i>
     HTML
 
-    button(button_body, class: "button button--primary", data: { disable_with: button_body })
+    button(button_body, class: 'button button--primary', data: { disable_with: button_body })
   end
 
   def yes_no
@@ -207,6 +207,6 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
 
   def error_state(object, method)
     errors = object.errors[method]
-    " form-group--error" if errors.any?
+    ' form-group--error' if errors.any?
   end
 end

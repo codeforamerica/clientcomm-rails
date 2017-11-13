@@ -1,6 +1,6 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "User receives a message from a client" do
+feature 'User receives a message from a client' do
   let(:userone) { create :user }
   let(:clientone) { create :client, user: userone }
 
@@ -9,7 +9,7 @@ feature "User receives a message from a client" do
   end
 
   context "while on the client's messages page" do
-    it "marks the message as read", :js do
+    it 'marks the message as read', :js do
       # go to the messages page
       clientone_phone = clientone.phone_number
       clientone_id = Client.find_by(phone_number: clientone_phone).id

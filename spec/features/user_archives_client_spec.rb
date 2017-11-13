@@ -1,6 +1,6 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "user archives client", :js do
+feature 'user archives client', :js do
   before do
     @survey = ENV['TYPEFORM_LINK']
     ENV['TYPEFORM_LINK'] = 'candy'
@@ -12,7 +12,7 @@ feature "user archives client", :js do
     page.driver.browser.js_errors = true
   end
 
-  scenario "user clicks archive client button" do
+  scenario 'user clicks archive client button' do
     # log in with a fake user
     myuser = create :user
     clientone = create :client, user: myuser
@@ -33,7 +33,7 @@ feature "user archives client", :js do
     expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
   end
 
-  scenario "archived client is revived by incoming sms" do
+  scenario 'archived client is revived by incoming sms' do
     # log in with a fake user
     myuser = create :user
     clientone = create :client, user: myuser, active: false, phone_number: twilio_new_message_params['From']

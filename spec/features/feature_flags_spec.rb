@@ -10,7 +10,7 @@ feature 'feature flags' do
 
     context 'enabled' do
       before do
-        FeatureFlag.create!(flag: "mass_messages", enabled: true)
+        FeatureFlag.create!(flag: 'mass_messages', enabled: true)
       end
 
       it 'shows mass messages button' do
@@ -37,7 +37,7 @@ feature 'feature flags' do
 
     context 'enabled' do
       before do
-        FeatureFlag.create!(flag: "templates", enabled: true)
+        FeatureFlag.create!(flag: 'templates', enabled: true)
       end
 
       it 'shows templates button' do

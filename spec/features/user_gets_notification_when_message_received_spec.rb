@@ -1,6 +1,6 @@
-require "rails_helper"
+require 'rails_helper'
 
-feature "User receives a message from a client" do
+feature 'User receives a message from a client' do
   let(:clientone) { build :client, phone_number: '+12431551212' }
   let(:clienttwo) { build :client, phone_number: '+12432551212' }
 
@@ -15,15 +15,15 @@ feature "User receives a message from a client" do
     visit clients_path
   end
 
-  context "while on the clients page" do
-    it "and sees a notification for a new message", :js do
+  context 'while on the clients page' do
+    it 'and sees a notification for a new message', :js do
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
       # there's a flash with the correct contents
       expect(page).to have_css '.flash p', text: "You have 1 unread message from #{clientone.full_name}"
     end
 
-    it "and sees a refreshed client list", :js do
+    it 'and sees a refreshed client list', :js do
       # post a message to the twilio endpoint from the first user 5 days ago
       # (validates that the correct message is being counted as 'last')
       travel_to 5.days.ago do
@@ -41,12 +41,12 @@ feature "User receives a message from a client" do
       # send a message from client two and check the new order
       twilio_post_sms(twilio_new_message_params(from_number: clienttwo.phone_number))
 
-      expect(page).to have_css '.flash p', text: "You have 3 unread messages"
+      expect(page).to have_css '.flash p', text: 'You have 3 unread messages'
       expect(page).to have_css '.unread td', text: 'just now'
       expect(page.body.index(clienttwo.full_name)).to be < page.body.index(clientone.full_name)
     end
 
-    it "sees a notification for only new messages from a client", :js do
+    it 'sees a notification for only new messages from a client', :js do
       # post a message to the twilio endpoint from a user
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
       # there's a flash with the correct content

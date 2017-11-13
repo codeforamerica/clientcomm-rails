@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 feature 'sending messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
@@ -32,7 +32,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Send a text message', with: long_message_body
 
-      expect(page.find('.sendbar .character-count')).to have_content("This message may be sent as 2 texts.")
+      expect(page.find('.sendbar .character-count')).to have_content('This message may be sent as 2 texts.')
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
 
       fill_in 'Send a text message', with: message_body
@@ -89,7 +89,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Your message text', with: long_message_body
 
-      expect(page.find('#scheduled_new_message  .character-count')).to have_content("This message may be sent as 2 texts.")
+      expect(page.find('#scheduled_new_message  .character-count')).to have_content('This message may be sent as 2 texts.')
       expect(page.find('#scheduled_new_message')).to have_css('.character-count.text--error')
 
       fill_in 'Your message text', with: message_body
@@ -98,10 +98,10 @@ feature 'sending messages', active_job: true do
 
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
-      fill_in 'Date', with: ""
+      fill_in 'Date', with: ''
       find('.ui-datepicker-next').click
-      click_on future_date.strftime("%-d")
-      select future_date.change(min: 0).strftime("%-l:%M%P"), from: 'Time'
+      click_on future_date.strftime('%-d')
+      select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
 
       perform_enqueued_jobs do
         click_on 'Schedule message'

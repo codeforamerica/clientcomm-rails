@@ -14,7 +14,7 @@ RSpec.describe Client, type: :model do
 
     describe '#full_name' do
       it 'formats full name' do
-        expect(subject.full_name).to eq(subject.first_name + " " + subject.last_name)
+        expect(subject.full_name).to eq(subject.first_name + ' ' + subject.last_name)
       end
     end
   end

@@ -48,7 +48,7 @@ class TemplatesController < ApplicationController
     @template = current_user.templates.find(params[:id])
 
     if @template.update_attributes(template_params)
-      flash[:notice] = "Template updated"
+      flash[:notice] = 'Template updated'
       redirect_to templates_path
     else
       @templates = current_user.templates
@@ -64,7 +64,7 @@ class TemplatesController < ApplicationController
       data: { templates_count: current_user.templates.count }
     )
 
-    flash[:notice] = "Template deleted"
+    flash[:notice] = 'Template deleted'
     redirect_to templates_path
   end
 

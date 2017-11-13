@@ -75,7 +75,7 @@ class ClientsController < ApplicationController
   def update
     @client = current_user.clients.find(params[:id])
     if @client.update_attributes(client_params)
-      flash[:notice] = "Client updated"
+      flash[:notice] = 'Client updated'
 
       analytics_track(
         label: 'client_edit_success',

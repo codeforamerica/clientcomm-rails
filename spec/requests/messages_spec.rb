@@ -196,8 +196,8 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
-            date: time_in_past.strftime("%m/%d/%Y"),
-            time: time_in_past.strftime("%-l:%M%P")
+            date: time_in_past.strftime('%m/%d/%Y'),
+            time: time_in_past.strftime('%-l:%M%P')
           }
         }
 
@@ -212,7 +212,7 @@ describe 'Messages requests', type: :request, active_job: true do
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "You can't schedule a message in the past."
           expect(response_body).to include body
-          expect(response_body).to include time_in_past.strftime("%m/%d/%Y")
+          expect(response_body).to include time_in_past.strftime('%m/%d/%Y')
         end
       end
 
@@ -220,8 +220,8 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
         let(:message_send_at) {
           {
-            date: time_to_send.strftime("%m/%d/%Y"),
-            time: time_to_send.strftime("%-l:%M%P")
+            date: time_to_send.strftime('%m/%d/%Y'),
+            time: time_to_send.strftime('%-l:%M%P')
           }
         }
 
@@ -287,8 +287,8 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
-            date: time_in_past.strftime("%m/%d/%Y"),
-            time: time_in_past.strftime("%-l:%M%P")
+            date: time_in_past.strftime('%m/%d/%Y'),
+            time: time_in_past.strftime('%-l:%M%P')
           }
         }
 
@@ -314,7 +314,7 @@ describe 'Messages requests', type: :request, active_job: true do
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "You can't schedule a message in the past."
           expect(response_body).to include new_body
-          expect(response_body).to include time_in_past.strftime("%m/%d/%Y")
+          expect(response_body).to include time_in_past.strftime('%m/%d/%Y')
         end
       end
     end
@@ -328,7 +328,7 @@ describe 'Messages requests', type: :request, active_job: true do
         messages.each do |message|
           expect(response.body).to include(message.number_from) if message.inbound
           expect(response.body).to include(message.number_to) unless message.inbound
-          expect(response.body).to include(message.created_at.strftime("%b %-d %Y, %-l:%M:%S %P"))
+          expect(response.body).to include(message.created_at.strftime('%b %-d %Y, %-l:%M:%S %P'))
           expect(response.body).to include(message.body)
           expect(response.body).to include(client.first_name)
           expect(response.body).to include(user.full_name)

@@ -95,8 +95,8 @@ describe 'Templates requests', type: :request do
 
         get templates_path
 
-        expect(Nokogiri.parse(response.body).to_s).to include("New title")
-        expect(Nokogiri.parse(response.body).to_s).to include("New body")
+        expect(Nokogiri.parse(response.body).to_s).to include('New title')
+        expect(Nokogiri.parse(response.body).to_s).to include('New body')
       end
     end
 

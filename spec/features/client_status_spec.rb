@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature "Client status banner" do
+feature 'Client status banner' do
   before do
     FeatureFlag.create!(flag: 'client_status', enabled: true)
     ClientStatus.create!(name: 'Active', followup_date: 30)
@@ -12,15 +12,15 @@ feature "Client status banner" do
     create_list :client, 3, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: Time.now - 26.days
   end
 
-  scenario "user sees banner and messages clients" do
-    step "view banner on clients page" do
+  scenario 'user sees banner and messages clients' do
+    step 'view banner on clients page' do
       visit clients_path
 
-      expect(page).to have_content "You have 3 active clients due for follow up"
+      expect(page).to have_content 'You have 3 active clients due for follow up'
     end
 
-    step "click on button and go to mass message page" do
-      click_on "Message them"
+    step 'click on button and go to mass message page' do
+      click_on 'Message them'
 
       expect(page).to have_current_path(new_mass_message_path, only_path: true)
     end

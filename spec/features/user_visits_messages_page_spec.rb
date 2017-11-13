@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 feature 'User clicks on client in list', :js do
-  describe "and sees the messages page" do
+  describe 'and sees the messages page' do
     let!(:myuser) { create :user }
     let!(:myclient) { create :client, user: myuser }
 
@@ -25,7 +25,7 @@ feature 'User clicks on client in list', :js do
       end
     end
 
-    context "on the messages page" do
+    context 'on the messages page' do
       before do
         login_as(myuser, :scope => :user)
         visit client_messages_path(myclient)
@@ -79,7 +79,7 @@ feature 'User sees client notes on messages page', :js do
   let(:myuser) { create :user }
   let(:myclient) { create :client, user: myuser, notes: notes }
 
-  context "visits clients page on mobile" do
+  context 'visits clients page on mobile' do
     before do
       resize_window_to_mobile
     end

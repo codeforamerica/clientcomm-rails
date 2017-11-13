@@ -8,7 +8,7 @@ class Users::SessionsController < Devise::SessionsController
     # only error for messages other than 'unauthenticated'
     unauth_msg = I18n.t('devise.failure.unauthenticated')
     has_error = !flash[:alert].nil? && flash[:alert] != unauth_msg
-    if not has_error
+    if !has_error
       analytics_track(label: 'login_view')
     else
       analytics_track(label: 'login_error')

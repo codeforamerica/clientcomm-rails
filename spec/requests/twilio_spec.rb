@@ -267,7 +267,7 @@ describe 'Twilio controller', type: :request, active_job: true do
   context 'POST#incoming_voice' do
     shared_examples 'valid xml response' do
       it 'responds with xml' do
-        twilio_post_voice()
+        twilio_post_voice
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
@@ -305,7 +305,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
 
       it 'responds with xml that connects the call to the unclaimed user' do
-        twilio_post_voice()
+        twilio_post_voice
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
@@ -338,7 +338,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call to the unclaimed user' do
-        twilio_post_voice()
+        twilio_post_voice
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
@@ -380,7 +380,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call' do
-        twilio_post_voice()
+        twilio_post_voice
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include '<Number>+19999999999</Number>'

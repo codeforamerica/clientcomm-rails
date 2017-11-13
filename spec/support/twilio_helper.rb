@@ -28,7 +28,7 @@ module TwilioHelper
   end
 
   def twilio_message_text
-    "This is a test message."
+    'This is a test message.'
   end
 
   def twilio_new_message_params(
@@ -37,28 +37,28 @@ module TwilioHelper
     msg_txt: twilio_message_text
   )
     HashWithIndifferentAccess.new({
-                                    "ToCountry" => "US",
-                                    "ToState" => "CA",
-                                    "SmsMessageSid" => sms_sid,
-                                    "NumMedia" => "0",
-                                    "ToCity" => "",
-                                    "FromZip" => "94005",
-                                    "SmsSid" => sms_sid,
-                                    "FromState" => "CA",
-                                    "SmsStatus" => "received",
-                                    "FromCity" => "SAN FRANCISCO",
-                                    "Body" => msg_txt,
-                                    "FromCountry" => "US",
-                                    "To" => "+12435551212",
-                                    "ToZip" => "",
-                                    "AddOns" => "{\"status\":\"successful\",\"message\":null,\"code\":null,\"results\":{}}",
-                                    "NumSegments" => "1",
-                                    "MessageSid" => sms_sid,
-                                    "AccountSid" => "077541f41cce52ea6c4944fa6823a4a277",
-                                    "From" => from_number,
-                                    "ApiVersion" => "2010-04-01",
-                                    "controller" => "twilio",
-                                    "action" => "incoming_sms"
+                                    'ToCountry' => 'US',
+                                    'ToState' => 'CA',
+                                    'SmsMessageSid' => sms_sid,
+                                    'NumMedia' => '0',
+                                    'ToCity' => '',
+                                    'FromZip' => '94005',
+                                    'SmsSid' => sms_sid,
+                                    'FromState' => 'CA',
+                                    'SmsStatus' => 'received',
+                                    'FromCity' => 'SAN FRANCISCO',
+                                    'Body' => msg_txt,
+                                    'FromCountry' => 'US',
+                                    'To' => '+12435551212',
+                                    'ToZip' => '',
+                                    'AddOns' => '{"status":"successful","message":null,"code":null,"results":{}}',
+                                    'NumSegments' => '1',
+                                    'MessageSid' => sms_sid,
+                                    'AccountSid' => '077541f41cce52ea6c4944fa6823a4a277',
+                                    'From' => from_number,
+                                    'ApiVersion' => '2010-04-01',
+                                    'controller' => 'twilio',
+                                    'action' => 'incoming_sms'
                                   })
   end
 
@@ -69,16 +69,16 @@ module TwilioHelper
     to_number: '+12435551212'
   )
     {
-      "SmsSid" => sms_sid,
-      "SmsStatus" => sms_status,
-      "MessageStatus" => sms_status,
-      "To" => to_number,
-      "MessageSid" => sms_sid,
-      "AccountSid" => "077541f41cce52ea6c4944fa6823a4a277",
-      "From" => from_number,
-      "ApiVersion" => "2010-04-01",
-      "controller" => "twilio",
-      "action" => "incoming_sms_status"
+      'SmsSid' => sms_sid,
+      'SmsStatus' => sms_status,
+      'MessageStatus' => sms_status,
+      'To' => to_number,
+      'MessageSid' => sms_sid,
+      'AccountSid' => '077541f41cce52ea6c4944fa6823a4a277',
+      'From' => from_number,
+      'ApiVersion' => '2010-04-01',
+      'controller' => 'twilio',
+      'action' => 'incoming_sms_status'
     }
   end
 

@@ -1,6 +1,6 @@
 module WaitForAjax
   def wait_for_ajax
-    wait_for "all ajax requests to complete" do
+    wait_for 'all ajax requests to complete' do
       finished_all_ajax_requests?
     end
   end

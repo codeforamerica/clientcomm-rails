@@ -36,7 +36,7 @@ class MessagesController < ApplicationController
 
     # the list of past messages
     @messages = current_user.messages
-                            .where(client_id: params["client_id"])
+                            .where(client_id: params['client_id'])
                             .where('send_at < ?', Time.now)
                             .order('send_at ASC')
 

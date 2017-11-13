@@ -78,7 +78,7 @@ describe 'Clients requests', type: :request do
         it 'renders new with validation errors' do
           subject
 
-          expect(flash[:alert]).to include "There was a problem"
+          expect(flash[:alert]).to include 'There was a problem'
           expect(response.code).to eq '200'
           expect(response.body).to include "can't be blank"
           expect(Client.count).to eq 0
@@ -168,7 +168,7 @@ describe 'Clients requests', type: :request do
         it 'renders edit with validation errors' do
           subject
 
-          expect(flash[:alert]).to include "There was a problem"
+          expect(flash[:alert]).to include 'There was a problem'
           expect(response.code).to eq '200'
           expect(response.body).to include "can't be blank"
         end
@@ -225,8 +225,8 @@ describe 'Clients requests', type: :request do
           let(:training_contacted_at) { nil }
           let(:exited_contacted_at) { nil }
 
-          it "shows active followup banner" do
-            client_id = Client.find_by_client_status_id(ClientStatus.find_by_name("Active").id).id
+          it 'shows active followup banner' do
+            client_id = Client.find_by_client_status_id(ClientStatus.find_by_name('Active').id).id
             subject
 
             expect(Nokogiri.parse(response.body).text)
