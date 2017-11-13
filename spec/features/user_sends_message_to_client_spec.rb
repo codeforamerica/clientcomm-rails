@@ -32,7 +32,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Send a text message', with: long_message_body
 
-      expect(page.find('.sendbar .character-count')).to have_content(/^165$/)
+      expect(page.find('.sendbar .character-count')).to have_content("This message may be sent as 2 texts.")
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
 
       fill_in 'Send a text message', with: message_body
@@ -89,7 +89,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Your message text', with: long_message_body
 
-      expect(page.find('#scheduled_new_message  .character-count')).to have_content(165)
+      expect(page.find('#scheduled_new_message  .character-count')).to have_content("This message may be sent as 2 texts.")
       expect(page.find('#scheduled_new_message')).to have_css('.character-count.text--error')
 
       fill_in 'Your message text', with: message_body

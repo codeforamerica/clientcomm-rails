@@ -4,10 +4,12 @@ feature "user archives client", :js do
   before do
     @survey = ENV['TYPEFORM_LINK']
     ENV['TYPEFORM_LINK'] = 'candy'
+    page.driver.browser.js_errors = false
   end
 
   after do
     ENV['TYPEFORM_LINK'] = @survey
+    page.driver.browser.js_errors = true
   end
 
   scenario "user clicks archive client button" do

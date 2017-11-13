@@ -1,11 +1,13 @@
 $(document).ready(function(){
+  var $templateButton = $('#template-button');
+
   var sendInput = $('textarea.autosize');
   // Enable the popover for templates
-  $('#template-button').popover({
+  $templateButton.popover({
     container: '.sendbar'
   });
 
-  $('#template-button').click(function(){
+  $templateButton.click(function(){
     mixpanelTrack(
       "template_popover_view", {
         templates_count: $(this).data('template-count'),
@@ -14,8 +16,8 @@ $(document).ready(function(){
     );
   });
 
-  $('#template-button').on('shown.bs.popover', function () {
-    $('#template-button').addClass('template-popover-active');
+  $templateButton.on('shown.bs.popover', function () {
+    $templateButton.addClass('template-popover-active');
 
     $('.template-row').click(selectTemplate);
   });
@@ -23,7 +25,7 @@ $(document).ready(function(){
   function selectTemplate() {
     mixpanelTrack(
       "template_insert", {
-        client_id: $('#template-button').data('client-id')
+        client_id: $templateButton.data('client-id')
       }
     );
 
@@ -46,8 +48,9 @@ $(document).ready(function(){
   });
 
   function initializeModal(modalSelector) {
-    $(modalSelector).modal();
-    $(modalSelector).on('shown.bs.modal', function () {
+    var $modal = $(modalSelector);
+    $modal.modal();
+    $modal.on('shown.bs.modal', function () {
       $('textarea#scheduled_message_body.send-later-input.textarea').focus();
     });
   }
@@ -56,9 +59,10 @@ $(document).ready(function(){
   initializeModal('#edit-message-modal');
 
   function initializeDatepicker(datepickerSelector) {
-    $(datepickerSelector).datepicker();
-    $(datepickerSelector).datepicker("option", "showAnim", "");
-  };
+    var $datepicker = $(datepickerSelector);
+    $datepicker.datepicker();
+    $datepicker.datepicker("option", "showAnim", "");
+  }
 
   initializeDatepicker("#edit_message_send_at_date");
   initializeDatepicker("#new_message_send_at_date");
@@ -83,9 +87,9 @@ $(document).ready(function(){
 });
 
 function characterCount(element) {
-  if(element.length === 0) { return }
+  if(element.length === 0) { return; }
 
-  var initialLength = $(element).val().length
+  var initialLength = $(element).val().length;
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
@@ -98,21 +102,28 @@ function characterCount(element) {
     element.before(counter);
   }
 
-  var form = element.prop('form')
+  var form = element.prop('form');
 
   $(form).on('ajax:complete', function () {
-    var length = $(element).val().length;
-    counter.html(length)
-    counter.toggleClass('text--error', length > 160);
-  })
+    setCounter(counter, element);
+  });
 
   element.on('keydown keyup focus paste', function(e){
     setTimeout(function(){
-      var length = $(element).val().length;
-      counter.html(length);
-      counter.toggleClass('text--error', length > 160);
+      setCounter(counter, element);
     });
   });
+}
+
+function setCounter(counter, textField) {
+  var length = $(textField).val().length;
+  var tooLongForSingleText = length > 160;
+  counter.toggleClass('text--error', tooLongForSingleText);
+  if (tooLongForSingleText) {
+    counter.html("This message may be sent as "+Math.ceil(length/160)+" texts.");
+  } else {
+    counter.html(length);
+  }
 }
 
 function mixpanelTrack(event, params) {
