@@ -48,7 +48,8 @@ class TwilioController < ApplicationController
     return if message.nil?
 
     # update the status of the corresponding message in the database
-    message.update!(twilio_status: params[:SmsStatus])
+    # reload before `update` to avoid any DB race conditions from optimistic locking
+    message.reload.update!(twilio_status: params[:SmsStatus])
 
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: message)
