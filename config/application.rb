@@ -41,7 +41,7 @@ module Clientcomm
     # Set the time zone from ENV, or default to UTC
     config.time_zone = ENV['TIME_ZONE'] || 'UTC'
 
-    Dir.glob("#{Rails.root}/app/assets/images/**/").each do |path|
+    Dir.glob(Rails.root.join('app', 'assets', 'images', '**')).each do |path|
       config.assets.paths << path
     end
   end
