@@ -8,4 +8,4 @@ staging:
   <<: *default
 
 test:
-  adapter: async
+  adapter: test

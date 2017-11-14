@@ -9,6 +9,8 @@ require 'webmock/rspec'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+require 'action_cable/testing/rspec'
+require 'action_cable/testing/rspec/features'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 

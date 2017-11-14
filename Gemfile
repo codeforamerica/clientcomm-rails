@@ -39,6 +39,7 @@ group :test do
 end
 
 group :development, :test do
+  gem 'action-cable-testing'
   gem 'addressable'
   gem 'awesome_print'
   gem 'byebug', platform: :mri
