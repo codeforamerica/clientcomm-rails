@@ -76,6 +76,7 @@ feature 'User receives a message from a client' do
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
+      wait_for_ajax
       # there's no flash notification
       expect(page).to have_no_css '.flash'
     end
