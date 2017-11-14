@@ -42,7 +42,7 @@ RSpec.configure do |config|
     WebMock.after_request do |request_signature|
       if request_signature.uri.host == 'api.mixpanel.com'
         parsed = JSON.parse(
-          Base64.decode64(CGI::parse(request_signature.body)['data'][0])
+          Base64.decode64(CGI.parse(request_signature.body)['data'][0])
         )
         @mixpanel_requests << { parsed['event'] => parsed['properties'] }
         @mixpanel_event_names << parsed['event']

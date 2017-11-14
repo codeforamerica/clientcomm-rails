@@ -22,14 +22,6 @@ Performance/RegexpMatch:
   Exclude:
     - 'app/models/attachment.rb'
 
-# Offense count: 9
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: strict, flexible
-Rails/Date:
-  Exclude:
-    - 'spec/features/user_sends_message_to_client_spec.rb'
-    - 'spec/lib/sort_clients_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforceForPrefixed.
@@ -47,7 +39,7 @@ Rails/DynamicFindBy:
 # Offense count: 4
 Rails/FilePath:
   Exclude:
-    - 'config/application.rb'
+    # - 'config/application.rb'
     - 'config/environments/development.rb'
     - 'config/initializers/fake_twilio.rb'
     - 'spec/rails_helper.rb'
@@ -141,7 +133,6 @@ Style/BarePercentLiterals:
 # IgnoredMethods: lambda, proc, it
 Style/BlockDelimiters:
   Exclude:
-    - 'app/lib/sort_clients.rb'
     - 'spec/models/attachment_spec.rb'
     - 'spec/requests/messages_spec.rb'
     - 'spec/requests/twilio_spec.rb'
@@ -181,12 +172,6 @@ Style/ClassAndModuleChildren:
     - 'app/controllers/users/registrations_controller.rb'
     - 'app/controllers/users/sessions_controller.rb'
     - 'app/controllers/users/unlocks_controller.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/ColonMethodCall:
-  Exclude:
-    - 'spec/spec_helper.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.

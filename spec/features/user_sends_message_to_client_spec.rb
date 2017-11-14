@@ -94,7 +94,7 @@ feature 'sending messages', active_job: true do
 
       fill_in 'Your message text', with: message_body
 
-      future_date = (Date.today + 1.month).beginning_of_month
+      future_date = (Time.zone.today + 1.month).beginning_of_month
 
       # if we don't interact with the datepicker, it persists and
       # covers other ui elements
