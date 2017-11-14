@@ -74,7 +74,6 @@ feature 'User receives a message from a client' do
       visit client_messages_path(client_id: myclient_id)
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
-      wait_for_ajax
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
       # there's no flash notification
