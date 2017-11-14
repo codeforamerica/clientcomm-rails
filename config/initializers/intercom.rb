@@ -22,7 +22,7 @@ IntercomRails.config do |config|
   # If it is `current_user` or `@user`, then you can ignore this
   #
   # config.user.current = Proc.new { current_user }
-  # config.user.current = [Proc.new { current_user }]
+  config.user.current = [proc { current_user }, proc { current_admin_user }]
 
   # == Include for logged out Users
   # If set to true, include the Intercom messenger on all pages, regardless of whether
@@ -51,10 +51,11 @@ IntercomRails.config do |config|
   # You can provide either a method name which will be sent to the current
   # user object, or a Proc which will be passed the current user.
   #
+  # This must handle both User and AdminUser models
   config.user.custom_data = {
     user_id: proc { |user| user.email },
-    name: proc { |user| user.full_name },
-    phone: proc { |user| user.phone_number }
+    name: proc { |user| user.try(:full_name) },
+    phone: proc { |user| user.try(:phone_number) }
   }
 
   # == Current company method/variable
