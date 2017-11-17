@@ -12,7 +12,7 @@
 
         <div class="grid__item width-two-thirds-lg">
           <div class="inner-addon right-addon">
-            <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+            <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
             <% if FeatureFlag.enabled?('templates') %>
             <a tabindex="0"
               id="template-button"
