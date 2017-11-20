@@ -4,8 +4,8 @@ class ReportingRelationship < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  validates_uniqueness_of :client, scope: :user
-  validates_presence_of :client, :user
+  validates :client, uniqueness: { scope: :user }
+  validates :client, :user, presence: true
   validates :active, inclusion: { in: [true, false] }
 
   validate :unique_within_department

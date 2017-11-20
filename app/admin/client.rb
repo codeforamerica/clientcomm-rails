@@ -100,7 +100,7 @@ ActiveAdmin.register Client do
           previous_user.reporting_relationships.find_by(client: resource).update!(active: false)
         end
 
-        next unless new_user.present?
+        next if new_user.blank?
         new_user.reporting_relationships.find_or_create_by(client: resource).update!(active: true)
 
         NotificationMailer.client_transfer_notification(

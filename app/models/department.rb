@@ -1,5 +1,5 @@
 class Department < ApplicationRecord
-  has_many :users
+  has_many :users, dependent: :nullify
   belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id'
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
@@ -8,9 +8,9 @@ class Department < ApplicationRecord
   private
 
   def normalize_phone_number
-    return unless self.phone_number
+    return unless phone_number
 
-    self.phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
+    self.phone_number = SMSService.instance.number_lookup(phone_number: phone_number)
   rescue SMSService::NumberNotFound
     @bad_number = true
   end

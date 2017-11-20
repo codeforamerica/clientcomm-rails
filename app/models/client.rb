@@ -1,11 +1,11 @@
 class Client < ApplicationRecord
-  has_many :reporting_relationships
+  has_many :reporting_relationships, dependent: :nullify
   has_many :users, through: :reporting_relationships
   belongs_to :client_status
   has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 
-  scope :active, -> {
+  scope :active, lambda {
     joins(:reporting_relationships)
       .where(reporting_relationships: { active: true })
   }

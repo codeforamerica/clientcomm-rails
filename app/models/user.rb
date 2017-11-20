@@ -30,10 +30,7 @@ class User < ApplicationRecord
     messages.unread.count
   end
 
-  def clients_count
-    # the number of associated clients
-    clients.count
-  end
+  delegate :count, to: :clients, prefix: true
 
   def active_for_authentication?
     super && active

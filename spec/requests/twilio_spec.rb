@@ -102,13 +102,13 @@ describe 'Twilio controller', type: :request, active_job: true do
 
         client.reload
 
-        expect(client.last_contacted_at).to be_within(1.seconds).of some_date
+        expect(client.last_contacted_at).to be_within(1.second).of some_date
         expect(client.has_unread_messages).to eq true
         expect(client.has_message_error).to eq false
       end
     end
 
-    context 'the client has no active realtionships with a user' do
+    context 'the client has no active relationships with a user' do
       let(:department_users) { create_list :user, 3, department: department }
 
       before do
@@ -121,7 +121,8 @@ describe 'Twilio controller', type: :request, active_job: true do
           end
         end
 
-        ReportingRelationship.find_by(client: client, user: department_users.second).touch
+        ReportingRelationship.find_by(client: client, user: department_users.second)
+                             .update(updated_at: Time.zone.now)
       end
 
       it 'reactivates the most recently active relationship' do
