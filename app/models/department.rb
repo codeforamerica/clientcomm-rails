@@ -1,5 +1,6 @@
 class Department < ApplicationRecord
   has_many :users
+  belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id'
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?

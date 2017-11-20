@@ -23,19 +23,24 @@ class Message < ApplicationRecord
     to_phone_number = twilio_params[:To]
 
     client = Client.find_by(phone_number: from_phone_number)
+    department = Department.find_by(phone_number: to_phone_number)
+
     if client.nil?
       client = Client.create!(
-        phone_number: phone_number,
-        last_name: phone_number,
-        user:  User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
+        phone_number: from_phone_number,
+        last_name: from_phone_number,
+        users: [department.unclaimed_user]
       )
     end
 
-    user = User.joins(:department)
-      .joins(:reporting_relationships)
-      .where(departments: { phone_number: to_phone_number })
-      .find_by(reporting_relationships: { client: client })
-      # TODO: write a test for this; should require an active relationship to work
+    # find an inactive user
+    user = department.users
+                     .active
+                     .joins(:reporting_relationships)
+                     .order('reporting_relationships.updated_at DESC')
+                     .find_by(reporting_relationships: { client: client })
+
+    user ||= department.unclaimed_user
 
     new_message = Message.new(
       client: client,

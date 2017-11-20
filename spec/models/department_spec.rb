@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Department, type: :model do
   it { should have_many :users }
+  it { should belong_to :unclaimed_user }
 
   describe 'validations' do
     it 'validates correctness of phone_number' do
@@ -22,7 +23,7 @@ describe Department, type: :model do
     end
   end
 
-	describe 'normalizing' do
+  describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }
     let(:normalized_phone_number) { '+17605557890' }
     before do

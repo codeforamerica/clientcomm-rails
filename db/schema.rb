@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171107212003) do
+ActiveRecord::Schema.define(version: 20171109222018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,8 @@ ActiveRecord::Schema.define(version: 20171107212003) do
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_departments_on_user_id"
   end
 
   create_table "feature_flags", force: :cascade do |t|
@@ -168,6 +170,7 @@ ActiveRecord::Schema.define(version: 20171107212003) do
   add_foreign_key "attachments", "messages"
   add_foreign_key "clients", "client_statuses"
   add_foreign_key "clients", "users"
+  add_foreign_key "departments", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
   add_foreign_key "reporting_relationships", "clients"

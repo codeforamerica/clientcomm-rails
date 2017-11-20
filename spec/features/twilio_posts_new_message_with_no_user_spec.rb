@@ -6,19 +6,15 @@ feature 'Twilio', :js do
   end
 
   describe 'POSTs to #incoming_sms' do
-    before do
-      @unclaimed_email = ENV['UNCLAIMED_EMAIL']
-      ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
-    end
-
-    after do
-      ENV['UNCLAIMED_EMAIL'] = @unclaimed_email
-    end
-
     context 'from an unknown user' do
       let(:phone_number) { 'just some phone number' }
       let(:department) { create :department, phone_number: phone_number }
-      let!(:unclaimed_user) { create(:user, department: department, email: ENV['UNCLAIMED_EMAIL']) }
+      let!(:unclaimed_user) { create :user, department: department }
+
+      before do
+        department.unclaimed_user = unclaimed_user
+        department.save!
+      end
 
       it 'routes messages to user for unclaimed messages' do
         message_params = twilio_new_message_params to_number: phone_number

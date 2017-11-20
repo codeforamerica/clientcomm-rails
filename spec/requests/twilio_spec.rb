@@ -6,17 +6,18 @@ describe 'Twilio controller', type: :request, active_job: true do
   let(:has_message_error) { false }
   let(:active) { true }
   let(:dept_phone_number) { '+14242424242' }
-  let(:user) { create :user, dept_phone_number: dept_phone_number }
-  let!(:client) {
+  let(:department) { create :department, phone_number: dept_phone_number }
+  let(:user) { create :user, department: department }
+  let!(:client) do
     create(
       :client,
-      user: user,
+      users: [user],
       phone_number: phone_number,
       has_message_error: has_message_error,
       has_unread_messages: has_unread_messages,
       active: active
     )
-  }
+  end
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }
@@ -107,16 +108,26 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
     end
 
-    context 'the client was previously inactive' do
+    context 'the client has no active realtionships with a user' do
+      let(:department_users) { create_list :user, 3, department: department }
+
       before do
-        rr = client.reporting_relationships.find_by(user: user)
-        rr.update!(active: false)
+        travel_to 1.day.ago do
+          rr = client.reporting_relationships.find_by(user: user)
+          rr.update!(active: false)
+
+          department_users.each do |du|
+            ReportingRelationship.create(user: du, client: client, active: false)
+          end
+        end
+
+        ReportingRelationship.find_by(client: client, user: department_users.second).touch
       end
 
-      it 'returns the client to the active list' do
+      it 'reactivates the most recently active relationship' do
         subject
 
-        rr = client.reporting_relationships.find_by(user: user)
+        rr = client.reporting_relationships.find_by(user: department_users.second)
         expect(rr.active).to eq true
       end
 
@@ -133,6 +144,83 @@ describe 'Twilio controller', type: :request, active_job: true do
             }
           }
         )
+      end
+    end
+
+    context 'the most recently active relationship is with an inactive user' do
+      let(:user1) { create :user, department: department }
+      let(:user2) { create :user, department: department, active: false }
+      let(:client) { create :client, phone_number: phone_number }
+
+      before do
+        travel_to 1.day.ago do
+          ReportingRelationship.create(user: user1, client: client, active: false)
+        end
+
+        ReportingRelationship.create(user: user2, client: client, active: false)
+      end
+
+      it 'reactivates the most recently active relationship with an active user' do
+        subject
+        rr = ReportingRelationship.find_by(user: user1, client: client)
+        expect(rr.active).to eq true
+      end
+    end
+
+    context 'the client has no relationships with an active user' do
+      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
+      let(:user1) { create :user, department: department, active: false }
+      let(:user2) { create :user, department: department, active: false }
+      let(:client) { create :client, phone_number: phone_number }
+
+      before do
+        department.unclaimed_user = unclaimed_user
+        department.save
+
+        ReportingRelationship.create(user: user1, client: client, active: false)
+        ReportingRelationship.create(user: user2, client: client, active: false)
+      end
+
+      it 'reactivates the most recently active relationship with an active user' do
+        subject
+
+        expect(unclaimed_user.clients).to include client
+      end
+    end
+
+    context 'the client has no relationships within the department' do
+      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
+      let(:client) { create :client, phone_number: phone_number }
+
+      before do
+        department.unclaimed_user = unclaimed_user
+        department.save
+        create_list :user, 3, department: department
+      end
+
+      it 'creates a relation with the unclaimed user in that department' do
+        subject
+
+        expect(unclaimed_user.clients).to include client
+      end
+
+      context 'the client does not exist at all' do
+        let(:message_params) do
+          twilio_new_message_params(
+            from_number: '+15556667777',
+            to_number: dept_phone_number,
+            msg_txt: message_text,
+            sms_sid: sms_sid
+          )
+        end
+
+        it 'assigns the client to the unclaimed user' do
+          subject
+
+          unclaimed_client = Client.find_by(phone_number: '+15556667777')
+          expect(unclaimed_client).to_not be_nil
+          expect(unclaimed_user.clients).to include unclaimed_client
+        end
       end
     end
 

@@ -44,4 +44,16 @@ RSpec.describe User, type: :model do
       expect(SMSService.instance).to_not have_received(:number_lookup)
     end
   end
+
+  describe 'scopes' do
+    describe 'active' do
+      let!(:user_active) { create :user }
+      let!(:user_inactive) { create :user, active: false }
+
+      it 'only returns users that are active' do
+        expect(User.all.active).to include user_active
+        expect(User.all.active).to_not include user_inactive
+      end
+    end
+  end
 end

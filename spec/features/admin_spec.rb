@@ -1,21 +1,11 @@
 require 'rails_helper'
 
 feature 'Admin features' do
-  before do
-    @unclaimed_email = ENV['UNCLAIMED_EMAIL']
-    ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
-  end
-
-  after do
-    ENV['UNCLAIMED_EMAIL'] = @unclaimed_email
-  end
-
   scenario 'Admin disables user' do
     step 'given there is an active user with clients' do
-      @user1 = create :user, active: true
+      @user1 = create :user, full_name: 'User One', active: true
       @client = create :client, user: @user1, active: true
       @archived_client = create :client, user: @user1, active: false
-      @unclaimed_account = create :user, email: ENV['UNCLAIMED_EMAIL'], full_name: 'Unclaimed'
     end
 
     step 'given there is a second user to transfer to' do

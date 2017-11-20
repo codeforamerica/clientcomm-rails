@@ -76,6 +76,24 @@ describe 'Clients', type: :request, active_job: true do
                                   }
                                 })
       end
+
+      context 'the user does not change' do
+        let(:params) { { client: { notes: 'test', user_ids: [user1.id, user4.id] } } }
+
+        it 'does not send unnecessary notifications' do
+          perform_enqueued_jobs do
+            put admin_client_path(client), params: params
+          end
+
+          active_users = client.users
+                               .joins(:reporting_relationships)
+                               .where(reporting_relationships: { active: true })
+
+          expect(client.reload.notes).to eq 'test'
+          expect(ActionMailer::Base.deliveries).to be_empty
+          expect(active_users).to include(user1, user4)
+        end
+      end
     end
   end
 end

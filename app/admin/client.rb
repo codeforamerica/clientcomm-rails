@@ -88,6 +88,8 @@ ActiveAdmin.register Client do
                                 .where(reporting_relationships: { active: true })
                                 .find_by(department: dept)
 
+        next if new_user == previous_user
+
         resource.messages
                 .scheduled
                 .where(user: previous_user)

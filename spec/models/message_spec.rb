@@ -49,18 +49,15 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#create_from_twilio' do
-    before do
-      @unclaimed_email = ENV['UNCLAIMED_EMAIL']
-      ENV['UNCLAIMED_EMAIL'] = 'example@example.com'
-    end
-
-    after do
-      ENV['UNCLAIMED_EMAIL'] = @unclaimed_email
-    end
-
     context 'client does not exist' do
       let(:dept_phone_number) { '+17609996661' }
-      let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL'], dept_phone_number: dept_phone_number) }
+      let(:department) { create :department, phone_number: dept_phone_number }
+      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
+
+      before do
+        department.unclaimed_user = unclaimed_user
+        department.save
+      end
 
       it 'creates a new client with missing information' do
         unknown_number = '+19999999999'
@@ -83,10 +80,12 @@ RSpec.describe Message, type: :model do
     end
 
     context 'client exists' do
-      let(:client) { create :client }
+      let(:dept_phone_number) { '+17609996661' }
+      let!(:user) { create :user, dept_phone_number: dept_phone_number }
+      let!(:client) { create :client, users: [user] }
 
       it 'creates a message if proper params are sent' do
-        params = twilio_new_message_params from_number: client.phone_number
+        params = twilio_new_message_params from_number: client.phone_number, to_number: dept_phone_number
         msg = Message.create_from_twilio!(params)
         expect(client.messages.last).to eq msg
       end
@@ -95,6 +94,7 @@ RSpec.describe Message, type: :model do
         let(:params) do
           twilio_new_message_params(
             from_number: client.phone_number,
+            to_number: dept_phone_number,
             msg_txt: body
           ).merge(NumMedia: 2,
                   MediaUrl0: 'http://cats.com/fluffy_cat.png',
