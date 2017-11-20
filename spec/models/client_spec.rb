@@ -12,6 +12,17 @@ RSpec.describe Client, type: :model do
     it { should have_many(:attachments).through(:messages) }
   end
 
+  describe 'scoping' do
+    let(:user) { create :user }
+    let!(:active_clients) { create_list :client, 3, user: user }
+    let!(:inactive_clients) { create_list :client, 3, user: user, active: false }
+
+    it 'only shows active clients' do
+      expect(user.clients.active).to include(*active_clients)
+      expect(user.clients.active).to_not include(*inactive_clients)
+    end
+  end
+
   describe 'accessors' do
     let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
 

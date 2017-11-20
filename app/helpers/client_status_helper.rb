@@ -7,7 +7,7 @@ module ClientStatusHelper
       warning_period = 5.days
 
       found_clients = user.clients
-                          .where(active: true)
+                          .active
                           .where(client_status: status)
                           .where('last_contacted_at < ?', followup_date + warning_period)
 

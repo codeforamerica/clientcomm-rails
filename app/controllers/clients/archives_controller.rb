@@ -2,9 +2,8 @@ class Clients::ArchivesController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    # change the archive status of the client
     @client = client
-    @client.update!(active: client_params[:active])
+    @client.update_attributes(client_params)
 
     typeform_link = ENV.fetch('TYPEFORM_LINK', nil)
 
@@ -32,6 +31,6 @@ class Clients::ArchivesController < ApplicationController
 
   def client_params
     params.require(:client)
-          .permit(:active)
+          .permit(reporting_relationships_attributes: %i[id active])
   end
 end

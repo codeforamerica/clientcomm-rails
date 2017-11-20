@@ -1,7 +1,6 @@
 class User < ApplicationRecord
   has_many :reporting_relationships
-  has_many :clients, -> { joins(:reporting_relationships).where(reporting_relationships: { active: true }) },
-           through: :reporting_relationships
+  has_many :clients, through: :reporting_relationships
   has_many :messages
   has_many :templates
   belongs_to :department

@@ -14,7 +14,7 @@
       If they send you a message later they will automatically return to your contact list.
     </p>
     <p class="text--danger"><i class="icon-report"></i> Once you delete a client you won't be able to undo it</p>
-    <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), class: :button, data: { confirm: 'Are you sure you want to delete this client?' }, params: { client: { active: false } } %>
+    <%= button_to "Delete #{@client.first_name} #{@client.last_name}", client_archive_path(@client), class: :button, data: { confirm: 'Are you sure you want to delete this client?' }, params: { client: { reporting_relationships_attributes: { id: current_user.reporting_relationships.find_by(client: @client), active: false } } } %>
     <% if ENV['INTERCOM_APP_ID'].present? %>
       <h4>Transfer Client</h4>
       <p>

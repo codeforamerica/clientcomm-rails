@@ -5,14 +5,17 @@ class TwilioController < ApplicationController
     new_message = Message.create_from_twilio! params
     client = new_message.client
 
-    client_previously_active = client.active
+    rr = client.reporting_relationships.find_by(user: new_message.user)
+
+    client_previously_active = rr.active
 
     client.update!(
-      active: true,
       last_contacted_at: new_message.send_at,
       has_unread_messages: true,
       has_message_error: false
     )
+
+    rr.update!(active: true)
 
     MessageRedactionJob.perform_later(message: new_message)
 

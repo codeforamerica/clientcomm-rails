@@ -108,12 +108,16 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'the client was previously inactive' do
-      let(:active) { false }
+      before do
+        rr = client.reporting_relationships.find_by(user: user)
+        rr.update!(active: false)
+      end
 
       it 'returns the client to the active list' do
         subject
 
-        expect(client.reload.active).to eq true
+        rr = client.reporting_relationships.find_by(user: user)
+        expect(rr.active).to eq true
       end
 
       it 'tracks that the client was previously inactive' do

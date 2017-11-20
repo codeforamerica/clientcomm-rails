@@ -85,7 +85,7 @@
                 <tr>
                   <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">
                     <p style="font-family:sans-serif;font-size:19px;font-weight:bold;color:#666666;margin:0;Margin-bottom:15px;">ClientComm</p>
-                    <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">Hi <%= @client.user.full_name %>,</p>
+                    <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">Hi <%= @current_user.full_name %>,</p>
                     <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;Margin-bottom:15px;">An administrator has transferred <%= @client.full_name %>, <%= @client.phone_number %> to your client list. Their previous Case Manager was <%= @previous_user.full_name %>.</p>
 
                     <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;box-sizing:border-box;width:100%;">

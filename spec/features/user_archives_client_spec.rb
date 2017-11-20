@@ -35,7 +35,8 @@ feature 'user archives client', :js do
 
   scenario 'archived client is revived by incoming sms' do
     # log in with a fake user
-    myuser = create :user
+    department = create :department, phone_number: twilio_new_message_params['To']
+    myuser = create :user, department: department
     clientone = create :client, user: myuser, active: false, phone_number: twilio_new_message_params['From']
     login_as myuser, :scope => :user
     visit root_path

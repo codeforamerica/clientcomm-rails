@@ -188,7 +188,7 @@ describe 'Clients requests', type: :request do
         let(:archived_client) { user.clients.first }
 
         before do
-          archived_client.update!(active: false)
+          archived_client.reporting_relationships.find_by(user: user).update!(active: false)
         end
 
         it 'does not return archived clients' do

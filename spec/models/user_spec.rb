@@ -9,17 +9,6 @@ RSpec.describe User, type: :model do
   it { should have_many(:clients).through(:reporting_relationships) }
   it { should have_many :messages }
 
-  describe 'scoping' do
-    let(:user) { create :user }
-    let!(:active_clients) { create_list :client, 3, user: user }
-    let!(:inactive_clients) { create_list :client, 3, user: user, active: false }
-
-    it 'only shows active clients' do
-      expect(user.clients).to include(*active_clients)
-      expect(user.clients).to_not include(*inactive_clients)
-    end
-  end
-
   describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }
     let(:normalized_phone_number) { '+17605557890' }

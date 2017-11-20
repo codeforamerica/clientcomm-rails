@@ -10,21 +10,22 @@ class NotificationMailer < ApplicationMailer
   end
 
   def client_transfer_notification(current_user:, previous_user:, client:)
+    @current_user = current_user
     @previous_user = previous_user
     @client = client
 
     mail(
-      to: current_user.email,
+      to: @current_user.email,
       subject: 'You have a new client on ClientComm'
     )
   end
 
   def batch_transfer_notification(current_user:, transferred_clients:)
-    @transferred_clients = transferred_clients
     @current_user = current_user
+    @transferred_clients = transferred_clients
 
     mail(
-      to: current_user.email,
+      to: @current_user.email,
       subject: "You have #{@transferred_clients.count} new clients on ClientComm"
     )
   end

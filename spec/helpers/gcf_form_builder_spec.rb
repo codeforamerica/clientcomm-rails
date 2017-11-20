@@ -226,8 +226,8 @@ describe GcfFormBuilder, type: :view do
 
   describe '#gcf_checkbox' do
     it 'renders a check box that is not checked if the preference is false' do
-      user = create :user
-      client = create :client, active: false, :user => user
+      client = create :client
+      client.active = false
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_checkbox(:active, 'Active')

@@ -5,6 +5,13 @@ class Client < ApplicationRecord
   has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 
+  scope :active, -> {
+    joins(:reporting_relationships)
+      .where(reporting_relationships: { active: true })
+  }
+
+  accepts_nested_attributes_for :reporting_relationships
+
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
