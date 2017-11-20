@@ -3,7 +3,8 @@ require 'rails_helper'
 describe 'Messages requests', type: :request, active_job: true do
   context 'unauthenticated' do
     it 'rejects unauthenticated user' do
-      client = create(:client)
+      user = create :user
+      client = create :client, user: user
 
       get client_messages_path(client)
 

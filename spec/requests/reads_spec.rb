@@ -10,7 +10,8 @@ describe 'reads', type: :request do
     end
 
     describe 'reads#create' do
-      let(:client) { create :client, has_unread_messages: true }
+      let(:user) { create :user }
+      let(:client) { create :client, user: user, has_unread_messages: true }
       let(:message) { create :message, client: client, read: false, user: user }
       let(:user) { correct_user }
 

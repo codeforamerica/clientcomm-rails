@@ -13,8 +13,7 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'accessors' do
-    let(:user) { create :user }
-    let(:client) { create :client, user: user, first_name: 'Lorraine', last_name: 'Collins' }
+    let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
 
     describe '#full_name' do
       it 'formats full name' do

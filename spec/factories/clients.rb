@@ -12,10 +12,12 @@ FactoryBot.define do
     end
 
     after(:create) do |client, evaluator|
-      client.users << evaluator.user if evaluator.user
-      client.reporting_relationships
-            .find_by(user: evaluator.user)
-            .update(active: evaluator.active)
+      if evaluator.user
+        client.users << evaluator.user
+        client.reporting_relationships
+              .find_by(user: evaluator.user)
+              .update(active: evaluator.active)
+      end
     end
   end
 end

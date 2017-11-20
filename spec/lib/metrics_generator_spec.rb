@@ -32,12 +32,11 @@ describe MetricsGenerator do
     end
 
     it 'outputs number of clients who received their first message in the last week' do
-      user = create :user
-      client1 = create :client, user: user
-      client2 = create :client, user: user
-      client3 = create :client, user: user
-      client4 = create :client, user: user
-      client5 = create :client, user: user
+      client1 = create :client
+      client2 = create :client
+      client3 = create :client
+      client4 = create :client
+      client5 = create :client
 
       create :message, client: client1, created_at: Time.now
 
@@ -59,10 +58,9 @@ describe MetricsGenerator do
     end
 
     it 'outputs average number of messages per conversation' do
-      user = create :user
-      client1 = create :client, user: user
-      client2 = create :client, user: user
-      client3 = create :client, user: user
+      client1 = create :client
+      client2 = create :client
+      client3 = create :client
 
       create_list :message, 30, client: client1
       create_list :message, 15, client: client2
