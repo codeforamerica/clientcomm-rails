@@ -4,8 +4,7 @@ describe 'User', type: :request, active_job: true do
   let(:admin_user) { create :admin_user }
   let(:department) { create :department }
   let(:user) { create :user, department: department }
-  let!(:client1) { create :client, user: user, active: true }
-  let!(:client2) { create :client, user: user, active: false }
+  let!(:client1) { create :client, first_name: 'test', last_name: 'user', user: user, active: true }
 
   before do
     login_as admin_user, scope: :admin_user
@@ -16,7 +15,6 @@ describe 'User', type: :request, active_job: true do
       get disable_admin_user_path(user)
 
       expect(response.body).to include(client1.full_name)
-      expect(response.body).not_to include(client2.full_name)
     end
   end
 
