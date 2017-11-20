@@ -14,7 +14,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
   context 'authenticated' do
     let(:user) { create :user }
-    let(:client) { create_client build(:client, user: user) }
+    let(:client) { create :client, user: user }
     let(:body) { 'hello, my friend' }
 
     before do

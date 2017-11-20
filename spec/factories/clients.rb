@@ -1,11 +1,23 @@
 FactoryBot.define do
   factory :client do
-    user { create :user }
-    sequence(:first_name) { Faker::Name.first_name }
-    sequence(:last_name) { Faker::Name.last_name }
-    sequence(:phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
-    sequence(:notes) { Faker::Lorem.sentence }
-    active true
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
+    notes { Faker::Lorem.sentence }
     client_status { ClientStatus.all.sample }
+
+
+    transient do
+      user { nil }
+      active_rr { true }
+    end
+
+    after(:create) do |client, evaluator|
+      client.users << evaluator.user if evaluator.user
+      client.reporting_relationships
+            .find_by(user: evaluator.user)
+            .update(active: evaluator.active_rr)
+      binding.pry
+    end
   end
 end

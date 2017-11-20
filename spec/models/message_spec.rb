@@ -59,16 +59,17 @@ RSpec.describe Message, type: :model do
     end
 
     context 'client does not exist' do
-      let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL']) }
+      let(:dept_phone_number) { '+17609996661' }
+      let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL'], dept_phone_number: dept_phone_number) }
 
       it 'creates a new client with missing information' do
         unknown_number = '+19999999999'
-        params = twilio_new_message_params from_number: unknown_number
+        params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
 
         message = Message.create_from_twilio!(params)
 
         expect(message.user).to eq unclaimed_user
-        expect(message.number_to).to eq ENV['TWILIO_PHONE_NUMBER']
+        expect(message.number_to).to eq dept_phone_number
         expect(message.number_from).to eq unknown_number
         expect(message.inbound).to be_truthy
         expect(message.send_at).to be_present
@@ -77,7 +78,7 @@ RSpec.describe Message, type: :model do
         expect(client.first_name).to be_nil
         expect(client.last_name).to eq unknown_number
         expect(client.phone_number).to eq unknown_number
-        expect(client.user).to eq unclaimed_user
+        expect(client.users).to include unclaimed_user
       end
     end
 

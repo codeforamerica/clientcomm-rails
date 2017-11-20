@@ -2,24 +2,58 @@ require 'csv'
 
 class ImportCsv
   include ActiveModel::Model
-  attr_accessor :file, :clients
+  include ActiveModel::Validations
+  include ActiveModel::Validations::Callbacks
+  attr_accessor :file
+
+  before_validation :populate_clients
+  validate :relationships_are_all_valid
 
   def initialize(attributes = {})
     super
-    @clients ||= []
+    @clients = []
+    @relationships = []
   end
-
-  validate :clients_are_all_valid
 
   def save
     return false unless valid?
     @clients.each(&:save)
+    @relationships.each(&:save)
   end
 
   private
 
-  def clients_are_all_valid
-    errors.add(:file, 'Invalid Clients') unless @clients.all?(&:valid?)
+  def populate_clients
+    CSV.parse(@file, headers: true).each do |row|
+      entry = row.to_hash
+      user = User.find_by_email(entry['user'])
+
+      client = Client.find_or_initialize_by(
+        phone_number: entry['phone_number']
+      ) do |new_client|
+        new_client.last_name = entry['last_name']
+        new_client.first_name = entry['first_name']
+        new_client.users = [user]
+      end
+
+      if client.persisted?
+        @relationships << ReportingRelationship.new(client: client, user: user)
+      end
+
+      @clients << client
+    end
+  end
+
+  def relationships_are_all_valid
+    @relationships.each do |rr|
+      unless rr.valid?
+        if rr.errors.added? :client, :taken
+          @relationships.delete rr
+        else
+          errors.add(:file, 'Invalid Clients') unless @relationships.all?(&:valid?)
+        end
+      end
+    end
   end
 end
 
@@ -46,19 +80,6 @@ ActiveAdmin.register ImportCsv do
 
     def create
       @import_csv = ImportCsv.new(file: permitted_params[:import_csv][:file].read)
-
-      csv = CSV.parse(@import_csv.file, headers: true)
-      csv.each do |row|
-        entry = row.to_hash
-        client = Client.new(
-          phone_number: entry['phone_number'],
-          last_name: entry['last_name'],
-          first_name: entry['first_name'],
-          user: User.find_by_email(entry['user'])
-        )
-
-        @import_csv.clients << client
-      end
 
       if @import_csv.save
         redirect_to :admin_clients, notice: 'Clients Created Succesfully'

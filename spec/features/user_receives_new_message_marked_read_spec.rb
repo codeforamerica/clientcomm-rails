@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 feature 'User receives a message from a client' do
-  let(:userone) { create :user }
+  let(:phone_number) { 'anything I want' }
+  let(:department) { create :department, phone_number: phone_number }
+  let(:userone) { create :user, department: department }
   let(:clientone) { create :client, user: userone }
 
   before do
@@ -15,7 +17,10 @@ feature 'User receives a message from a client' do
       clientone_id = Client.find_by(phone_number: clientone_phone).id
       visit client_messages_path(client_id: clientone_id)
       # post a message to the twilio endpoint from the user
-      twilio_post_sms(twilio_new_message_params(from_number: clientone.phone_number))
+      twilio_post_sms(twilio_new_message_params(
+        from_number: clientone.phone_number,
+        to_number: phone_number
+      ))
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
       wait_for_ajax # visiting the page calls $.ajax to mark all messages read

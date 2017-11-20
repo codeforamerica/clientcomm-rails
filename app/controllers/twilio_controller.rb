@@ -21,19 +21,19 @@ class TwilioController < ApplicationController
 
     # construct and queue an alert
     message_alert = MessageAlertBuilder.build_alert(
-      user: client.user,
+      user: new_message.user,
       client_messages_path: client_messages_path(client.id),
       clients_path: clients_path
     )
 
     NotificationBroadcastJob.perform_later(
-      channel_id: client.user_id,
+      channel_id: new_message.user_id,
       text: message_alert[:text],
       link_to: message_alert[:link_to],
       properties: { client_id: client.id }
     )
 
-    NotificationMailer.message_notification(client.user, new_message).deliver_later if client.user.message_notification_emails
+    NotificationMailer.message_notification(new_message.user, new_message).deliver_later if new_message.user.message_notification_emails
 
     analytics_track(
       label: 'message_receive',
@@ -71,7 +71,10 @@ class TwilioController < ApplicationController
     voice_client = VoiceService.new
     client = Client.find_by(phone_number: params['From'])
     client_id = client.try(:id) || 'no client'
-    user = client.try(:user)
+    user = User.joins(:department)
+             .joins(:reporting_relationships)
+             .where(departments: { phone_number: params['To'] })
+             .find_by(reporting_relationships: { client: client })
 
     if user.try(:phone_number).present?
       render :xml => voice_client.dial_number(phone_number: user.phone_number)

@@ -24,6 +24,9 @@ en:
     errors:
       client:
         invalid: There was a problem saving this client.
+    notices:
+      client:
+        taken: You already have a client with this phone number.
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   message:
     status:
@@ -41,7 +44,7 @@ en:
               phone_number:
                 invalid: This is not a valid phone number.
                 taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
-                external_client_taken: "This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you."
+                existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
                 inactive_taken: This client has been deleted. Please use the Add Client button to recover them.
           message:
             attributes:

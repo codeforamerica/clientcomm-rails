@@ -11,7 +11,8 @@ module TwilioHelper
     twilio_post tw_params, post_sig, post_path
   end
 
-  def twilio_post_voice(tw_params = twilio_status_update_params, use_correct_signature = true)
+  def twilio_post_voice(tw_params = {}, use_correct_signature = true)
+    tw_params = twilio_status_update_params.merge(tw_params)
     post_path = '/incoming/voice'
     post_sig = use_correct_signature ? correct_signature(tw_params, post_path) : nil
     twilio_post tw_params, post_sig, post_path
@@ -33,33 +34,36 @@ module TwilioHelper
 
   def twilio_new_message_params(
     from_number: '+12425551212',
+    to_number: '+12435551212',
     sms_sid: SecureRandom.hex(17),
     msg_txt: twilio_message_text
   )
-    HashWithIndifferentAccess.new({
-                                    'ToCountry' => 'US',
-                                    'ToState' => 'CA',
-                                    'SmsMessageSid' => sms_sid,
-                                    'NumMedia' => '0',
-                                    'ToCity' => '',
-                                    'FromZip' => '94005',
-                                    'SmsSid' => sms_sid,
-                                    'FromState' => 'CA',
-                                    'SmsStatus' => 'received',
-                                    'FromCity' => 'SAN FRANCISCO',
-                                    'Body' => msg_txt,
-                                    'FromCountry' => 'US',
-                                    'To' => '+12435551212',
-                                    'ToZip' => '',
-                                    'AddOns' => '{"status":"successful","message":null,"code":null,"results":{}}',
-                                    'NumSegments' => '1',
-                                    'MessageSid' => sms_sid,
-                                    'AccountSid' => '077541f41cce52ea6c4944fa6823a4a277',
-                                    'From' => from_number,
-                                    'ApiVersion' => '2010-04-01',
-                                    'controller' => 'twilio',
-                                    'action' => 'incoming_sms'
-                                  })
+    HashWithIndifferentAccess.new(
+      {
+        "ToCountry" => "US",
+        "ToState" => "CA",
+        "SmsMessageSid" => sms_sid,
+        "NumMedia" => "0",
+        "ToCity" => "",
+        "FromZip" => "94005",
+        "SmsSid" => sms_sid,
+        "FromState" => "CA",
+        "SmsStatus" => "received",
+        "FromCity" => "SAN FRANCISCO",
+        "Body" => msg_txt,
+        "FromCountry" => "US",
+        "To" => to_number,
+        "ToZip" => "",
+        "AddOns" => "{\"status\":\"successful\",\"message\":null,\"code\":null,\"results\":{}}",
+        "NumSegments" => "1",
+        "MessageSid" => sms_sid,
+        "AccountSid" => "077541f41cce52ea6c4944fa6823a4a277",
+        "From" => from_number,
+        "ApiVersion" => "2010-04-01",
+        "controller" => "twilio",
+        "action" => "incoming_sms"
+      }
+    )
   end
 
   def twilio_status_update_params(

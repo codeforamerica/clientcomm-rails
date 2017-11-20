@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171030170543) do
+ActiveRecord::Schema.define(version: 20171101221037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,16 @@ ActiveRecord::Schema.define(version: 20171030170543) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "reporting_relationships", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "client_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "active", default: true, null: false
+    t.index ["client_id"], name: "index_reporting_relationships_on_client_id"
+    t.index ["user_id"], name: "index_reporting_relationships_on_user_id"
+  end
+
   create_table "templates", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -160,6 +170,8 @@ ActiveRecord::Schema.define(version: 20171030170543) do
   add_foreign_key "clients", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
+  add_foreign_key "reporting_relationships", "clients"
+  add_foreign_key "reporting_relationships", "users"
   add_foreign_key "templates", "users"
   add_foreign_key "users", "departments"
 end

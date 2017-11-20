@@ -26,14 +26,35 @@ class ClientsController < ApplicationController
   end
 
   def create
-    @client = Client.new(
-      user: current_user,
-      first_name: client_params[:first_name],
-      last_name: client_params[:last_name],
-      phone_number: client_params[:phone_number],
-      notes: client_params[:notes],
-      client_status_id: client_params[:client_status_id]
+    @client = Client.find_or_initialize_by(
+      phone_number: client_params[:phone_number]
     )
+    @client.first_name = client_params[:first_name]
+    @client.last_name = client_params[:last_name]
+    @client.notes = client_params[:notes]
+    @client.client_status_id = client_params[:client_status_id]
+
+    rr = ReportingRelationship.create(
+      user: current_user, client: @client
+    )
+    unless rr.save
+      if rr.errors.added? :client, :taken
+        flash[:notice] = t('flash.notices.client.taken')
+        redirect_to client_messages_path @client
+        return
+      end
+
+      if rr.errors.added? :client, :existing_dept_relationship
+        flash[:alert] = t('flash.errors.client.invalid')
+        @client.errors.add(
+          :phone_number,
+          :existing_dept_relationship,
+          user_full_name: rr.matching_record.user.full_name
+        )
+        render :new
+        return
+      end
+    end
 
     if @client.save
       analytics_track(
@@ -41,21 +62,6 @@ class ClientsController < ApplicationController
         data: @client.reload.analytics_tracker_data
       )
       redirect_to client_messages_path(@client)
-      return
-    end
-
-    if @client.errors.added? :phone_number, :taken
-      client = current_user.clients.find_by_phone_number(@client.phone_number)
-      flash[:notice] = 'You already have a client with this number.'
-      redirect_to client_messages_path(client)
-      return
-    end
-
-    if @client.errors.added? :phone_number, :inactive_taken
-      client = current_user.clients.find_by_phone_number(@client.phone_number)
-      client.update!(active: true)
-      flash[:notice] = "This client has been restored. If you didn't mean to do this, please contact us."
-      redirect_to client_messages_path(client)
       return
     end
 

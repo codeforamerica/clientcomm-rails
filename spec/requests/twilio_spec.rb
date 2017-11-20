@@ -5,7 +5,8 @@ describe 'Twilio controller', type: :request, active_job: true do
   let(:has_unread_messages) { false }
   let(:has_message_error) { false }
   let(:active) { true }
-  let(:user) { create :user }
+  let(:dept_phone_number) { '+14242424242' }
+  let(:user) { create :user, dept_phone_number: dept_phone_number }
   let!(:client) { create :client, user: user, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
 
   context 'POST#incoming_sms' do
@@ -14,6 +15,7 @@ describe 'Twilio controller', type: :request, active_job: true do
     let(:message_params) {
       twilio_new_message_params(
         from_number: phone_number,
+        to_number: dept_phone_number,
         msg_txt: message_text,
         sms_sid: sms_sid
       )
@@ -123,7 +125,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
     context 'a user has opted out of emails' do
       before do
-        client.user.update!(message_notification_emails: false)
+        user.update!(message_notification_emails: false)
       end
 
       it 'should not send an email' do
@@ -137,6 +139,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let(:message_params) do
         twilio_new_message_params(
           from_number: phone_number,
+          to_number: dept_phone_number,
           msg_txt: message_text
         ).merge(NumMedia: 1, MediaUrl0: 'http://cats.com/fluffy_cat.png', MediaContentType0: 'text/png')
       end
@@ -267,7 +270,7 @@ describe 'Twilio controller', type: :request, active_job: true do
   context 'POST#incoming_voice' do
     shared_examples 'valid xml response' do
       it 'responds with xml' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
@@ -305,7 +308,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
 
       it 'responds with xml that connects the call to the unclaimed user' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
@@ -333,12 +336,12 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
 
       let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
-      let!(:user) { create :user, phone_number: '' }
+      let!(:user) { create :user, phone_number: '', dept_phone_number: dept_phone_number }
       let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call to the unclaimed user' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
@@ -360,7 +363,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
         it_behaves_like 'valid xml response'
         it 'sends the correct analytics event' do
-          twilio_post_voice
+          twilio_post_voice('To' => dept_phone_number)
           expect_analytics_events(
             {
               'phonecall_receive' => {
@@ -376,11 +379,11 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'client is in a user case load' do
-      let!(:user) { create :user, phone_number: '+19999999999' }
+      let!(:user) { create :user, phone_number: '+19999999999', dept_phone_number: dept_phone_number }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect(response.status).to eq 200
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include '<Number>+19999999999</Number>'
@@ -399,11 +402,11 @@ describe 'Twilio controller', type: :request, active_job: true do
 
     context 'the client is in the unclaimed caseload' do
       let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
-      let(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
+      let(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'], dept_phone_number: dept_phone_number }
       let!(:client) { create :client, user: unclaimed_user, phone_number: '+12425551212' }
 
       it 'sends the correct analytics event' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect_analytics_events(
           {
             'phonecall_receive' => {

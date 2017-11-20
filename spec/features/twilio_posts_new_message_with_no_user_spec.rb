@@ -16,10 +16,12 @@ feature 'Twilio', :js do
     end
 
     context 'from an unknown user' do
-      let!(:unclaimed_user) { create(:user, email: ENV['UNCLAIMED_EMAIL']) }
+      let(:phone_number) { 'just some phone number' }
+      let(:department) { create :department, phone_number: phone_number }
+      let!(:unclaimed_user) { create(:user, department: department, email: ENV['UNCLAIMED_EMAIL']) }
 
       it 'routes messages to user for unclaimed messages' do
-        message_params = twilio_new_message_params
+        message_params = twilio_new_message_params to_number: phone_number
         twilio_post_sms message_params
 
         login_as(unclaimed_user, scope: :user)

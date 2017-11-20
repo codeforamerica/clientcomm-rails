@@ -24,7 +24,8 @@ describe 'import csv', type: :request do
   end
 
   describe 'POST#create' do
-    let!(:user) { create :user, email: 'test@example.com' }
+    let(:department) { create :department }
+    let!(:user) { create :user, department: department, email: 'test@example.com' }
 
     subject do
       file = fixture_file_upload('test.csv', 'text/csv')
@@ -45,29 +46,48 @@ describe 'import csv', type: :request do
       it 'creates clients corresponding to the inputted csv' do
         expect(user.clients.count).to eq 2
 
-        client_1 = user.clients.find_by_phone_number('4155553329')
-        client_2 = user.clients.find_by_phone_number('2125556230')
+        client1 = user.clients.find_by_phone_number('4155553329')
+        client2 = user.clients.find_by_phone_number('2125556230')
 
-        expect(client_1.first_name).to eq 'Person'
-        expect(client_1.last_name).to eq 'McPersonFace'
+        expect(client1.first_name).to eq 'Person'
+        expect(client1.last_name).to eq 'McPersonFace'
 
-        expect(client_2.first_name).to eq 'Cat'
-        expect(client_2.last_name).to eq 'McCatFace'
+        expect(client2.first_name).to eq 'Cat'
+        expect(client2.last_name).to eq 'McCatFace'
       end
     end
 
     context 'invalid clients' do
-      before do
-        create :client, phone_number: '2125556230'
-        subject
+      context 'client belongs to a different user in the same department' do
+        let(:another_user) { create :user, department: department }
+        let!(:client) { create :client, user: another_user, phone_number: '2125556230' }
+        it 'shows a validation error' do
+          subject
+          expect(response.body).to include 'Invalid Clients'
+        end
+
+        it 'creates clients corresponding to the inputted csv' do
+          subject
+          expect(user.clients.count).to eq 0
+        end
       end
 
-      it 'shows a validation error' do
-        expect(response.body).to include 'Invalid Clients'
-      end
+      context 'client belongs to requested user' do
+        let!(:client) { create :client, user: user, phone_number: '2125556230' }
 
-      it 'creates clients corresponding to the inputted csv' do
-        expect(user.clients.count).to eq 0
+        it 'creates clients corresponding to the inputted csv' do
+          subject
+          expect(user.clients.count).to eq 2
+
+          client1 = user.clients.find_by_phone_number('4155553329')
+          client2 = user.clients.find_by_phone_number('2125556230')
+
+          expect(client1.first_name).to eq 'Person'
+          expect(client1.last_name).to eq 'McPersonFace'
+
+          expect(client2.first_name).to eq client.first_name
+          expect(client2.last_name).to eq client.last_name
+        end
       end
     end
   end

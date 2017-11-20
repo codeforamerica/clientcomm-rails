@@ -1,15 +1,15 @@
 class Client < ApplicationRecord
-  belongs_to :user
+  has_many :reporting_relationships
+  has_many :users, through: :reporting_relationships
   belongs_to :client_status
   has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
-  validate :phone_number_is_unused, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
-  validates_presence_of :user
   validates_presence_of :last_name, :phone_number
+  validates_uniqueness_of :phone_number
 
   def analytics_tracker_data
     {
@@ -48,23 +48,6 @@ class Client < ApplicationRecord
   end
 
   private
-
-  def phone_number_is_unused
-    return unless user
-
-    client = Client.find_by_phone_number(phone_number)
-    if client
-      if client.user != user
-        errors.add(:phone_number, :external_client_taken, user_full_name: client.user.full_name)
-      else
-        if client.active
-          errors.add(:phone_number, :taken)
-        else
-          errors.add(:phone_number, :inactive_taken)
-        end
-      end
-    end
-  end
 
   def normalize_phone_number
     return unless self.phone_number

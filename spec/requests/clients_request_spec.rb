@@ -18,17 +18,10 @@ describe 'Clients requests', type: :request do
 
     describe 'POST#create' do
       let(:first_name) { Faker::Name.first_name }
-      let(:normalized_phone_number) { '+14663364863' }
       let(:phone_number) { '1-466-336-4863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
       let!(:client_status) { create :client_status }
-
-      before do
-        allow(SMSService.instance).to receive(:number_lookup)
-          .with(phone_number: phone_number)
-          .and_return(normalized_phone_number)
-      end
 
       subject do
         post clients_path, params: {
@@ -50,10 +43,10 @@ describe 'Clients requests', type: :request do
         expect(Client.count).to eq 1
 
         client = Client.first
-        expect(client.user).to eq user
+        expect(client.users).to include user
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name
-        expect(client.phone_number).to eq normalized_phone_number
+        expect(client.phone_number).to eq phone_number
         expect(client.notes).to eq notes
         expect(client.client_status).to eq client_status
       end
@@ -85,32 +78,29 @@ describe 'Clients requests', type: :request do
         end
       end
 
-      context 'client already exists under this user' do
-        let!(:client) { create :client, user: user, phone_number: phone_number, active: active }
-
-        context 'client is archived' do
-          let(:active) { false }
-
-          it 'redirects to messages page with a flash message' do
-            subject
-            expect(flash[:notice]).to eq "This client has been restored. If you didn't mean to do this, please contact us."
-            expect(response).to redirect_to(client_messages_path(client))
-          end
-
-          it 'unarchives client' do
+      context 'client has a relationship with a user in the same department' do
+        context 'client already exists under this user' do
+          let!(:client) { create :client, user: user, phone_number: phone_number}
+          it 'redirects to the messages page' do
             subject
 
-            expect(client.reload).to be_active
+            expect(response.code).to eq '302'
+            expect(response).to redirect_to client_messages_path(client)
+            expect(flash[:notice]).to eq 'You already have a client with this phone number.'
           end
         end
 
-        context 'client is active' do
-          let(:active) { true }
+        context 'client exists under a different user' do
+          let(:other_user) { create :user, department: user.department }
+          let!(:client) { create :client, user: other_user, phone_number: phone_number}
 
-          it 'redirects to messages page with a flash message' do
+          it 'shows an error flash' do
             subject
-            expect(flash[:notice]).to eq 'You already have a client with this number.'
-            expect(response).to redirect_to(client_messages_path(client))
+
+            expect(response.code).to eq '200'
+            expect(flash[:alert]).to include 'There was a problem saving this client.'
+            expect(response.body).to include 'This client already exists'
+            expect(response.body).to include other_user.full_name
           end
         end
       end

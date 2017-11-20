@@ -19,9 +19,10 @@ class Message < ApplicationRecord
   ERROR = 'error'
 
   def self.create_from_twilio!(twilio_params)
-    phone_number = twilio_params[:From]
+    from_phone_number = twilio_params[:From]
+    to_phone_number = twilio_params[:To]
 
-    client = Client.find_by(phone_number: phone_number)
+    client = Client.find_by(phone_number: from_phone_number)
     if client.nil?
       client = Client.create!(
         phone_number: phone_number,
@@ -30,11 +31,16 @@ class Message < ApplicationRecord
       )
     end
 
+    user = User.joins(:department)
+      .joins(:reporting_relationships)
+      .where(departments: { phone_number: to_phone_number })
+      .find_by(reporting_relationships: { client: client })
+
     new_message = Message.new(
       client: client,
-      user_id: client.user_id,
-      number_to: ENV['TWILIO_PHONE_NUMBER'],
-      number_from: phone_number,
+      user: user,
+      number_to: to_phone_number,
+      number_from: from_phone_number,
       inbound: true,
       twilio_sid: twilio_params[:SmsSid],
       twilio_status: twilio_params[:SmsStatus],

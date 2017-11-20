@@ -2,19 +2,18 @@ require 'rails_helper'
 
 RSpec.describe Client, type: :model do
   describe 'relationships' do
-    it { should belong_to :user }
+    it { should have_many(:users).through(:reporting_relationships) }
     it { should belong_to :client_status }
-    it { should validate_presence_of :user }
     it { should have_many :messages }
     it { should have_many(:attachments).through(:messages) }
   end
 
   describe 'accessors' do
-    subject { create :client }
+    subject { create :client, first_name: 'zak', last_name: 'mark' }
 
     describe '#full_name' do
       it 'formats full name' do
-        expect(subject.full_name).to eq(subject.first_name + ' ' + subject.last_name)
+        expect(subject.full_name).to eq('zak mark')
       end
     end
   end
@@ -33,7 +32,7 @@ RSpec.describe Client, type: :model do
         .and_return(normalized_phone_number)
     end
 
-    subject { create :client, phone_number: input_phone_number, user: create(:user, phone_number: user_number, department: nil) }
+    subject { create :client, phone_number: input_phone_number }
 
     it 'formats the phone number' do
       expect(subject.reload.phone_number).to eq(normalized_phone_number)
@@ -45,39 +44,7 @@ RSpec.describe Client, type: :model do
 
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:phone_number) }
-
-    context 'the phone number is taken by a client on a different user' do
-      it 'displays help text for transferring a client from another user' do
-        old_client = create(:client, user: create(:user, full_name: 'Case Manager'))
-        new_client = build(:client, phone_number: old_client.phone_number)
-
-        expect(new_client.valid?).to eq(false)
-
-        expect(new_client.errors.added?(:phone_number, 'This client already exists and belongs to Case Manager. Contact your ClientComm administrator and request that they be transferred to you.')).to eq(true)
-      end
-    end
-
-    context 'the phone number is taken by another client on the same user' do
-      it 'displays an error that the number is taken' do
-        old_client = create(:client)
-        new_client = build(:client, user: old_client.user, phone_number: old_client.phone_number)
-
-        expect(new_client.valid?).to eq(false)
-
-        expect(new_client.errors.added?(:phone_number, :taken)).to eq(true)
-      end
-
-      context 'the phone number is taken by an archived client' do
-        it 'displays help text for restoring an inactive client' do
-          old_client = create(:client, active: false)
-          new_client = build(:client, user: old_client.user, phone_number: old_client.phone_number)
-
-          expect(new_client.valid?).to eq(false)
-
-          expect(new_client.errors.added?(:phone_number, :inactive_taken)).to eq(true)
-        end
-      end
-    end
+    it { should validate_uniqueness_of(:phone_number) }
 
     it 'validates correctness of phone_number' do
       bad_number = '(212) 55-5236'
