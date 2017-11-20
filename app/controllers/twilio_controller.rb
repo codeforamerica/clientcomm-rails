@@ -74,10 +74,10 @@ class TwilioController < ApplicationController
     voice_client = VoiceService.new
     client = Client.find_by(phone_number: params['From'])
     client_id = client.try(:id) || 'no client'
-    user = User.joins(:department)
-               .joins(:reporting_relationships)
-               .where(departments: { phone_number: params['To'] })
-               .find_by(reporting_relationships: { client: client })
+    department = Department.find_by(phone_number: params['To'])
+    user = department.users
+                     .joins(:reporting_relationships)
+                     .find_by(reporting_relationships: { client: client })
 
     if user.try(:phone_number).present?
       render :xml => voice_client.dial_number(phone_number: user.phone_number)
@@ -85,12 +85,12 @@ class TwilioController < ApplicationController
         label: 'phonecall_receive',
         data: {
           client_id: client_id,
-          client_identified: user.present? && (user.email != ENV['UNCLAIMED_EMAIL']),
+          client_identified: user.present? && (user != department.unclaimed_user),
           call_routed: true,
           has_desk_phone: true
         }
       )
-    elsif (unclaimed_number = User.find_by_email(ENV['UNCLAIMED_EMAIL']).try(:phone_number))
+    elsif (unclaimed_number = department.unclaimed_user.try(:phone_number))
       render :xml => voice_client.dial_number(phone_number: unclaimed_number)
       analytics_track(
         label: 'phonecall_receive',

@@ -382,7 +382,7 @@ describe 'Twilio controller', type: :request, active_job: true do
     context 'defaults to reading a message' do
       it_behaves_like 'valid xml response'
       it 'sends the correct analytics event' do
-        twilio_post_voice
+        twilio_post_voice('To' => dept_phone_number)
         expect_analytics_events(
           {
             'phonecall_receive' => {
@@ -397,17 +397,9 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'client does not exist' do
-      before do
-        @old_unclaimed = ENV['UNCLAIMED_EMAIL']
-        ENV['UNCLAIMED_EMAIL'] = 'unclaimed@test.com'
-      end
-
-      after do
-        ENV['UNCLAIMED_EMAIL'] = @old_unclaimed
-      end
-
       let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
-      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
+      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number }
+      let!(:department) { create :department, phone_number: dept_phone_number, unclaimed_user: unclaimed_user }
 
       it 'responds with xml that connects the call to the unclaimed user' do
         twilio_post_voice('To' => dept_phone_number)
@@ -428,18 +420,10 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'client is in a user case load but user does not have a desk phone' do
-      before do
-        @old_unclaimed = ENV['UNCLAIMED_EMAIL']
-        ENV['UNCLAIMED_EMAIL'] = 'unclaimed@test.com'
-      end
-
-      after do
-        ENV['UNCLAIMED_EMAIL'] = @old_unclaimed
-      end
-
       let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
-      let!(:user) { create :user, phone_number: '', dept_phone_number: dept_phone_number }
-      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'] }
+      let!(:unclaimed_user) { create :user, phone_number: unclaimed_number }
+      let!(:department) { create :department, phone_number: dept_phone_number, unclaimed_user: unclaimed_user }
+      let!(:user) { create :user, phone_number: '', department: department }
       let!(:client) { create :client, user: user, phone_number: '+12425551212' }
 
       it 'responds with xml that connects the call to the unclaimed user' do
@@ -503,9 +487,13 @@ describe 'Twilio controller', type: :request, active_job: true do
     end
 
     context 'the client is in the unclaimed caseload' do
-      let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
-      let(:unclaimed_user) { create :user, phone_number: unclaimed_number, email: ENV['UNCLAIMED_EMAIL'], dept_phone_number: dept_phone_number }
+      let(:unclaimed_user) { create :user, department: department }
+      let!(:department) { create :department, phone_number: dept_phone_number }
       let!(:client) { create :client, user: unclaimed_user, phone_number: '+12425551212' }
+
+      before do
+        department.update!(unclaimed_user: unclaimed_user)
+      end
 
       it 'sends the correct analytics event' do
         twilio_post_voice('To' => dept_phone_number)
