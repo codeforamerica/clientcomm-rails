@@ -90,7 +90,7 @@ module TwilioHelper
 
   def twilio_post(tw_params, post_sig, post_url)
     if Capybara.current_session.server
-      conn = Faraday.new("#{myhost}")
+      conn = Faraday.new(myhost.to_s)
       conn.post do |req|
         req.url post_url
         req.headers[post_header_name] = post_sig

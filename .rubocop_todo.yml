@@ -22,13 +22,6 @@ Performance/RegexpMatch:
   Exclude:
     - 'app/models/attachment.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforceForPrefixed.
-Rails/Delegate:
-  Exclude:
-    - 'app/models/user.rb'
-
 # Offense count: 37
 # Cop supports --auto-correct.
 # Configuration parameters: Whitelist.
@@ -63,21 +56,6 @@ Rails/Output:
 Rails/OutputSafety:
   Exclude:
     - 'app/helpers/gcf_form_builder.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Rails/PluralizationGrammar:
-  Exclude:
-    - 'spec/models/message_spec.rb'
-    - 'spec/requests/twilio_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: referer, referrer
-Rails/RequestReferer:
-  Exclude:
-    - 'app/controllers/clients_controller.rb'
 
 # Offense count: 2
 # Configuration parameters: Include.
@@ -385,14 +363,6 @@ Style/SymbolArray:
     - 'db/migrate/20170606151721_create_delayed_jobs.rb'
     - 'lib/tasks/setup.rake'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-# IgnoredMethods: respond_to, define_method
-Style/SymbolProc:
-  Exclude:
-    - 'app/lib/sms_service.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStylesForMultiline.
@@ -415,9 +385,7 @@ Style/TrivialAccessors:
 # Cop supports --auto-correct.
 Style/UnneededInterpolation:
   Exclude:
-    - 'spec/features/admin_spec.rb'
     - 'spec/requests/templates_request_spec.rb'
-    - 'spec/support/twilio_helper.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

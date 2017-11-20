@@ -80,7 +80,7 @@ describe 'Clients requests', type: :request do
 
       context 'client has a relationship with a user in the same department' do
         context 'client already exists under this user' do
-          let!(:client) { create :client, user: user, phone_number: phone_number}
+          let!(:client) { create :client, user: user, phone_number: phone_number }
           it 'redirects to the messages page' do
             subject
 
@@ -92,7 +92,7 @@ describe 'Clients requests', type: :request do
 
         context 'client exists under a different user' do
           let(:other_user) { create :user, department: user.department }
-          let!(:client) { create :client, user: other_user, phone_number: phone_number}
+          let!(:client) { create :client, user: other_user, phone_number: phone_number }
 
           it 'shows an error flash' do
             subject

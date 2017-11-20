@@ -9,7 +9,6 @@ describe 'Clients', type: :request, active_job: true do
   let(:user3) { create :user, department: department2 }
   let(:user4) { create :user, department: department3 }
 
-
   before do
     @admin_user = create :admin_user
     login_as @admin_user, scope: :admin_user

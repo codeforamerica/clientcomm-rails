@@ -34,11 +34,7 @@ class SMSService
     message = @client.api.account.messages(message.twilio_sid).fetch
     message.update(body: '')
 
-    if message.num_media != '0'
-      message.media.list.each do |media|
-        media.delete
-      end
-    end
+    message.media.list.each(&:delete) if message.num_media != '0'
 
     true
   rescue Twilio::REST::RestError => e

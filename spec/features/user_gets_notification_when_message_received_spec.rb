@@ -21,8 +21,8 @@ feature 'User receives a message from a client' do
     it 'and sees a notification for a new message', :js do
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       # there's a flash with the correct contents
       expect(page).to have_css '.flash p', text: "You have 1 unread message from #{clientone.full_name}"
@@ -33,15 +33,15 @@ feature 'User receives a message from a client' do
       # (validates that the correct message is being counted as 'last')
       travel_to 5.days.ago do
         twilio_post_sms(twilio_new_message_params(
-          from_number: clientone.phone_number,
-          to_number: phone_number
+                          from_number: clientone.phone_number,
+                          to_number: phone_number
         ))
       end
       # post a message to the twilio endpoint from the first user 5 minutes ago
       travel_to 5.minutes.ago do
         twilio_post_sms(twilio_new_message_params(
-          from_number: clientone.phone_number,
-          to_number: phone_number
+                          from_number: clientone.phone_number,
+                          to_number: phone_number
         ))
       end
       # validate the order of the clients in the list
@@ -51,8 +51,8 @@ feature 'User receives a message from a client' do
 
       # send a message from client two and check the new order
       twilio_post_sms(twilio_new_message_params(
-        from_number: clienttwo.phone_number,
-        to_number: phone_number
+                        from_number: clienttwo.phone_number,
+                        to_number: phone_number
       ))
 
       expect(page).to have_css '.flash p', text: 'You have 3 unread messages'
@@ -63,8 +63,8 @@ feature 'User receives a message from a client' do
     it 'sees a notification for only new messages from a client', :js do
       # post a message to the twilio endpoint from a user
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       # there's a flash with the correct content
       flash_text = "You have 1 unread message from #{clientone.full_name}"
@@ -78,8 +78,8 @@ feature 'User receives a message from a client' do
       visit clients_path
       # post a second message
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone_record.phone_number,
-        to_number: phone_number
+                        from_number: clientone_record.phone_number,
+                        to_number: phone_number
       ))
       # we should see the same flash message, because the first
       # message was marked read
@@ -94,8 +94,8 @@ feature 'User receives a message from a client' do
       visit client_messages_path(client_id: myclient_id)
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text

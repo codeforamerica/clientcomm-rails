@@ -18,16 +18,16 @@ feature 'User receives messages from clients' do
     it 'sees a notification for new messages from one client', :js do
       # post messages to the twilio endpoint from a user
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       twilio_post_sms(twilio_new_message_params(
-        from_number: clientone.phone_number,
-        to_number: phone_number
+                        from_number: clientone.phone_number,
+                        to_number: phone_number
       ))
       # there's a flash with the correct contents
       expect(page).to have_css '.flash p', text: "You have 3 unread messages from #{clientone.full_name}"

@@ -5,9 +5,7 @@ class User < ApplicationRecord
   has_many :templates
   belongs_to :department
 
-  scope :active, -> {
-    where(active: true)
-  }
+  scope :active, -> { where(active: true) }
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?

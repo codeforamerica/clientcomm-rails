@@ -44,11 +44,12 @@ ActiveAdmin.register Client do
       f.input :notes
       Department.all.each do |department|
         department_users = department.users.order(full_name: :asc)
-        active_user_id = department.users.joins(:clients)
-                                         .joins(:reporting_relationships)
-                                         .where(clients: { id: resource.id })
-                                         .find_by(reporting_relationships: { active: true })
-                                         .try(:id)
+        active_user_id = department.users
+                                   .joins(:clients)
+                                   .joins(:reporting_relationships)
+                                   .where(clients: { id: resource.id })
+                                   .find_by(reporting_relationships: { active: true })
+                                   .try(:id)
 
         options = options_from_collection_for_select(
           department_users,
@@ -99,23 +100,22 @@ ActiveAdmin.register Client do
           previous_user.reporting_relationships.find_by(client: resource).update!(active: false)
         end
 
-        if new_user.present?
-          new_user.reporting_relationships.find_or_create_by(client: resource).update!(active: true)
+        next unless new_user.present?
+        new_user.reporting_relationships.find_or_create_by(client: resource).update!(active: true)
 
-          NotificationMailer.client_transfer_notification(
-            current_user: new_user,
-            previous_user: previous_user,
-            client: resource
-          ).deliver_later
+        NotificationMailer.client_transfer_notification(
+          current_user: new_user,
+          previous_user: previous_user,
+          client: resource
+        ).deliver_later
 
-          analytics_track(
-            label: :client_transfer,
-            data: {
-              admin_id: current_admin_user.id,
-              clients_transferred_count: 1
-            }
-          )
-        end
+        analytics_track(
+          label: :client_transfer,
+          data: {
+            admin_id: current_admin_user.id,
+            clients_transferred_count: 1
+          }
+        )
       end
 
       super do |success, failure|
