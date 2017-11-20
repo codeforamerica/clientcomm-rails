@@ -16,27 +16,27 @@ ClientStatus.find_or_create_by!(name: 'Exited', followup_date: 90)
 ClientStatus.find_or_create_by!(name: 'Training', followup_date: 30)
 ClientStatus.find_or_create_by!(name: 'Active', followup_date: 30)
 
-puts "Creating Admin User"
+puts 'Creating Admin User'
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?
 
-puts "Creating Test Users"
+puts 'Creating Test Users'
 test_user = User.find_or_create_by(email: 'test@example.com')
 test_user.update!(full_name: 'Test Example', password: 'changeme', department: nil)
 
-puts "Deleting Old Records"
+puts 'Deleting Old Records'
 Message.delete_all
 ReportingRelationship.delete_all
 Client.delete_all
 User.where.not(id: [test_user.id]).delete_all
 Department.delete_all
 
-puts "Creating Departments"
+puts 'Creating Departments'
 FactoryBot.create_list :department, 3
 User.all.each do |user|
   user.update_attributes(department: Department.all.sample)
 end
 
-puts "Creating Users and Clients"
+puts 'Creating Users and Clients'
 Department.all.each do |department|
   FactoryBot.create_list :user, 3, department: department
   unclaimed_user = FactoryBot.create :user, full_name: 'Unclaimed User', department: department
@@ -48,7 +48,7 @@ Department.all.each do |department|
   end
 end
 
-puts "Fuzzing Clients"
+puts 'Fuzzing Clients'
 Client.all.sample(15).each do |client|
   existing_users = client.users
   client.users << User.where.not(department: existing_users.map(&:department)).sample
