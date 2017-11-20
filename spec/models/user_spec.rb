@@ -12,10 +12,9 @@ RSpec.describe User, type: :model do
   describe 'scoping' do
     let(:user) { create :user }
     let!(:active_clients) { create_list :client, 3, user: user }
-    let!(:inactive_clients) { create_list :client, 3, user: user, active_rr: false }
+    let!(:inactive_clients) { create_list :client, 3, user: user, active: false }
 
     it 'only shows active clients' do
-      # binding.pry
       expect(user.clients).to include(*active_clients)
       expect(user.clients).to_not include(*inactive_clients)
     end

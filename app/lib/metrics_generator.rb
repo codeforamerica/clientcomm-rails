@@ -2,7 +2,7 @@ class MetricsGenerator
   def self.generate
     %Q(
 Case managers: #{User.count}
-Active Clients: #{Client.where(active: true).count}
+Active Clients: #{Client.distinct.joins(:reporting_relationships).where(reporting_relationships: { active: true }).count}
 Total Clients: #{Client.count}
 New conversations in last week: #{new_conversations}
 Average number of messages per conversation: #{average_messages_in_conversation}

@@ -6,18 +6,16 @@ FactoryBot.define do
     notes { Faker::Lorem.sentence }
     client_status { ClientStatus.all.sample }
 
-
     transient do
       user { nil }
-      active_rr { true }
+      active { true }
     end
 
     after(:create) do |client, evaluator|
       client.users << evaluator.user if evaluator.user
       client.reporting_relationships
             .find_by(user: evaluator.user)
-            .update(active: evaluator.active_rr)
-      binding.pry
+            .update(active: evaluator.active)
     end
   end
 end

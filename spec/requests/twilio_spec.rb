@@ -7,7 +7,16 @@ describe 'Twilio controller', type: :request, active_job: true do
   let(:active) { true }
   let(:dept_phone_number) { '+14242424242' }
   let(:user) { create :user, dept_phone_number: dept_phone_number }
-  let!(:client) { create :client, user: user, phone_number: phone_number, has_message_error: has_message_error, has_unread_messages: has_unread_messages, active: active }
+  let!(:client) {
+    create(
+      :client,
+      user: user,
+      phone_number: phone_number,
+      has_message_error: has_message_error,
+      has_unread_messages: has_unread_messages,
+      active: active
+    )
+  }
 
   context 'POST#incoming_sms' do
     let(:message_text) { 'Hello, this is a new message from a client!' }

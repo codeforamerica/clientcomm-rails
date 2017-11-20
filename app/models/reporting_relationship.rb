@@ -3,7 +3,8 @@ class ReportingRelationship < ApplicationRecord
   belongs_to :client
 
   validates_uniqueness_of :client, scope: :user
-  validates_presence_of :client, :user, :active
+  validates_presence_of :client, :user
+  validates :active, inclusion: { in: [true, false] }
 
   validate :unique_within_department
 

@@ -7,7 +7,7 @@ RSpec.describe ReportingRelationship, type: :model do
   describe 'Validations' do
     it { should validate_presence_of :user }
     it { should validate_presence_of :client }
-    it { should validate_presence_of :active }
+    it { should_not allow_value(nil).for :active }
 
     describe 'Client' do
       context 'An identical relationship' do

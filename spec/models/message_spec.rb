@@ -83,7 +83,8 @@ RSpec.describe Message, type: :model do
     end
 
     context 'client exists' do
-      let(:client) { create :client }
+      let(:user) { create :user }
+      let(:client) { create :client, user: user }
 
       it 'creates a message if proper params are sent' do
         params = twilio_new_message_params from_number: client.phone_number
