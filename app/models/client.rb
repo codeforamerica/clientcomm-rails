@@ -8,6 +8,7 @@ class Client < ApplicationRecord
   scope :active, lambda {
     joins(:reporting_relationships)
       .where(reporting_relationships: { active: true })
+      .distinct
   }
 
   accepts_nested_attributes_for :reporting_relationships

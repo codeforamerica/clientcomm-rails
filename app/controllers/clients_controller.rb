@@ -26,17 +26,25 @@ class ClientsController < ApplicationController
   end
 
   def create
+    normalized_phone_number = SMSService.instance.number_lookup(phone_number: client_params[:phone_number])
     @client = Client.find_or_initialize_by(
-      phone_number: client_params[:phone_number]
+      phone_number: normalized_phone_number
     )
     @client.first_name = client_params[:first_name]
     @client.last_name = client_params[:last_name]
     @client.notes = client_params[:notes]
     @client.client_status_id = client_params[:client_status_id]
 
-    rr = ReportingRelationship.create(
+    unless @client.save
+      flash[:alert] = t('flash.errors.client.invalid')
+      render :new
+      return
+    end
+
+    rr = ReportingRelationship.new(
       user: current_user, client: @client
     )
+
     unless rr.save
       if rr.errors.added? :client, :taken
         flash[:notice] = t('flash.notices.client.taken')
@@ -56,17 +64,12 @@ class ClientsController < ApplicationController
       end
     end
 
-    if @client.save
-      analytics_track(
-        label: 'client_create_success',
-        data: @client.reload.analytics_tracker_data
-      )
-      redirect_to client_messages_path(@client)
-      return
-    end
+    analytics_track(
+      label: 'client_create_success',
+      data: @client.reload.analytics_tracker_data
+    )
 
-    flash[:alert] = t('flash.errors.client.invalid')
-    render :new
+    redirect_to client_messages_path(@client)
   end
 
   def edit

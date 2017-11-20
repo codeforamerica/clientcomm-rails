@@ -17,8 +17,13 @@ RSpec.describe Client, type: :model do
     let!(:active_clients) { create_list :client, 3, user: user }
     let!(:inactive_clients) { create_list :client, 3, user: user, active: false }
 
+    before do
+      new_user = create :user
+      new_user.clients << active_clients.first
+    end
+
     it 'only shows active clients' do
-      expect(user.clients.active).to include(*active_clients)
+      expect(user.clients.active).to contain_exactly(*active_clients)
       expect(user.clients.active).to_not include(*inactive_clients)
     end
   end

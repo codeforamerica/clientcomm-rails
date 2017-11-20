@@ -18,7 +18,7 @@ describe 'Clients requests', type: :request do
 
     describe 'POST#create' do
       let(:first_name) { Faker::Name.first_name }
-      let(:phone_number) { '1-466-336-4863' }
+      let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
       let!(:client_status) { create :client_status }
@@ -81,7 +81,25 @@ describe 'Clients requests', type: :request do
       context 'client has a relationship with a user in the same department' do
         context 'client already exists under this user' do
           let!(:client) { create :client, user: user, phone_number: phone_number }
+          let(:abnormal_number) { '1-466-336-4863' }
+
+          subject do
+            post clients_path, params: {
+              client: {
+                first_name: first_name,
+                last_name: last_name,
+                phone_number: abnormal_number,
+                notes: notes,
+                client_status_id: client_status.id.to_s
+              }
+            }
+          end
+
           it 'redirects to the messages page' do
+            allow(SMSService.instance).to receive(:number_lookup)
+              .with(phone_number: abnormal_number)
+              .and_return(phone_number)
+
             subject
 
             expect(response.code).to eq '302'

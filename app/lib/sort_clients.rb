@@ -1,6 +1,7 @@
 class SortClients
   def self.clients_list(user:)
     user.clients
+        .select('clients.*, clients.has_unread_messages, COALESCE(clients.last_contacted_at, clients.created_at)')
         .active
         .order('clients.has_unread_messages DESC, COALESCE(clients.last_contacted_at, clients.created_at) DESC')
   end

@@ -86,6 +86,15 @@ module TwilioHelper
     }
   end
 
+  def twilio_stub_normalization(client:, abnormal_number:, normal_number:)
+    phone_numbers = double('phone_numbers')
+
+    allow(client).to receive(:phone_numbers).with(ERB::Util.url_encode(abnormal_number)).and_return(phone_numbers)
+    allow(phone_numbers).to receive(:fetch)
+      .with(no_args)
+      .and_return(double('phone_number', phone_number: normal_number))
+  end
+
   private
 
   def twilio_post(tw_params, post_sig, post_url)
