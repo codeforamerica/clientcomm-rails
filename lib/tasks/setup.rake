@@ -1,6 +1,21 @@
 namespace :setup do
-  task :unclaimed_account, [:unclaimed_email, :password, :admin_phone_number] => :environment do |_, args|
-    user = User.find_or_initialize_by(email: args.unclaimed_email)
-    user.update!(full_name: 'Unclaimed Clients', phone_number: args.admin_phone_number, password: args.password, password_confirmation: args.password)
+  task :admin_account, [:admin_email, :password] => :environment do |_, args|
+    user = AdminUser.find_or_initialize_by(email: args.admin_email)
+    user.update!(password: args.password, password_confirmation: args.password)
+  end
+
+  task :install_department, [:department_name] => :environment do |_, args|
+    unclaimed_user = User.find_by(email: ENV['UNCLAIMED_EMAIL'])
+
+    department = Department.create(
+      name: args.department_name,
+      phone_number: ENV['TWILIO_PHONE_NUMBER']
+    )
+
+    User.all.each do |user|
+      user.update!(department: department)
+    end
+
+    department.update!(unclaimed_user: unclaimed_user)
   end
 end

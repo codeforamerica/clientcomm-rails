@@ -28,9 +28,8 @@ variable "typeform_link" {}
 variable "enable_papertrail" {}
 variable "sentry_deploy_hook" {}
 
-variable "unclaimed_email" {}
-variable "unclaimed_password" {}
-variable "unclaimed_phone_number" {}
+variable "admin_email" {}
+variable "admin_password" {}
 
 # Configure the Heroku provider
 provider "heroku" {
@@ -234,6 +233,6 @@ resource "null_resource" "unclaimed_account" {
   depends_on = ["null_resource.provision_app"]
 
   provisioner "local-exec" {
-    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}, ${var.unclaimed_phone_number}]'"
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:admin_account[${var.admin_email}, ${var.admin_password}]'"
   }
 }

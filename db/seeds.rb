@@ -22,14 +22,12 @@ AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'chang
 puts "Creating Test Users"
 test_user = User.find_or_create_by(email: 'test@example.com')
 test_user.update!(full_name: 'Test Example', password: 'changeme', department: nil)
-unclaimed_user = User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL'])
-unclaimed_user.update!(full_name: 'Unclaimed Email', password: 'changeme', department: nil)
 
 puts "Deleting Old Records"
 Message.delete_all
 ReportingRelationship.delete_all
 Client.delete_all
-User.where.not(id: [test_user.id, unclaimed_user.id]).delete_all
+User.where.not(id: [test_user.id]).delete_all
 Department.delete_all
 
 puts "Creating Departments"
@@ -38,14 +36,16 @@ User.all.each do |user|
   user.update_attributes(department: Department.all.sample)
 end
 
-puts "Creating Users"
+puts "Creating Users and Clients"
 Department.all.each do |department|
   FactoryBot.create_list :user, 3, department: department
-end
+  unclaimed_user = FactoryBot.create :user, full_name: 'Unclaimed User', department: department
+  department.unclaimed_user = unclaimed_user
+  department.save
 
-puts "Creating Clients"
-User.where.not(id: [unclaimed_user.id]).each do |user|
-  FactoryBot.create_list :client, 5, user: user
+  department.users.where.not(id: department.unclaimed_user.id).each do |user|
+    FactoryBot.create_list :client, 5, user: user
+  end
 end
 
 puts "Fuzzing Clients"
