@@ -340,7 +340,7 @@ describe 'Messages requests', type: :request, active_job: true do
         messages.each do |message|
           expect(response.body).to include(message.number_from) if message.inbound
           expect(response.body).to include(message.number_to) unless message.inbound
-          expect(response.body).to include(message.created_at.strftime('%b %-d %Y, %-l:%M:%S %P'))
+          expect(response.body).to include(message.send_at.strftime('%b %-d %Y, %-l:%M:%S %P'))
           expect(response.body).to include(message.body)
           expect(response.body).to include(client.first_name)
           expect(response.body).to include(user.full_name)
