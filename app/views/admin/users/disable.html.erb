@@ -1,16 +1,21 @@
 <h3>Disabling an account means that this user will no longer be able to log in. You can re-enable their account at any
   time.</h3>
-<% if resource.clients.where(active: true).empty? %>
-    <%= link_to 'Disable account', disable_confirm_admin_user_path(resource), {class: 'button'} %>
-<% else %>
-    <div class='panel'>
-      <h3>Warning</h3>
-      <div class='panel-content'>
-        <p>This user has active clients. You
-          must <%= link_to 'transfer their clients', admin_clients_path(q: {user_id_eq: resource.id, active_eq: true}) %>
-          to another user or archive them before you can disable their account.</p>
-      </div>
+<% if @clients_to_disable.any? %>
+  <div class='panel'>
+    <h3>Warning: This user has active clients</h3>
+    <div class='panel-content'>
+      <p>
+        These clients will no longer be able to text this user.
+        Incoming texts will be received by the active user most
+        recently in contact with this client, or the unclaimed user for this department.
+      </p>
+      <ul>
+        <% @clients_to_disable.each do |client| %>
+          <li><%= client.full_name %></li>
+        <% end %>
+      </ul>
     </div>
-
-    <button class="disabled">Disable account</button>
+  </div>
 <% end %>
+<%= link_to 'Disable account', disable_confirm_admin_user_path(resource), {class: 'button'} %>
+

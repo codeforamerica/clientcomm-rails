@@ -20,6 +20,7 @@ ActiveAdmin.register User do
 
   member_action :disable, method: :get do
     @page_title = "Disable #{resource.full_name}'s account"
+    @clients_to_disable = resource.clients.active
   end
 
   member_action :enable, method: :get do
@@ -31,10 +32,7 @@ ActiveAdmin.register User do
   member_action :disable_confirm, method: :get do
     resource.update!(active: false)
 
-    user = User.find_by_email!(ENV['UNCLAIMED_EMAIL'])
-    resource.clients.where(active: false).each do |client|
-      client.update!(user: user)
-    end
+    resource.reporting_relationships.active.update(active: false)
 
     redirect_to admin_users_path
   end

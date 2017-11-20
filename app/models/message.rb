@@ -33,7 +33,6 @@ class Message < ApplicationRecord
       )
     end
 
-    # find an inactive user
     user = department.users
                      .active
                      .joins(:reporting_relationships)
