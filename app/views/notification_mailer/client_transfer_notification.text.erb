@@ -1,6 +1,8 @@
 ClientComm
 
 <%= "An administrator has transferred #{@client.first_name} #{@client.last_name}, #{@client.phone_number} to your client list." %>
-<%= "Their previous case manager was #{@previous_user.full_name}" %>
+<% if @previous_user.present? %>
+  <%= "Their previous case manager was #{@previous_user.full_name}" %>
+<% end %>
 
 Introduce yourself to <%= @client.first_name %>: <%= client_messages_url(@client) %>

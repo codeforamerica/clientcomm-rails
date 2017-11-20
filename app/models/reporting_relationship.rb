@@ -2,6 +2,8 @@ class ReportingRelationship < ApplicationRecord
   belongs_to :user
   belongs_to :client
 
+  scope :active, -> { where(active: true) }
+
   validates_uniqueness_of :client, scope: :user
   validates_presence_of :client, :user
   validates :active, inclusion: { in: [true, false] }
@@ -14,6 +16,7 @@ class ReportingRelationship < ApplicationRecord
 
   def unique_within_department
     @matching_record = ReportingRelationship
+                       .active
                        .joins(:user)
                        .where(users: { department_id: user.try(:department_id) })
                        .where.not(user: user)

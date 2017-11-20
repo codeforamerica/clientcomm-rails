@@ -35,6 +35,7 @@ class Message < ApplicationRecord
       .joins(:reporting_relationships)
       .where(departments: { phone_number: to_phone_number })
       .find_by(reporting_relationships: { client: client })
+      # TODO: write a test for this; should require an active relationship to work
 
     new_message = Message.new(
       client: client,

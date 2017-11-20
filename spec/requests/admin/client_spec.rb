@@ -8,7 +8,7 @@ describe 'Clients', type: :request, active_job: true do
   let(:user2) { create :user, department: department1 }
   let(:user3) { create :user, department: department2 }
   let(:user4) { create :user, department: department3 }
-  let(:client) { create :client, users: [user1, user4] }
+
 
   before do
     @admin_user = create :admin_user
@@ -21,6 +21,11 @@ describe 'Clients', type: :request, active_job: true do
     end
 
     context 'transferring a client' do
+      let(:client) { create :client, users: [user1, user4] }
+      let(:params) do
+        { client: { user_ids: [user2.id] } }
+      end
+
       it 'transfers scheduled messages' do
         scheduled_messages = user1.messages.scheduled
         perform_enqueued_jobs do
@@ -30,9 +35,12 @@ describe 'Clients', type: :request, active_job: true do
             }
           }
         end
+        active_users = client.users
+                             .joins(:reporting_relationships)
+                             .where(reporting_relationships: { active: true })
 
-        expect(client.reload.users).to include(user2, user3)
-        expect(client.reload.users).to_not include(user1, user4)
+        expect(active_users).to include(user2, user3)
+        expect(active_users).to_not include(user1, user4)
         expect(user2.messages.scheduled).to include(*scheduled_messages.reload)
         expect(ReportingRelationship.find_by(user: user4, client: client)).to_not be_active
         expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
@@ -40,13 +48,20 @@ describe 'Clients', type: :request, active_job: true do
         expect(ActionMailer::Base.deliveries).to_not be_empty
       end
 
-      it 'triggers the notification mailer' do
-        message_delivery = instance_double(ActionMailer::MessageDelivery)
+      it 'disassociates a user if no user is selected in any department' do
+        perform_enqueued_jobs do
+          put admin_client_path(client), params: {
+            client: {
+              user_ids: []
+            }
+          }
+        end
 
-        expect(NotificationMailer).to receive(:client_transfer_notification).and_return(message_delivery)
-        expect(message_delivery).to receive(:deliver_later)
+        active_users = client.users
+                             .joins(:reporting_relationships)
+                             .where(reporting_relationships: { active: true })
 
-        put admin_client_path(client), params: params
+        expect(active_users.length).to eq(0)
       end
 
       it 'tracks the transfer action' do

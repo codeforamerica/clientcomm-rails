@@ -7,10 +7,14 @@ ActiveAdmin.register Client do
   index do
     selectable_column
     column :full_name, sortable: :last_name
-    column 'Users' do |client|
-      client.users.map do |user|
-        user.full_name
-      end.join('\n')
+    Department.all.each do |dept|
+      column "#{dept.name} User" do |client|
+        dept_user = dept.users
+                        .joins(:reporting_relationships)
+                        .where(reporting_relationships: { active: true })
+                        .find_by(reporting_relationships: { client: client })
+        dept_user.try(:full_name)
+      end
     end
     column :phone_number
     column :active
@@ -23,29 +27,42 @@ ActiveAdmin.register Client do
 
   actions :all, :except => [:destroy]
 
-  filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }
+  # filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
   filter :active
-  filter :notes_present, as: 'boolean'
+  # filter :notes_present, as: 'boolean'
 
   form do |f|
     f.inputs 'Client Info' do
       # f.input :user_id, label: 'User', as: :select, collection: User.all.order(full_name: :asc).pluck(:full_name, :id), include_blank: false
-      f.input :active, as: :radio unless f.object.new_record?
       f.input :first_name
       f.input :last_name
       f.input :phone_number
       f.input :client_status if FeatureFlag.enabled?('client_status')
       f.input :notes
       Department.all.each do |department|
+        department_users = department.users.order(full_name: :asc)
+        active_user_id = department.users.joins(:clients)
+                                         .joins(:reporting_relationships)
+                                         .where(clients: { id: resource.id })
+                                         .find_by(reporting_relationships: { active: true })
+                                         .try(:id)
+
+        options = options_from_collection_for_select(
+          department_users,
+          :id,
+          :full_name,
+          active_user_id
+        )
+
         f.input :users, {
           label: "User for #{department.name}",
           as: :select,
-          collection: department.users.order(full_name: :asc).pluck(:full_name, :id),
+          collection: options,
           include_blank: true,
-          input_html: { multiple: false }
+          input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
         }
       end
     end
@@ -61,21 +78,51 @@ ActiveAdmin.register Client do
     end
 
     def update
-      # previous_user_id = resource.user_id
-      super do |success, failure|
-        success.html do
-          # resource.messages.scheduled.update_all(user_id: params[:client][:user_id])
-          # if params[:client][:user_id] != previous_user_id.to_s
-          #   NotificationMailer.client_transfer_notification(
-          #     current_user: resource.user,
-          #     previous_user: User.find(previous_user_id),
-          #     client: resource
-          #   ).deliver_later
-          # end
-          render :show
+      user_ids = params[:client][:user_ids]
+
+      Department.all.each do |dept|
+        new_user = dept.users.find_by(id: user_ids)
+
+        previous_user = resource.users
+                                .joins(:reporting_relationships)
+                                .where(reporting_relationships: { active: true })
+                                .find_by(department: dept)
+
+        resource.messages
+                .scheduled
+                .where(user: previous_user)
+                .update(user_id: new_user)
+
+        if previous_user.present?
+          previous_user.reporting_relationships.find_by(client: resource).update!(active: false)
         end
 
-        failure.html { render :edit }
+        if new_user.present?
+          new_user.reporting_relationships.find_or_create_by(client: resource).update!(active: true)
+
+          NotificationMailer.client_transfer_notification(
+            current_user: new_user,
+            previous_user: previous_user,
+            client: resource
+          ).deliver_later
+
+          analytics_track(
+            label: :client_transfer,
+            data: {
+              admin_id: current_admin_user.id,
+              clients_transferred_count: 1
+            }
+          )
+        end
+      end
+
+      super do |success, failure|
+        success.html do
+          render :show
+        end
+        failure.html do
+          render :edit
+        end
       end
     end
   end

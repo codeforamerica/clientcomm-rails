@@ -19,7 +19,7 @@ feature 'Admin features' do
     end
 
     step 'given there is a second user to transfer to' do
-      @user2 = create :user, active: true, full_name: 'Cat Stevens'
+      @user2 = create :user, active: true
     end
 
     step 'log in to admin panel' do
@@ -50,7 +50,12 @@ feature 'Admin features' do
       end
 
       expect(page).to have_content 'Edit Client'
-      select @user2.full_name, from: 'client_user_id'
+
+      expect(page).to have_select("user_in_dept_#{@user1.department.id}",
+                                  selected: @user1.full_name)
+
+      select @user2.full_name, from: "user_in_dept_#{@user2.department.id}"
+
       click_on 'Update Client'
     end
 
@@ -103,96 +108,6 @@ feature 'Admin features' do
       end
 
       expect(find("tr##{dom_id(@user1)}").text).to include 'Disable'
-    end
-  end
-
-  scenario 'Admin bulk transfers clients', :js do
-    step 'given a user with multiple clients' do
-      @user1 = create :user
-      @user2 = create :user
-
-      @client1 = create :client, user: @user1
-      @client2 = create :client, user: @user1
-      @client3 = create :client, user: @user1
-      @client4 = create :client, user: @user1
-    end
-
-    step 'log in to admin panel and go to the clients page' do
-      admin = create :admin_user
-      login_as(admin, scope: :admin_user)
-
-      visit admin_clients_path
-      expect(page).to have_content 'Clients'
-    end
-
-    step 'admin selects 3 clients to transfer' do
-      expect(page.find('.batch_actions_selector')).to have_css('.disabled')
-
-      within "tr##{dom_id(@client1)}" do
-        check "batch_action_item_#{@client1.id}"
-      end
-
-      within "tr##{dom_id(@client2)}" do
-        check "batch_action_item_#{@client2.id}"
-      end
-
-      within "tr##{dom_id(@client3)}" do
-        check "batch_action_item_#{@client3.id}"
-      end
-
-      expect(page.find('.batch_actions_selector')).to_not have_css('.disabled')
-    end
-
-    step 'admin clicks batch action button and selects transfer option' do
-      click_on 'Batch Actions'
-
-      expect(page).to have_css('.dropdown_menu_list_wrapper')
-
-      click_on 'Transfer Selected'
-    end
-
-    step 'admin selects user to recieve clients' do
-      expect(page).to have_content('Are you sure you want to do this?')
-
-      within '#dialog_confirm' do
-        select "#{@user2.full_name}"
-      end
-
-      click_on 'OK'
-    end
-
-    step 'admin sees confirmation that users were transfered' do
-      expect(page).to have_content('Clients transferred: 3')
-    end
-
-    step 'user2 receives email for transfer' do
-      transfer_notification = ActionMailer::Base.deliveries.find { |mail| mail.to.include? @user2.email }
-      parsed_mail = Nokogiri.parse(transfer_notification.html_part.to_s).to_s
-      expect(transfer_notification).to_not be_nil
-      expect(parsed_mail).to include 'An administrator has transferred'
-
-      [@client1, @client2, @client3].each do |client|
-        expect(parsed_mail).to include client.full_name
-        expect(parsed_mail).to include client.phone_number
-      end
-    end
-
-    step 'client users are updated in the clients table' do
-      within "tr##{dom_id(@client1)}" do
-        expect(page).to have_content @user2.full_name
-      end
-
-      within "tr##{dom_id(@client2)}" do
-        expect(page).to have_content @user2.full_name
-      end
-
-      within "tr##{dom_id(@client3)}" do
-        expect(page).to have_content @user2.full_name
-      end
-
-      within "tr##{dom_id(@client4)}" do
-        expect(page).to have_content @user1.full_name
-      end
     end
   end
 end
