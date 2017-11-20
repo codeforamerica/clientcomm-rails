@@ -27,23 +27,23 @@ ActiveAdmin.register Client do
 
   actions :all, :except => [:destroy]
 
-  # filter :user, collection: proc { User.all.order(full_name: :asc).pluck(:full_name, :id) }
+  filter :reporting_relationships_user_id,
+         as: :select,
+         collection: proc { User.all.order(full_name: :asc) },
+         label: 'User'
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
-  filter :active
-  # filter :notes_present, as: 'boolean'
 
   form do |f|
     f.inputs 'Client Info' do
-      # f.input :user_id, label: 'User', as: :select, collection: User.all.order(full_name: :asc).pluck(:full_name, :id), include_blank: false
       f.input :first_name
       f.input :last_name
       f.input :phone_number
       f.input :client_status if FeatureFlag.enabled?('client_status')
       f.input :notes
       Department.all.each do |department|
-        department_users = department.users.order(full_name: :asc)
+        department_users = department.users.active.order(full_name: :asc)
         active_user_id = department.users
                                    .joins(:clients)
                                    .joins(:reporting_relationships)
