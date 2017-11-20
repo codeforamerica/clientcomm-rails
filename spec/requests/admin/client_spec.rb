@@ -44,7 +44,9 @@ describe 'Clients', type: :request, active_job: true do
         expect(ReportingRelationship.find_by(user: user4, client: client)).to_not be_active
         expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
 
-        expect(ActionMailer::Base.deliveries).to_not be_empty
+        emails = ActionMailer::Base.deliveries
+        to_addrs = emails.map(&:to)
+        expect(to_addrs).to contain_exactly([user2.email], [user3.email])
       end
 
       it 'disassociates a user if no user is selected in any department' do
