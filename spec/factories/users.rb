@@ -1,8 +1,16 @@
 FactoryBot.define do
   factory :user do
-    sequence(:email) { Faker::Internet.unique.email }
-    sequence(:password) { Faker::Internet.unique.password }
-    sequence(:full_name) { Faker::Name.name }
-    sequence(:phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
+    email { Faker::Internet.unique.email }
+    password { Faker::Internet.unique.password }
+    full_name { Faker::Name.name }
+    phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
+
+    transient do
+      dept_phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
+    end
+
+    department do
+      create :department, phone_number: dept_phone_number
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171021000847) do
+ActiveRecord::Schema.define(version: 20171030170543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,6 +93,13 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
+  create_table "departments", force: :cascade do |t|
+    t.string "name"
+    t.string "phone_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "feature_flags", force: :cascade do |t|
     t.string "flag"
     t.boolean "enabled", null: false
@@ -142,6 +149,8 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.boolean "message_notification_emails", default: true
     t.boolean "active", default: true, null: false
     t.string "phone_number"
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_users_on_department_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -152,4 +161,5 @@ ActiveRecord::Schema.define(version: 20171021000847) do
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
   add_foreign_key "templates", "users"
+  add_foreign_key "users", "departments"
 end

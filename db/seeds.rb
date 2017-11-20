@@ -16,15 +16,17 @@ ClientStatus.find_or_create_by!(name: 'Exited', followup_date: 90)
 ClientStatus.find_or_create_by!(name: 'Training', followup_date: 30)
 ClientStatus.find_or_create_by!(name: 'Active', followup_date: 30)
 
-puts 'Creating Admin User'
+test_department = Department.find_or_create_by!(name: 'Test', phone_number: "+1760555#{Faker::PhoneNumber.unique.subscriber_number}")
+
+puts "Creating Admin User"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?
 
-puts 'Creating Test Users'
-User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')
-User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
+puts "Creating Test Users"
+User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme', department: test_department)
+User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme', department: test_department)
 
-puts 'Creating Sample Users'
-FactoryBot.create_list :user, 3
+puts "Creating Sample Users"
+FactoryBot.create_list :user, 3, department: test_department
 
 puts 'Creating Clients'
 User.all.each do |user|

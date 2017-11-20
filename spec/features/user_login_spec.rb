@@ -4,8 +4,8 @@ user_full_name = 'Tesfalem Medhanie'
 user_email = 'me@example.com'
 user_password = 'paassswoord'
 
-feature 'user wants to log in, check clients, and log out, so they', :js do
-  let(:existing_user) { create :user, full_name: user_full_name, email: user_email, password: user_password }
+feature "user wants to log in, check clients, and log out, so they", :js do
+  let(:existing_user) { create :user, full_name: user_full_name, email: user_email, password: user_password, dept_phone_number: '+17605556661'}
 
   specify do
     step 'when an existing user logs in' do
@@ -27,6 +27,7 @@ feature 'user wants to log in, check clients, and log out, so they', :js do
       click_on 'Sign in'
       expect(page).to have_text 'My clients'
       expect(page).to have_current_path(root_path)
+      expect(page).to have_text('(760) 555-6661')
     end
   end
 end

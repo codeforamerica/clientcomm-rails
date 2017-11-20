@@ -33,7 +33,7 @@ RSpec.describe Client, type: :model do
         .and_return(normalized_phone_number)
     end
 
-    subject { create :client, phone_number: input_phone_number, user: create(:user, phone_number: user_number) }
+    subject { create :client, phone_number: input_phone_number, user: create(:user, phone_number: user_number, department: nil) }
 
     it 'formats the phone number' do
       expect(subject.reload.phone_number).to eq(normalized_phone_number)
@@ -41,7 +41,7 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'validations' do
-    let(:user) { create :user, phone_number: 'fake_phone_number' }
+    let(:user) { create :user, phone_number: 'fake_phone_number', department: nil }
 
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:phone_number) }

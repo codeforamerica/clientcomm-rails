@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :clients, dependent: :destroy
   has_many :messages
   has_many :templates
+  belongs_to :department
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
