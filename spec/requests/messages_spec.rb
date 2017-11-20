@@ -14,7 +14,8 @@ describe 'Messages requests', type: :request, active_job: true do
   end
 
   context 'authenticated' do
-    let(:user) { create :user }
+    let(:department) { create :department }
+    let(:user) { create :user, department: department }
     let(:client) { create :client, user: user }
     let(:body) { 'hello, my friend' }
 
@@ -23,9 +24,17 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'GET#index' do
-      it 'shows all past messages' do
-        message = create :message, client: client
-        message_2 = create :message, client: client
+      let(:department2) { create :department }
+      let(:user2) { create :user, department: department2 }
+
+      before do
+        user2.clients << client
+      end
+
+      it 'shows all past messages for a given relationship' do
+        message = create :message, client: client, user: user
+        message_2 = create :message, client: client, user: user
+        message_3 = create :message, client: client, user: user2
 
         get client_messages_path(client)
 
@@ -33,6 +42,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
         expect(response_body).to include(message.body)
         expect(response_body).to include(message_2.body)
+        expect(response_body).to_not include(message_3.body)
       end
 
       it 'marks all messages read when index loaded' do
@@ -158,6 +168,7 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(created_message.id).to eq message.id
           expect(created_message.read).to eq true
           expect(created_message.send_at).to_not be_nil
+          expect(created_message.number_from).to eq department.phone_number
 
           expect_most_recent_analytics_event(
             {

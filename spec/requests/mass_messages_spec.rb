@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe 'Mass messages requests', type: :request, active_job: true do
-  let(:user) { create :user }
+  let(:department) { create :department }
+  let(:user) { create :user, department: department }
 
   before do
     sign_in user
@@ -29,9 +30,11 @@ describe 'Mass messages requests', type: :request, active_job: true do
       expect(user.messages.count).to eq 2
       expect(client_1.messages.count).to eq 1
       expect(client_1.messages.first.body).to eq message_body
+      expect(client_1.messages.first.number_from).to eq department.phone_number
       expect(client_2.messages.count).to eq 0
       expect(client_3.messages.count).to eq 1
       expect(client_3.messages.first.body).to eq message_body
+      expect(client_3.messages.first.number_from).to eq department.phone_number
     end
 
     it 'sends an analytics event for each message in mass message' do

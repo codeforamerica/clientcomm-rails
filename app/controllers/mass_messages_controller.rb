@@ -49,7 +49,7 @@ class MassMessagesController < ApplicationController
         body: mass_message.message,
         user: mass_message.user,
         client: client,
-        number_from: ENV['TWILIO_PHONE_NUMBER'],
+        number_from: current_user.department.phone_number,
         number_to: client.phone_number,
         read: true,
         inbound: false,

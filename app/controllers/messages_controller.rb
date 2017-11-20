@@ -53,7 +53,7 @@ class MessagesController < ApplicationController
       body: message_params[:body],
       user: current_user,
       client: client,
-      number_from: ENV['TWILIO_PHONE_NUMBER'],
+      number_from: current_user.department.phone_number,
       number_to: client.phone_number,
       send_at: send_at,
       read: true
@@ -165,8 +165,9 @@ class MessagesController < ApplicationController
   end
 
   def past_messages(client:)
-    Message.where(client: client)
-           .where('send_at < ?', Time.now)
-           .order('send_at ASC')
+    client.messages
+          .where(user: current_user)
+          .where('send_at < ?', Time.now)
+          .order('send_at ASC')
   end
 end

@@ -2,7 +2,7 @@ class SortClients
   def self.clients_list(user:)
     user.clients
         .active
-        .order('has_unread_messages DESC, COALESCE(last_contacted_at, created_at) DESC')
+        .order('clients.has_unread_messages DESC, COALESCE(clients.last_contacted_at, clients.created_at) DESC')
   end
 
   def self.mass_messages_list(user:, selected_clients: [])
