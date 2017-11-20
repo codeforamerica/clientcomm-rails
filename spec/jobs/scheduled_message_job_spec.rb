@@ -22,7 +22,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
       .and_return(link_html)
 
     expect(ActionCable.server).to receive(:broadcast)
-      .with("scheduled_messages_#{message.client.id}", link_html: link_html, count: count)
+      .with("scheduled_messages_#{message.user.id}_#{message.client.id}", link_html: link_html, count: count)
 
     subject
 

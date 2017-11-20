@@ -32,7 +32,7 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
       )
 
       expect(mock_server).to have_received(:broadcast) do |channel, data|
-        expect(channel).to eq "messages_#{message.client_id}"
+        expect(channel).to eq "messages_#{user.id}_#{message.client_id}"
         expect(data[:message_dom_id]).to eq dom_id(message)
         expect(data[:message_html]).to eq message_partial
       end
