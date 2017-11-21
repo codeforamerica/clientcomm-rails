@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
   describe '#perform' do
     let!(:user) { create :user }
-    let!(:client) { create :client, :user => user }
-    let!(:message) { create :message, :user => user, :client => client }
+    let!(:client) { create :client, user: user }
+    let!(:message) { create :message, user: user, client: client }
 
     it 'queues a job' do
       described_class.perform_later(message: message)
@@ -31,11 +31,13 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
         locals: { message: message }
       )
 
-      expect(mock_server).to have_received(:broadcast) do |channel, data|
-        expect(channel).to eq "messages_#{user.id}_#{message.client_id}"
-        expect(data[:message_dom_id]).to eq dom_id(message)
-        expect(data[:message_html]).to eq message_partial
-      end
+      expect(mock_server).to have_received(:broadcast).once.with(
+        "messages_#{user.id}_#{message.client_id}",
+        message_html: message_partial,
+        message_dom_id: dom_id(message),
+        message_id: message.id
+      )
+      expect(mock_server).to have_received(:broadcast).once.with("clients_#{user.id}", {})
     end
   end
 end

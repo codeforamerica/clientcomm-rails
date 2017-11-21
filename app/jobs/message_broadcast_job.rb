@@ -12,6 +12,7 @@ class MessageBroadcastJob < ApplicationJob
       message_dom_id: message_dom_id,
       message_id: message.id
     )
+    ActionCable.server.broadcast("clients_#{message.user_id}", {})
   end
 
   def render_message_partial(message)
