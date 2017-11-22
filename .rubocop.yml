@@ -8,6 +8,9 @@ Layout/EmptyLinesAroundBlockBody:
     - 'db/schema.rb'
     - 'config/routes.rb'
 
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 80
 

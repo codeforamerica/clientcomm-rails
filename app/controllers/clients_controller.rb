@@ -26,9 +26,14 @@ class ClientsController < ApplicationController
   end
 
   def create
-    normalized_phone_number = SMSService.instance.number_lookup(phone_number: client_params[:phone_number])
+    begin
+      normalized_phone_number = SMSService.instance.number_lookup(phone_number: client_params[:phone_number])
+    rescue SMSService::NumberNotFound
+      logger.warn('Invalid phone number on client create.')
+    end
+
     @client = Client.find_or_initialize_by(
-      phone_number: normalized_phone_number
+      phone_number: normalized_phone_number || client_params[:phone_number]
     )
     @client.first_name = client_params[:first_name]
     @client.last_name = client_params[:last_name]

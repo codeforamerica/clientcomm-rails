@@ -66,15 +66,35 @@ describe 'Clients requests', type: :request do
       end
 
       context 'receives invalid client parameters' do
-        let(:last_name) { nil }
+        context 'receives empty last name' do
+          let(:last_name) { nil }
 
-        it 'renders new with validation errors' do
-          subject
+          it 'renders new with validation errors' do
+            subject
 
-          expect(flash[:alert]).to include 'There was a problem'
-          expect(response.code).to eq '200'
-          expect(response.body).to include "can't be blank"
-          expect(Client.count).to eq 0
+            expect(flash[:alert]).to include 'There was a problem'
+            expect(response.code).to eq '200'
+            expect(response.body).to include "can't be blank"
+            expect(Client.count).to eq 0
+          end
+        end
+
+        context 'receives invalid phone number' do
+          let(:bad_number) { '(212) 55-5236' }
+          let(:phone_number) { bad_number }
+
+          it 'renders new with invalid phone number validation error' do
+            allow(SMSService.instance).to receive(:number_lookup)
+              .with(phone_number: bad_number)
+              .and_raise(SMSService::NumberNotFound)
+
+            subject
+
+            expect(flash[:alert]).to include 'There was a problem'
+            expect(response.code).to eq '200'
+            expect(response.body).to include 'not a valid phone number'
+            expect(Client.count).to eq 0
+          end
         end
       end
 
@@ -129,11 +149,10 @@ describe 'Clients requests', type: :request do
       let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
+      let!(:existing_client) { create :client, user: user }
 
       subject do
-        client = create :client, user: user
-
-        put client_path(client), params: {
+        put client_path(existing_client), params: {
           client: {
             first_name: first_name,
             last_name: last_name,
@@ -156,7 +175,7 @@ describe 'Clients requests', type: :request do
         expect(client.notes).to eq notes
       end
 
-      it 'tracks the creation of a new client' do
+      it 'tracks the updating of a client' do
         subject
 
         client = Client.first
@@ -171,14 +190,33 @@ describe 'Clients requests', type: :request do
       end
 
       context 'receives invalid client parameters' do
-        let(:last_name) { nil }
+        context 'receives empty last name' do
+          let(:last_name) { nil }
 
-        it 'renders edit with validation errors' do
-          subject
+          it 'renders edit with validation errors' do
+            subject
 
-          expect(flash[:alert]).to include 'There was a problem'
-          expect(response.code).to eq '200'
-          expect(response.body).to include "can't be blank"
+            expect(flash[:alert]).to include 'There was a problem'
+            expect(response.code).to eq '200'
+            expect(response.body).to include "can't be blank"
+          end
+        end
+
+        context 'receives invalid phone number' do
+          let(:bad_number) { '(212) 55-5236' }
+          let(:phone_number) { bad_number }
+
+          it 'renders edit with invalid phone number validation error' do
+            allow(SMSService.instance).to receive(:number_lookup)
+              .with(phone_number: bad_number)
+              .and_raise(SMSService::NumberNotFound)
+
+            subject
+
+            expect(flash[:alert]).to include 'There was a problem'
+            expect(response.code).to eq '200'
+            expect(response.body).to include 'not a valid phone number'
+          end
         end
       end
     end
