@@ -1,7 +1,7 @@
 ActiveAdmin.register User do
   menu priority: 3
 
-  permit_params :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails
+  permit_params :department_id, :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails
   index do
     column :full_name
     column :email
@@ -47,6 +47,7 @@ ActiveAdmin.register User do
 
     panel 'User Details' do
       attributes_table_for user do
+        row :department
         row :full_name
         row :email
         row :phone_number
@@ -76,6 +77,8 @@ ActiveAdmin.register User do
         f.input :password
         f.input :password_confirmation
       end
+
+      f.input :department, as: :select, collection: Department.all
     end
 
     unless f.object.new_record?
