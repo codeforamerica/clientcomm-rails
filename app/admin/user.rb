@@ -78,7 +78,7 @@ ActiveAdmin.register User do
         f.input :password_confirmation
       end
 
-      f.input :department, as: :select, collection: Department.all
+      f.input :department, as: :select, collection: Department.all if f.object.new_record?
     end
 
     unless f.object.new_record?
