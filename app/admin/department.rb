@@ -1,6 +1,13 @@
 ActiveAdmin.register Department do
   permit_params :user_id, :name, :phone_number
 
+  index do
+    column :name
+    column :phone_number
+    column :unclaimed_user
+    actions
+  end
+
   form do |f|
     f.inputs do
       if resource.persisted?
