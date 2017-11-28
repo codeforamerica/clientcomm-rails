@@ -50,7 +50,7 @@ feature 'User edits template' do
 
     find('a .icon-mode_edit').click
 
-    expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
+    expect(page).to have_current_path(edit_template_path(Template.find_by(title: template.title)))
 
     fill_in 'Template name', with: 'New template title'
     fill_in 'Template', with: 'New template body'
@@ -67,7 +67,7 @@ feature 'User edits template' do
 
     find('a .icon-mode_edit').click
 
-    expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
+    expect(page).to have_current_path(edit_template_path(Template.find_by(title: template.title)))
 
     fill_in 'Template name', with: ''
     fill_in 'Template', with: ''
@@ -91,7 +91,7 @@ feature 'User deletes template' do
 
     find('a .icon-mode_edit').click
 
-    expect(page).to have_current_path(edit_template_path(Template.find_by_title(template.title)))
+    expect(page).to have_current_path(edit_template_path(Template.find_by(title: template.title)))
 
     accept_confirm do
       click_on 'Delete template'
@@ -109,7 +109,7 @@ feature 'templates' do
     user = create :user
     client = create :client, user: user
 
-    saved_client = Client.find_by_first_name(client.first_name)
+    saved_client = Client.find_by(first_name: client.first_name)
 
     login_as(user, :scope => :user)
     visit client_messages_path(client)

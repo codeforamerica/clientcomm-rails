@@ -21,7 +21,7 @@ class Users::PasswordsController < Devise::PasswordsController
 
   def find_user_by_token(token)
     encoded_token = Devise.token_generator.digest(User, :reset_password_token, token)
-    user = User.find_by_reset_password_token(encoded_token)
+    user = User.find_by(reset_password_token: encoded_token)
     user if user && user.reset_password_period_valid?
   end
 end

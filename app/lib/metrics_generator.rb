@@ -1,6 +1,6 @@
 class MetricsGenerator
   def self.generate
-    %Q(
+    %(
 Case managers: #{User.count}
 Active Clients: #{Client.distinct.joins(:reporting_relationships).where(reporting_relationships: { active: true }).count}
 Total Clients: #{Client.count}

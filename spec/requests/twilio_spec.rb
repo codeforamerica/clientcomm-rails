@@ -67,14 +67,14 @@ describe 'Twilio controller', type: :request, active_job: true do
     it 'enqueues a MessageBroadcastJob' do
       subject
 
-      message = Message.find_by_twilio_sid(sms_sid)
+      message = Message.find_by(twilio_sid: sms_sid)
       expect(MessageBroadcastJob).to have_been_enqueued.with(message: message)
     end
 
     it 'enqueues a MessageRedactionJob' do
       subject
 
-      message = Message.find_by_twilio_sid(sms_sid)
+      message = Message.find_by(twilio_sid: sms_sid)
       expect(MessageRedactionJob).to have_been_enqueued.with(message: message)
     end
 

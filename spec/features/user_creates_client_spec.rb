@@ -48,7 +48,7 @@ feature 'User creates client' do
       create :client_status, name: 'Training'
       create :client_status, name: 'Exited'
 
-      myclient = build :client, client_status: ClientStatus.find_by_name('Exited')
+      myclient = build :client, client_status: ClientStatus.find_by(name: 'Exited')
 
       visit new_client_path
 

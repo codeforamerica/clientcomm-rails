@@ -22,13 +22,6 @@ Performance/RegexpMatch:
   Exclude:
     - 'app/models/attachment.rb'
 
-# Offense count: 37
-# Cop supports --auto-correct.
-# Configuration parameters: Whitelist.
-# Whitelist: find_by_sql
-Rails/DynamicFindBy:
-  Enabled: false
-
 # Offense count: 4
 Rails/FilePath:
   Exclude:
@@ -93,14 +86,6 @@ Rails/Validation:
     - 'app/models/mass_message.rb'
     - 'app/models/message.rb'
     - 'app/models/user.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: percent_q, bare_percent
-Style/BarePercentLiterals:
-  Exclude:
-    - 'app/lib/metrics_generator.rb'
 
 # Offense count: 12
 # Cop supports --auto-correct.
@@ -387,12 +372,6 @@ Style/UnneededInterpolation:
   Exclude:
     - 'spec/requests/templates_request_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/UnneededPercentQ:
-  Exclude:
-    - 'app/lib/metrics_generator.rb'
-
 # Offense count: 9
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, MinSize, WordRegex.
@@ -406,9 +385,3 @@ Style/WordArray:
     - 'spec/lib/sms_service_spec.rb'
     - 'spec/requests/messages_spec.rb'
     - 'spec/requests/twilio_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/ZeroLengthPredicate:
-  Exclude:
-    - 'app/lib/message_alert_builder.rb'

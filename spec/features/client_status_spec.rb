@@ -8,8 +8,8 @@ feature 'Client status banner' do
     user = create :user
     login_as(user, :scope => :user)
 
-    create_list :client, 2, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: Time.now - 5.days
-    create_list :client, 3, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: Time.now - 26.days
+    create_list :client, 2, user: user, client_status: ClientStatus.find_by(name: 'Active'), last_contacted_at: Time.now - 5.days
+    create_list :client, 3, user: user, client_status: ClientStatus.find_by(name: 'Active'), last_contacted_at: Time.now - 26.days
   end
 
   scenario 'user sees banner and messages clients' do

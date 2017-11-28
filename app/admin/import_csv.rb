@@ -26,7 +26,7 @@ class ImportCsv
   def populate_clients
     CSV.parse(@file, headers: true).each do |row|
       entry = row.to_hash
-      user = User.find_by_email(entry['user'])
+      user = User.find_by(email: entry['user'])
 
       client = Client.find_or_initialize_by(
         phone_number: entry['phone_number']

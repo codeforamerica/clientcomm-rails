@@ -4,7 +4,7 @@ module MessageAlertBuilder
   def self.build_alert(user:, client_messages_path:, clients_path:)
     # return an alert appropriate for the state of unread messages
     unread_messages = user.messages.where(read: false)
-    if unread_messages.length == 0
+    if unread_messages.empty?
       nil
     else
       lookup = unread_messages.group(:client).count

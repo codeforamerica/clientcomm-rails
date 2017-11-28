@@ -283,7 +283,7 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(new_time_to_send)
 
-          old_message_id = Message.find_by_body(body).id
+          old_message_id = Message.find_by(body: body).id
 
           put message_path(message), params: post_params
 

@@ -46,8 +46,8 @@ describe 'import csv', type: :request do
       it 'creates clients corresponding to the inputted csv' do
         expect(user.clients.count).to eq 2
 
-        client1 = user.clients.find_by_phone_number('4155553329')
-        client2 = user.clients.find_by_phone_number('2125556230')
+        client1 = user.clients.find_by(phone_number: '4155553329')
+        client2 = user.clients.find_by(phone_number: '2125556230')
 
         expect(client1.first_name).to eq 'Person'
         expect(client1.last_name).to eq 'McPersonFace'
@@ -79,8 +79,8 @@ describe 'import csv', type: :request do
           subject
           expect(user.clients.count).to eq 2
 
-          client1 = user.clients.find_by_phone_number('4155553329')
-          client2 = user.clients.find_by_phone_number('2125556230')
+          client1 = user.clients.find_by(phone_number: '4155553329')
+          client2 = user.clients.find_by(phone_number: '2125556230')
 
           expect(client1.first_name).to eq 'Person'
           expect(client1.last_name).to eq 'McPersonFace'
