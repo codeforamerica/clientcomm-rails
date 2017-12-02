@@ -1,9 +1,0 @@
-ClientComm
-
-<%= "An administrator has transferred #{@transferred_clients.count} clients to your client list." %>
-
-Introduce yourself:
-
-<% @transferred_clients.each do |hash| %>
-  <%= hash[:client].full_name %>, <%= hash[:client].phone_number %>, from <%= hash[:previous_user].full_name %>.
-<% end %>

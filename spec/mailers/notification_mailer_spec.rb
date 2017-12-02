@@ -78,7 +78,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     context 'text part' do
-      subject { mail.text_part.body }
+      subject { Premailer::Rails::Hook.perform(mail).text_part.body }
 
       it_behaves_like 'client_transfer_notification'
     end

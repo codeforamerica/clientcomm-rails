@@ -20,6 +20,7 @@ gem 'bourbon', '~> 4.2.0'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'neat', '~> 1.8.0'
+gem 'premailer-rails'
 gem 'sass-rails', '~> 5.0'
 
 gem 'intercom-rails'

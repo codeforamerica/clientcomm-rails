@@ -7,6 +7,18 @@ class NotificationMailerPreview < ActionMailer::Preview
     NotificationMailer.message_notification(user, message)
   end
 
+  def client_transfer_notification
+    previous_user = User.last
+    user = User.first
+    client = user.clients.first
+
+    NotificationMailer.client_transfer_notification(
+      current_user: user,
+      previous_user: previous_user,
+      client: client
+    )
+  end
+
   def batch_transfer_notification
     previous_user = User.last
     user = User.first
