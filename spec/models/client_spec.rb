@@ -7,7 +7,6 @@ RSpec.describe Client, type: :model do
 
   describe 'relationships' do
     it { should have_many(:users).through(:reporting_relationships) }
-    it { should belong_to :client_status }
     it { should have_many :messages }
     it { should have_many(:attachments).through(:messages) }
   end
@@ -34,6 +33,64 @@ RSpec.describe Client, type: :model do
     describe '#full_name' do
       it 'formats full name' do
         expect(client.full_name).to eq('Lorraine Collins')
+      end
+    end
+
+    describe '#reporting_relationship:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client) }
+
+      it 'returns the relevant reporting relationship' do
+        expect(client.reporting_relationship(user: user)).to eq(rr)
+      end
+    end
+
+    describe '#last_contacted_at:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let(:time) { 1.day.ago }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, last_contacted_at: time) }
+
+      it 'returns the relevant reporting relationship' do
+        expect(client.last_contacted_at(user: user)).to eq(time)
+      end
+    end
+
+    describe '#relationship_started:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let(:time) { 1.day.ago }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, created_at: time) }
+
+      it 'returns the relevant reporting relationship' do
+        expect(client.relationship_started(user: user)).to eq(time)
+      end
+    end
+
+    describe '#timestamp' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let(:time) { 1.day.ago }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, created_at: time) }
+
+      it 'returns the correct time' do
+        expect(client.timestamp(user: user)).to eq(time.to_i)
+      end
+
+      context 'reporting_relationship.last_contacted_at is set' do
+        let!(:rr) do
+          ReportingRelationship.create(
+            user: user,
+            client: client,
+            last_contacted_at: time,
+            created_at: time.yesterday
+          )
+        end
+
+        it 'uses the last_contacted_at date' do
+          expect(client.timestamp(user: user)).to eq(time.to_i)
+        end
       end
     end
   end
@@ -93,30 +150,9 @@ RSpec.describe Client, type: :model do
 
   describe '#analytics_tracker_data' do
     it 'shows data about the client' do
-      user = create :user
-      client = create(
-        :client,
-        id: 4,
-        user: user,
-        notes: 'some notes',
-        has_unread_messages: true,
-        last_contacted_at: Time.now
-      )
+      client = create :client, id: 4
 
-      2.times { create :message, client: client, inbound: true }
-      4.times { create :message, client: client, inbound: false }
-      Message.last.update send_at: Time.current + 10.days
-
-      expect(client.analytics_tracker_data).to include(
-        client_id: 4,
-        has_unread_messages: true,
-        messages_all_count: 6,
-        messages_received_count: 2,
-        messages_sent_count: 4,
-        messages_attachments_count: 0,
-        messages_scheduled_count: 1,
-        has_client_notes: true
-      )
+      expect(client.analytics_tracker_data).to include(client_id: 4)
     end
   end
 end

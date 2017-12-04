@@ -14,6 +14,108 @@ describe 'Clients', type: :request, active_job: true do
     login_as @admin_user, scope: :admin_user
   end
 
+  describe 'GET#show' do
+    let(:client) { create :client }
+    let(:created_at) { 2.days.ago }
+    let(:last_contacted_at) { 1.day.ago }
+    let(:notes) { 'beep beep i am a note blah' }
+    let(:has_unread_messages) { true }
+    let(:has_message_error) { true }
+    let!(:rr1) do
+      ReportingRelationship.create(
+        client: client,
+        user: user1,
+        created_at: created_at,
+        last_contacted_at: last_contacted_at,
+        notes: notes,
+        has_unread_messages: has_unread_messages,
+        has_message_error: has_message_error
+      )
+    end
+
+    subject { get admin_client_path(client) }
+
+    it 'displays a panel with the correct info' do
+      subject
+      expect(response.body).to include(client.first_name)
+      expect(response.body).to include(client.last_name)
+      expect(response.body).to include(client.phone_number)
+
+      expect(response.body).to include("#{user1.department.name}: #{user1.full_name}")
+
+      response_html = Nokogiri.parse(response.body)
+      expect(response_html.css("#attributes_table_reporting_relationship_#{rr1.id}")).to be_present
+      response_html.css("#attributes_table_reporting_relationship_#{rr1.id}").each do |table|
+        expect(table.content).to include(created_at.strftime('%B %d, %Y %l:%M %Z'))
+        expect(table.content).to include(notes)
+        expect(table.content).to include(last_contacted_at.strftime('%B %d, %Y %l:%M %Z'))
+        expect(table.css('.row-has_unread_messages')).to be_present
+        expect(table.css('.row-has_message_error')).to be_present
+
+        table.css('.row-has_unread_messages').each do |row|
+          expect(row.content).to include('Yes')
+        end
+
+        table.css('.row-has_message_error').each do |row|
+          expect(row.content).to include('Yes')
+        end
+      end
+    end
+
+    context 'a relationship is inactive' do
+      let!(:rr2) do
+        ReportingRelationship.create(
+          client: client,
+          user: user3,
+          active: false,
+          created_at: created_at,
+          last_contacted_at: last_contacted_at,
+          notes: notes,
+          has_unread_messages: has_unread_messages,
+          has_message_error: has_message_error
+        )
+      end
+
+      it 'displays the inactive relationship' do
+        subject
+        response_html = Nokogiri.parse(response.body)
+
+        expect(response_html.css("#attributes_table_reporting_relationship_#{rr1.id}")).to be_present
+
+        expect(response_html.css("#attributes_table_reporting_relationship_#{rr2.id}")).to be_present
+        response_html.css("#attributes_table_reporting_relationship_#{rr2.id}").each do |table|
+          table.css('.row-active').each do |row|
+            expect(row.content).to include('No')
+          end
+        end
+      end
+
+      context 'there is an active relationship in the same department' do
+        let!(:rr2) do
+          ReportingRelationship.create(
+            client: client,
+            user: user2,
+            active: false,
+            created_at: created_at,
+            last_contacted_at: last_contacted_at,
+            notes: notes,
+            has_unread_messages: has_unread_messages,
+            has_message_error: has_message_error
+          )
+        end
+
+        it 'only displays the active relationships' do
+          subject
+          response_html = Nokogiri.parse(response.body)
+
+          expect(response_html.css("#attributes_table_reporting_relationship_#{rr1.id}")).to be_present
+
+          expect(response_html.css("#attributes_table_reporting_relationship_#{rr2.id}")).to_not be_present
+        end
+      end
+    end
+  end
+
   describe 'PUT#update' do
     before do
       create_list :message, 5, client: client, user: user1, send_at: Time.now + 1.day

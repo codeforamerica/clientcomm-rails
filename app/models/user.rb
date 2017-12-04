@@ -54,3 +54,8 @@ class User < ApplicationRecord
     errors.add(:phone_number, :invalid) if @bad_number
   end
 end
+
+# client does not exist
+# client exists for this user
+# client exists for another user in this dept
+# client exists for another user in another department

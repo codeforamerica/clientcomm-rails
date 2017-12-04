@@ -28,7 +28,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
     message.reload
 
-    expect(message.client.last_contacted_at).to be_within(0.1.seconds).of send_at_time
+    expect(message.client.last_contacted_at(user: message.user)).to be_within(0.1.seconds).of send_at_time
   end
 
   shared_examples 'does not send' do

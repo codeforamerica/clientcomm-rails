@@ -16,7 +16,7 @@ class ScheduledMessageJob < ApplicationJob
       return
     end
 
-    message.client.update!(last_contacted_at: message.send_at)
+    ReportingRelationship.find_by(client: message.client, user: message.user).update!(last_contacted_at: message.send_at)
 
     SMSService.instance.send_message(
       message: message,

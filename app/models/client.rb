@@ -1,7 +1,6 @@
 class Client < ApplicationRecord
   has_many :reporting_relationships, dependent: :nullify
   has_many :users, through: :reporting_relationships
-  belongs_to :client_status
   has_many :messages, -> { order(send_at: :asc) }
   has_many :attachments, through: :messages
 
@@ -11,6 +10,7 @@ class Client < ApplicationRecord
       .distinct
   }
 
+  validates_associated :reporting_relationships
   accepts_nested_attributes_for :reporting_relationships
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
@@ -21,15 +21,7 @@ class Client < ApplicationRecord
 
   def analytics_tracker_data
     {
-      client_id: self.id,
-      has_unread_messages: has_unread_messages,
-      hours_since_contact: hours_since_contact,
-      messages_all_count: messages.count,
-      messages_received_count: inbound_messages_count,
-      messages_sent_count: outbound_messages_count,
-      messages_attachments_count: attachments.count,
-      messages_scheduled_count: scheduled_messages_count,
-      has_client_notes: notes.present?
+      client_id: self.id
     }
   end
 
@@ -37,8 +29,8 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def timestamp
-    (last_contacted_at || created_at).to_time.to_i
+  def timestamp(user:)
+    (last_contacted_at(user: user) || relationship_started(user: user)).to_time.to_i
   end
 
   def inbound_messages_count
@@ -55,6 +47,22 @@ class Client < ApplicationRecord
     messages.scheduled.count
   end
 
+  def client_status(user:)
+    reporting_relationships.find_by(user: user).client_status
+  end
+
+  def last_contacted_at(user:)
+    reporting_relationships.find_by(user: user).last_contacted_at
+  end
+
+  def reporting_relationship(user:)
+    reporting_relationships.find_by(user: user)
+  end
+
+  def relationship_started(user:)
+    reporting_relationships.find_by(user: user).created_at
+  end
+
   private
 
   def normalize_phone_number
@@ -67,9 +75,5 @@ class Client < ApplicationRecord
 
   def service_accepts_phone_number
     errors.add(:phone_number, :invalid) if @bad_number
-  end
-
-  def hours_since_contact
-    ((Time.now - (last_contacted_at || created_at)) / 3600).round
   end
 end

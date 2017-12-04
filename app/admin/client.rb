@@ -18,9 +18,39 @@ ActiveAdmin.register Client do
     end
     column :phone_number
     column :active
-    column :client_status
     column :notes
     actions
+  end
+
+  show do
+    panel 'Client Details' do
+      attributes_table_for client do
+        row :first_name
+        row :last_name
+        row :phone_number
+      end
+    end
+
+    Department.all.includes(:users).each do |dept|
+      dept_users = dept.users
+                       .joins(:reporting_relationships)
+                       .where(reporting_relationships: { client: client })
+                       .order('reporting_relationships.updated_at') # TODO: test ordering and make sure it's the right order
+
+      user = dept_users.find { |u| client.reporting_relationship(user: u).active? } || dept_users.first
+
+      next unless user
+      panel "#{user.department.name}: #{user.full_name}" do
+        attributes_table_for client.reporting_relationship(user: user) do
+          row :active
+          row :notes
+          row(:created_at) { |rr| rr.created_at&.strftime('%B %d, %Y %l:%M %Z') }
+          row(:last_contacted_at) { |rr| rr.last_contacted_at&.strftime('%B %d, %Y %l:%M %Z') }
+          row :has_unread_messages
+          row :has_message_error
+        end
+      end
+    end
   end
 
   action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }

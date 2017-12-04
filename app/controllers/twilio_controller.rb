@@ -9,13 +9,12 @@ class TwilioController < ApplicationController
 
     client_previously_active = rr.active
 
-    client.update!(
+    rr.update!(
       last_contacted_at: new_message.send_at,
       has_unread_messages: true,
-      has_message_error: false
+      has_message_error: false,
+      active: true
     )
-
-    rr.update!(active: true)
 
     MessageRedactionJob.perform_later(message: new_message)
 

@@ -16,6 +16,17 @@ describe 'Clients requests', type: :request do
       sign_in user
     end
 
+    describe 'GET#new' do
+      let(:client) { create :client, user: user }
+      subject { get edit_client_path(client) }
+
+      it 'tracks a visit to the edit client form' do
+        subject
+        expect(response.code).to eq '200'
+        expect_analytics_events_happened('client_edit_view')
+      end
+    end
+
     describe 'POST#create' do
       let(:first_name) { Faker::Name.first_name }
       let(:phone_number) { '+14663364863' }
@@ -29,8 +40,13 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
-            notes: notes,
-            client_status_id: client_status.id.to_s
+            reporting_relationships_attributes: {
+              '0': {
+                user_id: user.id,
+                notes: notes,
+                client_status_id: client_status.id.to_s
+              }
+            }
           }
         }
       end
@@ -43,12 +59,13 @@ describe 'Clients requests', type: :request do
         expect(Client.count).to eq 1
 
         client = Client.first
+        rr = client.reporting_relationships.find_by(user: user)
         expect(client.users).to include user
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name
         expect(client.phone_number).to eq phone_number
-        expect(client.notes).to eq notes
-        expect(client.client_status).to eq client_status
+        expect(rr.notes).to eq notes
+        expect(rr.client_status).to eq client_status
       end
 
       it 'tracks the creation of a new client' do
@@ -109,8 +126,13 @@ describe 'Clients requests', type: :request do
                 first_name: first_name,
                 last_name: last_name,
                 phone_number: abnormal_number,
-                notes: notes,
-                client_status_id: client_status.id.to_s
+                reporting_relationships_attributes: {
+                  '0': {
+                    user_id: user.id,
+                    notes: notes,
+                    client_status_id: client_status.id.to_s
+                  }
+                }
               }
             }
           end
@@ -125,6 +147,22 @@ describe 'Clients requests', type: :request do
             expect(response.code).to eq '302'
             expect(response).to redirect_to client_messages_path(client)
             expect(flash[:notice]).to eq 'You already have a client with this phone number.'
+          end
+
+          context 'client has a prior, inactive, relationship with this user' do
+            let!(:client) { create :client, user: user, phone_number: phone_number, active: false }
+
+            it 'redirects to the messages page' do
+              allow(SMSService.instance).to receive(:number_lookup)
+                .with(phone_number: abnormal_number)
+                .and_return(phone_number)
+
+              subject
+
+              expect(response.code).to eq '302'
+              expect(response).to redirect_to client_messages_path(client)
+              expect(client.reporting_relationships.find_by(user: user)).to be_active
+            end
           end
         end
 
@@ -142,6 +180,22 @@ describe 'Clients requests', type: :request do
           end
         end
       end
+
+      context 'client has a relationship with a user in a different department' do
+        let(:other_user) { create :user }
+        let!(:client) { create :client, user: other_user, phone_number: phone_number }
+
+        it 'should redirect to the messages page' do
+          subject
+
+          expect(response.code).to eq '302'
+          expect(response).to redirect_to client_messages_path(client)
+
+          rr = client.reporting_relationships.find_by(user: user)
+          expect(rr.notes).to eq notes
+          expect(rr.client_status).to eq client_status
+        end
+      end
     end
 
     describe 'POST#update' do
@@ -149,7 +203,7 @@ describe 'Clients requests', type: :request do
       let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
-      let!(:existing_client) { create :client, user: user }
+      let!(:existing_client) { create :client, user: user, created_at: 10.days.ago }
 
       subject do
         put client_path(existing_client), params: {
@@ -157,9 +211,42 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
-            notes: notes
+            reporting_relationships_attributes: {
+              '0': {
+                id: existing_client.reporting_relationships.find_by(user: user).id,
+                notes: notes
+              }
+            }
           }
         }
+      end
+
+      it 'tracks the updating of a client' do
+        create :message, user: user, client: existing_client, inbound: false
+        create :message, user: user, client: existing_client, inbound: false, send_at: Time.now.tomorrow
+        create :message, user: user, client: existing_client, inbound: true
+        attachment_message = create :message, user: user, client: existing_client, inbound: true
+        create :attachment, message: attachment_message
+        existing_client.reporting_relationships.where(user: user).update(
+          last_contacted_at: 5.days.ago,
+          has_unread_messages: true
+        )
+
+        subject
+        expect(response.code).to eq '302'
+        expect(latest_analytics_event('client_edit_success')['hours_since_contact']).to be_within(1).of(120)
+        expect_analytics_events({
+                                  'client_edit_success' => {
+                                    'client_id' => existing_client.id,
+                                    'has_unread_messages' => true,
+                                    'messages_all_count' => 4,
+                                    'messages_received_count' => 2,
+                                    'messages_sent_count' => 1,
+                                    'messages_attachments_count' => 1,
+                                    'messages_scheduled_count' => 1,
+                                    'has_client_notes' => true
+                                  }
+                                })
       end
 
       it 'updates a client' do
@@ -172,7 +259,7 @@ describe 'Clients requests', type: :request do
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name
         expect(client.phone_number).to eq phone_number
-        expect(client.notes).to eq notes
+        expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
       end
 
       it 'tracks the updating of a client' do
@@ -230,6 +317,23 @@ describe 'Clients requests', type: :request do
 
       subject { get clients_path }
 
+      it 'tracks a visit to the client index with clients and messages' do
+        create :message, user: user, client: user.clients.first, inbound: true
+        create :message, user: user, client: user.clients.second, inbound: true
+        create :message, user: user, client: user.clients.third, inbound: true
+
+        subject
+
+        expect(response.code).to eq '200'
+        expect_analytics_events({
+                                  'clients_view' => {
+                                    'has_unread_messages' => true,
+                                    'unread_messages_count' => 3,
+                                    'clients_count' => 5
+                                  }
+                                })
+      end
+
       it 'returns a list of clients' do
         subject
 
@@ -258,27 +362,28 @@ describe 'Clients requests', type: :request do
         before do
           FeatureFlag.create!(flag: 'client_status', enabled: true)
           ClientStatus.create!(name: 'Active', followup_date: 30)
-
-          create :client, user: user, client_status: ClientStatus.find_by(name: 'Active'), last_contacted_at: active_contacted_at
-          create :client, user: user, client_status: ClientStatus.find_by(name: 'Training'), last_contacted_at: training_contacted_at
-          create :client, user: user, client_status: ClientStatus.find_by(name: 'Exited'), last_contacted_at: exited_contacted_at
         end
 
         subject { get clients_path }
 
         context 'clients with active statuses require follow ups' do
           let(:active_contacted_at) { Time.now - 26.days }
-          let(:training_contacted_at) { nil }
-          let(:exited_contacted_at) { nil }
 
           it 'shows active followup banner' do
-            client_id = Client.find_by(client_status_id: ClientStatus.find_by(name: 'Active').id).id
+            client = create :client
+            ReportingRelationship.create(
+              client: client,
+              user: user,
+              client_status: ClientStatus.find_by(name: 'Active'),
+              last_contacted_at: active_contacted_at
+            )
+
             subject
 
             expect(Nokogiri.parse(response.body).text)
               .to include('You have 1 active client due for follow up')
             expect(Nokogiri.parse(response.body).to_s)
-              .to include('clients%5B%5D=' + client_id.to_s)
+              .to include('clients%5B%5D=' + client.id.to_s)
           end
         end
       end
@@ -287,7 +392,7 @@ describe 'Clients requests', type: :request do
         let(:error_client) { user.clients.first }
 
         before do
-          error_client.update!(has_message_error: true)
+          error_client.reporting_relationship(user: user).update!(has_message_error: true)
         end
 
         it 'shows a error logo' do
@@ -302,6 +407,12 @@ describe 'Clients requests', type: :request do
       let(:client) { create :client, user: user }
 
       subject { get edit_client_path(client) }
+
+      it 'tracks a visit to the edit client form' do
+        subject
+        expect(response.code).to eq '200'
+        expect_analytics_events_happened('client_edit_view')
+      end
 
       context 'intercom' do
         let(:app_id) { 'test' }

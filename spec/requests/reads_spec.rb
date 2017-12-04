@@ -26,13 +26,13 @@ describe 'reads', type: :request do
       it 'updates message read' do
         subject
 
-        expect(Message.find(message.id).read).to eq true
+        expect(message.reload.read).to eq true
       end
 
       it 'updates client has_unread_messages' do
         subject
 
-        expect(Client.find(client.id).has_unread_messages).to eq false
+        expect(client.reporting_relationship(user: correct_user).has_unread_messages).to eq false
       end
 
       context 'message does not belong to user' do

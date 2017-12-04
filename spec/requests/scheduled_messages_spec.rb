@@ -14,11 +14,11 @@ describe 'Messages requests', type: :request, active_job: true do
 
   context 'authenticated' do
     let!(:user) { create :user }
-    let!(:client) { create :client, :user => user }
+    let!(:client) { create :client, user: user }
     let(:message_one_body) { 'hello this is message one' }
     let(:message_two_body) { 'hello this is message two' }
-    let!(:message_one) { create :message, :user => user, :client => client, :body => message_one_body, :send_at => Time.now.tomorrow }
-    let!(:message_two) { create :message, :user => user, :client => client, :body => message_two_body, :send_at => Time.now.tomorrow + 1.hour }
+    let!(:message_one) { create :message, user: user, client: client, body: message_one_body, send_at: Time.now.tomorrow }
+    let!(:message_two) { create :message, user: user, client: client, body: message_two_body, send_at: Time.now.tomorrow + 1.hour }
 
     before do
       sign_in user

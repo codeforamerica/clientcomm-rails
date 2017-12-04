@@ -8,8 +8,9 @@ module ClientStatusHelper
 
       found_clients = user.clients
                           .active
-                          .where(client_status: status)
-                          .where('last_contacted_at < ?', followup_date + warning_period)
+                          .joins(:reporting_relationships)
+                          .where(reporting_relationships: { client_status: status, user: user })
+                          .where('reporting_relationships.last_contacted_at < ?', followup_date + warning_period)
 
       output[status.name] = found_clients.pluck(:id) if found_clients.present?
     end

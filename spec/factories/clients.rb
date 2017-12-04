@@ -4,11 +4,11 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
     notes { Faker::Lorem.sentence }
-    client_status { ClientStatus.all.sample }
 
     transient do
       user { nil }
       active { true }
+      client_status { ClientStatus.all.sample }
     end
 
     after(:create) do |client, evaluator|
@@ -16,7 +16,7 @@ FactoryBot.define do
         client.users << evaluator.user
         client.reporting_relationships
               .find_by(user: evaluator.user)
-              .update(active: evaluator.active)
+              .update(active: evaluator.active, client_status: evaluator.client_status)
       end
     end
   end

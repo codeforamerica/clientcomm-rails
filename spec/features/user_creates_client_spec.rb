@@ -9,8 +9,13 @@ feature 'logged-out user visits create client page' do
 end
 
 feature 'User creates client' do
+  let(:myuser) { create :user }
+  let(:first_name) { 'Waffles' }
+  let(:last_name) { 'McGee' }
+  let(:notes) { 'some notes' }
+  let(:phone_number) { '+12345678910' }
+
   before do
-    myuser = create :user
     login_as(myuser, :scope => :user)
     visit root_path
     click_on 'New client'
@@ -18,49 +23,47 @@ feature 'User creates client' do
   end
 
   scenario 'successfully', :js do
-    myclient = build :client, notes: 'some note', first_name: 'Jean', last_name: 'Grey'
-    add_client(myclient)
-    expect(page).to have_content 'Jean Grey'
+    fill_in 'First name', with: first_name
+    fill_in 'Last name', with: last_name
+    fill_in 'Phone number', with: phone_number
+    fill_in 'Notes', with: notes
+    click_on 'Save new client'
+
+    expect(page).to have_content first_name
+    expect(page).to have_content last_name
     click_on 'Manage client'
 
-    expect(find_field('Notes').value).to eq myclient.notes
+    expect(find_field('Notes').value).to eq notes
   end
 
   scenario 'unsuccessfully' do
-    myclient = build :client, last_name: nil
-
-    fill_in 'First name', with: myclient.first_name
-    fill_in 'Last name', with: myclient.last_name
-    fill_in 'Phone number', with: myclient.phone_number
-    fill_in 'Notes', with: myclient.notes
+    fill_in 'First name', with: first_name
+    fill_in 'Last name', with: ''
+    fill_in 'Phone number', with: phone_number
+    fill_in 'Notes', with: notes
     click_on 'Save new client'
     expect(page).to have_content 'Add a new client'
     expect(page).to have_content "Last name can't be blank"
   end
 
   context 'client status feature flag enabled' do
+    let!(:status) { create :client_status, name: 'Active' }
     before do
       FeatureFlag.create!(flag: 'client_status', enabled: true)
     end
 
     scenario 'client status is selected' do
-      create :client_status, name: 'Active'
-      create :client_status, name: 'Training'
-      create :client_status, name: 'Exited'
-
-      myclient = build :client, client_status: ClientStatus.find_by(name: 'Exited')
-
       visit new_client_path
 
-      fill_in 'First name', with: myclient.first_name
-      fill_in 'Last name', with: myclient.last_name
-      fill_in 'Phone number', with: myclient.phone_number
-      choose myclient.client_status.name
+      fill_in 'First name', with: first_name
+      fill_in 'Last name', with: last_name
+      fill_in 'Phone number', with: phone_number
+      choose status.name
       click_on 'Save new client'
 
-      expect(page).to have_content myclient.first_name
+      expect(page).to have_content first_name
       click_on 'Manage client'
-      expect(find_field('Exited')).to be_checked
+      expect(find_field('Active')).to be_checked
     end
   end
 end

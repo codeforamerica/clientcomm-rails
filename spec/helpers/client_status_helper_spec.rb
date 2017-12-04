@@ -3,35 +3,89 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
   context '#client_statuses' do
     let(:user) { create :user }
 
-    before do
-      ClientStatus.create!(name: 'Exited', followup_date: 90)
-
-      @client_1 = create :client, user: user, client_status: ClientStatus.find_by(name: 'Active'), last_contacted_at: active_contacted_at
-      @client_2 = create :client, user: user, client_status: ClientStatus.find_by(name: 'Training'), last_contacted_at: training_contacted_at
-      @client_3 = create :client, user: user, client_status: ClientStatus.find_by(name: 'Exited'), last_contacted_at: exited_contacted_at
-      @archived_client = create :client, user: user, client_status: ClientStatus.find_by(name: 'Exited'), last_contacted_at: exited_contacted_at, active: false
-      @client_nil_status = create :client, user: user
-      @not_our_client = create :client, client_status: ClientStatus.find_by(name: 'Exited'), last_contacted_at: exited_contacted_at
-    end
-
     subject { helper.client_statuses(user: user) }
 
-    context 'no clients require followups' do
-      let(:training_contacted_at) { Time.now - 24.days }
-      let(:active_contacted_at) { Time.now - 24.days }
-      let(:exited_contacted_at) { Time.now - 84.days }
+    before do
+      ClientStatus.create!(name: 'Active', followup_date: 60)
+      client = create :client, id: 5
+      ReportingRelationship.create(
+        user: user,
+        client: client,
+        client_status: ClientStatus.find_by(name: 'Active'),
+        last_contacted_at: 56.days.ago
+      )
+    end
 
-      it 'returns empty' do
-        expect(subject).to eq({})
+    it 'returns clients requiring follow-up' do
+      expect(subject).to eq({ 'Active' => [5] })
+    end
+
+    context 'there are inactive clients' do
+      before do
+        ClientStatus.create!(name: 'Active', followup_date: 60)
+        client = create :client, id: 6
+        ReportingRelationship.create(
+          user: user,
+          client: client,
+          client_status: ClientStatus.find_by(name: 'Active'),
+          last_contacted_at: 56.days.ago,
+          active: false
+        )
+      end
+
+      it 'returns only the clients requiring follow-up' do
+        expect(subject).to eq({ 'Active' => [5] })
       end
     end
 
-    context 'clients require follow up' do
-      let(:exited_contacted_at) { Time.now - 86.days }
-      let(:active_contacted_at) { nil }
-      let(:training_contacted_at) { nil }
-      it 'returns the client requiring follow-up' do
-        expect(subject).to eq({ 'Exited' => [@client_3.id] })
+    context 'multiple statuses' do
+      before do
+        ClientStatus.create!(name: 'Exited', followup_date: 90)
+        client = create :client, id: 6
+        ReportingRelationship.create(
+          user: user,
+          client: client,
+          client_status: ClientStatus.find_by(name: 'Exited'),
+          last_contacted_at: 86.days.ago
+        )
+      end
+
+      it 'returns the full set of clients requiring follow-up' do
+        expect(subject).to eq({ 'Active' => [5], 'Exited' => [6] })
+      end
+
+      context 'multiple clients within a status' do
+        before do
+          ClientStatus.create!(name: 'Exited', followup_date: 90)
+          client = create :client, id: 7
+          ReportingRelationship.create(
+            user: user,
+            client: client,
+            client_status: ClientStatus.find_by(name: 'Exited'),
+            last_contacted_at: 86.days.ago
+          )
+        end
+
+        it 'returns the full set of clients requiring follow-up' do
+          expect(subject).to eq({ 'Active' => [5], 'Exited' => [6, 7] })
+        end
+      end
+    end
+
+    context 'there are clients that do not require follow-up' do
+      before do
+        ClientStatus.create!(name: 'Exited', followup_date: 90)
+        client = create :client, id: 6
+        ReportingRelationship.create(
+          user: user,
+          client: client,
+          client_status: ClientStatus.find_by(name: 'Exited'),
+          last_contacted_at: 20.days.ago
+        )
+      end
+
+      it 'does not return clients not requiring follow-up' do
+        expect(subject).to eq({ 'Active' => [5] })
       end
     end
   end

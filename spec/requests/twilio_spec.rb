@@ -102,9 +102,10 @@ describe 'Twilio controller', type: :request, active_job: true do
 
         client.reload
 
-        expect(client.last_contacted_at).to be_within(1.second).of some_date
-        expect(client.has_unread_messages).to eq true
-        expect(client.has_message_error).to eq false
+        rr = client.reporting_relationships.find_by(user: user)
+        expect(rr.last_contacted_at).to be_within(1.second).of some_date
+        expect(rr.has_unread_messages).to eq true
+        expect(rr.has_message_error).to eq false
       end
     end
 

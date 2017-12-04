@@ -73,16 +73,16 @@
                           <%= client.full_name %>
                         <% end %>
                       </td>
-                      <td data-timestamp="<%= client.timestamp %>" class="timestamp">
+                      <td data-timestamp="<%= client.timestamp(user: current_user) %>" class="timestamp">
                         <%= b.label(class: ['cell-content']) do %>
-                          <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
+                          <%= client.last_contacted_at(user: current_user) ? time_ago_in_words(client.last_contacted_at(user: current_user)) : '--' %>
                         <% end %>
                       </td>
                       <% if FeatureFlag.enabled? 'client_status' %>
-                        <td class="hidden-xs client-status" data-client-status="<%= client.client_status ? client.client_status.name : '--' %>">
+                        <td class="hidden-xs client-status" data-client-status="<%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>">
                           <%= b.label(class: ['cell-content']) do %>
-                            <i class="status-icon <%= client.client_status.name.downcase if client.client_status %>"></i>
-                            <%= client.client_status ? client.client_status.name : '--' %>
+                            <i class="status-icon <%= client.client_status(user: current_user).name.downcase if client.client_status(user: current_user) %>"></i>
+                            <%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>
                           <% end %>
                         </td>
                       <% end %>

@@ -5,9 +5,27 @@ describe 'Clients sorting order', type: :request do
     it 'sorts clients with no unread messages by last_contacted_at' do
       user = create :user
       sign_in user
-      clientone = create :client, user: user, last_contacted_at: 3.hours.ago, has_unread_messages: false
-      clienttwo = create :client, user: user, last_contacted_at: 2.hours.ago, has_unread_messages: false
-      clientthree = create :client, user: user, last_contacted_at: 1.hour.ago, has_unread_messages: false
+      clientthree = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clientthree,
+        last_contacted_at: 1.hour.ago,
+        has_unread_messages: false
+      )
+      clienttwo = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clienttwo,
+        last_contacted_at: 2.hours.ago,
+        has_unread_messages: false
+      )
+      clientone = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clientone,
+        last_contacted_at: 3.hours.ago,
+        has_unread_messages: false
+      )
 
       get clients_path
       expect(response.code).to eq '200'
@@ -21,9 +39,26 @@ describe 'Clients sorting order', type: :request do
       user = create :user
       sign_in user
 
-      clientone = create :client, user: user, last_contacted_at: 15.minutes.ago, has_unread_messages: true
-      clienttwo = create :client, user: user, last_contacted_at: Time.now
-      clientthree = create :client, user: user, last_contacted_at: 30.minutes.ago, has_unread_messages: true
+      clientone = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clientone,
+        last_contacted_at: 15.minutes.ago,
+        has_unread_messages: true
+      )
+      clienttwo = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clienttwo,
+        last_contacted_at: Time.now
+      )
+      clientthree = create :client
+      ReportingRelationship.create(
+        user: user,
+        client: clientthree,
+        last_contacted_at: 30.minutes.ago,
+        has_unread_messages: true
+      )
 
       get clients_path
       expect(response.code).to eq '200'

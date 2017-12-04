@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109222018) do
+ActiveRecord::Schema.define(version: 20171129184319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -133,7 +133,13 @@ ActiveRecord::Schema.define(version: 20171109222018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true, null: false
+    t.text "notes"
+    t.datetime "last_contacted_at"
+    t.boolean "has_unread_messages", default: false, null: false
+    t.boolean "has_message_error", default: false, null: false
+    t.bigint "client_status_id"
     t.index ["client_id"], name: "index_reporting_relationships_on_client_id"
+    t.index ["client_status_id"], name: "index_reporting_relationships_on_client_status_id"
     t.index ["user_id"], name: "index_reporting_relationships_on_user_id"
   end
 
@@ -173,6 +179,7 @@ ActiveRecord::Schema.define(version: 20171109222018) do
   add_foreign_key "departments", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
+  add_foreign_key "reporting_relationships", "client_statuses"
   add_foreign_key "reporting_relationships", "clients"
   add_foreign_key "reporting_relationships", "users"
   add_foreign_key "templates", "users"

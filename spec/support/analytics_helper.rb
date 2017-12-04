@@ -1,4 +1,9 @@
 module AnalyticsHelper
+  def latest_analytics_event(event_name)
+    event = @mixpanel_requests.find { |req| req.key? event_name }
+    event[event_name]
+  end
+
   def expect_analytics_event_sequence(*event_names)
     # only the passed events happened, in the order passed
     expect(@mixpanel_event_names).to eq event_names

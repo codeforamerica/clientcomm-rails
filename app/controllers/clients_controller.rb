@@ -19,6 +19,7 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new
+    @reporting_relationship = @client.reporting_relationships.build(user: current_user)
 
     analytics_track(
       label: 'client_create_view'
@@ -26,59 +27,50 @@ class ClientsController < ApplicationController
   end
 
   def create
-    begin
-      normalized_phone_number = SMSService.instance.number_lookup(phone_number: client_params[:phone_number])
-    rescue SMSService::NumberNotFound
-      logger.warn('Invalid phone number on client create.')
-    end
+    @client = Client.new(client_params)
 
-    @client = Client.find_or_initialize_by(
-      phone_number: normalized_phone_number || client_params[:phone_number]
-    )
-    @client.first_name = client_params[:first_name]
-    @client.last_name = client_params[:last_name]
-    @client.notes = client_params[:notes]
-    @client.client_status_id = client_params[:client_status_id]
+    if @client.save
+      analytics_track(
+        label: 'client_create_success',
+        data: @client.reload.analytics_tracker_data
+      )
 
-    unless @client.save
-      flash[:alert] = t('flash.errors.client.invalid')
-      render :new
+      redirect_to client_messages_path(@client)
       return
     end
 
-    rr = ReportingRelationship.new(
-      user: current_user, client: @client
-    )
-
-    unless rr.save
-      if rr.errors.added? :client, :taken
-        flash[:notice] = t('flash.notices.client.taken')
-        redirect_to client_messages_path @client
-        return
-      end
-
-      if rr.errors.added? :client, :existing_dept_relationship
-        flash[:alert] = t('flash.errors.client.invalid')
+    if @client.errors.added?(:phone_number, :taken)
+      existing_client = Client.find_by(phone_number: @client.phone_number)
+      conflicting_user = existing_client.users
+                                        .where.not(id: current_user.id)
+                                        .find_by(department: current_user.department)
+      if conflicting_user
         @client.errors.add(
           :phone_number,
           :existing_dept_relationship,
-          user_full_name: rr.matching_record.user.full_name
+          user_full_name: conflicting_user.full_name
         )
-        render :new
+      elsif current_user.clients.include? existing_client
+        existing_relationship = current_user.reporting_relationships.find_by(client: existing_client)
+        flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
+        existing_relationship.update(active: true)
+        redirect_to client_messages_path(existing_client)
+        return
+      else
+        rr_params = client_params[:reporting_relationships_attributes]['0']
+        existing_client.reporting_relationships.create(rr_params)
+        redirect_to client_messages_path(existing_client)
         return
       end
     end
 
-    analytics_track(
-      label: 'client_create_success',
-      data: @client.reload.analytics_tracker_data
-    )
-
-    redirect_to client_messages_path(@client)
+    flash[:alert] = t('flash.errors.client.invalid')
+    render :new
   end
 
   def edit
     @client = current_user.clients.find(params[:id])
+    @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
 
     analytics_track(
       label: 'client_edit_view',
@@ -91,9 +83,11 @@ class ClientsController < ApplicationController
     if @client.update_attributes(client_params)
       flash[:notice] = 'Client updated'
 
+      reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
+
       analytics_track(
         label: 'client_edit_success',
-        data: @client.analytics_tracker_data
+        data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
       )
 
       redirect_to client_messages_path(@client)
@@ -107,6 +101,15 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client)
-          .permit(:first_name, :last_name, :client_status_id, :phone_number, :notes)
+          .permit(:first_name,
+                  :last_name,
+                  :client_status_id,
+                  :phone_number,
+                  :notes,
+                  reporting_relationships_attributes: %i[
+                    id notes client_status_id
+                  ]).tap do |p|
+      p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
+    end
   end
 end

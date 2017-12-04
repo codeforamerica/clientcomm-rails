@@ -19,37 +19,33 @@ feature 'User receives a message from a client' do
 
   context 'while on the clients page' do
     it 'and sees a notification for a new message', :js do
-      # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(
                         from_number: clientone.phone_number,
                         to_number: phone_number
       ))
-      # there's a flash with the correct contents
+
       expect(page).to have_css '.flash p', text: "You have 1 unread message from #{clientone.full_name}"
     end
 
     it 'and sees a refreshed client list', :js do
-      # post a message to the twilio endpoint from the first user 5 days ago
-      # (validates that the correct message is being counted as 'last')
       travel_to 5.days.ago do
         twilio_post_sms(twilio_new_message_params(
                           from_number: clientone.phone_number,
                           to_number: phone_number
         ))
       end
-      # post a message to the twilio endpoint from the first user 5 minutes ago
+
       travel_to 5.minutes.ago do
         twilio_post_sms(twilio_new_message_params(
                           from_number: clientone.phone_number,
                           to_number: phone_number
         ))
       end
-      # validate the order of the clients in the list
+
       visit clients_path
       expect(page).to have_css '.unread td', text: '5 minutes'
       expect(page.body.index(clientone.full_name)).to be < page.body.index(clienttwo.full_name)
 
-      # send a message from client two and check the new order
       twilio_post_sms(twilio_new_message_params(
                         from_number: clienttwo.phone_number,
                         to_number: phone_number

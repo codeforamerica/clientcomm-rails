@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe ReportingRelationship, type: :model do
   it { should belong_to :user }
   it { should belong_to :client }
+  it { should belong_to :client_status }
 
   describe 'Validations' do
     it { should validate_presence_of :user }
