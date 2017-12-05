@@ -27,7 +27,7 @@
     border-radius: 0 !important;
     border-right-width: 0 !important;
   }
-  table.body .btn table {
+  table.body .btn {
     width: 100% !important;
   }
   table.body .btn a {
@@ -53,27 +53,43 @@ body {
 }
 
 table {
-  border-collapse:separate;
-  mso-table-lspace:0pt;
-  mso-table-rspace:0pt;
+  border-collapse: separate;
+  mso-table-lspace: 0pt;
+  mso-table-rspace: 0pt;
 
   td {
-    font-size:14px;
-    vertical-align:top;
+    vertical-align: top;
   }
   td, p {
-    font-family: sans-serif;
   }
 }
 
 table.body {
   background-color:#FAFAF9;
-  width:100%;
+  width: 100%;
 
   td.wrapper {
-    box-sizing:border-box;
-    padding:20px;
+    box-sizing: border-box;
+    padding: 20px;
   }
+}
+
+.main {
+  background-color: #fff;
+  border-radius: 3px;
+  width: 100%;
+}
+
+.btn td {
+  border-radius: 5px;
+  text-align: center;
+  background-color: #019C86;
+}
+
+.btn-primary {
+  box-sizing: border-box;
+  width: auto;
+  padding-bottom: 15px;
 }
 
 .btn-primary table td:hover {
@@ -85,10 +101,59 @@ table.body {
 }
 
 table.body td.container {
-  display:block;
-  max-width:580px;
-  padding:10px;
-  width:580px;
+  display: block;
+  max-width: 580px;
+  padding: 10px;
+  width: 580px;
+}
+
+.container {
+  margin: 0 auto !important;
+}
+
+.content {
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+  max-width: 580px;
+  padding: 10px;
+}
+
+.preheader {
+  color: transparent;
+  display: none;
+  height: 0;
+  max-height: 0;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  mso-hide: all;
+  visibility: hidden;
+  width: 0;
+}
+
+.wrapper > table {
+  width: 100%;
+}
+
+p {
+  font-weight: normal;
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.header-appname {
+  color: #666666;
+  font-weight: bold;
+  font-size: 19px;
+}
+
+.message-well {
+  font-size: 18px;
+  background-color: #FAFAF9;
+  padding: 10px;
+  border: 1px solid #EAEAE9;
+  border-radius: 4px;
 }
 
 .email-cta {

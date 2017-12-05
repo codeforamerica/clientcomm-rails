@@ -1,40 +1,34 @@
 <table border="0" cellpadding="0" cellspacing="0" class="body">
   <tr>
-    <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
-    <td class="container" style="font-family:sans-serif;font-size:14px;vertical-align:top;margin:0 auto !important;">
-      <div class="content" style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
+    <td>&nbsp;</td>
+    <td class="container">
+      <div class="content">
         <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader" style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">An administrator has transferred <%= @transferred_clients.count %> clients to you.</span>
-        <table class="main" style="background:#fff;border-radius:3px;width:100%;">
+        <span class="preheader">An administrator has transferred <%= @transferred_clients.count %> clients to you.</span>
+        <table class="main">
           <!-- START MAIN CONTENT AREA -->
           <tr>
             <td class="wrapper">
-              <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+              <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">
-                    <p style="font-family:sans-serif;font-size:19px;font-weight:bold;color:#666666;margin:0;margin-bottom:15px;">ClientComm</p>
-                    <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px;">Hi <%= @current_user.full_name %>,</p>
-                    <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px;">An administrator has transferred <%= @transferred_clients.count %> new clients to your client list. Be sure to introduce yourself!</p>
+                  <td>
+                    <p class="header-appname">ClientComm</p>
+                    <p>Hi <%= @current_user.full_name %>,</p>
+                    <p>An administrator has transferred <%= @transferred_clients.count %> new clients to your client list. Be sure to introduce yourself!</p>
                     <% if FeatureFlag.enabled?("mass_messages") %>
-                      <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="box-sizing:border-box;width:100%;">
+                      <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                         <tbody>
-                        <tr>
-                          <td align="left" style="font-family:sans-serif;font-size:14px;vertical-align:top;padding-bottom:15px;">
-                            <table border="0" cellpadding="0" cellspacing="0" style="width:100%;width:auto;">
-                              <tbody>
-                              <tr>
-                                <td style="font-family:sans-serif;font-size:14px;vertical-align:top;background-color:#ffffff;border-radius:5px;text-align:center;background-color:#019C86;"> <%= link_to('Mass Message them now', new_mass_message_url, { target: '_blank', class: 'email-cta' }) %></td>
-                              </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
+                          <tr>
+                            <td>
+                              <%= link_to('Mass Message them now', new_mass_message_url, { target: '_blank', class: 'email-cta' }) %>
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     <% end %>
-                    <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px;">Your new clients are:</p>
+                    <p>Your new clients are:</p>
                     <% @transferred_clients.each do |hash| %>
-                      <p style="font-family:sans-serif;font-size:14px;font-weight:normal;margin:0;margin-bottom:15px;"><%= link_to "#{hash[:client].full_name}, #{hash[:client].phone_number}, from #{hash[:previous_user].full_name}.", client_messages_url(hash[:client]) %>.</p>
+                      <p><%= link_to "#{hash[:client].full_name}, #{hash[:client].phone_number}, from #{hash[:previous_user].full_name}.", client_messages_url(hash[:client]) %>.</p>
                     <% end %>
                   </td>
                 </tr>
@@ -47,6 +41,6 @@
         <!-- END CENTERED WHITE CONTAINER -->
       </div>
     </td>
-    <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
