@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
+  validate :no_active_reporting_relationships_if_inactive
 
   validates_presence_of :full_name
 
@@ -41,6 +42,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def no_active_reporting_relationships_if_inactive
+    errors.add(:active, :active_reporting_relationships) if active == false && reporting_relationships.where(active: true).any?
+  end
 
   def normalize_phone_number
     return unless self.phone_number

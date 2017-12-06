@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe 'Clients', type: :request, active_job: true do
-  let(:department1) { create :department }
-  let(:department2) { create :department }
-  let(:department3) { create :department }
+  let(:department1) { create :department, name: 'AAA' }
+  let(:department2) { create :department, name: 'BBB' }
+  let(:department3) { create :department, name: 'CCC' }
   let(:user1) { create :user, department: department1 }
   let(:user2) { create :user, department: department1 }
   let(:user3) { create :user, department: department2 }
@@ -12,6 +12,93 @@ describe 'Clients', type: :request, active_job: true do
   before do
     @admin_user = create :admin_user
     login_as @admin_user, scope: :admin_user
+  end
+
+  describe 'GET#index' do
+    let(:client) { create :client }
+    let(:created_at) { 2.days.ago }
+    let(:last_contacted_at) { 1.day.ago }
+    let(:notes) { 'beep beep i am a note blah' }
+    let(:has_unread_messages) { true }
+    let(:has_message_error) { true }
+    let!(:rr1) do
+      ReportingRelationship.create(
+        client: client,
+        user: user1,
+        created_at: created_at,
+        last_contacted_at: last_contacted_at,
+        notes: notes,
+        has_unread_messages: has_unread_messages,
+        has_message_error: has_message_error
+      )
+    end
+    let!(:rr2) do
+      ReportingRelationship.create(
+        client: client,
+        user: user3,
+        created_at: created_at,
+        last_contacted_at: last_contacted_at,
+        notes: notes,
+        has_unread_messages: has_unread_messages,
+        has_message_error: has_message_error
+      )
+    end
+
+    subject { get admin_clients_path }
+
+    it 'displays a list of clients' do
+      subject
+
+      expected_department_string = "#{department1.name}, #{department2.name}"
+      expected_user_string = "#{user1.full_name}, #{user3.full_name}"
+
+      response_html = Nokogiri.parse(response.body)
+      client_row = response_html.css("#client_#{client.id}").first
+
+      expect(client_row.content).to include(client.full_name)
+      expect(client_row.content).to include(expected_department_string)
+      expect(client_row.content).to include(expected_user_string)
+    end
+
+    context 'a relationship is inactive' do
+      let!(:rr2) do
+        ReportingRelationship.create(
+          client: client,
+          user: user3,
+          active: false
+        )
+      end
+
+      it 'does not display users with inactive relationships' do
+        subject
+
+        response_html = Nokogiri.parse(response.body)
+        client_row = response_html.css("#client_#{client.id}").first
+
+        expect(client_row.content).to_not include(department2.name)
+        expect(client_row.content).to_not include(user3.full_name)
+      end
+    end
+
+    context 'only the correct departments are shown' do
+      let(:client2) { create :client }
+      let!(:rr2) do
+        ReportingRelationship.create(
+          client: client2,
+          user: user3
+        )
+      end
+
+      it 'does not display users with inactive relationships' do
+        subject
+
+        response_html = Nokogiri.parse(response.body)
+        client_row = response_html.css("#client_#{client2.id}").first
+
+        expect(client_row.content).to_not include(department1.name)
+        expect(client_row.content).to_not include(user1.full_name)
+      end
+    end
   end
 
   describe 'GET#show' do

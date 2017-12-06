@@ -30,9 +30,9 @@ ActiveAdmin.register User do
   end
 
   member_action :disable_confirm, method: :get do
-    resource.update!(active: false)
-
     resource.reporting_relationships.active.update(active: false)
+
+    resource.update!(active: false)
 
     redirect_to admin_users_path
   end

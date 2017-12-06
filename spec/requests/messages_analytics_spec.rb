@@ -13,6 +13,12 @@ describe 'Tracking of message analytics events', type: :request do
       expect_analytics_events({
                                 'client_messages_view' => {
                                   'client_id' => client.id,
+                                  'has_unread_messages' => false,
+                                  'hours_since_contact' => 0,
+                                  'messages_all_count' => 0,
+                                  'messages_received_count' => 0,
+                                  'messages_sent_count' => 0,
+                                  'messages_attachments_count' => 0
                                 }
                               })
     end

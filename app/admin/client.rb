@@ -3,19 +3,38 @@ ActiveAdmin.register Client do
 
   config.sort_order = 'last_name_asc'
 
-  permit_params :user_id, :first_name, :last_name, :phone_number, :notes, :active, :client_status_id
+  permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
+
   index do
     selectable_column
     column :full_name, sortable: :last_name
-    Department.all.each do |dept|
-      column "#{dept.name} User" do |client|
-        dept_user = dept.users
-                        .joins(:reporting_relationships)
-                        .where(reporting_relationships: { active: true })
-                        .find_by(reporting_relationships: { client: client })
-        dept_user.try(:full_name)
+
+    column 'Departments' do |client|
+      dep_users = {}
+      active_users = client.users
+                           .joins(:reporting_relationships)
+                           .where(reporting_relationships: { active: true })
+
+      active_users.each do |u|
+        dep_users[u.department.name] = u.full_name
       end
+
+      dep_users.sort.to_h.keys.join(', ')
     end
+
+    column 'Users' do |client|
+      dep_users = {}
+      active_users = client.users
+                           .joins(:reporting_relationships)
+                           .where(reporting_relationships: { active: true })
+
+      active_users.each do |u|
+        dep_users[u.department.name] = u.full_name
+      end
+
+      dep_users.sort.to_h.values.join(', ')
+    end
+
     column :phone_number
     column :active
     column :notes
@@ -70,26 +89,27 @@ ActiveAdmin.register Client do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
-      f.input :client_status if FeatureFlag.enabled?('client_status')
-      f.input :notes
-      Department.all.each do |department|
-        department_users = department.users.active.order(full_name: :asc)
-        active_user_id = department.users
-                                   .joins(:clients)
-                                   .joins(:reporting_relationships)
-                                   .where(clients: { id: resource.id })
-                                   .find_by(reporting_relationships: { active: true })
-                                   .try(:id)
+    end
 
-        options = options_from_collection_for_select(
-          department_users,
-          :id,
-          :full_name,
-          active_user_id
-        )
+    Department.all.each do |department|
+      department_users = department.users.active.order(full_name: :asc)
+      active_user_id = department.users
+                                 .joins(:clients)
+                                 .joins(:reporting_relationships)
+                                 .where(clients: { id: resource.id })
+                                 .find_by(reporting_relationships: { active: true })
+                                 .try(:id)
 
+      options = options_from_collection_for_select(
+        department_users,
+        :id,
+        :full_name,
+        active_user_id
+      )
+
+      f.inputs department.name do
         f.input :users, {
-          label: "User for #{department.name}",
+          label: 'User:',
           as: :select,
           collection: options,
           include_blank: true,
@@ -127,7 +147,7 @@ ActiveAdmin.register Client do
                 .update(user_id: new_user)
 
         if previous_user.present?
-          previous_user.reporting_relationships.find_by(client: resource).update!(active: false)
+          resource.reporting_relationship(user: previous_user).update!(active: false)
         end
 
         next if new_user.blank?
@@ -147,6 +167,8 @@ ActiveAdmin.register Client do
           }
         )
       end
+
+      params[:client][:user_ids] = nil
 
       super do |success, failure|
         success.html do

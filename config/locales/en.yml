@@ -39,6 +39,8 @@ en:
               phone_number:
                 taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
                 invalid: This is not a valid phone number.
+              active:
+                active_reporting_relationships: User with active reporting relationships cannot be deactivated.
           client:
             attributes:
               phone_number:

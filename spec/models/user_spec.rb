@@ -43,6 +43,12 @@ RSpec.describe User, type: :model do
       user.update!(full_name: 'some other name')
       expect(SMSService.instance).to_not have_received(:number_lookup)
     end
+
+    it 'cannot be inactive with active reporting relationships' do
+      user.active = false
+      expect(user.valid?).to eq(false)
+      expect(user.errors.keys).to contain_exactly(:active)
+    end
   end
 
   describe 'scopes' do

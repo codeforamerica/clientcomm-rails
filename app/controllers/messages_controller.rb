@@ -7,9 +7,11 @@ class MessagesController < ApplicationController
   def index
     @client = current_user.clients.find params[:client_id]
 
+    reporting_relationship = @client.reporting_relationship(user: current_user)
+
     analytics_track(
       label: 'client_messages_view',
-      data: @client.analytics_tracker_data
+      data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
     )
 
     @templates = current_user.templates
@@ -84,7 +86,7 @@ class MessagesController < ApplicationController
 
       analytics_track(
         label: 'message_send',
-        data: message.analytics_tracker_data
+        data: message.analytics_tracker_data.merge(mass_message: false)
       )
       ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     end

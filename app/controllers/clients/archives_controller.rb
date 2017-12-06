@@ -11,7 +11,7 @@ class Clients::ArchivesController < ApplicationController
       label: 'client_archive_success',
       data: {
         client_id: @client.id,
-        client_duration: (Date.current - @client.created_at.to_date).to_i
+        client_duration: (Date.current - @client.relationship_started(user: current_user).to_date).to_i
       }
     )
 

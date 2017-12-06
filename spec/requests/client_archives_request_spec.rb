@@ -17,12 +17,14 @@ describe 'Clients requests', type: :request do
   describe 'post#archive' do
     let(:typeform_link) { 'whatever' }
 
-    let(:client) { create :client, user: user, created_at: Time.zone.local(2003, 01, 01, 01, 01, 01) }
+    let(:client) { create :client }
+    let!(:rr) { ReportingRelationship.create(user: user, client: client, created_at: Time.zone.local(2003, 01, 01, 01, 01, 01)) }
+
     subject do
       post client_archive_path(client), params: {
         client: {
           reporting_relationships_attributes: {
-            id: client.reporting_relationships.find_by(user: user).id,
+            id: rr.id,
             active: false
           }
         }
