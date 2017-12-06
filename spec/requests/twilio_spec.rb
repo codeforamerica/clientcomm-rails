@@ -285,7 +285,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
   context 'POST#incoming_sms_status' do
     let!(:msgone) {
-      create :message, client: client, inbound: false, twilio_status: 'queued'
+      create :message, client: client, user: user, inbound: false, twilio_status: 'queued'
     }
     let(:sms_sid) { msgone.twilio_sid }
 
@@ -318,7 +318,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let(:sms_status) { 'delivered' }
 
       it 'associated client has false message error' do
-        expect(client.reload.has_message_error).to be_falsey
+        expect(client.has_message_error(user: user)).to be_falsey
       end
 
       it 'redacts the message' do
@@ -351,7 +351,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
 
       it 'sets error true on associated client' do
-        expect(client.reload.has_message_error).to be_truthy
+        expect(client.has_message_error(user: user)).to be_truthy
       end
 
       it 'redacts the message' do

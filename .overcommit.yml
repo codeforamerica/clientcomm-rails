@@ -26,6 +26,7 @@ PreCommit:
     enabled: true
     on_warn: fail # Treat all warnings as failures
     command: ['bundle', 'exec', 'rubocop']
+    flags: ['-R']
 
 PrePush:
   RSpec:

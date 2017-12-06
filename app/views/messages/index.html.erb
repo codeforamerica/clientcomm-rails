@@ -14,13 +14,13 @@
         </h2>
         <span class="header--paragraph no-margin hidden-xs">
             <%= phone_number_display(@client.phone_number) %>
-          <% unless @client.notes.blank? %> &#8226; <% end %>
+          <% unless @client.notes(user: current_user).blank? %> &#8226; <% end %>
           </span>
         <span id="truncated_note" class="header--paragraph hidden-xs">
-            <%= truncate(@client.notes, length: 40, separator: ' ', omission: '... ') { link_to 'More', '#0', { id: 'show_note' } } %>
+            <%= truncate(@client.notes(user: current_user), length: 40, separator: ' ', omission: '... ') { link_to 'More', '#0', { id: 'show_note' } } %>
           </span>
         <span id="full_note" style="display:none" class="header--paragraph hidden-xs">
-            <%= @client.notes %> <%= link_to 'Less', '#0', { id: 'hide_note' } %>
+            <%= @client.notes(user: current_user) %> <%= link_to 'Less', '#0', { id: 'hide_note' } %>
           </span>
       </div>
       <div class="col-sm-4 col-md-3 hidden-xs">

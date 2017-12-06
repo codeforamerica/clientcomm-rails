@@ -48,6 +48,19 @@ RSpec.describe Message, type: :model do
     end
   end
 
+  describe 'accessors' do
+    describe '#reporting_relationship:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client) }
+      let!(:message) { create :message, user: user, client: client }
+
+      it 'returns the relevant value' do
+        expect(message.reporting_relationship).to eq(rr)
+      end
+    end
+  end
+
   describe '#create_from_twilio' do
     context 'client does not exist' do
       let(:dept_phone_number) { '+17609996661' }

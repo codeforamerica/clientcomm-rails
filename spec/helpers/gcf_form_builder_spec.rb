@@ -178,19 +178,18 @@ describe GcfFormBuilder, type: :view do
 
   describe '#gcf_select_field' do
     it 'renders a select field' do
-      user = create :user
-      client = create :client, active: true, :user => user
-      form_builder = GcfFormBuilder.new(:client, client, template, {})
+      user = create :user, active: true
+      form_builder = GcfFormBuilder.new(:user, user, template, {})
 
-      output = form_builder.gcf_select(:active, 'Is this client active?', %w(Yes No))
+      output = form_builder.gcf_select(:active, 'Is this user active?', %w(Yes No))
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <fieldset class="form-group">
-          <label for="client_active">
-            <p class="form-question">Is this client active?</p>
+          <label for="user_active">
+            <p class="form-question">Is this user active?</p>
           </label>
           <div class="select">
-            <select class="select__element" name="client[active]" id="client_active">
+            <select class="select__element" name="user[active]" id="user_active">
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
@@ -202,9 +201,8 @@ describe GcfFormBuilder, type: :view do
 
   describe '#gcf_checkbox_set' do
     it 'renders a check box set' do
-      user = create :user
-      client = create :client, active: true, :user => user
-      form_builder = GcfFormBuilder.new(:client, client, template, {})
+      user = create :user, active: true
+      form_builder = GcfFormBuilder.new(:user, user, template, {})
 
       output = form_builder.gcf_checkbox_set([{ label: 'Active', method: :active }, { label: 'Still Active', method: :active }], label_text: 'TEST LABEL')
       expect(output).to be_html_safe
@@ -212,12 +210,12 @@ describe GcfFormBuilder, type: :view do
         <p class="form-question">TEST LABEL</p>
         <fieldset class="input-group--block">
           <label class="checkbox">
-            <input name="client[active]" type="hidden" value="0" />
-            <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Active
+            <input name="user[active]" type="hidden" value="0" />
+            <input type="checkbox" value="1" checked="checked" name="user[active]" id="user_active" /> Active
           </label>
           <label class="checkbox">
-            <input name="client[active]" type="hidden" value="0" />
-            <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Still Active
+            <input name="user[active]" type="hidden" value="0" />
+            <input type="checkbox" value="1" checked="checked" name="user[active]" id="user_active" /> Still Active
           </label>
         </fieldset>
       HTML
@@ -226,33 +224,32 @@ describe GcfFormBuilder, type: :view do
 
   describe '#gcf_checkbox' do
     it 'renders a check box that is not checked if the preference is false' do
-      client = create :client
-      client.active = false
-      form_builder = GcfFormBuilder.new(:client, client, template, {})
+      user = create :user
+      user.active = false
+      form_builder = GcfFormBuilder.new(:user, user, template, {})
 
       output = form_builder.gcf_checkbox(:active, 'Active')
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <label class="checkbox">
-          <input name="client[active]" type="hidden" value="0" />
-          <input type="checkbox" value="1" name="client[active]" id="client_active" /> Active
+          <input name="user[active]" type="hidden" value="0" />
+          <input type="checkbox" value="1" name="user[active]" id="user_active" /> Active
         </label>
       HTML
     end
 
     it 'renders a check box that is checked when the subscription preference is true' do
-      user = create :user
-      client = create :client, active: true, :user => user
-      form_builder = GcfFormBuilder.new(:client, client, template, {})
+      user = create :user, active: true
+      form_builder = GcfFormBuilder.new(:user, user, template, {})
 
       output = form_builder.gcf_checkbox(:active, 'Active')
 
       expect(output).to be_html_safe
       expect(output).to match_html <<~HTML
         <label class="checkbox">
-          <input name="client[active]" type="hidden" value="0" />
-          <input type="checkbox" value="1" checked="checked" name="client[active]" id="client_active" /> Active
+          <input name="user[active]" type="hidden" value="0" />
+          <input type="checkbox" value="1" checked="checked" name="user[active]" id="user_active" /> Active
         </label>
       HTML
     end

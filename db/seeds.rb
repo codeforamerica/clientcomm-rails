@@ -56,5 +56,6 @@ end
 
 puts 'Creating Messages'
 Client.all.each do |client|
+  client.update!(client_status_id: ClientStatus.all.sample.id)
   FactoryBot.create_list :message, 10, user: client.users.sample, client: client
 end

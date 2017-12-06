@@ -8,7 +8,7 @@ FactoryBot.define do
     transient do
       user { nil }
       active { true }
-      client_status { ClientStatus.all.sample }
+      client_status { nil }
     end
 
     after(:create) do |client, evaluator|

@@ -57,10 +57,10 @@ class TwilioController < ApplicationController
     MessageBroadcastJob.perform_later(message: message)
 
     if params[:SmsStatus] == 'delivered'
-      message.client.update!(has_message_error: false)
+      message.reporting_relationship.update!(has_message_error: false)
       SMSService.instance.redact_message(message: message)
     elsif ['failed', 'undelivered'].include?(params[:SmsStatus])
-      message.client.update!(has_message_error: true)
+      message.reporting_relationship.update!(has_message_error: true)
       SMSService.instance.redact_message(message: message)
       analytics_track(
         label: 'message_send_failed',

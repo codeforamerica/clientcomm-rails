@@ -18,4 +18,17 @@ namespace :setup do
 
     department.update!(unclaimed_user: unclaimed_user)
   end
+
+  task :migrate_metadata_from_client_to_relationship => :environment do
+    Client.all.each do |client|
+      client.reporting_relationships.each do |rr|
+        rr.active = client.active
+        rr.notes = client['notes']
+        rr.has_message_error = client.has_message_error
+        rr.has_unread_messages = client.has_unread_messages
+        rr.client_status_id = client.client_status_id
+        rr.save!
+      end
+    end
+  end
 end

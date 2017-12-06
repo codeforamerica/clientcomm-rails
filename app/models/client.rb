@@ -63,6 +63,20 @@ class Client < ApplicationRecord
     reporting_relationships.find_by(user: user).created_at
   end
 
+  def notes(user:)
+    reporting_relationships.find_by(user: user).notes
+  end
+
+  def active(user:)
+    reporting_relationships.find_by(user: user).active
+  end
+
+  # rubocop:disable Naming/PredicateName
+  def has_message_error(user:)
+    reporting_relationships.find_by(user: user).has_message_error
+  end
+  # rubocop:enable Naming/PredicateName
+
   private
 
   def normalize_phone_number

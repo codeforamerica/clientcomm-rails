@@ -89,6 +89,10 @@ class Message < ApplicationRecord
     end
   end
 
+  def reporting_relationship
+    ReportingRelationship.find_by(user: user, client: client)
+  end
+
   private
 
   def time_buffer

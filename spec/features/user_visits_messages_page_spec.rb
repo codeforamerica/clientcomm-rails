@@ -77,7 +77,8 @@ feature 'User sees client notes on messages page', :js do
   let(:notes) { 'Example text that is more than forty characters long.' }
   let(:truncated_notes) { 'Example text that is more than forty...' }
   let(:myuser) { create :user }
-  let(:myclient) { create :client, user: myuser, notes: notes }
+  let(:myclient) { create :client }
+  let!(:rr) { ReportingRelationship.create(client: myclient, user: myuser, notes: notes) }
 
   context 'visits clients page on mobile' do
     before do
@@ -108,9 +109,12 @@ feature 'User sees client notes on messages page', :js do
   end
 
   context 'user clicks show more link' do
-    let!(:myuser) { create :user }
+    let(:myuser) { create :user }
+    let(:notes) { '12345678901234567890123456789011234567890123456789012345678901' }
+    let(:truncated_notes) { '123456789012345678901234567890112345...' }
+    let(:client_with_long_note) { create :client }
+    let!(:rr) { ReportingRelationship.create(client: client_with_long_note, user: myuser, notes: notes) }
 
-    let!(:client_with_long_note) { create :client, user: myuser, notes: '12345678901234567890123456789011234567890123456789012345678901' }
     before do
       login_as(myuser, :scope => :user)
       visit client_messages_path(client_with_long_note)
@@ -123,16 +127,19 @@ feature 'User sees client notes on messages page', :js do
     it 'shows full note when show more button is clicked' do
       expect(page).to have_selector('#truncated_note', visible: true)
       expect(page).to have_selector('#full_note', visible: false)
+      expect(page).to have_content truncated_notes
 
       click_link 'More'
 
       expect(page).to have_selector('#truncated_note', visible: false)
       expect(page).to have_selector('#full_note', visible: true)
+      expect(page).to have_content notes
 
       click_link 'Less'
 
       expect(page).to have_selector('#truncated_note', visible: true)
       expect(page).to have_selector('#full_note', visible: false)
+      expect(page).to have_content truncated_notes
     end
   end
 end

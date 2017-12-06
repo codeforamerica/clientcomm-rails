@@ -68,6 +68,37 @@ RSpec.describe Client, type: :model do
       end
     end
 
+    describe '#notes:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let(:notes) { 'some notes about a client' }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, notes: notes) }
+
+      it 'returns the relevant notes' do
+        expect(client.notes(user: user)).to eq(notes)
+      end
+    end
+
+    describe '#active:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, active: false) }
+
+      it 'returns the relevant value' do
+        expect(client.active(user: user)).to eq(false)
+      end
+    end
+
+    describe '#has_message_error:user' do
+      let(:user) { create :user }
+      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+      let!(:rr) { ReportingRelationship.create(user: user, client: client, has_message_error: false) }
+
+      it 'returns the relevant value' do
+        expect(client.has_message_error(user: user)).to eq(false)
+      end
+    end
+
     describe '#timestamp' do
       let(:user) { create :user }
       let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }

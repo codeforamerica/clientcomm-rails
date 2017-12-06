@@ -36,8 +36,6 @@ ActiveAdmin.register Client do
     end
 
     column :phone_number
-    column :active
-    column :notes
     actions
   end
 
