@@ -53,7 +53,7 @@ RSpec.describe Client, type: :model do
       let!(:rr) { ReportingRelationship.create(user: user, client: client, last_contacted_at: time) }
 
       it 'returns the relevant reporting relationship' do
-        expect(client.last_contacted_at(user: user)).to eq(time)
+        expect(client.last_contacted_at(user: user).to_i).to eq(time.to_i)
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe Client, type: :model do
       let!(:rr) { ReportingRelationship.create(user: user, client: client, created_at: time) }
 
       it 'returns the relevant reporting relationship' do
-        expect(client.relationship_started(user: user)).to eq(time)
+        expect(client.relationship_started(user: user).to_i).to eq(time.to_i)
       end
     end
 
