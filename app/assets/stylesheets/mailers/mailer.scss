@@ -41,7 +41,7 @@
 }
 
 body {
-  background-color: #FAFAF9;
+  background-color: #FAFAF9 !important;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -65,7 +65,7 @@ table {
 }
 
 table.body {
-  background-color:#FAFAF9;
+  background-color:#FAFAF9 !important;
   width: 100%;
 
   td.wrapper {
@@ -75,7 +75,7 @@ table.body {
 }
 
 .main {
-  background-color: #fff;
+  background-color: #FFFFFF;
   border-radius: 3px;
   width: 100%;
 }
@@ -89,15 +89,15 @@ table.body {
 .btn-primary {
   box-sizing: border-box;
   width: auto;
-  padding-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .btn-primary table td:hover {
   background-color: #34b09e !important;
 }
 .btn-primary a:hover {
-  background-color: #34b09e !important;
-  border-color: #34b09e !important;
+  background-color: #34B09E !important;
+  border-color: #34B09E !important;
 }
 
 table.body td.container {
@@ -168,5 +168,5 @@ p {
   padding: 12px 25px;
   text-decoration: none;
   background-color: #019C86;
-  color: #ffffff;
+  color: #FFFFFF;
 }
