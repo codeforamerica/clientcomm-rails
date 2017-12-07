@@ -20,15 +20,24 @@ namespace :setup do
   end
 
   task :migrate_metadata_from_client_to_relationship => :environment do
-    Client.all.each do |client|
+    count = Client.all.count - 1
+    Client.all.each_with_index do |client, i|
+      progress = 50.0 * (i / count.to_f)
+
+      bar = '#' * progress.to_i
+      space = ' ' * (50 - progress.to_i)
+      print "\r|#{bar}#{space}|"
+
       client.reporting_relationships.each do |rr|
-        rr.active = client.active
+        rr.active = client['active']
         rr.notes = client['notes']
-        rr.has_message_error = client.has_message_error
-        rr.has_unread_messages = client.has_unread_messages
-        rr.client_status_id = client.client_status_id
+        rr.has_message_error = client['has_message_error']
+        rr.has_unread_messages = client['has_unread_messages']
+        rr.client_status_id = client['client_status_id']
         rr.save!
       end
     end
+
+    puts "\nComplete"
   end
 end

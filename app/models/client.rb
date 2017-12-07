@@ -75,6 +75,10 @@ class Client < ApplicationRecord
   def has_message_error(user:)
     reporting_relationships.find_by(user: user).has_message_error
   end
+
+  def has_unread_messages(user:)
+    reporting_relationships.find_by(user: user).has_unread_messages
+  end
   # rubocop:enable Naming/PredicateName
 
   private
