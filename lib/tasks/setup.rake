@@ -29,7 +29,6 @@ namespace :setup do
       print "\r|#{bar}#{space}|"
 
       client.reporting_relationships.each do |rr|
-        rr.active = client['active']
         rr.notes = client['notes']
         rr.has_message_error = client['has_message_error']
         rr.has_unread_messages = client['has_unread_messages']
