@@ -14,6 +14,7 @@ feature 'User creates client' do
   let(:last_name) { 'McGee' }
   let(:notes) { 'some notes' }
   let(:phone_number) { '+12345678910' }
+  let(:phone_number_display) { '(234) 567-8910' }
 
   before do
     login_as(myuser, :scope => :user)
@@ -62,7 +63,7 @@ feature 'User creates client' do
 
         expect(page).to have_content 'Waffles'
         expect(page).to have_content 'MacGee'
-        expect(page).to have_content("The number #{phone_number} already exists in ClientComm")
+        expect(page).to have_content("The number #{phone_number_display} already exists in ClientComm")
         click_on 'Yes, use this client'
 
         expect(page).to have_current_path(client_messages_path(client))
