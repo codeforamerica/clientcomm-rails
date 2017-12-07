@@ -1,0 +1,48 @@
+<div class="slab">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+      <div class="form-card form-card--compact">
+        <div class="form-card__header">
+          [link icon]<h1 class="form-card__title">Confirm client</h1>
+        </div>
+        <div class="form-card__content">
+
+          <p>
+            The number
+            <strong><%= @existing_client.phone_number %></strong>
+            already exists in ClientComm as
+            <strong><%= @existing_client.full_name %></strong>.
+            Is this the correct client?
+          </p>
+
+          <%= form_for @client do |f| %>
+            <%= hidden_field_tag :user_confirmed, true %>
+            <%= f.hidden_field :first_name %>
+            <%= f.hidden_field :last_name %>
+
+            <%= f.hidden_field :phone_number %>
+
+            <%= f.fields_for :reporting_relationships, @reporting_relationship do |rr| %>
+              <% if FeatureFlag.enabled? 'client_status' %>
+                <%= rr.hidden_field :client_status_id %>
+              <% end %>
+
+              <%= rr.hidden_field :notes %>
+            <% end %>
+
+            <div class="form-card__footer">
+              <div class="toolbar">
+                <div class="toolbar__left"><%= f.submit 'Yes, use this client', class: 'button button--cta', role: 'button' %></div>
+                <div class="toolbar__right">
+                  <%= link_to clients_path, class: "button" do %>
+                    Cancel
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

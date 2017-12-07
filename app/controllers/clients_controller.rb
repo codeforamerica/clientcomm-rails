@@ -26,6 +26,7 @@ class ClientsController < ApplicationController
     )
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def create
     @client = Client.new(client_params)
 
@@ -40,26 +41,31 @@ class ClientsController < ApplicationController
     end
 
     if @client.errors.added?(:phone_number, :taken)
-      existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = existing_client.users
-                                        .where.not(id: current_user.id)
-                                        .find_by(department: current_user.department)
+      @existing_client = Client.find_by(phone_number: @client.phone_number)
+      conflicting_user = @existing_client.users
+                                         .where.not(id: current_user.id)
+                                         .find_by(department: current_user.department)
       if conflicting_user
         @client.errors.add(
           :phone_number,
           :existing_dept_relationship,
           user_full_name: conflicting_user.full_name
         )
-      elsif current_user.clients.include? existing_client
-        existing_relationship = current_user.reporting_relationships.find_by(client: existing_client)
+      elsif current_user.clients.include? @existing_client
+        existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
         flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
         existing_relationship.update(active: true)
-        redirect_to client_messages_path(existing_client)
+        redirect_to client_messages_path(@existing_client)
         return
       else
         rr_params = client_params[:reporting_relationships_attributes]['0']
-        existing_client.reporting_relationships.create(rr_params)
-        redirect_to client_messages_path(existing_client)
+        @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
+        if params[:user_confirmed] == 'true'
+          @reporting_relationship.save!
+          redirect_to client_messages_path(@existing_client)
+          return
+        end
+        render :confirm
         return
       end
     end
@@ -67,6 +73,7 @@ class ClientsController < ApplicationController
     flash[:alert] = t('flash.errors.client.invalid')
     render :new
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @client = current_user.clients.find(params[:id])

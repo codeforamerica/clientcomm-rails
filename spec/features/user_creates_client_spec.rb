@@ -46,6 +46,34 @@ feature 'User creates client' do
     expect(page).to have_content "Last name can't be blank"
   end
 
+  context 'the client already exists and belongs to another user in another department' do
+    let(:other_user) { create :user }
+    let!(:client) { create :client, user: other_user, first_name: 'Waffles', last_name: 'MacGee', phone_number: phone_number }
+
+    scenario 'it displays a confirmation page with the correct info' do
+      step 'filling in the client info' do
+        fill_in 'First name', with: first_name
+        fill_in 'Last name', with: last_name
+        fill_in 'Phone number', with: phone_number
+        fill_in 'Notes', with: notes
+        click_on 'Save new client'
+
+        expect(page).to have_current_path(clients_path)
+
+        expect(page).to have_content 'Waffles'
+        expect(page).to have_content 'MacGee'
+        expect(page).to have_content("The number #{phone_number} already exists in ClientComm")
+        click_on 'Yes, use this client'
+
+        expect(page).to have_current_path(client_messages_path(client))
+
+        click_on 'Manage client'
+
+        expect(find_field('Notes').value).to eq notes
+      end
+    end
+  end
+
   context 'client status feature flag enabled' do
     let!(:status) { create :client_status, name: 'Active' }
     before do

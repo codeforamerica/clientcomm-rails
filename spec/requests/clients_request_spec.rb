@@ -182,18 +182,51 @@ describe 'Clients requests', type: :request do
       end
 
       context 'client has a relationship with a user in a different department' do
+        let(:first_name) { 'Mark' }
+        let(:last_name) { 'Zak' }
         let(:other_user) { create :user }
-        let!(:client) { create :client, user: other_user, phone_number: phone_number }
+        let!(:client) { create :client, first_name: first_name, last_name: last_name, user: other_user, phone_number: phone_number }
 
-        it 'should redirect to the messages page' do
-          subject
+        it 'should render the confirmation page' do
+          expect { subject }.to_not(change { ReportingRelationship.count })
 
-          expect(response.code).to eq '302'
-          expect(response).to redirect_to client_messages_path(client)
+          expect(response.code).to eq '200'
 
-          rr = client.reporting_relationships.find_by(user: user)
-          expect(rr.notes).to eq notes
-          expect(rr.client_status).to eq client_status
+          expect(response.body).to include(first_name)
+          expect(response.body).to include(last_name)
+          expect(response.body).to include(phone_number)
+          expect(response.body).to include('already exists in ClientComm')
+        end
+
+        context 'the user_confirmed value is true' do
+          subject do
+            post clients_path, params: {
+              user_confirmed: true,
+              client: {
+                first_name: first_name,
+                last_name: last_name,
+                phone_number: phone_number,
+                reporting_relationships_attributes: {
+                  '0': {
+                    user_id: user.id,
+                    notes: notes,
+                    client_status_id: client_status.id.to_s
+                  }
+                }
+              }
+            }
+          end
+
+          it 'creates the reporting relationship' do
+            subject
+
+            expect(response.code).to eq '302'
+            expect(response).to redirect_to client_messages_path(client)
+
+            rr = client.reporting_relationships.find_by(user: user)
+            expect(rr.notes).to eq notes
+            expect(rr.client_status).to eq client_status
+          end
         end
       end
     end
