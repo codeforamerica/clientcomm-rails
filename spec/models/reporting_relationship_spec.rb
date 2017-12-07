@@ -42,6 +42,23 @@ RSpec.describe ReportingRelationship, type: :model do
           expect(rr.errors.added?(:client, :existing_dept_relationship))
             .to eq true
         end
+
+        context 'the reporting relationships itself is inactive' do
+          it 'is valid' do
+            department = create :department
+            user1 = create :user, department: department
+            user2 = create :user, department: department
+            client = create :client, user: user1
+
+            rr = ReportingRelationship.new(
+              user: user2,
+              client: client,
+              active: false
+            )
+
+            expect(rr).to be_valid
+          end
+        end
       end
     end
   end
