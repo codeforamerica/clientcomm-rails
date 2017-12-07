@@ -65,6 +65,10 @@ RSpec.configure do |config|
     example.run
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = false
   end
+
+  config.after :each, :type => :feature, js: true do
+    wait_for_ajax
+  end
 end
 
 Shoulda::Matchers.configure do |config|
