@@ -32,6 +32,7 @@ namespace :setup do
         rr.notes = client['notes']
         rr.has_message_error = client['has_message_error']
         rr.has_unread_messages = client['has_unread_messages']
+        rr.last_contacted_at = client['last_contacted_at']
         rr.client_status_id = client['client_status_id']
         rr.save!
       end

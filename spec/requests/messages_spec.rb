@@ -47,12 +47,14 @@ describe 'Messages requests', type: :request, active_job: true do
 
       it 'marks all messages read when index loaded' do
         message = create :message, user: user, client: client, inbound: true
+        client.reporting_relationship(user: user).update!(has_unread_messages: true)
 
         # when we visit the messages path, it should mark the message read
         expect { get client_messages_path(client) }
           .to change { message.reload.read? }
           .from(false)
           .to(true)
+        expect(client.reporting_relationship(user: user).has_unread_messages).to eq(false)
       end
 
       context 'there are scheduled messages' do
