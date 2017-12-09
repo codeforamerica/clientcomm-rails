@@ -9,6 +9,16 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     HTML
   end
 
+  def gcf_input_field_with_link_icon(method, label_text, type: 'text', notes: [], options: {}, classes: [], autofocus: nil)
+    classes = classes.append(%w[text-input])
+    <<-HTML.html_safe
+      <fieldset class="form-group">
+        <label for="client_#{method}">#{label_contents(label_text, notes, 'link')}</label>
+        #{text_field(method, { autofocus: autofocus, type: type, class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' }.merge(options))}
+      </fieldset>
+    HTML
+  end
+
   def gcf_textarea(method, label_text, notes: [], options: {}, classes: [], placeholder: nil, autofocus: nil)
     classes = classes.append(%w[textarea])
     <<-HTML.html_safe
@@ -140,10 +150,16 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
 
   private
 
-  def label_contents(label_text, notes)
+  def label_contents(label_text, notes, icon = nil)
     notes = Array(notes)
+    icon_html = ''
+    if icon.present?
+      icon_html = <<-HTML
+        <i class="icon-#{icon} orange"></i>
+      HTML
+    end
     label_text = <<-HTML
-      <p class="form-question">#{label_text}</p>
+      <p class="form-question">#{label_text}#{icon_html}</p>
     HTML
     notes.each do |note|
       label_text << <<-HTML

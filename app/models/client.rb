@@ -81,6 +81,10 @@ class Client < ApplicationRecord
   end
   # rubocop:enable Naming/PredicateName
 
+  def active_users
+    users.joins(:reporting_relationships).where(reporting_relationships: { active: true }).distinct
+  end
+
   private
 
   def normalize_phone_number

@@ -441,6 +441,12 @@ describe 'Clients requests', type: :request do
 
       subject { get edit_client_path(client) }
 
+      it 'shows the current client data' do
+        subject
+        expect(response.body).to include(client.first_name)
+        expect(response.body).to include(client.last_name)
+      end
+
       it 'tracks a visit to the edit client form' do
         subject
         expect(response.code).to eq '200'
@@ -473,6 +479,21 @@ describe 'Clients requests', type: :request do
 
             expect(response.body).to_not include('Transfer Client')
           end
+        end
+      end
+
+      context 'when the client belongs to more than one active user' do
+        let(:other_user) { create :user }
+
+        before do
+          client.users << other_user
+        end
+
+        it 'shows a relevant notification' do
+          subject
+
+          expect(response.body).to include(other_user.full_name)
+          expect(response.body).to include("Changing the client's name or phone number will change it for everyone.")
         end
       end
     end
