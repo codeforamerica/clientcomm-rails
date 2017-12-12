@@ -12,9 +12,11 @@ end
 
 feature 'user edits client', :js do
   let(:myuser) { create :user }
+  let(:other_user) { create :user }
   let!(:clientone) { create :client, user: myuser }
 
   before do
+    other_user.clients << clientone
     login_as myuser, :scope => :user
     visit root_path
   end
@@ -24,6 +26,7 @@ feature 'user edits client', :js do
       find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
+    expect(page).to have_content("also assigned to #{other_user.full_name}")
 
     new_first_name = 'Vinicius'
     new_last_name = 'Lima'
@@ -34,6 +37,12 @@ feature 'user edits client', :js do
     fill_in 'Notes', with: note
 
     click_on 'Save changes'
+
+    # TODO: uncomment for tests
+    # emails = ActionMailer::Base.deliveries
+    # expect(emails.count).to eq 1
+    # expect(emails.first.body).to include("#{clientone.full_name}'s name is now")
+
     expect(page).to have_current_path(client_messages_path(clientone))
 
     expect(page).to have_content "#{new_first_name} #{new_last_name}"

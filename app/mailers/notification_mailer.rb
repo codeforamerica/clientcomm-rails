@@ -20,6 +20,19 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  def client_edit_notification(notified_user:, editing_user:, phone_number: nil, full_name: nil, client:)
+    @notified_user = notified_user
+    @editing_user = editing_user
+    @phone_number = phone_number
+    @full_name = full_name
+    @client = client
+
+    mail(
+      to: @notified_user.email,
+      subject: "Your client's contact information has been updated"
+    )
+  end
+
   def batch_transfer_notification(current_user:, transferred_clients:)
     @current_user = current_user
     @transferred_clients = transferred_clients

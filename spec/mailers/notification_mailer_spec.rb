@@ -83,4 +83,68 @@ describe NotificationMailer, type: :mailer do
       it_behaves_like 'client_transfer_notification'
     end
   end
+
+  describe 'client_edit_notification' do
+    let(:user1) { create :user, email: 'user1@user1.com' }
+    let(:user2) { create :user, email: 'user2@user2.com' }
+
+    # for fun, call this number (yes it's real, no it's not a prank)
+    let(:client) { create :client, users: [user1, user2], first_name: 'John', last_name: 'Smith', phone_number: '(844) 387-6962' }
+
+    context 'name change' do
+      subject do
+        NotificationMailer.client_edit_notification(
+          notified_user: user1,
+          editing_user: user2,
+          full_name: 'Joe Schmoe',
+          client: client
+        )
+      end
+
+      it 'renders the body' do
+        expect(subject.to).to eq(%w[user1@user1.com])
+        expect(subject.body.to_s)
+          .to include("Joe Schmoe's name is now")
+
+        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        expect(subject.body.to_s)
+          .to have_link('John Smith', href: url)
+      end
+    end
+
+    context 'phone change' do
+      subject do
+        NotificationMailer.client_edit_notification(
+          notified_user: user1,
+          editing_user: user2,
+          phone_number: '867-5309',
+          client: client
+        )
+      end
+
+      it 'renders the body' do
+        # expect(subject.to).to eq(%w[user1@user1.com])
+        # expect(subject.body.encoded)
+        #   .to include("#{link_to client.full_name, client_path(client)}'s phone_number has changed from 867-5309 to (844) 387-6962")
+      end
+    end
+
+    context 'both change' do
+      subject do
+        NotificationMailer.client_edit_notification(
+          notified_user: user1,
+          editing_user: user2,
+          full_name: 'Joe Schmoe',
+          phone_number: '867-5309',
+          client: client
+        )
+      end
+
+      it 'renders the body' do
+        # expect(subject.to).to eq(%w[user1@user1.com])
+        # expect(subject.body.encoded)
+        #   .to include("#{link_to client.full_name, client_path(client)}'s phone_number has changed from 867-5309 to (844) 387-6962")
+      end
+    end
+  end
 end
