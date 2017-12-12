@@ -87,32 +87,42 @@ ActiveAdmin.register Client do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
-    end
 
-    Department.all.each do |department|
-      department_users = department.users.active.order(full_name: :asc)
-      active_user_id = department.users
-                                 .joins(:clients)
-                                 .joins(:reporting_relationships)
-                                 .where(clients: { id: resource.id })
-                                 .find_by(reporting_relationships: { active: true })
-                                 .try(:id)
+      Department.all.each do |department|
+        department_users = department.users.active.order(full_name: :asc)
+        active_user = department.users
+                                .joins(:clients)
+                                .joins(:reporting_relationships)
+                                .where(clients: { id: resource.id })
+                                .find_by(reporting_relationships: { active: true })
 
-      options = options_from_collection_for_select(
-        department_users,
-        :id,
-        :full_name,
-        active_user_id
-      )
+        if f.object.new_record? # NEW
+          options = options_from_collection_for_select(
+            department_users,
+            :id,
+            :full_name,
+            active_user.try(:id)
+          )
 
-      f.inputs department.name do
-        f.input :users, {
-          label: 'User:',
-          as: :select,
-          collection: options,
-          include_blank: true,
-          input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
-        }
+          f.input :users, {
+            label: "#{department.name} user:",
+            as: :select,
+            collection: options,
+            include_blank: true,
+            input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
+          }
+        else # EDIT
+          li do
+            label "#{department.name} user:"
+            if active_user.present?
+              rr = resource.reporting_relationships.find_by(user: active_user)
+              span active_user.full_name, disabled: true
+              a 'Change', href: edit_admin_reporting_relationship_path(rr)
+            else
+              a 'Assign user'
+            end
+          end
+        end
       end
     end
 

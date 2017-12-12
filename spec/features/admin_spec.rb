@@ -30,16 +30,33 @@ feature 'Admin Panel' do
   end
 
   describe 'Client Edit' do
-    let(:department) { create :department }
-    let!(:user1) { create :user, department: department }
-    let!(:user2) { create :user, department: department, active: false }
+    let!(:department1) { create :department }
+    let!(:department2) { create :department }
+    let!(:user1) { create :user, department: department1 }
+    let!(:user2) { create :user, department: department1 }
     let!(:client1) { create :client, users: [user1] }
 
-    context 'transferring a client' do
-      it 'does not show inactive users' do
+    scenario 'transferring a client' do
+      step 'visits the edit client page' do
         visit edit_admin_client_path(client1)
 
-        expect(page).to have_select("user_in_dept_#{department.id}", options: ['', user1.full_name])
+        expect(page).to have_content(department1.name.capitalize)
+        expect(page).to have_content(user1.full_name)
+        expect(page).to have_content(department2.name.capitalize)
+        expect(page).to have_content('Assign user')
+      end
+
+      step 'clicks the change button next to a user' do
+        click_on('Change')
+
+        expect(page).to have_content('Transfer Client')
+        # a notes field
+        # a pull-down with the correct users in it
+        # expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name])
+      end
+
+      step 'it completes the form and submits it' do
+        # user is redirected with a success message
       end
     end
   end
