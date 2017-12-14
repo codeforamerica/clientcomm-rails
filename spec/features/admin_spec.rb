@@ -50,6 +50,8 @@ feature 'Admin Panel' do
         click_on('Change')
 
         expect(page).to have_content('Transfer Client')
+        expect(page).to have_content("ADMIN / CLIENTS / #{client1.full_name.upcase}")
+        expect(page).to have_content('Change user')
         # a notes field
         # a pull-down with the correct users in it
         # expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name])
