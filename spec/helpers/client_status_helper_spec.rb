@@ -67,7 +67,8 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
         end
 
         it 'returns the full set of clients requiring follow-up' do
-          expect(subject).to eq({ 'Active' => [5], 'Exited' => [6, 7] })
+          expect(subject['Active']).to eq([5])
+          expect(subject['Exited']).to match_array([6, 7])
         end
       end
     end
