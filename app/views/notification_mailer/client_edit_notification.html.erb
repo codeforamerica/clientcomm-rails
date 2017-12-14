@@ -13,20 +13,31 @@
                 <tr>
                   <td>
                     <p class="header-appname">ClientComm</p>
-                    <%# <p>Hi <%= @user.full_name %1>,</p> %>
-                    <%# <p>An administrator has transferred <%= @client.full_name %1>, <%= @client.phone_number %1> to your client list.</p> %>
-                    <%# <% if @previous_user.present? %1> %>
-                    <%#   <p>Their previous Case Manager was <%= @previous_user.full_name %1>.</p> %>
-                    <%# <% end %1> %>
+                    <p>
+                      Hi <%= @notified_user.full_name %>,
+                    </p>
+                    <p>
+                      <%= @editing_user.full_name %> has made the following change to your shared client:
+                    </p>
                     <p class="message-well">
-                      <%= @full_name %>'s name is now <%= link_to @client.full_name, client_messages_url(@client) %>
+                      <% if @full_name.present? %>
+                        <%= @full_name %>'s name is now <%= link_to @client.full_name, client_messages_url(@client) %>.
+                      <% end %>
+                      <br />
+                      <br />
+                      <% if @phone_number.present? %>
+                        <%= link_to "#{@client.full_name}'s", client_messages_url(@client) %> phone number has changed from <%= phone_number_display(@phone_number) %> to <%= phone_number_display(@client.phone_number) %>.
+                      <% end %>
+                    </p>
+                    <p>
+                      As a reminder, any changes made to this client's name or phone number will be shared with <%= @client.users.pluck(:full_name).to_sentence %>.
                     </p>
 
                     <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                       <tbody>
                         <tr>
                           <td>
-                            <%= link_to('Introduce yourself on ClientComm', client_messages_url(@client), { target: '_blank', class: 'email-cta' }) %>
+                            <%= link_to('View client on ClientComm', client_messages_url(@client), { target: '_blank', class: 'email-cta' }) %>
                           </td>
                         </tr>
                       </tbody>

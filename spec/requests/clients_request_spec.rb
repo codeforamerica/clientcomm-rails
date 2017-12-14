@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe 'Clients requests', type: :request do
+  include ActiveJob::TestHelper
+
   context 'unauthenticated' do
     it 'rejects unauthenticated user' do
       get clients_path
@@ -295,18 +297,28 @@ describe 'Clients requests', type: :request do
         expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
       end
 
-      it 'tracks the updating of a client' do
-        subject
+      context 'a client has active users in multiple departments' do
+        let(:user2) { create :user }
+        let(:user3) { create :user }
+        let(:user4) { create :user }
 
-        client = Client.first
+        before do
+          existing_client.users << user2
+          existing_client.users << user3
+          existing_client.users << user4
 
-        expect_analytics_events(
-          {
-            'client_edit_success' => {
-              'client_id' => client.id
-            }
-          }
-        )
+          existing_client.reporting_relationships.find_by(user: user4)
+                         .update(active: false)
+        end
+
+        it 'sends notification emails to other users' do
+          mail = double('mail', deliver: true)
+          expect(NotificationMailer).to receive(:client_edit_notification)
+            .and_return(mail).twice
+          expect(mail).to receive(:deliver_later).twice
+
+          subject
+        end
       end
 
       context 'receives invalid client parameters' do

@@ -36,12 +36,13 @@ feature 'user edits client', :js do
     fill_in 'Last name', with: new_last_name
     fill_in 'Notes', with: note
 
+    old_name = clientone.full_name
     click_on 'Save changes'
+    clientone.reload
 
-    # TODO: uncomment for tests
-    # emails = ActionMailer::Base.deliveries
-    # expect(emails.count).to eq 1
-    # expect(emails.first.body).to include("#{clientone.full_name}'s name is now")
+    emails = ActionMailer::Base.deliveries
+    expect(emails.count).to eq 1
+    expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
 
     expect(page).to have_current_path(client_messages_path(clientone))
 

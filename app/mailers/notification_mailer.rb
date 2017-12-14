@@ -1,4 +1,6 @@
 class NotificationMailer < ApplicationMailer
+  helper ApplicationHelper
+
   def message_notification(user, message)
     @client = message.client
     @message = message
@@ -20,11 +22,18 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
-  def client_edit_notification(notified_user:, editing_user:, phone_number: nil, full_name: nil, client:)
+  def client_edit_notification(notified_user:, editing_user:, client:, previous_changes:)
+    if previous_changes['first_name'].present? || previous_changes['last_name'].present?
+      first_name = previous_changes.dig('first_name', 0) || client.first_name
+      last_name = previous_changes.dig('last_name', 0) || client.last_name
+      @full_name = "#{first_name} #{last_name}"
+    end
+    @phone_number = previous_changes['phone_number'].try(:[], 0)
+
+    raise ArgumentError, 'Must provide either Phone Number or Full Name' if @phone_number.nil? && @full_name.nil?
+
     @notified_user = notified_user
     @editing_user = editing_user
-    @phone_number = phone_number
-    @full_name = full_name
     @client = client
 
     mail(

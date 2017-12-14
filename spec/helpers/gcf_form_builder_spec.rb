@@ -11,7 +11,7 @@ describe GcfFormBuilder, type: :view do
   describe '#gcf_textarea' do
     it 'renders a text area' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_textarea(:first_name, 'Enter your first name in this unnecessarily BIG box!', notes: ['This is a great note.', 'Applause, please!'])
@@ -32,7 +32,7 @@ describe GcfFormBuilder, type: :view do
 
     it 'renders with autofocus' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_textarea(:first_name, 'Enter your first name in this unnecessarily BIG box!', notes: ['This is a great note.', 'Applause, please!'], autofocus: true)
@@ -55,7 +55,7 @@ describe GcfFormBuilder, type: :view do
   describe '#gcf_input_field' do
     it 'renders an input field' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: ['This is a great note.', 'Applause, please!'])
@@ -74,7 +74,7 @@ describe GcfFormBuilder, type: :view do
 
     it 'renders with autofocus' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: ['This is a great note.', 'Applause, please!'], autofocus: true)
@@ -91,10 +91,29 @@ describe GcfFormBuilder, type: :view do
       HTML
     end
 
+    it 'renders with an icon' do
+      user = create :user
+      client = create :client, user: user
+      form_builder = GcfFormBuilder.new(:client, client, template, {})
+
+      output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: ['This is a great note.', 'Applause, please!'], autofocus: true, icon: 'link')
+      expect(output).to be_html_safe
+      expect(output).to match_html <<~HTML
+        <fieldset class="form-group">
+          <label for="client_first_name">
+            <p class="form-question">Enter your first name <i class="icon-link orange"></p>
+            <p class="text--help">This is a great note.</p>
+            <p class="text--help">Applause, please!</p>
+          </label>
+          <input autofocus="autofocus" type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="#{client.first_name}" name="client[first_name]" id="client_first_name" />
+        </fieldset>
+      HTML
+    end
+
     context 'with no note' do
       it 'renders an input field' do
         user = create :user
-        client = create :client, :user => user
+        client = create :client, user: user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
         output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: nil)
@@ -113,7 +132,7 @@ describe GcfFormBuilder, type: :view do
     context 'with a string supplied as a note' do
       it 'renders an input field' do
         user = create :user
-        client = create :client, :user => user
+        client = create :client, user: user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
         output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: 'This is a great note.')
@@ -133,7 +152,7 @@ describe GcfFormBuilder, type: :view do
     context 'with a $ prefix' do
       it 'renders the input prefix' do
         user = create :user
-        client = create :client, :user => user
+        client = create :client, user: user
         form_builder = GcfFormBuilder.new(:client, client, template, {})
 
         output = form_builder.gcf_input_field(:first_name, 'Enter your first name', type: 'text', notes: nil, prefix: '$')
@@ -154,7 +173,7 @@ describe GcfFormBuilder, type: :view do
 
     it 'renders errors' do
       user = create :user
-      client = build :client, last_name: '', :user => user
+      client = build :client, last_name: '', user: user
       client.valid?
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
@@ -170,7 +189,7 @@ describe GcfFormBuilder, type: :view do
           <div class="field_with_errors">
             <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="" name="client[last_name]" id="client_last_name" />
           </div>
-          <div class="text--error"><i class="icon-warning"></i> can't be blank </div>
+          <div class="text--error"><i class="icon-warning"></i> Last name can't be blank </div>
         </fieldset>
       HTML
     end
@@ -258,7 +277,7 @@ describe GcfFormBuilder, type: :view do
   describe '#gcf_radio_set' do
     it 'renders a set of radio buttons' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
 
       output = form_builder.gcf_radio_set(:last_name, "What's your last name?", [{ value: 1, label: 'Gutierrez' }, { value: 2, label: 'Livingston' }])
@@ -282,7 +301,7 @@ describe GcfFormBuilder, type: :view do
   describe '#continue' do
     it 'renders a continue button' do
       user = create :user
-      client = create :client, :user => user
+      client = create :client, user: user
       form_builder = GcfFormBuilder.new(:client, client, template, {})
       output = form_builder.continue "Let's Go!"
       expect(output).to be_html_safe

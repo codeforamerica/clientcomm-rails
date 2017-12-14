@@ -1,23 +1,16 @@
 class GcfFormBuilder < ActionView::Helpers::FormBuilder
-  def gcf_input_field(method, label_text, type: 'text', notes: [], options: {}, classes: [], prefix: nil, autofocus: nil)
+  # rubocop:disable Metrics/ParameterLists
+  def gcf_input_field(method, label_text, type: 'text', notes: [], options: {}, classes: [], prefix: nil, autofocus: nil, icon: nil)
     classes = classes.append(%w[text-input])
     <<-HTML.html_safe
       <fieldset class="form-group#{error_state(object, method)}">
-        #{label_and_field(method, label_text, text_field(method, { autofocus: autofocus, type: type, class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' }.merge(options)), notes: notes, prefix: prefix)}
+        #{label(method, label_contents(label_text, notes, icon))}
+        #{prefixed_field(text_field(method, { autofocus: autofocus, type: type, class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' }.merge(options)), prefix: prefix)}
         #{errors_for(object, method)}
       </fieldset>
     HTML
   end
-
-  def gcf_input_field_with_link_icon(method, label_text, type: 'text', notes: [], options: {}, classes: [], autofocus: nil)
-    classes = classes.append(%w[text-input])
-    <<-HTML.html_safe
-      <fieldset class="form-group">
-        <label for="client_#{method}">#{label_contents(label_text, notes, 'link')}</label>
-        #{text_field(method, { autofocus: autofocus, type: type, class: classes.join(' '), autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' }.merge(options))}
-      </fieldset>
-    HTML
-  end
+  # rubocop:enable Metrics/ParameterLists
 
   def gcf_textarea(method, label_text, notes: [], options: {}, classes: [], placeholder: nil, autofocus: nil)
     classes = classes.append(%w[textarea])
@@ -170,16 +163,19 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def label_and_field(method, label_text, field, notes: [], prefix: nil)
+    label(method, label_contents(label_text, notes)) + prefixed_field(field, prefix: prefix)
+  end
+
+  def prefixed_field(field, prefix: nil)
     if prefix
       <<-HTML
-        #{label(method, label_contents(label_text, notes))}
         <div class="text-input-group">
           <div class="text-input-group__prefix">#{prefix}</div>
           #{field}
         </div>
       HTML
     else
-      label(method, label_contents(label_text, notes)) + field
+      field
     end
   end
 
@@ -215,7 +211,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <<-HTML
         <div class="text--error">
           <i class="icon-warning"></i>
-          #{errors.join(', ')}
+          #{object.errors.full_message(method, errors.to_sentence)}
         </div>
       HTML
     end

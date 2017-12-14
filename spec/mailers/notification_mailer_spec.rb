@@ -89,15 +89,22 @@ describe NotificationMailer, type: :mailer do
     let(:user2) { create :user, email: 'user2@user2.com' }
 
     # for fun, call this number (yes it's real, no it's not a prank)
-    let(:client) { create :client, users: [user1, user2], first_name: 'John', last_name: 'Smith', phone_number: '(844) 387-6962' }
+    let(:client) { create :client, users: [user1, user2], first_name: 'John', last_name: 'Smith', phone_number: '+18443876962' }
 
     context 'name change' do
       subject do
         NotificationMailer.client_edit_notification(
           notified_user: user1,
           editing_user: user2,
-          full_name: 'Joe Schmoe',
-          client: client
+          client: client,
+          previous_changes: client.previous_changes
+        )
+      end
+
+      before do
+        allow(client).to receive(:previous_changes).and_return(
+          'first_name' => %w[Joe John],
+          'last_name' => %w[Schmoe Smith]
         )
       end
 
@@ -105,10 +112,49 @@ describe NotificationMailer, type: :mailer do
         expect(subject.to).to eq(%w[user1@user1.com])
         expect(subject.body.to_s)
           .to include("Joe Schmoe's name is now")
+        expect(subject.body.to_s).not_to include('phone number has changed from')
 
         url = url_for(controller: 'messages', action: 'index', client_id: client.id)
         expect(subject.body.to_s)
           .to have_link('John Smith', href: url)
+      end
+
+      context 'first_name only' do
+        before do
+          allow(client).to receive(:previous_changes).and_return(
+            'first_name' => %w[Joe John]
+          )
+        end
+
+        it 'renders the body' do
+          expect(subject.to).to eq(%w[user1@user1.com])
+          expect(subject.body.to_s)
+            .to include("Joe Smith's name is now")
+          expect(subject.body.to_s).not_to include('phone number has changed from')
+
+          url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+          expect(subject.body.to_s)
+            .to have_link('John Smith', href: url)
+        end
+      end
+
+      context 'last_name only' do
+        before do
+          allow(client).to receive(:previous_changes).and_return(
+            'last_name' => %w[Schmoe Smith]
+          )
+        end
+
+        it 'renders the body' do
+          expect(subject.to).to eq(%w[user1@user1.com])
+          expect(subject.body.to_s)
+            .to include("John Schmoe's name is now")
+          expect(subject.body.to_s).not_to include('phone number has changed from')
+
+          url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+          expect(subject.body.to_s)
+            .to have_link('John Smith', href: url)
+        end
       end
     end
 
@@ -117,15 +163,26 @@ describe NotificationMailer, type: :mailer do
         NotificationMailer.client_edit_notification(
           notified_user: user1,
           editing_user: user2,
-          phone_number: '867-5309',
-          client: client
+          client: client,
+          previous_changes: client.previous_changes
+        )
+      end
+
+      before do
+        allow(client).to receive(:previous_changes).and_return(
+          'phone_number' => ['+14088675309', '+18443876962']
         )
       end
 
       it 'renders the body' do
-        # expect(subject.to).to eq(%w[user1@user1.com])
-        # expect(subject.body.encoded)
-        #   .to include("#{link_to client.full_name, client_path(client)}'s phone_number has changed from 867-5309 to (844) 387-6962")
+        expect(subject.to).to eq(%w[user1@user1.com])
+        expect(subject.body.to_s)
+          .to include('phone number has changed from (408) 867-5309 to (844) 387-6962')
+        expect(subject.body.to_s).not_to include('name is now')
+
+        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        expect(subject.body.to_s)
+          .to have_link("John Smith's", href: url)
       end
     end
 
@@ -134,16 +191,50 @@ describe NotificationMailer, type: :mailer do
         NotificationMailer.client_edit_notification(
           notified_user: user1,
           editing_user: user2,
-          full_name: 'Joe Schmoe',
-          phone_number: '867-5309',
-          client: client
+          client: client,
+          previous_changes: client.previous_changes
+        )
+      end
+
+      before do
+        allow(client).to receive(:previous_changes).and_return(
+          'first_name' => %w[Joe John],
+          'last_name' => %w[Schmoe Smith],
+          'phone_number' => ['+14088675309', '+18443876962']
         )
       end
 
       it 'renders the body' do
-        # expect(subject.to).to eq(%w[user1@user1.com])
-        # expect(subject.body.encoded)
-        #   .to include("#{link_to client.full_name, client_path(client)}'s phone_number has changed from 867-5309 to (844) 387-6962")
+        expect(subject.to).to eq(%w[user1@user1.com])
+        expect(subject.body.to_s)
+          .to include("Joe Schmoe's name is now")
+        expect(subject.body.to_s)
+          .to include('phone number has changed from (408) 867-5309 to (844) 387-6962')
+
+        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        expect(subject.body.to_s)
+          .to have_link('John Smith', href: url)
+        expect(subject.body.to_s)
+          .to have_link("John Smith's", href: url)
+      end
+    end
+
+    context 'no phone number or full name are passed in' do
+      subject do
+        NotificationMailer.client_edit_notification(
+          notified_user: user1,
+          editing_user: user2,
+          client: client,
+          previous_changes: client.previous_changes
+        )
+      end
+
+      before do
+        allow(client).to receive(:previous_changes).and_return({})
+      end
+
+      it 'throws an error' do
+        expect { subject.message }.to raise_error(ArgumentError, 'Must provide either Phone Number or Full Name')
       end
     end
   end

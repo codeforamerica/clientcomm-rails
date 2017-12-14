@@ -19,6 +19,22 @@ class NotificationMailerPreview < ActionMailer::Preview
     )
   end
 
+  def client_edit_notification
+    notified_user = User.first
+    editing_user = User.last
+    phone_number = '408-555-5058'
+    full_name = 'Oldname McOldnamerson'
+    client = Client.take
+
+    NotificationMailer.client_edit_notification(
+      notified_user: notified_user,
+      editing_user: editing_user,
+      phone_number: phone_number,
+      full_name: full_name,
+      client: client
+    )
+  end
+
   def batch_transfer_notification
     previous_user = User.last
     user = User.first

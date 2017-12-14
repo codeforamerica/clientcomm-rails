@@ -61,6 +61,7 @@ RSpec.configure do |config|
   config.include ActionView::RecordIdentifier
 
   config.around :each, :type => :feature do |example|
+    ActionMailer::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
     example.run
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = false
