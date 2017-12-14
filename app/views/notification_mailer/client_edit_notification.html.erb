@@ -30,7 +30,7 @@
                       <% end %>
                     </p>
                     <p>
-                      As a reminder, any changes made to this client's name or phone number will be shared with <%= @client.users.pluck(:full_name).to_sentence %>.
+                      As a reminder, any changes made to this client's name or phone number will be shared with <%= @client.active_users.where.not(id: @notified_user.id).pluck(:full_name).to_sentence %>.
                     </p>
 
                     <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">

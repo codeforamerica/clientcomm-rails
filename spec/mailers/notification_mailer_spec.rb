@@ -87,9 +87,10 @@ describe NotificationMailer, type: :mailer do
   describe 'client_edit_notification' do
     let(:user1) { create :user, email: 'user1@user1.com' }
     let(:user2) { create :user, email: 'user2@user2.com' }
+    let(:user3) { create :user, email: 'user3@user3.com' }
 
     # for fun, call this number (yes it's real, no it's not a prank)
-    let(:client) { create :client, users: [user1, user2], first_name: 'John', last_name: 'Smith', phone_number: '+18443876962' }
+    let(:client) { create :client, users: [user1, user2, user3], first_name: 'John', last_name: 'Smith', phone_number: '+18443876962' }
 
     context 'name change' do
       subject do
@@ -106,6 +107,9 @@ describe NotificationMailer, type: :mailer do
           'first_name' => %w[Joe John],
           'last_name' => %w[Schmoe Smith]
         )
+
+        client.reporting_relationships.find_by(user: user3)
+              .update(active: false)
       end
 
       it 'renders the body' do
@@ -117,6 +121,9 @@ describe NotificationMailer, type: :mailer do
         url = url_for(controller: 'messages', action: 'index', client_id: client.id)
         expect(subject.body.to_s)
           .to have_link('John Smith', href: url)
+
+        expect(subject.body.to_s)
+          .to include("will be shared with #{[user2.full_name].to_sentence}.")
       end
 
       context 'first_name only' do
