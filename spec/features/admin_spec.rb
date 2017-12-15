@@ -34,6 +34,7 @@ feature 'Admin Panel' do
     let!(:department2) { create :department }
     let!(:user1) { create :user, department: department1 }
     let!(:user2) { create :user, department: department1 }
+    let!(:user3) { create :user, department: department2 }
     let!(:client1) { create :client, users: [user1] }
 
     scenario 'transferring a client' do
@@ -52,13 +53,18 @@ feature 'Admin Panel' do
         expect(page).to have_content('Transfer Client')
         expect(page).to have_content("ADMIN / CLIENTS / #{client1.full_name.upcase}")
         expect(page).to have_content('Change user')
-        # a notes field
-        # a pull-down with the correct users in it
-        # expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name])
+        expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+        expect(page).to have_content('Include a note for the new user')
       end
 
       step 'it completes the form and submits it' do
-        # user is redirected with a success message
+        select user2.full_name, from: 'Transfer to'
+        fill_in 'transfer_note', with: 'Notes notes notes.'
+
+        click_on 'Transfer Client'
+
+        # expect(page).to have_content('Client successfully transferred.')
+        # expect(page.current_url).to eq(admin_client_url(client1))
       end
     end
   end

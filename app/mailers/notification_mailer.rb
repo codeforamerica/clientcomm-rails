@@ -11,10 +11,11 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
-  def client_transfer_notification(current_user:, previous_user:, client:)
+  def client_transfer_notification(current_user:, previous_user:, client:, transfer_note: nil)
     @current_user = current_user
     @previous_user = previous_user
     @client = client
+    @transfer_note = transfer_note
 
     mail(
       to: @current_user.email,
