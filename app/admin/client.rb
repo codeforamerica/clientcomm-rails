@@ -119,7 +119,10 @@ ActiveAdmin.register Client do
               span active_user.full_name, disabled: true
               a 'Change', href: edit_admin_reporting_relationship_path(rr)
             else
-              a 'Assign user'
+              a 'Assign user',
+                href: new_admin_reporting_relationship_path(
+                  department_id: department.id, client_id: resource.id
+                )
             end
           end
         end

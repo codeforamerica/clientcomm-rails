@@ -37,7 +37,7 @@ feature 'Admin Panel' do
     let!(:user3) { create :user, department: department2 }
     let!(:client1) { create :client, users: [user1] }
 
-    scenario 'transferring a client' do
+    scenario 'assigning a client to a user' do
       step 'visits the edit client page' do
         visit edit_admin_client_path(client1)
 
@@ -47,7 +47,38 @@ feature 'Admin Panel' do
         expect(page).to have_content('Assign user')
       end
 
-      step 'clicks the change button next to a user' do
+      step 'clicks the assign user link next to a user' do
+        click_on('Assign user')
+
+        expect(page).to have_content('Transfer Client')
+        expect(page).to have_content('ADMIN / CLIENTS /')
+        expect(page).to have_content('Change user')
+        expect(page).to have_select("user_in_dept_#{department2.id}", options: ['', user3.full_name])
+        expect(page).to have_content('Include a note for the new user')
+      end
+
+      step 'it completes the form and submits it' do
+        select user3.full_name, from: 'Transfer to'
+        fill_in 'transfer_note', with: 'Welcome your new client.'
+
+        click_on 'Transfer Client'
+
+        expect(page).to have_content("#{client1.full_name} has been assigned to #{user3.full_name} in #{department2.name}")
+        expect(page.current_path).to eq(admin_client_path(client1))
+      end
+    end
+
+    scenario 'transferring a client to a new user' do
+      step 'visits the edit client page' do
+        visit edit_admin_client_path(client1)
+
+        expect(page).to have_content(department1.name.capitalize)
+        expect(page).to have_content(user1.full_name)
+        expect(page).to have_content(department2.name.capitalize)
+        expect(page).to have_content('Assign user')
+      end
+
+      step 'clicks the change link next to a user' do
         click_on('Change')
 
         expect(page).to have_content('Transfer Client')
@@ -63,8 +94,8 @@ feature 'Admin Panel' do
 
         click_on 'Transfer Client'
 
-        # expect(page).to have_content('Client successfully transferred.')
-        # expect(page.current_url).to eq(admin_client_url(client1))
+        expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
+        expect(page.current_path).to eq(admin_client_path(client1))
       end
     end
   end
