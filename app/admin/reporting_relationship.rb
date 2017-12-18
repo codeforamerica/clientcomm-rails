@@ -58,6 +58,11 @@ ActiveAdmin.register ReportingRelationship do
       client = rr.client
       department = Department.find(department_id)
 
+      client.messages
+            .scheduled
+            .where(user: department.users)
+            .update(user_id: new_user)
+
       ReportingRelationship.where(client: client, user: department.users).each do |relationship|
         relationship.update!(active: false)
       end
@@ -71,14 +76,13 @@ ActiveAdmin.register ReportingRelationship do
         transfer_note: transfer_note
       ).deliver_later
 
-      # TODO: uncomment
-      # analytics_track(
-      #   label: :client_transfer,
-      #   data: {
-      #     admin_id: current_admin_user.id,
-      #     clients_transferred_count: 1
-      #   }
-      # )
+      analytics_track(
+        label: :client_transfer,
+        data: {
+          admin_id: current_admin_user.id,
+          clients_transferred_count: 1
+        }
+      )
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
       redirect_to(admin_client_path(client))
@@ -105,7 +109,7 @@ ActiveAdmin.register ReportingRelationship do
 
       client.messages
             .scheduled
-            .where(user: previous_user)
+            .where(user: department.users)
             .update(user_id: new_user)
 
       ReportingRelationship.where(client: client, user: department.users).each do |relationship|
@@ -126,14 +130,13 @@ ActiveAdmin.register ReportingRelationship do
         transfer_note: transfer_note
       ).deliver_later
 
-      # TODO: uncomment
-      # analytics_track(
-      #   label: :client_transfer,
-      #   data: {
-      #     admin_id: current_admin_user.id,
-      #     clients_transferred_count: 1
-      #   }
-      # )
+      analytics_track(
+        label: :client_transfer,
+        data: {
+          admin_id: current_admin_user.id,
+          clients_transferred_count: 1
+        }
+      )
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
       redirect_to(admin_client_path(client))

@@ -1,25 +1,9 @@
 require 'device_detector'
 require 'mixpanel-ruby'
-require 'singleton'
 
 class AnalyticsService
-  include Singleton
-
-  def initialize
-    mixpanel_token = ENV['MIXPANEL_TOKEN']
-    return if mixpanel_token.nil?
-
-    @tracker = Mixpanel::Tracker.new(mixpanel_token)
-    # silence local SSL errors
-    if Rails.env.development?
-      Mixpanel.config_http do |http|
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-    end
-  end
-
-  def track(distinct_id:, label:, user_agent: nil, data: {})
-    if @tracker
+  def self.track(distinct_id:, label:, user_agent: nil, data: {})
+    if MIXPANEL_TRACKER
       if user_agent
         client = DeviceDetector.new(user_agent)
         data[:client_bot_name] = client.bot_name
@@ -36,13 +20,13 @@ class AnalyticsService
       end
 
       data[:locale] = I18n.locale
-      @tracker.track(distinct_id, label, data)
+      MIXPANEL_TRACKER.track(distinct_id, label, data)
     end
   rescue StandardError => err
     Rails.logger.error "Error tracking analytics event #{err}"
   end
 
-  def alias(internal_id, visitor_id)
-    @tracker.alias(internal_id, visitor_id)
+  def self.alias(internal_id, visitor_id)
+    MIXPANEL_TRACKER.alias(internal_id, visitor_id)
   end
 end

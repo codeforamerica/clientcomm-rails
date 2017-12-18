@@ -30,8 +30,9 @@ feature 'Admin Panel' do
   end
 
   describe 'Client Edit' do
-    let!(:department1) { create :department }
-    let!(:department2) { create :department }
+    let(:transfer_note) { 'Welcome your new client.' }
+    let!(:department1) { create :department, name: 'Department One' }
+    let!(:department2) { create :department, name: 'Department Two' }
     let!(:user1) { create :user, department: department1 }
     let!(:user2) { create :user, department: department1 }
     let!(:user3) { create :user, department: department2 }
@@ -59,12 +60,16 @@ feature 'Admin Panel' do
 
       step 'it completes the form and submits it' do
         select user3.full_name, from: 'Transfer to'
-        fill_in 'transfer_note', with: 'Welcome your new client.'
+        fill_in 'transfer_note', with: transfer_note
 
         click_on 'Transfer Client'
 
         expect(page).to have_content("#{client1.full_name} has been assigned to #{user3.full_name} in #{department2.name}")
         expect(page.current_path).to eq(admin_client_path(client1))
+
+        emails = ActionMailer::Base.deliveries
+        expect(emails.count).to eq 1
+        expect(emails.first.html_part.to_s).to include transfer_note
       end
     end
 

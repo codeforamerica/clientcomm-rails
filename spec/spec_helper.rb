@@ -52,12 +52,6 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each) do
-    # Prevents any test doubles for this singleton class from being re-used
-    # across examples, which is not supported.
-    AnalyticsService.instance_variable_set(:@singleton__instance__, nil)
-  end
-
   config.after(:all) do
     I18n.locale = :en
   end

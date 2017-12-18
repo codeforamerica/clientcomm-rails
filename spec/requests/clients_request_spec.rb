@@ -449,7 +449,7 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'GET#edit' do
-      let(:client) { create :client, user: user }
+      let(:client) { create :client, user: user, first_name: 'Fred', last_name: 'Flintstone' }
 
       subject { get edit_client_path(client) }
 
@@ -495,7 +495,7 @@ describe 'Clients requests', type: :request do
       end
 
       context 'when the client belongs to more than one active user' do
-        let(:other_user) { create :user }
+        let(:other_user) { create :user, full_name: 'Jerry Mouse' }
 
         before do
           client.users << other_user

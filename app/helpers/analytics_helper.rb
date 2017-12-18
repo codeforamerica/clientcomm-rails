@@ -17,7 +17,7 @@ module AnalyticsHelper
     # but don't leave it in
     tracking_data = tracking_data.except(:current_user_id)
 
-    AnalyticsService.instance.track(
+    AnalyticsService.track(
       distinct_id: tracking_id,
       label: label,
       user_agent: user_agent,

@@ -138,57 +138,5 @@ ActiveAdmin.register Client do
 
       super
     end
-
-    def update
-      user_ids = params[:client][:user_ids]
-
-      Department.all.each do |dept|
-        new_user = dept.users.find_by(id: user_ids)
-
-        previous_user = resource.users
-                                .joins(:reporting_relationships)
-                                .where(reporting_relationships: { active: true })
-                                .find_by(department: dept)
-
-        next if new_user == previous_user
-
-        resource.messages
-                .scheduled
-                .where(user: previous_user)
-                .update(user_id: new_user)
-
-        if previous_user.present?
-          resource.reporting_relationship(user: previous_user).update!(active: false)
-        end
-
-        next if new_user.blank?
-        new_user.reporting_relationships.find_or_create_by(client: resource).update!(active: true)
-
-        NotificationMailer.client_transfer_notification(
-          current_user: new_user,
-          previous_user: previous_user,
-          client: resource
-        ).deliver_later
-
-        analytics_track(
-          label: :client_transfer,
-          data: {
-            admin_id: current_admin_user.id,
-            clients_transferred_count: 1
-          }
-        )
-      end
-
-      params[:client][:user_ids] = nil
-
-      super do |success, failure|
-        success.html do
-          render :show
-        end
-        failure.html do
-          render :edit
-        end
-      end
-    end
   end
 end
