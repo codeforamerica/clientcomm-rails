@@ -5,7 +5,7 @@ class MoveActiveFromClientsToReportingRelationships < ActiveRecord::Migration[5.
         user_id: client['user_id'],
         client: client
       ) do |rr|
-        rr.active = client.active
+        rr.active = client[:active]
       end
     end
   end
