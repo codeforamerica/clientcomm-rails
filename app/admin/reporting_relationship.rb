@@ -34,7 +34,7 @@ ActiveAdmin.register ReportingRelationship do
                    collection: options,
                    include_blank: true,
                    input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
-      u.template.concat "<li><label class='label' for='transfer_note'>Include a note for the new user</label><textarea id='transfer_note' name='transfer[note]'></textarea></li>".html_safe
+      u.template.concat "<li><label class='label' for='transfer_note'>Include a message for the new user</label><textarea id='transfer_note' name='transfer[note]'></textarea></li>".html_safe
       # rubocop:enable Rails/OutputSafety
     end
     f.actions do

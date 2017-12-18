@@ -55,7 +55,7 @@ feature 'Admin Panel' do
         expect(page).to have_content('ADMIN / CLIENTS /')
         expect(page).to have_content('Change user')
         expect(page).to have_select("user_in_dept_#{department2.id}", options: ['', user3.full_name])
-        expect(page).to have_content('Include a note for the new user')
+        expect(page).to have_content('Include a message for the new user')
       end
 
       step 'it completes the form and submits it' do
@@ -90,7 +90,7 @@ feature 'Admin Panel' do
         expect(page).to have_content("ADMIN / CLIENTS / #{client1.full_name.upcase}")
         expect(page).to have_content('Change user')
         expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
-        expect(page).to have_content('Include a note for the new user')
+        expect(page).to have_content('Include a message for the new user')
       end
 
       step 'it completes the form and submits it' do
