@@ -61,7 +61,7 @@ ActiveAdmin.register ReportingRelationship do
       client.messages
             .scheduled
             .where(user: department.users)
-            .update(user_id: new_user)
+            .update(user: new_user)
 
       ReportingRelationship.where(client: client, user: department.users).each do |relationship|
         relationship.update!(active: false)
@@ -110,7 +110,7 @@ ActiveAdmin.register ReportingRelationship do
       client.messages
             .scheduled
             .where(user: department.users)
-            .update(user_id: new_user)
+            .update(user: new_user)
 
       ReportingRelationship.where(client: client, user: department.users).each do |relationship|
         relationship.update!(active: false)

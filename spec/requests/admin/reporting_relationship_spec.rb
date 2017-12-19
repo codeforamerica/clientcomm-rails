@@ -21,8 +21,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
       let(:params) do
         {
           reporting_relationship: {
-            user: { department_id: department.id, id: user3.id },
-            client_id: client.id
+            client_id: client.id,
+            user: { department_id: department.id, id: user3.id }
           },
           transfer: { note: 'This is a transfer note.' }
         }
@@ -64,8 +64,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         let(:params) do
           {
             reporting_relationship: {
-              user: { department_id: department.id, id: user2.id },
-              client_id: client.id
+              client_id: client.id,
+              user: { department_id: department.id, id: user2.id }
             },
             transfer: { note: 'This is a transfer note.' }
           }
@@ -94,6 +94,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
         it 'transfers scheduled messages' do
           scheduled_messages = user1.messages.scheduled
+          scheduled_messages_count = scheduled_messages.count
           perform_enqueued_jobs do
             post admin_reporting_relationships_path, params: params
           end
@@ -101,6 +102,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
           expect(active_users).to include(user2)
           expect(active_users).to_not include(user1)
+          expect(user2.messages.scheduled.count).to eq(scheduled_messages_count)
           expect(user2.messages.scheduled).to include(*scheduled_messages.reload)
           expect(ReportingRelationship.find_by(user: user2, client: client)).to be_active
           expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
@@ -113,15 +115,12 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
       context 'reactivating an old relationship' do
         let(:client) { create :client, users: [user1] }
-        let(:rr) { ReportingRelationship.find_by(user: user1, client: client) }
         let(:department) { user1.department }
         let(:params) do
           {
             reporting_relationship: {
               client_id: client.id,
-              user: {
-                department_id: department.id, id: user1.id
-              }
+              user: { department_id: department.id, id: user1.id }
             },
             transfer: { note: 'This is a transfer note.' }
           }
@@ -168,6 +167,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
       it 'transfers scheduled messages' do
         scheduled_messages = user1.messages.scheduled
+        scheduled_messages_count = scheduled_messages.count
         perform_enqueued_jobs do
           put admin_reporting_relationship_path(rr.id), params: params
         end
@@ -175,6 +175,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
         expect(active_users).to include(user2, user4)
         expect(active_users).to_not include(user1)
+        expect(user2.messages.scheduled.count).to eq(scheduled_messages_count)
         expect(user2.messages.scheduled).to include(*scheduled_messages.reload)
         expect(ReportingRelationship.find_by(user: user2, client: client)).to be_active
         expect(ReportingRelationship.find_by(user: user4, client: client)).to be_active
