@@ -10,29 +10,27 @@ ActiveAdmin.register Client do
     column :full_name, sortable: :last_name
 
     column 'Departments' do |client|
-      dep_users = {}
       active_users = client.users
                            .joins(:reporting_relationships)
+                           .joins(:department)
                            .where(reporting_relationships: { active: true })
+                           .order('departments.name ASC')
+                           .distinct
+                           .pluck('departments.name')
 
-      active_users.each do |u|
-        dep_users[u.department.name] = u.full_name
-      end
-
-      dep_users.sort.to_h.keys.join(', ')
+      active_users.join(', ')
     end
 
     column 'Users' do |client|
-      dep_users = {}
       active_users = client.users
                            .joins(:reporting_relationships)
+                           .joins(:department)
                            .where(reporting_relationships: { active: true })
+                           .order('departments.name ASC')
+                           .distinct
+                           .pluck(:full_name, 'departments.name')
 
-      active_users.each do |u|
-        dep_users[u.department.name] = u.full_name
-      end
-
-      dep_users.sort.to_h.values.join(', ')
+      active_users.map { |u| u[0] }.join(', ')
     end
 
     column :phone_number
