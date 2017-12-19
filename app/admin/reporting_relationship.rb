@@ -57,31 +57,14 @@ ActiveAdmin.register ReportingRelationship do
 
       client = rr.client
       department = Department.find(department_id)
+      old_users = department.users
 
-      client.messages
-            .scheduled
-            .where(user: department.users)
-            .update(user: new_user)
+      transfer_messages(client: client, old_users: old_users, new_user: new_user)
 
-      ReportingRelationship.where(client: client, user: department.users).each do |relationship|
-        relationship.update!(active: false)
-      end
+      deactivate_old_relationships(client: client, users: old_users)
 
-      new_user.reporting_relationships.find_or_create_by(client: client).update!(active: true)
-
-      NotificationMailer.client_transfer_notification(
-        current_user: new_user,
-        previous_user: nil,
-        client: client,
-        transfer_note: transfer_note
-      ).deliver_later
-
-      analytics_track(
-        label: :client_transfer,
-        data: {
-          admin_id: current_admin_user.id,
-          clients_transferred_count: 1
-        }
+      transfer_client_and_mail_and_track(
+        client: client, previous_user: nil, new_user: new_user, transfer_note: transfer_note
       )
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
@@ -100,27 +83,44 @@ ActiveAdmin.register ReportingRelationship do
 
       previous_user = rr.user
 
+      if new_user == previous_user
+        redirect_to(admin_client_path(rr.client)) && return
+      end
+
       client = rr.client
       department = Department.find(department_id)
+      old_users = department.users
 
-      if new_user == previous_user
-        redirect_to(admin_client_path(client)) && return
-      end
+      transfer_messages(client: client, old_users: old_users, new_user: new_user)
 
-      client.messages
-            .scheduled
-            .where(user: department.users)
-            .update(user: new_user)
-
-      ReportingRelationship.where(client: client, user: department.users).each do |relationship|
-        relationship.update!(active: false)
-      end
+      deactivate_old_relationships(client: client, users: old_users)
 
       if new_user.blank?
         flash[:success] = "#{client.full_name} has been unassigned from #{previous_user.full_name} in #{department.name}"
         redirect_to(admin_client_path(client)) && return
       end
 
+      transfer_client_and_mail_and_track(
+        client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note
+      )
+
+      flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
+      redirect_to(admin_client_path(client))
+    end
+
+    private
+
+    def transfer_messages(client:, old_users:, new_user:)
+      client.messages.scheduled.where(user: old_users).update(user: new_user)
+    end
+
+    def deactivate_old_relationships(client:, users:)
+      ReportingRelationship.where(client: client, user: users).each do |relationship|
+        relationship.update!(active: false)
+      end
+    end
+
+    def transfer_client_and_mail_and_track(client:, previous_user:, new_user:, transfer_note:)
       new_user.reporting_relationships.find_or_create_by(client: client).update!(active: true)
 
       NotificationMailer.client_transfer_notification(
@@ -137,13 +137,6 @@ ActiveAdmin.register ReportingRelationship do
           clients_transferred_count: 1
         }
       )
-
-      flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
-      redirect_to(admin_client_path(client))
     end
-  end
-
-  def transfer_user
-    # :TODO:
   end
 end
