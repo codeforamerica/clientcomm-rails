@@ -47,7 +47,7 @@ describe NotificationMailer, type: :mailer do
   describe '#client_transfer_notification' do
     let(:current_user) { create(:user) }
     let(:previous_user) { create(:user) }
-    let(:client) { create(:client) }
+    let(:client) { create(:client, first_name: 'Roger', last_name: 'Rabbit') }
     let(:mail) do
       NotificationMailer.client_transfer_notification(
         current_user: current_user,
