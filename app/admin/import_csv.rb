@@ -36,9 +36,7 @@ class ImportCsv
         new_client.users = [user]
       end
 
-      if client.persisted?
-        @relationships << ReportingRelationship.new(client: client, user: user)
-      end
+      @relationships << ReportingRelationship.new(client: client, user: user) if client.persisted?
 
       @clients << client
     end

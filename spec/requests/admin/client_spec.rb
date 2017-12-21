@@ -44,60 +44,20 @@ describe 'Clients', type: :request, active_job: true do
       )
     end
 
-    subject { get admin_clients_path }
+    subject { get admin_client_relationships_path }
 
     it 'displays a list of clients' do
       subject
 
-      expected_department_string = "#{department1.name}, #{department2.name}"
-      expected_user_string = "#{user1.full_name}, #{user3.full_name}"
+      expected_department_string = department1.name.to_s
+      expected_user_string = user1.full_name.to_s
 
       response_html = Nokogiri.parse(response.body)
-      client_row = response_html.css("#client_#{client.id}").first
+      client_row = response_html.css("#reporting_relationship_#{rr1.id}").first
 
       expect(client_row.content).to include(client.full_name)
       expect(client_row.content).to include(expected_department_string)
       expect(client_row.content).to include(expected_user_string)
-    end
-
-    context 'a relationship is inactive' do
-      let!(:rr2) do
-        ReportingRelationship.create(
-          client: client,
-          user: user3,
-          active: false
-        )
-      end
-
-      it 'does not display users with inactive relationships' do
-        subject
-
-        response_html = Nokogiri.parse(response.body)
-        client_row = response_html.css("#client_#{client.id}").first
-
-        expect(client_row.content).to_not include(department2.name)
-        expect(client_row.content).to_not include(user3.full_name)
-      end
-    end
-
-    context 'only the correct departments are shown' do
-      let(:client2) { create :client }
-      let!(:rr2) do
-        ReportingRelationship.create(
-          client: client2,
-          user: user3
-        )
-      end
-
-      it 'does not display users with inactive relationships' do
-        subject
-
-        response_html = Nokogiri.parse(response.body)
-        client_row = response_html.css("#client_#{client2.id}").first
-
-        expect(client_row.content).to_not include(department1.name)
-        expect(client_row.content).to_not include(user1.full_name)
-      end
     end
   end
 

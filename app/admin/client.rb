@@ -1,41 +1,9 @@
 ActiveAdmin.register Client do
-  menu priority: 4
+  menu false
 
   config.sort_order = 'last_name_asc'
 
   permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
-
-  index do
-    selectable_column
-    column :full_name, sortable: :last_name
-
-    column 'Departments' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck('departments.name')
-
-      active_users.join(', ')
-    end
-
-    column 'Users' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck(:full_name, 'departments.name')
-
-      active_users.map { |u| u[0] }.join(', ')
-    end
-
-    column :phone_number
-    actions
-  end
 
   show do
     panel 'Client Details' do
@@ -57,7 +25,7 @@ ActiveAdmin.register Client do
       next unless user
       panel "#{user.department.name}: #{user.full_name}" do
         attributes_table_for client.reporting_relationship(user: user) do
-          row :active
+          row :active, &:active
           row :notes
           row(:created_at) { |rr| rr.created_at&.strftime('%B %d, %Y %l:%M %Z') }
           row(:last_contacted_at) { |rr| rr.last_contacted_at&.strftime('%B %d, %Y %l:%M %Z') }
@@ -79,10 +47,6 @@ ActiveAdmin.register Client do
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
-  filter :users_department_id_eq,
-         label: 'Department',
-         as: :select,
-         collection: -> { Department.all.order(name: :asc) }
 
   member_action :deactivate, method: :post do
     rr = resource.reporting_relationships.find(params[:reporting_relationship_id])

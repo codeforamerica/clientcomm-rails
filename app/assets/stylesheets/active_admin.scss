@@ -57,3 +57,26 @@ body {
     background-image: linear-gradient(to bottom, #ED42A2, #B8337E);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ED42A2, endColorstr=#B8337E);
   }
 }
+
+
+.table_tools_segmented_control {
+
+  li {
+    // selected scope should be pink
+    &.selected a {
+      @include gradient(#ED0086, #A6005E);
+      box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1) inset;
+      cursor: default;
+      color: #efefef;
+      text-shadow: none;
+
+      .count {
+        color: #efefef;
+      }
+
+      &:hover {
+        @include gradient(#ED42A2, #B8337E);
+      }
+    }
+  }
+}

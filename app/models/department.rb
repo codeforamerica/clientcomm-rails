@@ -1,6 +1,6 @@
 class Department < ApplicationRecord
-  has_many :users, dependent: :nullify
-  belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id'
+  has_many :users, dependent: :nullify, inverse_of: :department
+  belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id', inverse_of: :department
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?

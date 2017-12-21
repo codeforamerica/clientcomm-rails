@@ -4,6 +4,11 @@ class ReportingRelationship < ApplicationRecord
   belongs_to :client_status
 
   scope :active, -> { where(active: true) }
+  Department.all.find_each do |department|
+    scope department.name, lambda {
+      joins(:user).where(users: { department: department })
+    }
+  end
 
   validates :client, uniqueness: { scope: :user }
   validates :client, :user, presence: true

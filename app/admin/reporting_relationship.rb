@@ -83,9 +83,7 @@ ActiveAdmin.register ReportingRelationship do
 
       previous_user = rr.user
 
-      if new_user == previous_user
-        redirect_to(admin_client_path(rr.client)) && return
-      end
+      redirect_to(admin_client_path(rr.client)) && return if new_user == previous_user
 
       client = rr.client
       department = Department.find(department_id)

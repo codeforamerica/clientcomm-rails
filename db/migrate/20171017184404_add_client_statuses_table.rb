@@ -14,4 +14,5 @@ class AddClientStatusesTable < ActiveRecord::Migration[5.1]
   end
 end
 
-class ClientStatus < ApplicationRecord; end
+class ClientStatus < ApplicationRecord
+end
