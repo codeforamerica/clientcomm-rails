@@ -112,6 +112,13 @@ ActiveAdmin.register ReportingRelationship do
 
     def transfer_messages(client:, old_users:, new_user:)
       client.messages.scheduled.where(user: old_users).update(user: new_user)
+
+      # rubocop:disable Style/GuardClause
+      if new_user.present?
+        unclaimed_messages = client.messages.where(user: new_user.department.unclaimed_user)
+        unclaimed_messages.update(user: new_user) if unclaimed_messages.any?
+      end
+      # rubocop:enable Style/GuardClause
     end
 
     def deactivate_old_relationships(client:, users:)
