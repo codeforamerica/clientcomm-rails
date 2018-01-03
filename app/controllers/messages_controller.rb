@@ -7,6 +7,10 @@ class MessagesController < ApplicationController
   def index
     @client = current_user.clients.find params[:client_id]
 
+    unless @client.active(user: current_user)
+      redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
+    end
+
     reporting_relationship = @client.reporting_relationship(user: current_user)
 
     analytics_track(
@@ -26,6 +30,8 @@ class MessagesController < ApplicationController
     @sendfocus = true
 
     @messages_scheduled = scheduled_messages(client: @client)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
   end
 
   def download

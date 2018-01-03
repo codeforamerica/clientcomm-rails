@@ -122,6 +122,7 @@ describe 'Messages requests', type: :request, active_job: true do
           get client_messages_path(client)
 
           expect(response).to redirect_to(clients_path)
+          expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
         end
       end
 
@@ -131,6 +132,7 @@ describe 'Messages requests', type: :request, active_job: true do
           get client_messages_path(unrelated_client)
 
           expect(response).to redirect_to(clients_path)
+          expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
         end
       end
 
@@ -139,6 +141,7 @@ describe 'Messages requests', type: :request, active_job: true do
           get client_messages_path(99999)
 
           expect(response).to redirect_to(clients_path)
+          expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
         end
       end
     end

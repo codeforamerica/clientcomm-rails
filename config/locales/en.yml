@@ -27,40 +27,41 @@ en:
     notices:
       client:
         taken: You already have a client with this phone number.
+        unauthorized: The client you tried to view is not in your caseload.
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   message:
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
   activerecord:
     errors:
-        models:
-          user:
-            attributes:
-              phone_number:
-                taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
-                invalid: This is not a valid phone number.
-              active:
-                active_reporting_relationships: User with active reporting relationships cannot be deactivated.
-          client:
-            attributes:
-              phone_number:
-                invalid: This is not a valid phone number.
-                taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
-                existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
-                inactive_taken: This client has been deleted. Please use the Add Client button to recover them.
-          message:
-            attributes:
-              send_at:
-                on_or_after: "You can't schedule a message in the past."
-                before: "You can't schedule a message more than a year in the future."
-              body:
-                blank: You need to add a message.
-          template:
-            attributes:
-              title:
-                blank: Give your template a name so you can find it in the list.
-              body:
-                blank: Add a template.
+      models:
+        user:
+          attributes:
+            phone_number:
+              taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
+              invalid: This is not a valid phone number.
+            active:
+              active_reporting_relationships: User with active reporting relationships cannot be deactivated.
+        client:
+          attributes:
+            phone_number:
+              invalid: This is not a valid phone number.
+              taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
+              existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
+              inactive_taken: This client has been deleted. Please use the Add Client button to recover them.
+        message:
+          attributes:
+            send_at:
+              on_or_after: "You can't schedule a message in the past."
+              before: "You can't schedule a message more than a year in the future."
+            body:
+              blank: You need to add a message.
+        template:
+          attributes:
+            title:
+              blank: Give your template a name so you can find it in the list.
+            body:
+              blank: Add a template.
   activemodel:
     forms:
       models:
