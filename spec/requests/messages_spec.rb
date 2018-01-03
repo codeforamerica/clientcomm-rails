@@ -115,6 +115,32 @@ describe 'Messages requests', type: :request, active_job: true do
           end
         end
       end
+
+      context 'for a client the user has an inactive relationship with' do
+        it 'should redirect to the clients index view' do
+          ReportingRelationship.find_by(user: user, client: client).update(active: false)
+          get client_messages_path(client)
+
+          expect(response).to redirect_to(clients_path)
+        end
+      end
+
+      context 'for a client the user has no relationship with' do
+        it 'should redirect to the clients index view' do
+          unrelated_client = create(:client)
+          get client_messages_path(unrelated_client)
+
+          expect(response).to redirect_to(clients_path)
+        end
+      end
+
+      context "for a client that doesn't exist" do
+        it 'should redirect to the clients index view' do
+          get client_messages_path(99999)
+
+          expect(response).to redirect_to(clients_path)
+        end
+      end
     end
 
     describe 'DELETE#destroy' do
