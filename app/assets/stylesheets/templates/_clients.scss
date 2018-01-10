@@ -62,4 +62,30 @@
 
 #survey {
   display: none;
+  padding: 20px;
+  margin-top: 20px;
+
+  .question-text {
+    font-weight: bold;
+  }
+
+  .survey-response {
+    margin: 10px 0;
+    padding: 5px 10px;
+    background: white;
+    border: 2px $color-light-grey solid;
+    font-size: 1.2em;
+    width: 100%;
+
+    .cb {
+      line-height: 5px;
+      position: relative;
+      top: -4px;
+      margin: 0px 5px;
+    }
+  }
+}
+
+#deactivate_client:disabled {
+  opacity: 0.5;
 }

@@ -494,11 +494,12 @@ describe 'Clients requests', type: :request do
 
     describe 'GET#edit' do
       let(:client) { create :client, user: user, first_name: 'Fred', last_name: 'Flintstone' }
-      let(:survey_question) { 'What was the outcome for this client?' }
+      let(:survey_question_text) { 'What was the outcome for this client?' }
+      let(:survey_response_text) { 'FTA' }
 
       before do
-        # create question for survey with text 'What was the outcome for this client?'
-        # create answer to survey 'FTA'
+        q = create :survey_question, text: survey_question_text
+        create :survey_response, survey_question: q, text: survey_response_text
       end
 
       subject { get edit_client_path(client) }
@@ -518,8 +519,8 @@ describe 'Clients requests', type: :request do
       it 'renders a closeout survey' do
         subject
         expect(response.code).to eq '200'
-        expect(response.body).to include(survey_question)
-        expect(response.body).to include('FTA')
+        expect(response.body).to include(survey_question_text)
+        expect(response.body).to include(survey_response_text)
       end
 
       context 'intercom' do

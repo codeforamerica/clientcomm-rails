@@ -14,7 +14,7 @@ $(document).ready(function() {
   });
 
   $('#survey').click(function() {
-    checked = ($(this).children(":checkbox:checked").length > 0);
+    checked = ($(this).find(":checkbox:checked").length > 0);
     $('#deactivate_client').prop('disabled', !checked);
   });
 });
