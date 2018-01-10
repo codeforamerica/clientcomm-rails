@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105010123) do
+ActiveRecord::Schema.define(version: 20180105182759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,15 @@ ActiveRecord::Schema.define(version: 20180105010123) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "survey_response_links", force: :cascade do |t|
+    t.bigint "survey_id"
+    t.bigint "survey_response_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id"], name: "index_survey_response_links_on_survey_id"
+    t.index ["survey_response_id"], name: "index_survey_response_links_on_survey_response_id"
+  end
+
   create_table "survey_responses", force: :cascade do |t|
     t.text "text"
     t.bigint "survey_question_id"
@@ -205,6 +214,8 @@ ActiveRecord::Schema.define(version: 20180105010123) do
   add_foreign_key "reporting_relationships", "client_statuses"
   add_foreign_key "reporting_relationships", "clients"
   add_foreign_key "reporting_relationships", "users"
+  add_foreign_key "survey_response_links", "survey_responses"
+  add_foreign_key "survey_response_links", "surveys"
   add_foreign_key "survey_responses", "survey_questions"
   add_foreign_key "surveys", "clients"
   add_foreign_key "surveys", "users"

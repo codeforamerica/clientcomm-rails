@@ -9,6 +9,7 @@ RSpec.describe Client, type: :model do
     it { should have_many(:users).through(:reporting_relationships) }
     it { should have_many :messages }
     it { should have_many(:attachments).through(:messages) }
+    it { should have_many(:surveys) }
   end
 
   describe 'scoping' do

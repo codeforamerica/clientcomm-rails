@@ -3,12 +3,15 @@ class Client < ApplicationRecord
   has_many :users, through: :reporting_relationships
   has_many :messages, -> { order(send_at: :asc) }
   has_many :attachments, through: :messages
+  has_many :surveys, dependent: :nullify
 
   scope :active, lambda {
     joins(:reporting_relationships)
       .where(reporting_relationships: { active: true })
       .distinct
   }
+
+  accepts_nested_attributes_for :surveys
 
   validates_associated :reporting_relationships
   accepts_nested_attributes_for :reporting_relationships

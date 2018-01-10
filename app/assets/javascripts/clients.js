@@ -1,5 +1,5 @@
 //= require client_search
-//= require clients/archives
+//= require clients/edit
 
 $(document).ready(function() {
 

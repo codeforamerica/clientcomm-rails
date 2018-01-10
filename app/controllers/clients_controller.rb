@@ -130,9 +130,13 @@ class ClientsController < ApplicationController
                   :phone_number,
                   :notes,
                   reporting_relationships_attributes: %i[
-                    id notes client_status_id
+                    id notes client_status_id active
+                  ],
+                  surveys_attributes: [
+                    survey_response_ids: []
                   ]).tap do |p|
       p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
+      p[:surveys_attributes]['0'][:user_id] = current_user.id
     end
   end
 end

@@ -1,5 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe SurveyResponse, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:survey_question) }
+  it { should have_many(:survey_response_links) }
 end

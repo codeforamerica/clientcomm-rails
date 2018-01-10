@@ -273,19 +273,30 @@ describe 'Clients requests', type: :request do
               },
               surveys_attributes: {
                 '0': {
-                  response_ids: [1, 2, 3]
-                  # collection of IDs of survey responses
+                  survey_response_ids: [survey_response1.id, survey_response2.id, survey_response3.id]
                 }
               }
             }
           }
         end
 
-        it 'deactivates the rr and creates a survey' do
+        it 'deactivates the rr' do
+          subject
+          expect(existing_client.active(user: user))
+            .to eq(false)
+        end
+
+        it 'creates a survey' do
           subject
           expect(Survey.count).to eq(1)
-          expect(Survey.last.responses.count).to eq(3)
-          expect(Survey.last.responses).to include(survey_response1, survey_response2, survey_response3)
+          expect(Survey.last.survey_responses.count).to eq(3)
+          expect(Survey.last.survey_responses).to include(survey_response1, survey_response2, survey_response3)
+        end
+
+        it 'attaches the survey to the right user and client' do
+          subject
+          expect(Survey.last.client).to eq(existing_client)
+          expect(Survey.last.user).to eq(user)
         end
       end
 
