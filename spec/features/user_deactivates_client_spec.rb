@@ -24,6 +24,9 @@ feature 'user deactivates client', :js do
     clientone = create :client, user: myuser
     login_as myuser, :scope => :user
     visit root_path
+
+    expect(page).to have_css '#client-list', text: "#{clientone.first_name} #{clientone.last_name}"
+
     within "#client_#{clientone.id}" do
       find('td', text: 'Manage').click
     end
@@ -40,15 +43,14 @@ feature 'user deactivates client', :js do
     expect(page).to have_content response_text2
     expect(page).to have_content response_text3
 
-    click_on "Delete #{clientone.first_name} #{clientone.last_name}"
-    expect(page).to have_current_path(edit_client_path(clientone))
+    expect(page).to have_button("Delete #{clientone.first_name} #{clientone.last_name}", disabled: true)
 
     check response_text1
     check response_text3
 
     click_on "Delete #{clientone.first_name} #{clientone.last_name}"
     expect(page).to have_current_path(clients_path)
-    expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
+    expect(page).to_not have_css '#client-list', text: "#{clientone.first_name} #{clientone.last_name}"
     expect(page).to have_css '.flash p', text: "#{clientone.full_name} has been successfully deleted"
   end
 

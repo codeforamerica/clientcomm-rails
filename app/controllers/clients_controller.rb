@@ -93,27 +93,43 @@ class ClientsController < ApplicationController
       reporting_relationship = @client.reporting_relationships
                                       .find_by(user: current_user)
 
+      # if params rr.active == false
+      # then it was a deactivation and follow that logic
+
       other_active_relationships = @client.reporting_relationships
                                           .active.where.not(user: current_user)
 
-      if other_active_relationships.any?
-        other_active_relationships.each do |rr|
-          NotificationMailer.client_edit_notification(
-            notified_user: rr.user,
-            editing_user: current_user,
-            client: @client,
-            previous_changes: @client.previous_changes.except(:updated_at)
-          ).deliver_later
+      if reporting_relationship.active
+        if other_active_relationships.any?
+          other_active_relationships.each do |rr|
+            NotificationMailer.client_edit_notification(
+              notified_user: rr.user,
+              editing_user: current_user,
+              client: @client,
+              previous_changes: @client.previous_changes.except(:updated_at)
+            ).deliver_later
+          end
         end
+
+        analytics_track(
+          label: 'client_edit_success',
+          data: @client.analytics_tracker_data
+                  .merge(reporting_relationship.analytics_tracker_data)
+        )
+
+        redirect_to client_messages_path(@client)
+      else
+        analytics_track(
+          label: 'client_archive_success',
+          data: {
+            client_id: @client.id,
+            client_duration: (Date.current - @client.relationship_started(user: current_user).to_date).to_i
+          }
+        )
+
+        redirect_to clients_path, notice: "#{@client.full_name} has been successfully deleted"
       end
 
-      analytics_track(
-        label: 'client_edit_success',
-        data: @client.analytics_tracker_data
-                .merge(reporting_relationship.analytics_tracker_data)
-      )
-
-      redirect_to client_messages_path(@client)
     else
       flash[:alert] = t('flash.errors.client.invalid')
       render :edit
@@ -136,7 +152,7 @@ class ClientsController < ApplicationController
                     survey_response_ids: []
                   ]).tap do |p|
       p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
-      p[:surveys_attributes]['0'][:user_id] = current_user.id
+      p[:surveys_attributes]['0'][:user_id] = current_user.id if p.dig(:surveys_attributes, '0')
     end
   end
 end

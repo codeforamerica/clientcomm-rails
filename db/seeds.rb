@@ -29,11 +29,18 @@ ReportingRelationship.delete_all
 Client.delete_all
 User.where.not(id: [test_user.id]).delete_all
 Department.delete_all
+Survey.delete_all
 
 puts 'Creating Departments'
 FactoryBot.create_list :department, 3
 User.all.each do |user|
   user.update_attributes(department: Department.all.sample)
+end
+
+puts 'Creating Survey Questions and Responses'
+FactoryBot.create :survey_question
+SurveyQuestion.all.each do |question|
+  FactoryBot.create_list :survey_response, 6, survey_question: question
 end
 
 puts 'Creating Users and Clients'

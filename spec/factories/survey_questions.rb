@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :survey_question do
-    text 'MyText'
+    text { Faker::Lorem.sentence }
   end
 end
