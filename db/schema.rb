@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171129184319) do
+ActiveRecord::Schema.define(version: 20180105010123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,29 @@ ActiveRecord::Schema.define(version: 20171129184319) do
     t.index ["user_id"], name: "index_reporting_relationships_on_user_id"
   end
 
+  create_table "survey_questions", force: :cascade do |t|
+    t.text "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "survey_responses", force: :cascade do |t|
+    t.text "text"
+    t.bigint "survey_question_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_question_id"], name: "index_survey_responses_on_survey_question_id"
+  end
+
+  create_table "surveys", force: :cascade do |t|
+    t.bigint "client_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_surveys_on_client_id"
+    t.index ["user_id"], name: "index_surveys_on_user_id"
+  end
+
   create_table "templates", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -182,6 +205,9 @@ ActiveRecord::Schema.define(version: 20171129184319) do
   add_foreign_key "reporting_relationships", "client_statuses"
   add_foreign_key "reporting_relationships", "clients"
   add_foreign_key "reporting_relationships", "users"
+  add_foreign_key "survey_responses", "survey_questions"
+  add_foreign_key "surveys", "clients"
+  add_foreign_key "surveys", "users"
   add_foreign_key "templates", "users"
   add_foreign_key "users", "departments"
 end

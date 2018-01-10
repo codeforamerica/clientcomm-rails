@@ -256,6 +256,39 @@ describe 'Clients requests', type: :request do
         }
       end
 
+      context 'deactivating a client' do
+        let!(:survey_question) { create :survey_question }
+        let!(:survey_response1) { create :survey_response, survey_question: survey_question, text: 'Successful closeout' }
+        let!(:survey_response2) { create :survey_response, survey_question: survey_question, text: 'FTA' }
+        let!(:survey_response3) { create :survey_response, survey_question: survey_question, text: 'Supervision rescinded' }
+
+        subject do
+          put client_path(existing_client), params: {
+            client: {
+              reporting_relationships_attributes: {
+                '0': {
+                  id: existing_client.reporting_relationships.find_by(user: user).id,
+                  active: false
+                }
+              },
+              surveys_attributes: {
+                '0': {
+                  response_ids: [1, 2, 3]
+                  # collection of IDs of survey responses
+                }
+              }
+            }
+          }
+        end
+
+        it 'deactivates the rr and creates a survey' do
+          subject
+          expect(Survey.count).to eq(1)
+          expect(Survey.last.responses.count).to eq(3)
+          expect(Survey.last.responses).to include(survey_response1, survey_response2, survey_response3)
+        end
+      end
+
       it 'tracks the updating of a client' do
         create :message, user: user, client: existing_client, inbound: false
         create :message, user: user, client: existing_client, inbound: false, send_at: Time.now.tomorrow
@@ -450,6 +483,12 @@ describe 'Clients requests', type: :request do
 
     describe 'GET#edit' do
       let(:client) { create :client, user: user, first_name: 'Fred', last_name: 'Flintstone' }
+      let(:survey_question) { 'What was the outcome for this client?' }
+
+      before do
+        # create question for survey with text 'What was the outcome for this client?'
+        # create answer to survey 'FTA'
+      end
 
       subject { get edit_client_path(client) }
 
@@ -463,6 +502,13 @@ describe 'Clients requests', type: :request do
         subject
         expect(response.code).to eq '200'
         expect_analytics_events_happened('client_edit_view')
+      end
+
+      it 'renders a closeout survey' do
+        subject
+        expect(response.code).to eq '200'
+        expect(response.body).to include(survey_question)
+        expect(response.body).to include('FTA')
       end
 
       context 'intercom' do
