@@ -52,7 +52,6 @@ feature 'Admin Panel' do
         click_on('Assign user')
 
         expect(page).to have_content('Transfer Client')
-        expect(page).to have_content('ADMIN / CLIENTS /')
         expect(page).to have_content('Change user')
         expect(page).to have_select("user_in_dept_#{department2.id}", options: ['', user3.full_name])
         expect(page).to have_content('Include a message for the new user')
@@ -73,6 +72,32 @@ feature 'Admin Panel' do
       end
     end
 
+    context 'deactivate links' do
+      before do
+        ReportingRelationship.create(client: client1, user: user2, active: false)
+      end
+
+      scenario 'deactivating and reactivating a relationship to a user' do
+        step 'visits the edit page, clicks the deactivate link next to a user' do
+          visit edit_admin_client_path(client1)
+          click_on('Deactivate')
+
+          expect(page.current_path).to eq(admin_client_path(client1))
+          expect(page).to have_content("#{client1.full_name} has been deactivated for #{user1.full_name} in #{department1.name}.")
+        end
+
+        step 'visits the edit page, clicks the reactivate link next to a user' do
+          visit edit_admin_client_path(client1)
+          expect(page).to have_content(user1.full_name)
+          expect(page).to_not have_content(user2.full_name)
+          click_on('Reactivate')
+
+          expect(page.current_path).to eq(admin_client_path(client1))
+          expect(page).to have_content("#{client1.full_name} has been reactivated for #{user1.full_name} in #{department1.name}.")
+        end
+      end
+    end
+
     scenario 'transferring a client to a new user' do
       step 'visits the edit client page' do
         visit edit_admin_client_path(client1)
@@ -87,7 +112,6 @@ feature 'Admin Panel' do
         click_on('Change')
 
         expect(page).to have_content('Transfer Client')
-        expect(page).to have_content("ADMIN / CLIENTS / #{client1.full_name.upcase}")
         expect(page).to have_content('Change user')
         expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
         expect(page).to have_content('Include a message for the new user')

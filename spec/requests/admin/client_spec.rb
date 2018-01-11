@@ -203,13 +203,61 @@ describe 'Clients', type: :request, active_job: true do
     end
   end
 
+  describe '#deactivate' do
+    let(:client) { create :client }
+    let!(:rr1) do
+      ReportingRelationship.create(
+        client: client,
+        user: user1,
+        active: true
+      )
+    end
+
+    it 'deactivates a reporting relationship' do
+      post deactivate_admin_client_path(client), params: {
+        reporting_relationship_id: rr1.id
+      }
+
+      expect(rr1.reload.active).to eq(false)
+      expect(flash[:success]).to include "#{client.full_name} has been deactivated for #{user1.full_name} in #{department1.name}."
+      expect(response).to redirect_to(admin_client_path(client))
+    end
+  end
+
+  describe '#reactivate' do
+    let(:client) { create :client }
+    let!(:rr1) do
+      ReportingRelationship.create(
+        client: client,
+        user: user1,
+        active: false
+      )
+    end
+
+    it 'reactivates a reporting relationship' do
+      post reactivate_admin_client_path(client), params: {
+        reporting_relationship_id: rr1.id
+      }
+
+      expect(rr1.reload.active).to eq(true)
+      expect(flash[:success]).to include "#{client.full_name} has been reactivated for #{user1.full_name} in #{department1.name}."
+      expect(response).to redirect_to(admin_client_path(client))
+    end
+  end
+
   describe 'PUT#update' do
     let(:client) { create :client }
     let(:first_name) { 'Joanne' }
     let(:last_name) { 'Smith' }
     let(:phone_number) { 'Some phone number' }
     let(:params) do
-      { client: { first_name: first_name, last_name: last_name, phone_number: phone_number } }
+      {
+        client: {
+          first_name: first_name,
+          last_name: last_name,
+          phone_number: phone_number
+        }
+      }
     end
 
     it 'updates the user properties' do

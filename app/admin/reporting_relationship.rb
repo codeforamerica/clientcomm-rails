@@ -96,7 +96,7 @@ ActiveAdmin.register ReportingRelationship do
       deactivate_old_relationships(client: client, users: old_users)
 
       if new_user.blank?
-        flash[:success] = "#{client.full_name} has been unassigned from #{previous_user.full_name} in #{department.name}"
+        flash[:success] = "#{client.full_name} has been deactivated for #{previous_user.full_name} in #{department.name}."
         redirect_to(admin_client_path(client)) && return
       end
 
