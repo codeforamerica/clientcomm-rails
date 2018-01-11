@@ -147,6 +147,7 @@ ActiveAdmin.register Client do
               if last_active_user
                 rr = resource.reporting_relationships.find_by(user: last_active_user)
                 span last_active_user.full_name, disabled: true
+                a 'Change', href: edit_admin_reporting_relationship_path(rr)
                 a 'Reactivate', href: reactivate_admin_client_path(resource, reporting_relationship_id: rr.id), 'data-method': :post
               else
                 a 'Assign user',

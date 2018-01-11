@@ -80,6 +80,8 @@ feature 'Admin Panel' do
       scenario 'deactivating and reactivating a relationship to a user' do
         step 'visits the edit page, clicks the deactivate link next to a user' do
           visit edit_admin_client_path(client1)
+
+          expect(page).to have_link('Change')
           click_on('Deactivate')
 
           expect(page.current_path).to eq(admin_client_path(client1))
@@ -90,6 +92,7 @@ feature 'Admin Panel' do
           visit edit_admin_client_path(client1)
           expect(page).to have_content(user1.full_name)
           expect(page).to_not have_content(user2.full_name)
+          expect(page).to have_link('Change')
           click_on('Reactivate')
 
           expect(page.current_path).to eq(admin_client_path(client1))
