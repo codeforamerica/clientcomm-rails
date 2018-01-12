@@ -4,7 +4,7 @@ feature 'Admin Panel' do
   let(:admin_user) { create :admin_user }
 
   before do
-    login_as(admin_user, :scope => :admin_user)
+    login_as(admin_user, scope: :admin_user)
   end
 
   describe 'User View' do
@@ -26,6 +26,42 @@ feature 'Admin Panel' do
       expect(page).to have_content(client2.full_name)
       expect(page).to_not have_content(client3.full_name)
       expect(page).to_not have_content(client4.full_name)
+    end
+  end
+
+  describe 'Client Index' do
+    let(:department1) { create :department }
+    let(:department2) { create :department }
+    let!(:user1) { create :user, department: department1 }
+    let!(:user2) { create :user, department: department2 }
+    let!(:user3) { create :user, department: department1, active: false }
+    let!(:user4) { create :user, department: department2, active: false }
+    let!(:client1) { create :client, user: user1 }
+    let!(:client2) { create :client, user: user2 }
+    let!(:client3) { create :client, user: user3 }
+    let!(:client4) { create :client, user: user4 }
+
+    context 'filtering by department' do
+      it 'shows all clients when not filtered' do
+        visit admin_clients_path
+
+        expect(page).to have_content(client1.full_name)
+        expect(page).to have_content(client2.full_name)
+        expect(page).to have_content(client3.full_name)
+        expect(page).to have_content(client4.full_name)
+      end
+
+      it 'shows clients with active users in the selected department' do
+        visit admin_clients_path
+
+        select department1.name, from: 'Department'
+        click_on 'Filter'
+
+        expect(page).to have_content(client1.full_name)
+        expect(page).to_not have_content(client2.full_name)
+        expect(page).to_not have_content(client3.full_name)
+        expect(page).to_not have_content(client4.full_name)
+      end
     end
   end
 

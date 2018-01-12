@@ -79,6 +79,10 @@ ActiveAdmin.register Client do
   filter :first_name_cont, label: 'Client first name'
   filter :last_name_cont, label: 'Client last name'
   filter :phone_number_cont, label: 'Phone Number'
+  filter :users_department_id_eq,
+         label: 'Department',
+         as: :select,
+         collection: -> { Department.all.order(name: :asc) }
 
   member_action :deactivate, method: :post do
     rr = resource.reporting_relationships.find(params[:reporting_relationship_id])
