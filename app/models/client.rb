@@ -22,13 +22,6 @@ class Client < ApplicationRecord
   validates_presence_of :last_name, :phone_number
   validates_uniqueness_of :phone_number
 
-  Department.all.find_each do |department|
-    scope department.name, lambda {
-      joins('INNER JOIN reporting_relationships rep_rel ON rep_rel.client_id = clients.id AND rep_rel.active = true')
-        .joins('INNER JOIN users ON rep_rel.user_id = users.id').where(users: { department: department })
-    }
-  end
-
   def analytics_tracker_data
     {
       client_id: self.id
