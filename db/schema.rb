@@ -14,7 +14,6 @@ ActiveRecord::Schema.define(version: 20180105182759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -65,7 +64,6 @@ ActiveRecord::Schema.define(version: 20180105182759) do
     t.string "first_name"
     t.string "last_name"
     t.string "phone_number"
-    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
@@ -74,6 +72,7 @@ ActiveRecord::Schema.define(version: 20180105182759) do
     t.boolean "has_unread_messages", default: false, null: false
     t.boolean "has_message_error", default: false, null: false
     t.bigint "client_status_id"
+    t.boolean "active"
     t.index ["client_status_id"], name: "index_clients_on_client_status_id"
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"

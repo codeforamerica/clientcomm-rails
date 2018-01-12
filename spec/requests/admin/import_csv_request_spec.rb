@@ -41,7 +41,7 @@ describe 'import csv', type: :request do
         subject
       end
 
-      it { should redirect_to(admin_clients_path) }
+      it { should redirect_to(admin_client_relationships_path) }
 
       it 'creates clients corresponding to the inputted csv' do
         expect(user.clients.count).to eq 2

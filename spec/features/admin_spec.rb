@@ -43,7 +43,7 @@ feature 'Admin Panel' do
 
     context 'filtering by department' do
       it 'shows all clients when not filtered' do
-        visit admin_clients_path
+        visit admin_client_relationships_path
 
         expect(page).to have_content(client1.full_name)
         expect(page).to have_content(client2.full_name)
@@ -52,14 +52,15 @@ feature 'Admin Panel' do
       end
 
       it 'shows clients with active users in the selected department' do
-        visit admin_clients_path
+        visit admin_client_relationships_path
 
         select department1.name, from: 'Department'
+
         click_on 'Filter'
 
         expect(page).to have_content(client1.full_name)
         expect(page).to_not have_content(client2.full_name)
-        expect(page).to_not have_content(client3.full_name)
+        expect(page).to have_content(client3.full_name)
         expect(page).to_not have_content(client4.full_name)
       end
     end

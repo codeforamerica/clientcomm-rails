@@ -6,6 +6,10 @@ class ImportCsv
   include ActiveModel::Validations::Callbacks
   attr_accessor :file
 
+  def self.inheritance_column
+    nil
+  end
+
   before_validation :populate_clients
   validate :relationships_are_all_valid
 
@@ -67,7 +71,7 @@ ActiveAdmin.register ImportCsv do
 
     f.actions do
       f.action :submit, label: 'Upload CSV'
-      f.action :cancel, url: :admin_clients, label: 'Cancel'
+      f.action :cancel, url: :admin_client_relationships, label: 'Cancel'
     end
   end
 
@@ -80,7 +84,7 @@ ActiveAdmin.register ImportCsv do
       @import_csv = ImportCsv.new(file: permitted_params[:import_csv][:file].read)
 
       if @import_csv.save
-        redirect_to :admin_clients, notice: 'Clients Created Succesfully'
+        redirect_to :admin_client_relationships, notice: 'Clients Created Succesfully'
       else
         render :new
       end

@@ -4,7 +4,7 @@ ActiveAdmin.register ReportingRelationship do
   breadcrumb do
     crumbs = [
       link_to('ADMIN', admin_root_path),
-      link_to('CLIENTS', admin_clients_path)
+      link_to('CLIENTS', admin_client_relationships_path)
     ]
     if resource.persisted?
       crumbs << link_to(resource.client.full_name.upcase, admin_client_path(resource.client))

@@ -134,9 +134,7 @@ ActiveAdmin.register Client do
 
   controller do
     def index
-      params[:q][:phone_number_cont] = params[:q][:phone_number_cont].gsub(/\D/, '') if params[:q].try(:[], :phone_number_cont)
-
-      super
+      redirect_to admin_client_relationships_path
     end
   end
 end

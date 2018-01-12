@@ -1,12 +1,7 @@
 ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
-  menu priority: 4
+  menu priority: 4, label: 'Clients'
 
   permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
-
-  scope :all, default: true
-  Department.all.each do |department|
-    scope department.name
-  end
 
   index do
     selectable_column
@@ -29,9 +24,10 @@ ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
     end
   end
 
+  action_item :new_client, only: :index { link_to 'New Client', new_admin_client_path }
   action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
 
-  actions :all, :except => [:destroy]
+  actions :all, :except => %i[destroy new]
 
   filter :user_id,
          as: :select,
@@ -41,6 +37,10 @@ ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
   filter :client_last_name_cont, label: 'Client last name'
   filter :client_phone_number_cont, label: 'Phone Number'
   filter :active
+  filter :user_department_id_eq,
+         label: 'Department',
+         as: :select,
+         collection: -> { Department.all.order(name: :asc) }
 
   controller do
     def scoped_collection
@@ -48,6 +48,7 @@ ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
     end
 
     def index
+      @page_title = 'Clients'
       params[:q][:phone_number_cont] = params[:q][:phone_number_cont].gsub(/\D/, '') if params[:q].try(:[], :phone_number_cont)
 
       super
