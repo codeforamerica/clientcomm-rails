@@ -73,7 +73,7 @@ class Message < ApplicationRecord
       attachments_count: self.attachments.count,
       message_date_scheduled: self.send_at,
       message_date_created: self.created_at,
-      client_active: self.client.active?
+      client_active: self.client.active(user: self.user)
     }
   end
 

@@ -11,9 +11,14 @@ describe 'reads', type: :request do
 
     describe 'reads#create' do
       let(:user) { create :user }
-      let(:client) { create :client, user: user, has_unread_messages: true }
+      let(:client) { create :client, user: user }
       let(:message) { create :message, client: client, read: false, user: user }
       let(:user) { correct_user }
+
+      before do
+        client.reporting_relationship(user: user)
+              .update(has_unread_messages: true)
+      end
 
       subject do
         post message_read_path(message), params: {
@@ -24,12 +29,16 @@ describe 'reads', type: :request do
       end
 
       it 'updates message read' do
+        expect(message.reload.read).to eq false
+
         subject
 
         expect(message.reload.read).to eq true
       end
 
       it 'updates client has_unread_messages' do
+        expect(client.reporting_relationship(user: correct_user).has_unread_messages).to eq true
+
         subject
 
         expect(client.reporting_relationship(user: correct_user).has_unread_messages).to eq false

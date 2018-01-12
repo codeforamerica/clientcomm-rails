@@ -3,12 +3,14 @@ FactoryBot.define do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
-    notes { Faker::Lorem.sentence }
 
     transient do
       user { nil }
       active { true }
       client_status { nil }
+      notes { Faker::Lorem.sentence }
+      has_message_error { false }
+      has_unread_messages { false }
     end
 
     after(:create) do |client, evaluator|
@@ -16,7 +18,13 @@ FactoryBot.define do
         client.users << evaluator.user
         client.reporting_relationships
               .find_by(user: evaluator.user)
-              .update(active: evaluator.active, client_status: evaluator.client_status)
+              .update(
+                active: evaluator.active,
+                client_status: evaluator.client_status,
+                notes: evaluator.notes,
+                has_message_error: evaluator.has_message_error,
+                has_unread_messages: evaluator.has_unread_messages
+              )
       end
     end
   end
