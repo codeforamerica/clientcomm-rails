@@ -120,7 +120,7 @@ class ClientsController < ApplicationController
         redirect_to client_messages_path(@client)
       else
         analytics_track(
-          label: 'client_archive_success',
+          label: 'client_deactivate_success',
           data: {
             client_id: @client.id,
             client_duration: (Date.current - @client.relationship_started(user: current_user).to_date).to_i

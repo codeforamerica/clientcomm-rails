@@ -262,6 +262,10 @@ describe 'Clients requests', type: :request do
         let!(:survey_response2) { create :survey_response, survey_question: survey_question, text: 'FTA' }
         let!(:survey_response3) { create :survey_response, survey_question: survey_question, text: 'Supervision rescinded' }
 
+        before do
+          existing_client.reporting_relationship(user: user).update(created_at: 10.days.ago)
+        end
+
         subject do
           put client_path(existing_client), params: {
             client: {
@@ -297,6 +301,18 @@ describe 'Clients requests', type: :request do
           subject
           expect(Survey.last.client).to eq(existing_client)
           expect(Survey.last.user).to eq(user)
+        end
+
+        it 'tracks the deactivation of a client' do
+          subject
+          expect_analytics_events(
+            {
+              'client_deactivate_success' => {
+                'client_id' => existing_client.id,
+                'client_duration' => 10
+              }
+            }
+          )
         end
       end
 

@@ -62,7 +62,7 @@ Client.all.sample(15).each do |client|
 end
 
 puts 'Creating Messages'
-Client.all.each do |client|
-  client.update!(client_status_id: ClientStatus.all.sample.id)
-  FactoryBot.create_list :message, 10, user: client.users.sample, client: client
+ReportingRelationship.all.each do |rr|
+  rr.update!(client_status_id: ClientStatus.all.sample.id)
+  FactoryBot.create_list :message, 10, user: rr.user, client: rr.client
 end
