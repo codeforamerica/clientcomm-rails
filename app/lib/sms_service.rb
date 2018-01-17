@@ -13,6 +13,11 @@ class SMSService
     @client = Twilio::REST::Client.new sid, token
   end
 
+  def status_lookup(message:)
+    twilio_message = @client.api.account.messages(message.twilio_sid).fetch
+    twilio_message.status
+  end
+
   def send_message(message:, callback_url:)
     # send the message via Twilio
     response = send_twilio_message(
@@ -31,10 +36,10 @@ class SMSService
   end
 
   def redact_message(message:)
-    message = @client.api.account.messages(message.twilio_sid).fetch
-    message.update(body: '')
+    twilio_message = @client.api.account.messages(message.twilio_sid).fetch
+    twilio_message.update(body: '')
 
-    message.media.list.each(&:delete) if message.num_media != '0'
+    twilio_message.media.list.each(&:delete) if twilio_message.num_media != '0'
 
     true
   rescue Twilio::REST::RestError => e
