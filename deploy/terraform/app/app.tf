@@ -26,6 +26,8 @@ variable "twilio_phone_number" {}
 variable "typeform_link" {}
 
 variable "enable_papertrail" {}
+variable "papertrail_plan" {}
+
 variable "sentry_deploy_hook" {}
 
 variable "admin_email" {}
@@ -72,7 +74,6 @@ resource "heroku_app" "clientcomm" {
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
-    UNCLAIMED_EMAIL = "${var.unclaimed_email}"
   }
 }
 
@@ -137,7 +138,12 @@ resource "heroku_addon" "sentry_deploy_hook" {
 resource "heroku_addon" "logging" {
   count = "${var.enable_papertrail ? 1 : 0}"
   app  = "${heroku_app.clientcomm.name}"
-  plan = "papertrail:choklad"
+  plan = "${var.papertrail_plan}"
+}
+
+resource "heroku_addon" "scheduler" {
+  app  = "${heroku_app.clientcomm.name}"
+  plan = "scheduler:standard"
 }
 
 resource "aws_s3_bucket" "logging_bucket" {
@@ -234,5 +240,11 @@ resource "null_resource" "unclaimed_account" {
 
   provisioner "local-exec" {
     command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:admin_account[${var.admin_email}, ${var.admin_password}]'"
+  }
+}
+
+resource "null_resource" "open_scheduler" {
+  provisioner "local-exec" {
+    command = "heroku addons:open ${heroku_addon.scheduler.id}"
   }
 }

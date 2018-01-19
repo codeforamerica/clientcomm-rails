@@ -30,6 +30,10 @@ variable "typeform_link" {}
 variable "enable_papertrail" {
   default = true
 }
+variable "papertrail_plan" {
+  default = "papertrail:choklad"
+}
+
 variable "sentry_deploy_hook" {}
 
 # Email Vars
@@ -71,7 +75,9 @@ module "app" {
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
 
-  enable_papertrail  = "${var.enable_papertrail}"
+  enable_papertrail = "${var.enable_papertrail}"
+  papertrail_plan   = "${var.papertrail_plan}"
+
   sentry_deploy_hook = "${var.sentry_deploy_hook}"
 
   environment = "${var.environment}"
