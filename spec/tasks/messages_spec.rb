@@ -9,6 +9,13 @@ describe 'messages rake tasks' do
 
     let(:twilio_message) { double('twilio_message', status: 'delivered') }
 
+    let!(:accepted_message) { create :message, inbound: false, twilio_status: 'accepted' }
+    let!(:queued_message) { create :message, inbound: false, twilio_status: 'queued' }
+    let!(:sending_message) { create :message, inbound: false, twilio_status: 'sending' }
+    let!(:delivered_message) { create :message, inbound: false, twilio_status: 'delivered' }
+    let!(:undelivered_message) { create :message, inbound: false, twilio_status: 'undelivered' }
+    let!(:received_message) { create :message, inbound: true, twilio_status: 'received' }
+
     before do
       load File.expand_path('../../../lib/tasks/messages.rake', __FILE__)
       Rake::Task.define_task(:environment)
@@ -17,16 +24,6 @@ describe 'messages rake tasks' do
       @token = ENV['TWILIO_AUTH_TOKEN']
       ENV['TWILIO_ACCOUNT_SID'] = sid
       ENV['TWILIO_AUTH_TOKEN'] = token
-
-      allow(SMSService.instance).to receive(:status_lookup)
-        .and_return('delivered')
-
-      create_list :message, 3, inbound: false, twilio_status: 'accepted'
-      create_list :message, 3, inbound: false, twilio_status: 'queued'
-      create_list :message, 3, inbound: false, twilio_status: 'sending'
-      create_list :message, 3, inbound: false, twilio_status: 'delivered'
-      create_list :message, 3, inbound: false, twilio_status: 'undelivered'
-      create_list :message, 3, inbound: true, twilio_status: 'received'
     end
 
     after do
@@ -39,15 +36,28 @@ describe 'messages rake tasks' do
       undelivered_messages = Message.where(twilio_status: 'undelivered')
       received_messages = Message.where(twilio_status: 'received')
 
-      expect(transient_messages.count).to eq 9
-      expect(undelivered_messages.count).to eq 3
-      expect(received_messages.count).to eq 3
+      expect(SMSService.instance).to receive(:status_lookup)
+        .with(message: accepted_message)
+        .and_return('sent')
+      expect(SMSService.instance).to receive(:status_lookup)
+        .with(message: queued_message)
+        .and_return('accepted')
+      expect(SMSService.instance).to receive(:status_lookup)
+        .with(message: sending_message)
+        .and_return('delivered')
+
+      expect(SMSService.instance).to receive(:redact_message)
+        .with(message: sending_message.reload)
+
+      expect(transient_messages.count).to eq 3
+      expect(undelivered_messages.count).to eq 1
+      expect(received_messages.count).to eq 1
 
       Rake::Task['messages:update_twilio_statuses'].invoke
 
-      expect(transient_messages.count).to eq 0
-      expect(undelivered_messages.count).to eq 3
-      expect(received_messages.count).to eq 3
+      expect(transient_messages.count).to eq 2
+      expect(undelivered_messages.count).to eq 1
+      expect(received_messages.count).to eq 1
     end
   end
 end
