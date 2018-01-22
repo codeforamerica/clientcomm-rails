@@ -6,11 +6,12 @@ IntercomRails.config do |config|
   # == Intercom session_duration
   #
   # config.session_duration = 300000
+
   # == Intercom secret key
   # This is required to enable secure mode, you can find it on your Setup
   # guide in the "Secure Mode" step.
-  #
-  # config.api_secret = "..."
+
+  config.api_secret = Rails.application.secrets.intercom_secure_mode_secret_key
 
   # == Enabled Environments
   # Which environments is auto inclusion of the Javascript enabled for
