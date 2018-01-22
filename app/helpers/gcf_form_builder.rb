@@ -211,7 +211,7 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
       <<-HTML
         <div class="text--error">
           <i class="icon-warning"></i>
-          #{object.errors.full_message(method, errors.to_sentence)}
+          #{errors.to_sentence}
         </div>
       HTML
     end

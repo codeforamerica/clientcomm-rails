@@ -189,7 +189,7 @@ describe GcfFormBuilder, type: :view do
           <div class="field_with_errors">
             <input type="text" class="text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="" name="client[last_name]" id="client_last_name" />
           </div>
-          <div class="text--error"><i class="icon-warning"></i> Last name can't be blank </div>
+          <div class="text--error"><i class="icon-warning"></i> can't be blank </div>
         </fieldset>
       HTML
     end
