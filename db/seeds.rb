@@ -37,6 +37,8 @@ User.all.each do |user|
   user.update_attributes(department: Department.all.sample)
 end
 
+test_user.reload.department.update(phone_number: ENV['TWILIO_PHONE_NUMBER'])
+
 puts 'Creating Survey Questions and Responses'
 FactoryBot.create :survey_question
 SurveyQuestion.all.each do |question|
