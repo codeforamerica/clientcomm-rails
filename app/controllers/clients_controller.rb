@@ -46,6 +46,7 @@ class ClientsController < ApplicationController
                                          .where.not(id: current_user.id)
                                          .find_by(department: current_user.department)
       if conflicting_user
+	@client.errors.delete(:phone_number)
         @client.errors.add(
           :phone_number,
           :existing_dept_relationship,
