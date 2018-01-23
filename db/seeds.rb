@@ -6,6 +6,11 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+# pass passwords to db:reset, db:setup, or db:seed like so:
+# `upw=myuserpassword apw=myadminpassword rails db:seed`
+user_password = ENV['upw'] || ENV['user_password'] || SecureRandom.hex(14)
+admin_password = ENV['apw'] || ENV['admin_password'] || user_password
+
 puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
@@ -16,12 +21,12 @@ ClientStatus.find_or_create_by!(name: 'Exited', followup_date: 90)
 ClientStatus.find_or_create_by!(name: 'Training', followup_date: 30)
 ClientStatus.find_or_create_by!(name: 'Active', followup_date: 30)
 
-puts 'Creating Admin User'
-AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?
+puts "Creating Admin User with password #{admin_password}"
+AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
 
-puts 'Creating Test Users'
+puts "Creating Test User with password #{user_password}"
 test_user = User.find_or_create_by(email: 'test@example.com')
-test_user.update!(full_name: 'Test Example', password: 'changeme', department: nil)
+test_user.update!(full_name: 'Test Example', password: user_password, department: nil)
 
 puts 'Deleting Old Records'
 Message.delete_all
