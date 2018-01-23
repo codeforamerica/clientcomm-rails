@@ -177,7 +177,8 @@ describe 'Clients requests', type: :request do
 
             expect(response.code).to eq '200'
             expect(flash[:alert]).to include 'There was a problem saving this client.'
-            expect(response.body).to include 'This client already exists'
+            expect(response.body)
+              .to include I18n.t('activerecord.errors.models.client.attributes.phone_number.existing_dept_relationship', user_full_name: other_user.full_name)
             expect(response.body).to include other_user.full_name
             expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
           end
@@ -409,6 +410,27 @@ describe 'Clients requests', type: :request do
             expect(flash[:alert]).to include 'There was a problem'
             expect(response.code).to eq '200'
             expect(response.body).to include 'not a valid phone number'
+          end
+        end
+
+        context 'conflicting edits with existing client records' do
+          context 'phone_number' do
+            context 'the existing client has a same-department relationship' do
+              let(:other_user) { create :user, department: user.department }
+              let(:other_client) { create :client, user: other_user }
+              let(:phone_number) { other_client.phone_number }
+
+              it 'shows an error flash' do
+                subject
+
+                expect(response.code).to eq '200'
+                expect(flash[:alert]).to include 'There was a problem saving this client.'
+                expect(response.body)
+                  .to include I18n.t('activerecord.errors.models.client.attributes.phone_number.existing_dept_relationship', user_full_name: other_user.full_name)
+                expect(response.body).to include other_user.full_name
+                expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
+              end
+            end
           end
         end
       end

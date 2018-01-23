@@ -97,20 +97,8 @@ class ClientsController < ApplicationController
       # if params rr.active == false
       # then it was a deactivation and follow that logic
 
-      other_active_relationships = @client.reporting_relationships
-                                          .active.where.not(user: current_user)
-
       if reporting_relationship.active
-        if other_active_relationships.any?
-          other_active_relationships.each do |rr|
-            NotificationMailer.client_edit_notification(
-              notified_user: rr.user,
-              editing_user: current_user,
-              client: @client,
-              previous_changes: @client.previous_changes.except(:updated_at)
-            ).deliver_later
-          end
-        end
+        notify_other_users
 
         analytics_track(
           label: 'client_edit_success',
@@ -130,14 +118,41 @@ class ClientsController < ApplicationController
 
         redirect_to clients_path, notice: "#{@client.full_name} has been successfully deleted"
       end
-
-    else
-      flash[:alert] = t('flash.errors.client.invalid')
-      render :edit
+      return
+    elsif @client.errors.added?(:phone_number, :taken)
+      @existing_client = Client.find_by(phone_number: @client.phone_number)
+      conflicting_user = @existing_client.users
+                                         .where.not(id: current_user.id)
+                                         .find_by(department: current_user.department)
+      if conflicting_user
+        @client.errors.delete(:phone_number)
+        @client.errors.add(
+          :phone_number,
+          :existing_dept_relationship,
+          user_full_name: conflicting_user.full_name
+        )
+      end
     end
+
+    flash[:alert] = t('flash.errors.client.invalid')
+    render :edit
   end
 
   private
+
+  def notify_other_users
+    other_active_relationships = @client.reporting_relationships
+                                        .active.where.not(user: current_user)
+
+    other_active_relationships.each do |rr|
+      NotificationMailer.client_edit_notification(
+        notified_user: rr.user,
+        editing_user: current_user,
+        client: @client,
+        previous_changes: @client.previous_changes.except(:updated_at)
+      ).deliver_later
+    end
+  end
 
   def client_params
     params.fetch(:client)
