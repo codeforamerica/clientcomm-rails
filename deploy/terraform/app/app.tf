@@ -16,6 +16,7 @@ variable "mailgun_smtp_password" {}
 
 variable "app_domain" {}
 variable "intercom_app_id" {}
+variable "intercom_secret_key" {}
 variable "mixpanel_token" {}
 variable "sentry_endpoint" {}
 variable "skylight_authentication" {}
@@ -56,6 +57,7 @@ resource "heroku_app" "clientcomm" {
     DEPLOYMENT = "${var.heroku_app_name}"
     DEPLOY_BASE_URL = "https://${var.app_domain}"
     INTERCOM_APP_ID = "${var.intercom_app_id}"
+    INTERCOM_SECRET_KEY = "${var.intercom_secret_key}"
     LANG = "en_US.UTF-8"
     MAILGUN_DOMAIN = "${var.mailgun_domain}"
     MAILGUN_PASSWORD = "${var.mailgun_smtp_password}"
