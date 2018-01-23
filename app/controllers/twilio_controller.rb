@@ -1,5 +1,7 @@
 class TwilioController < ApplicationController
   skip_before_action :verify_authenticity_token
+  # validate twilio authenticity using twilio middleware
+  # config/application.rb:28
 
   def incoming_sms
     new_message = Message.create_from_twilio! params
