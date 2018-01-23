@@ -5,9 +5,7 @@ namespace :messages do
     transient_messages.each do |m|
       twilio_status = SMSService.instance.status_lookup(message: m)
       m.update(twilio_status: twilio_status)
-      if twilio_status == 'delivered'
-        SMSService.instance.redact_message(message: m)
-      end
+      MessageRedactionJob.perform_later(message: m)
     end
   end
 end

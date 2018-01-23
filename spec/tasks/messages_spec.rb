@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'rake'
 
 describe 'messages rake tasks' do
-  describe 'messages:update_twilio_statuses' do
+  describe 'messages:update_twilio_statuses', active_job: true do
     let(:twilio_client) { FakeTwilioClient.new sid, token }
     let(:sid) { 'some_sid' }
     let(:token) { 'some_token' }
@@ -47,13 +47,22 @@ describe 'messages rake tasks' do
         .and_return('delivered')
 
       expect(SMSService.instance).to receive(:redact_message)
+        .with(message: accepted_message.reload)
+        .and_return(false)
+      expect(SMSService.instance).to receive(:redact_message)
+        .with(message: queued_message.reload)
+        .and_return(false)
+      expect(SMSService.instance).to receive(:redact_message)
         .with(message: sending_message.reload)
+        .and_return(true)
 
       expect(transient_messages.count).to eq 3
       expect(undelivered_messages.count).to eq 1
       expect(received_messages.count).to eq 1
 
-      Rake::Task['messages:update_twilio_statuses'].invoke
+      perform_enqueued_jobs do
+        Rake::Task['messages:update_twilio_statuses'].invoke
+      end
 
       expect(transient_messages.count).to eq 2
       expect(undelivered_messages.count).to eq 1

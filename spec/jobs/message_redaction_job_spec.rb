@@ -12,16 +12,4 @@ describe MessageRedactionJob, active_job: true, type: :job do
 
     subject
   end
-
-  context 'redacting the message fails' do
-    before do
-      allow(SMSService.instance).to receive(:redact_message).and_return(false, true)
-    end
-
-    it 'requeues the message' do
-      subject
-
-      expect(SMSService.instance).to have_received(:redact_message).twice.with(message: message)
-    end
-  end
 end
