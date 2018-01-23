@@ -18,7 +18,7 @@
                     <% if @previous_user.present? %>
                       <p>Their previous Case Manager was <%= @previous_user.full_name %>.</p>
                     <% end %>
-                    <% if @transfer_note %>
+                    <% if @transfer_note.present? %>
                       <p>The administrator said:</p>
                       <p class="message-well">
                         <%= @transfer_note %>

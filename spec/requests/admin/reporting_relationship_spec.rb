@@ -111,6 +111,35 @@ describe 'ReportingRelationships', type: :request, active_job: true do
           to_addrs = emails.map(&:to)
           expect(to_addrs).to contain_exactly([user2.email])
         end
+        context 'when the transfer note is empty' do
+          let(:params) do
+            {
+              reporting_relationship: {
+                client_id: client.id,
+                user: { department_id: department.id, id: user2.id }
+              },
+              transfer: { note: '' }
+            }
+          end
+
+          it 'does not render the message message well' do
+            perform_enqueued_jobs do
+              post admin_reporting_relationships_path, params: params
+            end
+
+            active_users = client.active_users
+
+            expect(active_users).to include(user2)
+            expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
+            expect(ReportingRelationship.find_by(user: user2, client: client)).to be_active
+
+            emails = ActionMailer::Base.deliveries
+            email = emails.first
+            expect(email.body.encoded).to_not include 'message-well'
+            to_addrs = emails.map(&:to)
+            expect(to_addrs).to contain_exactly([user2.email])
+          end
+        end
       end
 
       context 'reactivating an old relationship' do
