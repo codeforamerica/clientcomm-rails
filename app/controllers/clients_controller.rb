@@ -42,7 +42,7 @@ class ClientsController < ApplicationController
 
     if @client.errors.added?(:phone_number, :taken)
       @existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = @existing_client.users
+      conflicting_user = @existing_client.users.active_rr
                                          .where.not(id: current_user.id)
                                          .find_by(department: current_user.department)
       if conflicting_user

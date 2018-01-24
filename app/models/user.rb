@@ -7,6 +7,12 @@ class User < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  scope :active_rr, lambda {
+    joins(:reporting_relationships)
+      .where(reporting_relationships: { active: true })
+      .distinct
+  }
+
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
   validate :no_active_reporting_relationships_if_inactive

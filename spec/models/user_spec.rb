@@ -23,6 +23,19 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'scoping' do
+    let(:inactive_user) { create :user, department: user.department }
+
+    before do
+      ReportingRelationship.create(user: inactive_user, client: client, active: false)
+    end
+
+    it 'only shows active users' do
+      expect(client.users.active_rr).to include(user)
+      expect(client.users.active_rr).to_not include(inactive_user)
+    end
+  end
+
   describe 'validations' do
     it { should validate_presence_of :full_name }
 

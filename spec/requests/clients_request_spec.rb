@@ -151,6 +151,26 @@ describe 'Clients requests', type: :request do
             expect(flash[:notice]).to eq 'You already have a client with this phone number.'
           end
 
+          context 'client has an inactive relationship in this department' do
+            let(:conflicting_user) { create :user, department: user.department }
+
+            before do
+              ReportingRelationship.create(user: conflicting_user, client: client, active: false)
+            end
+
+            it 'redirects to the messages page' do
+              allow(SMSService.instance).to receive(:number_lookup)
+                .with(phone_number: abnormal_number)
+                .and_return(phone_number)
+
+              subject
+
+              expect(response.code).to eq '302'
+              expect(response).to redirect_to client_messages_path(client)
+              expect(flash[:notice]).to eq 'You already have a client with this phone number.'
+            end
+          end
+
           context 'client has a prior, inactive, relationship with this user' do
             let!(:client) { create :client, user: user, phone_number: phone_number, active: false }
 
