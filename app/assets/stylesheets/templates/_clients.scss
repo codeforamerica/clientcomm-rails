@@ -85,3 +85,16 @@
     }
   }
 }
+
+// Make Transfer Client Dropdown Label on top
+
+label[for=transfer_user_id] {
+  width: 100%
+}
+label[for=transfer_user_id] p, label[for=transfer_note] p  {
+  margin-bottom: 0
+}
+
+.transfer-client .form-card--compact .form-group {
+  margin-bottom: 10px
+}

@@ -52,9 +52,9 @@ class Message < ApplicationRecord
       body: twilio_params[:Body],
       send_at: Time.current
     )
-
     twilio_params[:NumMedia].to_i.times.each do |i|
       attachment = Attachment.new
+
       attachment.media_remote_url = twilio_params["MediaUrl#{i}"]
       new_message.attachments << attachment
     end

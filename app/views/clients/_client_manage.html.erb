@@ -4,11 +4,19 @@
   </div>
   <div class="form-card__content">
     <div>
-      <h4>Download transcript</h4>
-      <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
-      <a href="<%= client_messages_download_path(@client) %>">
-        <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
-      </a>
+      <div class="transfer-client">
+      <%= form_for Transfer.new, builder: GcfFormBuilder do |transfer_form| %>
+      <h4>Transfer Client</h4>
+      <p>
+      Transfer <%= @client.full_name %> to another user. Your conversation history with <%= @client.first_name %> will not be transferred.
+      </p>
+      <%= transfer_form.gcf_select(:user_id, 'Transfer to', @transfer_users, prompt: 'Pick user') %>
+
+      <%= transfer_form.gcf_textarea(:note, 'Include a note to be emailed to the new user <i>(optional)</i>') %>
+
+      <%= transfer_form.hidden_field :client_id, value: @client.id %>
+      <%= transfer_form.submit "Transfer #{@client.first_name} #{@client.last_name}", id: :transfer_client, class: :button %>
+    <% end %>
     </div>
     <%= form_for @client do |client_form| %>
       <h4>Delete client</h4>
@@ -44,13 +52,11 @@
       </div>
       <%= client_form.submit "Delete #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
     <% end %>
-
-    <% if ENV['INTERCOM_APP_ID'].present? %>
-      <h4>Transfer Client</h4>
-      <p>
-        A client can only be assigned to one user at a time. If someone else needs to text <%= @client.full_name %>, request a transfer by letting us know.
-      </p>
-      <button class="button" id="transfer-button" data-client-name="<%= @client.full_name %>">Request transfer</button>
-    <% end %>
+      <h4>Download transcript</h4>
+      <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
+      <a href="<%= client_messages_download_path(@client) %>">
+        <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
+      </a>
+    </div>
   </div>
 </div>
