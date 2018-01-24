@@ -430,6 +430,20 @@ describe 'Clients requests', type: :request do
                 expect(response.body).to include other_user.full_name
                 expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
               end
+
+              context 'multiple reporting relationships' do
+                let(:external_user) { create :user }
+
+                before do
+                  existing_client.users << external_user
+                end
+
+                it 'does not display multiple reporting relationships' do
+                  subject
+
+                  expect(response.body.scan(/private note/).count).to eq 1
+                end
+              end
             end
           end
         end

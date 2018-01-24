@@ -88,22 +88,20 @@ class ClientsController < ApplicationController
 
   def update
     @client = current_user.clients.find(params[:id])
+
+    @reporting_relationship = @client.reporting_relationship(user: current_user)
     if @client.update_attributes(client_params)
       flash[:notice] = 'Client updated'
-
-      reporting_relationship = @client.reporting_relationships
-                                      .find_by(user: current_user)
-
       # if params rr.active == false
       # then it was a deactivation and follow that logic
 
-      if reporting_relationship.active
+      if @reporting_relationship.reload.active
         notify_other_users
 
         analytics_track(
           label: 'client_edit_success',
           data: @client.analytics_tracker_data
-                  .merge(reporting_relationship.analytics_tracker_data)
+                  .merge(@reporting_relationship.analytics_tracker_data)
         )
 
         redirect_to client_messages_path(@client)
