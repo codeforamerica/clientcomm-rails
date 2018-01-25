@@ -596,35 +596,6 @@ describe 'Clients requests', type: :request do
         expect(response.body).to include(survey_response_text)
       end
 
-      context 'intercom' do
-        let(:app_id) { 'test' }
-
-        before do
-          @intercom = ENV['INTERCOM_APP_ID']
-          ENV['INTERCOM_APP_ID'] = app_id
-        end
-
-        after do
-          ENV['INTERCOM_APP_ID'] = @intercom
-        end
-
-        it 'shows the transfer client section' do
-          subject
-
-          expect(response.body).to include('Transfer Client')
-        end
-
-        context 'no intercom app ID is set' do
-          let(:app_id) { '' }
-
-          it 'does not show the transfer client section' do
-            subject
-
-            expect(response.body).to_not include('Transfer Client')
-          end
-        end
-      end
-
       context 'when the client belongs to more than one active user' do
         let(:other_user) { create :user, full_name: 'Jerry Mouse' }
 

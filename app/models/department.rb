@@ -5,6 +5,10 @@ class Department < ApplicationRecord
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
+  def eligible_users
+    User.where(department: self).where.not(id: user_id)
+  end
+
   private
 
   def normalize_phone_number

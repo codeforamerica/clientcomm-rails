@@ -29,6 +29,7 @@ en:
         taken: You already have a client with this phone number.
         unauthorized: The client you tried to view is not in your caseload.
         deactivated: '%{client_full_name} has been successfully deactivated'
+        transferred: '%{client_full_name} was transferred to %{user_full_name}.'
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   message:
     status:
