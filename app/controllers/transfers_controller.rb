@@ -18,6 +18,16 @@ class TransfersController < ApplicationController
       transfer_note: transfer_note
     ).deliver_later
 
+		analytics_track(
+			label: :client_transfer,
+			data: {
+				admin_id: nil,
+				clients_transferred_count: 1,
+				transferred_by: 'user',
+				has_transfer_note: transfer_note.present?
+			}
+		)
+
     redirect_to(
       clients_path,
       notice: t(

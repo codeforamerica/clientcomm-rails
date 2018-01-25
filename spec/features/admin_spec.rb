@@ -165,6 +165,15 @@ feature 'Admin Panel' do
 
         expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
         expect(page.current_path).to eq(admin_client_path(client1))
+        expect_most_recent_analytics_event(
+          {
+            'client_transfer' => {
+              'clients_transferred_count' => 1,
+              'transferred_by' => 'admin',
+              'has_transfer_note' => true
+            }
+          }
+        )
       end
     end
   end
