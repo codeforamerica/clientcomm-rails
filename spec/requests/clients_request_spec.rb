@@ -506,17 +506,17 @@ describe 'Clients requests', type: :request do
         expect(Nokogiri.parse(response.body).to_s).not_to include("#{another_client.first_name} #{another_client.last_name}")
       end
 
-      context 'there are archived clients' do
-        let(:archived_client) { user.clients.first }
+      context 'there are deactivated clients' do
+        let(:deactivated_client) { user.clients.first }
 
         before do
-          archived_client.reporting_relationships.find_by(user: user).update!(active: false)
+          deactivated_client.reporting_relationships.find_by(user: user).update!(active: false)
         end
 
-        it 'does not return archived clients' do
+        it 'does not return deactivated clients' do
           subject
 
-          expect(response.body).to_not include("#{archived_client.first_name} #{archived_client.last_name}")
+          expect(response.body).to_not include("#{deactivated_client.first_name} #{deactivated_client.last_name}")
         end
       end
 

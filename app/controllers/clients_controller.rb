@@ -114,7 +114,7 @@ class ClientsController < ApplicationController
           }
         )
 
-        redirect_to clients_path, notice: "#{@client.full_name} has been successfully deleted"
+        redirect_to clients_path, notice: t('flash.notices.client.deactivated', client_full_name: @client.full_name)
       end
       return
     elsif @client.errors.added?(:phone_number, :taken)

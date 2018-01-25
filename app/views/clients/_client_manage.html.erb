@@ -11,9 +11,9 @@
       </a>
     </div>
     <%= form_for @client do |client_form| %>
-      <h4>Delete client</h4>
+      <h4>Deactivate client</h4>
       <p>
-        When a client leaves your caseload you can delete them from your contact list.
+        When a client leaves your caseload you can deactivate them from your contact list.
         If they send you a message later they will automatically return to your contact list.
       </p>
       <div id='survey' class='notice'>
@@ -42,7 +42,7 @@
           <% end %>
         <% end %>
       </div>
-      <%= client_form.submit "Delete #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
+      <%= client_form.submit "Deactivate #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
     <% end %>
 
     <% if ENV['INTERCOM_APP_ID'].present? %>

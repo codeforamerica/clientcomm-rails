@@ -18,7 +18,7 @@ feature 'user deactivates client', :js do
     page.driver.browser.js_errors = true
   end
 
-  scenario 'user clicks delete client button' do
+  scenario 'user clicks deactivate client button' do
     # log in with a fake user
     myuser = create :user
     clientone = create :client, user: myuser
@@ -31,11 +31,11 @@ feature 'user deactivates client', :js do
       find('td', text: 'Manage').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
-    expect(page).to have_content 'Delete client'
+    expect(page).to have_content 'Deactivate client'
 
     expect(page).to_not have_content question_text
 
-    click_on "Delete #{clientone.first_name} #{clientone.last_name}"
+    click_on "Deactivate #{clientone.first_name} #{clientone.last_name}"
     expect(page).to have_current_path(edit_client_path(clientone))
 
     expect(page).to have_content question_text
@@ -43,15 +43,15 @@ feature 'user deactivates client', :js do
     expect(page).to have_content response_text2
     expect(page).to have_content response_text3
 
-    expect(page).to have_button("Delete #{clientone.first_name} #{clientone.last_name}", disabled: true)
+    expect(page).to have_button("Deactivate #{clientone.first_name} #{clientone.last_name}", disabled: true)
 
     check response_text1
     check response_text3
 
-    click_on "Delete #{clientone.first_name} #{clientone.last_name}"
+    click_on "Deactivate #{clientone.first_name} #{clientone.last_name}"
     expect(page).to have_current_path(clients_path)
     expect(page).to_not have_css '#client-list', text: "#{clientone.first_name} #{clientone.last_name}"
-    expect(page).to have_css '.flash p', text: "#{clientone.full_name} has been successfully deleted"
+    expect(page).to have_css '.flash p', text: I18n.t('flash.notices.client.deactivated', client_full_name: clientone.full_name)
   end
 
   scenario 'deactivated client is revived by incoming sms' do
