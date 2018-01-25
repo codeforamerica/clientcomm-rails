@@ -45,8 +45,8 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#client_transfer_notification' do
-    let(:current_user) { create(:user) }
-    let(:previous_user) { create(:user) }
+    let(:current_user) { create(:user, full_name: 'William Hearn') }
+    let(:previous_user) { create(:user, full_name: 'Rita Johnston') }
     let(:client) { create(:client, first_name: 'Roger', last_name: 'Rabbit') }
     let(:mail) do
       NotificationMailer.client_transfer_notification(
@@ -63,7 +63,7 @@ describe NotificationMailer, type: :mailer do
       end
 
       it 'renders the body' do
-        expect(subject).to include('An administrator has transferred')
+        expect(subject).to include("#{previous_user.full_name} has transferred")
         expect(subject).to include(client.full_name)
         expect(subject).to include(client.phone_number)
         expect(subject).to include(previous_user.full_name)

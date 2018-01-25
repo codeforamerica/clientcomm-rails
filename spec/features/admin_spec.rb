@@ -106,6 +106,7 @@ feature 'Admin Panel' do
         emails = ActionMailer::Base.deliveries
         expect(emails.count).to eq 1
         expect(emails.first.html_part.to_s).to include transfer_note
+        expect(emails.first.html_part.to_s).to include 'An administrator has transferred'
       end
     end
 
@@ -166,12 +167,10 @@ feature 'Admin Panel' do
         expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
         expect(page.current_path).to eq(admin_client_path(client1))
         expect_most_recent_analytics_event(
-          {
-            'client_transfer' => {
-              'clients_transferred_count' => 1,
-              'transferred_by' => 'admin',
-              'has_transfer_note' => true
-            }
+          'client_transfer' => {
+            'clients_transferred_count' => 1,
+            'transferred_by' => 'admin',
+            'has_transfer_note' => true
           }
         )
       end

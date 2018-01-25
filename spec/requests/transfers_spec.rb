@@ -36,14 +36,14 @@ describe 'Transfers requests', type: :request, active_job: true do
       to_add = emails.map(&:to)
       body = emails.first.body.encoded
       expect(to_add).to contain_exactly([transfer_user.email])
+      expect(body).to include("#{user.full_name} has transferred a client to you")
       expect(body).to include('some note')
+
       expect_most_recent_analytics_event(
-        {
-          'client_transfer' => {
-            'clients_transferred_count' => 1,
-            'transferred_by' => 'user',
-            'has_transfer_note' => true
-          }
+        'client_transfer' => {
+          'clients_transferred_count' => 1,
+          'transferred_by' => 'user',
+          'has_transfer_note' => true
         }
       )
     end

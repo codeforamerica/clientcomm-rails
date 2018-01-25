@@ -11,11 +11,14 @@ class TransfersController < ApplicationController
     transfer = Transfer.new(user_id: user.id, client_id: client.id, note: transfer_note)
     transfer.apply
 
+    transferred_by = 'user'
+
     NotificationMailer.client_transfer_notification(
       current_user: user,
       previous_user: current_user,
       client: client,
-      transfer_note: transfer_note
+      transfer_note: transfer_note,
+      transferred_by: transferred_by
     ).deliver_later
 
     analytics_track(
@@ -23,7 +26,7 @@ class TransfersController < ApplicationController
       data: {
         admin_id: nil,
         clients_transferred_count: 1,
-        transferred_by: 'user',
+        transferred_by: transferred_by,
         has_transfer_note: transfer_note.present?
       }
     )

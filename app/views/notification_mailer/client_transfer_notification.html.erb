@@ -4,7 +4,13 @@
     <td class="container">
       <div class="content">
         <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader">An administrator has transferred a client to you.</span>
+        <span class="preheader">
+          <% if @transferred_by == 'admin' %>
+            An administrator has transferred a client to you.
+          <% else %>
+            <%= @previous_user.full_name %> has transferred a client to you.
+          <% end %>
+        </span>
         <table class="main">
           <!-- START MAIN CONTENT AREA -->
           <tr>
@@ -14,12 +20,20 @@
                   <td>
                     <p class="header-appname">ClientComm</p>
                     <p>Hi <%= @current_user.full_name %>,</p>
-                    <p>An administrator has transferred <%= @client.full_name %>, <%= @client.phone_number %> to your client list.</p>
-                    <% if @previous_user.present? %>
-                      <p>Their previous Case Manager was <%= @previous_user.full_name %>.</p>
+                    <% if @transferred_by == 'admin' %>
+                      <p>An administrator has transferred <%= @client.full_name %>, <%= @client.phone_number %> to your client list.</p>
+                      <% if @previous_user.present? %>
+                        <p>Their previous Case Manager was <%= @previous_user.full_name %>.</p>
+                      <% end %>
+                    <% else %>
+                      <p><%= @previous_user.full_name %> has transferred their client <%= @client.full_name %>, <%= @client.phone_number %> to your client list.</p>
                     <% end %>
                     <% if @transfer_note.present? %>
-                      <p>The administrator said:</p>
+                      <% if @transferred_by == 'admin' %>
+                        <p>The administrator said:</p>
+                      <% else %>
+                        <p><%= @previous_user.full_name %> said:</p>
+                      <% end %>
                       <p class="message-well">
                         <%= @transfer_note %>
                       </p>

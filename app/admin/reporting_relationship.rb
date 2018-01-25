@@ -132,7 +132,8 @@ ActiveAdmin.register ReportingRelationship do
         current_user: new_user,
         previous_user: previous_user,
         client: client,
-        transfer_note: transfer_note
+        transfer_note: transfer_note,
+        transferred_by: 'admin'
       ).deliver_later
 
       analytics_track(

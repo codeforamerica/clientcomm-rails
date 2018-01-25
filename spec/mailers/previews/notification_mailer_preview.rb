@@ -11,13 +11,14 @@ class NotificationMailerPreview < ActionMailer::Preview
     previous_user = User.last
     user = User.first
     client = user.clients.first
-    transfer_note = ''
+    transfer_note = 'Hello world'
 
     NotificationMailer.client_transfer_notification(
       current_user: user,
       previous_user: previous_user,
       client: client,
-      transfer_note: transfer_note
+      transfer_note: transfer_note,
+      transferred_by: 'user'
     )
   end
 
