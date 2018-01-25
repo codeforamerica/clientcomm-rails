@@ -3,12 +3,14 @@ require 'rails_helper'
 feature 'user transfers client', :js, active_job: true do
   let!(:myuser) { create :user }
   let!(:transfer_user) { create :user, department: myuser.department }
+  let!(:unclaimed_user) { create :user, department: myuser.department }
   let!(:other_user) { create :user }
   let!(:clientone) { create :client, user: myuser }
 
   let(:note) { 'I am transfering this client to you' }
 
   before do
+    myuser.department.update(user_id: unclaimed_user.id)
     other_user.clients << clientone
     login_as myuser, :scope => :user
     visit root_path
@@ -22,6 +24,9 @@ feature 'user transfers client', :js, active_job: true do
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     expect(page).to have_content("also assigned to #{other_user.full_name}")
+    expect(page).to_not have_css 'select#transfer_user_id', text: myuser.full_name
+    unclaimed_user = User.find(myuser.department.user_id)
+    expect(page).to_not have_css 'select#transfer_user_id', text: unclaimed_user.full_name
     select transfer_user.full_name, from: 'transfer_user_id'
     fill_in 'transfer_note', with: note
 

@@ -2,7 +2,7 @@ class TransfersController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    unless transfer_params['user_id'].present?
+    if transfer_params['user_id'].blank?
       redirect_to(edit_client_path(transfer_params['client_id'])) && return
     end
     user = User.find(transfer_params['user_id'])
