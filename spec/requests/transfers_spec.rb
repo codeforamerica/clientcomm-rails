@@ -48,6 +48,21 @@ describe 'Transfers requests', type: :request, active_job: true do
       )
     end
 
+    context 'transfer user has an inactive relationship' do
+      before do
+        create :reporting_relationship, user: transfer_user, client: client, active: false
+      end
+
+      it 'restores the relationship' do
+        perform_enqueued_jobs do
+          subject
+        end
+
+        expect(user.clients.active).to_not include client
+        expect(transfer_user.clients.active).to include client
+      end
+    end
+
     context 'user_id is blank' do
       subject do
         post transfers_path, params: {
