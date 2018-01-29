@@ -29,7 +29,6 @@ class ClientsController < ApplicationController
   # rubocop:disable Metrics/PerceivedComplexity
   def create
     @client = Client.new(client_params)
-
     if @client.save
       analytics_track(
         label: 'client_create_success',
@@ -42,8 +41,7 @@ class ClientsController < ApplicationController
 
     if @client.errors.added?(:phone_number, :taken)
       @existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = @existing_client.users.active_rr
-                                         .where.not(id: current_user.id)
+      conflicting_user = @existing_client.users.active_rr.where.not(id: current_user.id)
                                          .find_by(department: current_user.department)
       if conflicting_user
         @client.errors.delete(:phone_number)
@@ -70,6 +68,17 @@ class ClientsController < ApplicationController
         return
       end
     end
+    error_types = []
+    @client.errors.details.each do |column, errors|
+      errors.each do |item|
+        error_types << "#{column}_#{item[:error]}"
+      end
+    end
+
+    analytics_track(
+      label: 'client_create_error',
+      data: @client.analytics_tracker_data.merge(error_types: error_types)
+    )
 
     flash[:alert] = t('flash.errors.client.invalid')
     render :new

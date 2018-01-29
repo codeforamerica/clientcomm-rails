@@ -95,6 +95,13 @@ describe 'Clients requests', type: :request do
             expect(response.code).to eq '200'
             expect(response.body).to include "can't be blank"
             expect(Client.count).to eq 0
+            expect_analytics_events(
+              {
+                'client_create_error' => {
+                  'error_types' => ['last_name_blank']
+                }
+              }
+            )
           end
         end
 
@@ -113,6 +120,31 @@ describe 'Clients requests', type: :request do
             expect(response.code).to eq '200'
             expect(response.body).to include 'not a valid phone number'
             expect(Client.count).to eq 0
+            expect_analytics_events(
+              {
+                'client_create_error' => {
+                  'error_types' => ['phone_number_invalid']
+                }
+              }
+            )
+          end
+        end
+
+        context 'multiple columns have validation failures' do
+          let(:bad_number) { '(212) 55-5236' }
+          let(:phone_number) { bad_number }
+          let(:last_name) { nil }
+          before do
+            allow(SMSService.instance).to receive(:number_lookup)
+              .with(phone_number: bad_number)
+              .and_raise(SMSService::NumberNotFound)
+          end
+
+          it 'tracks all validation errors' do
+            subject
+
+            event = latest_analytics_event 'client_create_error'
+            expect(event['error_types']).to include('last_name_blank', 'phone_number_invalid')
           end
         end
       end
