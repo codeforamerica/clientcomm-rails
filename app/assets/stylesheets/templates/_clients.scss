@@ -86,15 +86,22 @@
   }
 }
 
-// Make Transfer Client Dropdown Label on top
-
+// Put label for transfer client user select on top
 label[for=transfer_user_id] {
-  width: 100%
+  width: 100%;
 }
 label[for=transfer_user_id] p, label[for=transfer_note] p  {
-  margin-bottom: 0
+  margin-bottom: 0;
 }
 
-.transfer-client .form-card--compact .form-group {
-  margin-bottom: 10px
+#new_transfer fieldset.form-group {
+  margin-bottom: 1em;
+}
+
+#new_transfer fieldset textarea#transfer_note.textarea {
+  margin-bottom: 0;
+}
+
+#new_transfer fieldset div.select {
+  margin-bottom: 0;
 }
