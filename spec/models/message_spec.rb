@@ -1,12 +1,70 @@
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
-  describe 'relationships' do
-    it do
-      should belong_to :client
-      should belong_to :user
-      should have_many :attachments
+  describe 'analytics_tracker_data' do
+    let(:client_id) { 5 }
+    let(:user_id) { 10 }
+    let(:message_id) { 10 }
+    let(:body_length) { 10 }
+    let(:body) { Faker::Lorem.characters(body_length) }
+    let(:send_at) { Time.new(2010, 1, 1, 1, 1, 1) }
+    let(:created_at) { Time.new(2009, 2, 1, 1, 1, 1) }
+    let(:user) { create :user, id: user_id }
+    let(:client) { create :client, id: client_id, user: user }
+    let(:message) do
+      create(
+        :message,
+        id: 10,
+        client: client,
+        body: body,
+        user: user,
+        send_at: send_at,
+        created_at: created_at
+      )
     end
+
+    subject do
+      message.analytics_tracker_data
+    end
+
+    it 'sends analytics tracking data' do
+      expect(subject). to include(
+        client_id: client_id,
+        message_id: message_id,
+        message_date_scheduled: send_at,
+        message_date_created: created_at,
+        message_length: body_length,
+        current_user_id: user_id,
+        attachments_count: 0,
+        client_active: true # Default
+      )
+    end
+
+    context 'client is inactive' do
+      let(:client) { create :client, id: client_id, user: user, active: false }
+
+      it 'is reflected in the tracking data' do
+        expect(subject). to include(client_active: false)
+      end
+    end
+
+    context 'message has attachments' do
+      let(:attachments_count) { 3 }
+
+      before do
+        create_list(:attachment, attachments_count, message: message)
+      end
+
+      it 'attachments count is correct' do
+        expect(subject). to include(attachments_count: attachments_count)
+      end
+    end
+  end
+
+  describe 'relationships' do
+    it { should belong_to :client }
+    it { should belong_to :user }
+    it { should have_many :attachments }
 
     it do
       should validate_presence_of(:send_at)
