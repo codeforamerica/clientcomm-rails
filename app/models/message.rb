@@ -73,7 +73,8 @@ class Message < ApplicationRecord
       attachments_count: self.attachments.count,
       message_date_scheduled: self.send_at,
       message_date_created: self.created_at,
-      client_active: self.client.active(user: self.user)
+      client_active: self.client.active(user: self.user),
+      first_message: self.first?
     }
   end
 
@@ -91,6 +92,10 @@ class Message < ApplicationRecord
 
   def reporting_relationship
     ReportingRelationship.find_by(user: user, client: client)
+  end
+
+  def first?
+    self.client.messages.where(user: self.user).order(send_at: :desc).first == self
   end
 
   private

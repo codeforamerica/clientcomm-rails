@@ -1,6 +1,36 @@
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
+  describe '#first?' do
+    let(:message) { create :message, send_at: send_at }
+
+    before do
+      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 2)
+      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 3)
+      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+    end
+
+    subject do
+      message.first?
+    end
+
+    context 'message is first' do
+      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 1) }
+
+      it 'sends analytics tracking data' do
+        expect(subject).to eq true
+      end
+    end
+
+    context 'message is not first' do
+      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 5) }
+
+      it 'sends analytics tracking data' do
+        expect(subject).to eq false
+      end
+    end
+  end
+
   describe 'analytics_tracker_data' do
     let(:client_id) { 5 }
     let(:user_id) { 10 }
@@ -28,7 +58,7 @@ RSpec.describe Message, type: :model do
     end
 
     it 'sends analytics tracking data' do
-      expect(subject). to include(
+      expect(subject).to include(
         client_id: client_id,
         message_id: message_id,
         message_date_scheduled: send_at,
@@ -36,15 +66,32 @@ RSpec.describe Message, type: :model do
         message_length: body_length,
         current_user_id: user_id,
         attachments_count: 0,
-        client_active: true # Default
+        client_active: true, # Default
+        first_message: true
       )
+    end
+
+    context 'there are many messages' do
+      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 5) }
+
+      before do
+        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 2)
+        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 3)
+        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+      end
+
+      it 'sends analytics tracking data' do
+        expect(subject).to include(
+          first_message: false
+        )
+      end
     end
 
     context 'client is inactive' do
       let(:client) { create :client, id: client_id, user: user, active: false }
 
-      it 'is reflected in the tracking data' do
-        expect(subject). to include(client_active: false)
+      it 'client_active is correct' do
+        expect(subject).to include(client_active: false)
       end
     end
 
@@ -56,7 +103,7 @@ RSpec.describe Message, type: :model do
       end
 
       it 'attachments count is correct' do
-        expect(subject). to include(attachments_count: attachments_count)
+        expect(subject).to include(attachments_count: attachments_count)
       end
     end
   end
