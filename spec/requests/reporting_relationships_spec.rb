@@ -1,9 +1,10 @@
 require 'rails_helper'
 
-describe 'Transfers requests', type: :request, active_job: true do
+describe 'Reporting Relationship Requests', type: :request, active_job: true do
   let(:department) { create :department }
   let(:user) { create :user, department: department }
   let(:transfer_user) { create :user, department: department }
+  let(:transfer_note) { Faker::Lorem.characters(10) }
   let!(:client) { create :client, user: user }
 
   before do
@@ -12,11 +13,11 @@ describe 'Transfers requests', type: :request, active_job: true do
 
   describe 'POST#create' do
     subject do
-      post transfers_path, params: {
-        transfer: {
-          note: 'some note',
-          client_id: client.id,
-          user_id: transfer_user.id
+      post reporting_relationships_path, params: {
+        transfer_note: transfer_note,
+        reporting_relationship: {
+          user_id: transfer_user.id,
+          client_id: client.id
         }
       }
     end
@@ -37,7 +38,7 @@ describe 'Transfers requests', type: :request, active_job: true do
       body = emails.first.body.encoded
       expect(to_add).to contain_exactly([transfer_user.email])
       expect(body).to include("#{user.full_name} has transferred a client to you")
-      expect(body).to include('some note')
+      expect(body).to include(transfer_note)
 
       expect_most_recent_analytics_event(
         'client_transfer' => {
@@ -65,11 +66,10 @@ describe 'Transfers requests', type: :request, active_job: true do
 
     context 'user_id is blank' do
       subject do
-        post transfers_path, params: {
-          transfer: {
-            note: 'some note',
-            client_id: client.id,
-            user_id: ''
+        post reporting_relationships_path, params: {
+          reporting_relationship: {
+            user_id: nil,
+            client_id: client.id
           }
         }
       end

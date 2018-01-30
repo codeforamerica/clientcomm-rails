@@ -1,17 +1,20 @@
-class TransfersController < ApplicationController
+class ReportingRelationshipsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    if transfer_params['user_id'].blank?
-      redirect_to(edit_client_path(transfer_params['client_id'])) && return
+    if reporting_relationship_params['user_id'].blank?
+      redirect_to(edit_client_path(reporting_relationship_params['client_id'])) && return
     end
-    user = User.find(transfer_params['user_id'])
-    client = Client.find(transfer_params['client_id'])
-    transfer_note = transfer_params['note']
-    transfer = Transfer.new(user_id: user.id, client_id: client.id, note: transfer_note)
-    transfer.apply
+
+    ReportingRelationship.find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
+                         .update!(active: false)
+
+    ReportingRelationship.find_or_create_by(reporting_relationship_params).update!(active: true)
 
     transferred_by = 'user'
+
+    user = User.find(reporting_relationship_params['user_id'])
+    client = Client.find(reporting_relationship_params['client_id'])
 
     NotificationMailer.client_transfer_notification(
       current_user: user,
@@ -43,7 +46,11 @@ class TransfersController < ApplicationController
 
   private
 
-  def transfer_params
-    params.require(:transfer)
+  def transfer_note
+    params['transfer_note']
+  end
+
+  def reporting_relationship_params
+    params.require(:reporting_relationship).permit(:user_id, :client_id)
   end
 end

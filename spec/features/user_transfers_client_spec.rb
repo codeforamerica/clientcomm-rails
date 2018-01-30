@@ -24,10 +24,10 @@ feature 'user transfers client', :js, active_job: true do
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     expect(page).to have_content("also assigned to #{other_user.full_name}")
-    expect(page).to_not have_css 'select#transfer_user_id', text: myuser.full_name
+    expect(page).to_not have_css 'select#reporting_relationship_user_id', text: myuser.full_name
     unclaimed_user = User.find(myuser.department.user_id)
-    expect(page).to_not have_css 'select#transfer_user_id', text: unclaimed_user.full_name
-    select transfer_user.full_name, from: 'transfer_user_id'
+    expect(page).to_not have_css 'select#reporting_relationship_user_id', text: unclaimed_user.full_name
+    select transfer_user.full_name, from: 'reporting_relationship_user_id'
     fill_in 'transfer_note', with: note
 
     perform_enqueued_jobs do
