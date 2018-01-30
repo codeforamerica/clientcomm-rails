@@ -40,7 +40,11 @@ class ImportCsv
         new_client.users = [user]
       end
 
-      @relationships << ReportingRelationship.new(client: client, user: user) if client.persisted?
+      relationship = ReportingRelationship.find_or_initialize_by(
+        client: client, user: user
+      )
+      relationship.active = true
+      @relationships << relationship
 
       @clients << client
     end
