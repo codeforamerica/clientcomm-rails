@@ -445,6 +445,8 @@ describe 'Clients requests', type: :request do
             expect(flash[:alert]).to include 'There was a problem'
             expect(response.code).to eq '200'
             expect(response.body).to include "can't be blank"
+            event = latest_analytics_event 'client_edit_error'
+            expect(event['error_types']).to include('last_name_blank')
           end
         end
 

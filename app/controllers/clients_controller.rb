@@ -68,18 +68,7 @@ class ClientsController < ApplicationController
         return
       end
     end
-    error_types = []
-    @client.errors.details.each do |column, errors|
-      errors.each do |item|
-        error_types << "#{column}_#{item[:error]}"
-      end
-    end
-
-    analytics_track(
-      label: 'client_create_error',
-      data: @client.analytics_tracker_data.merge(error_types: error_types)
-    )
-
+    track_errors('create')
     flash[:alert] = t('flash.errors.client.invalid')
     render :new
   end
@@ -141,11 +130,26 @@ class ClientsController < ApplicationController
       end
     end
 
+    track_errors('edit')
     flash[:alert] = t('flash.errors.client.invalid')
     render :edit
   end
 
   private
+
+  def track_errors(method)
+    error_types = []
+    @client.errors.details.each do |column, errors|
+      errors.each do |item|
+        error_types << "#{column}_#{item[:error]}"
+      end
+    end
+
+    analytics_track(
+      label: "client_#{method}_error",
+      data: @client.analytics_tracker_data.merge(error_types: error_types)
+    )
+  end
 
   def notify_other_users
     other_active_relationships = @client.reporting_relationships
