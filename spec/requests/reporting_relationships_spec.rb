@@ -74,9 +74,10 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
         }
       end
 
-      it 'redirects back to the form' do
+      it 'renders an error' do
         subject
-        expect(response).to redirect_to edit_client_path client.id
+        path = 'activerecord.errors.models.reporting_relationship.attributes.user.blank'
+        expect(response.body).to include I18n.t path
       end
     end
   end

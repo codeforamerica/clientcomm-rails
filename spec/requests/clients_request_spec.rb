@@ -630,6 +630,22 @@ describe 'Clients requests', type: :request do
         expect(response.body).to include(survey_response_text)
       end
 
+      context 'has inactivate users' do
+        let(:full_name_inactive) { 'My Name' }
+        let(:full_name_active) { 'Not Same' }
+        before do
+          create :user, department: user.department, full_name: full_name_active
+          create :user, department: user.department, active: false, full_name: full_name_inactive
+        end
+
+        it 'does not display inactive users in transfer dropdown' do
+          subject
+          options = Nokogiri.parse(response.body).css('#new_reporting_relationship select option').map(&:text)
+          expect(options).to include(full_name_active)
+          expect(options).to_not include(full_name_inactive)
+        end
+      end
+
       context 'when the client belongs to more than one active user' do
         let(:other_user) { create :user, full_name: 'Jerry Mouse' }
 

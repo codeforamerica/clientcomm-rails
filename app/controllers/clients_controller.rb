@@ -77,7 +77,10 @@ class ClientsController < ApplicationController
   def edit
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
-    @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).order(:full_name).pluck(:full_name, :id)
+    @transfer_reporting_relationship = ReportingRelationship.new
+    @transfer_users = current_user.department.eligible_users.active
+                                  .where.not(id: current_user.id)
+                                  .order(:full_name).pluck(:full_name, :id)
     analytics_track(
       label: 'client_edit_view',
       data: @client.analytics_tracker_data.merge(source: request.referer)
@@ -87,6 +90,7 @@ class ClientsController < ApplicationController
   def update
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationship(user: current_user)
+    @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
     if @client.update_attributes(client_params)
       flash[:notice] = 'Client updated'

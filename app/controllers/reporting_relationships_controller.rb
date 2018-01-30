@@ -2,24 +2,32 @@ class ReportingRelationshipsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    if reporting_relationship_params['user_id'].blank?
-      redirect_to(edit_client_path(reporting_relationship_params['client_id'])) && return
+    @reporting_relationship = ReportingRelationship
+                              .find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
+
+    @reporting_relationship.update!(active: false)
+
+    @client = Client.find(reporting_relationship_params['client_id'])
+    @transfer_users = current_user.department.eligible_users.active
+                                  .where.not(id: current_user.id)
+                                  .order(:full_name).pluck(:full_name, :id)
+
+    @transfer_reporting_relationship = ReportingRelationship.find_or_initialize_by(reporting_relationship_params)
+    @transfer_reporting_relationship.active = true
+
+    unless @transfer_reporting_relationship.save
+      render 'clients/edit'
+      return
     end
-
-    ReportingRelationship.find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
-                         .update!(active: false)
-
-    ReportingRelationship.find_or_create_by(reporting_relationship_params).update!(active: true)
 
     transferred_by = 'user'
 
     user = User.find(reporting_relationship_params['user_id'])
-    client = Client.find(reporting_relationship_params['client_id'])
 
     NotificationMailer.client_transfer_notification(
       current_user: user,
       previous_user: current_user,
-      client: client,
+      client: @client,
       transfer_note: transfer_note,
       transferred_by: transferred_by
     ).deliver_later
@@ -38,7 +46,7 @@ class ReportingRelationshipsController < ApplicationController
       clients_path,
       notice: t(
         'flash.notices.client.transferred',
-        client_full_name: client.full_name,
+        client_full_name: @client.full_name,
         user_full_name: user.full_name
       )
     )

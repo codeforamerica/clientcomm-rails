@@ -4,12 +4,12 @@
   </div>
   <div class="form-card__content">
     <div>
-    <%= form_for ReportingRelationship.new, builder: GcfFormBuilder do |transfer_form| %>
+    <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
       <p>
       Transfer <%= @client.full_name %> to another user. Your conversation history with <%= @client.first_name %> will not be transferred.
       </p>
-      <%= transfer_form.gcf_select(:user_id, 'Transfer to', @transfer_users, prompt: 'Pick user') %>
+      <%= transfer_form.gcf_select_fk(:user_id, 'Transfer to', @transfer_users, prompt: 'Pick user') %>
       <fieldset class="form-group">
         <label for="transfer_note"><p class="form-question">Include a note to be emailed to the new user <i>(optional)</i></p></label>
         <%= text_area_tag(:transfer_note, nil, class: 'textarea') %>

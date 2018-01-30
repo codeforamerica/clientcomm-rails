@@ -1,2 +1,10 @@
 <% content_for(:template_name) { "clients" } %>
-<%= render "manage", form_title: "Edit client", save_text: "Save changes" %>
+<div class="slab">
+  <div class="grid">
+    <div class="grid__item width-two-thirds shift-one-sixth">
+      <%# <% binding.pry %1> %>
+      <%= render 'clients/client_form', form_title: 'Edit client', save_text: 'Save changes' %>
+      <%= render 'clients/client_manage', form_title: 'Edit client', save_text: 'Save changes' %>
+    </div>
+  </div>
+</div>

@@ -37,6 +37,10 @@ en:
   activerecord:
     errors:
       models:
+        reporting_relationship:
+          attributes:
+            user:
+              blank: You need to pick someone to transfer this client to.
         user:
           attributes:
             phone_number:

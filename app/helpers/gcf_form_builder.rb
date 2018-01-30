@@ -44,6 +44,18 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     HTML
   end
 
+  def gcf_select_fk(method, label_text, collection, notes: [], include_blank: false, prompt: false)
+    <<-HTML.html_safe
+      <fieldset class="form-group#{error_state(object, method)}">
+        #{label(method, label_contents(label_text, notes))}
+        <div class="select">
+          #{select(method, collection, { include_blank: include_blank, prompt: prompt }, class: 'select__element')}
+        </div>
+        #{errors_for_fk(object, method)}
+      </fieldset>
+    HTML
+  end
+
   def gcf_date_select(method, label_text, notes: [], options: {}, autofocus: nil)
     <<-HTML.html_safe
       <fieldset class="form-group#{error_state(object, method)}">
@@ -215,6 +227,10 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
         </div>
       HTML
     end
+  end
+
+  def errors_for_fk(object, method)
+    errors_for(object, method.to_s.chomp('_id').to_sym)
   end
 
   def error_state(object, method)
