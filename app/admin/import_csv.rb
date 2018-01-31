@@ -11,8 +11,7 @@ class ImportCsv
   end
 
   before_validation :populate_clients
-  validate :relationships_are_all_valid
-  validate :clients_are_all_valid
+  validate :relationships_are_all_valid, :clients_are_all_valid
 
   def initialize(attributes = {})
     super
@@ -65,9 +64,7 @@ class ImportCsv
 
   def clients_are_all_valid
     @clients.each do |client|
-      unless client.valid?
-        errors.add(:file, 'Invalid Clients (check phone number format)') if client.errors.added? :phone_number, :taken
-      end
+      errors.add(:file, 'Invalid Clients') unless client.valid?
     end
   end
 end

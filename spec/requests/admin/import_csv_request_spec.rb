@@ -161,7 +161,6 @@ describe 'import csv', type: :request do
       end
 
       context 'client exists but valid matching phone number is not identical' do
-        let(:input_phone_number) { '12125556230' }
         let(:normalized_phone_number) { '+12125556230' }
         let(:user2) { create :user, department: department }
         let!(:client) { create :client, user: user2, phone_number: normalized_phone_number }
