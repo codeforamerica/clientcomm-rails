@@ -31,6 +31,19 @@ describe 'Messages requests', type: :request, active_job: true do
         user2.clients << client
       end
 
+      it 'shows no message dialog if no messages' do
+        get client_messages_path(client)
+        message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
+        expect(response.body).to include(message)
+      end
+
+      it 'does not show message dialog if messages exist' do
+        message = create :message, client: client, user: user
+        get client_messages_path(client)
+        message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
+        expect(response.body).to_not include(message)
+      end
+
       it 'shows all past messages for a given relationship' do
         message = create :message, client: client, user: user
         message_2 = create :message, client: client, user: user
@@ -38,11 +51,9 @@ describe 'Messages requests', type: :request, active_job: true do
 
         get client_messages_path(client)
 
-        response_body = Nokogiri::HTML(response.body).to_s
-
-        expect(response_body).to include(message.body)
-        expect(response_body).to include(message_2.body)
-        expect(response_body).to_not include(message_3.body)
+        expect(response.body).to include(message.body)
+        expect(response.body).to include(message_2.body)
+        expect(response.body).to_not include(message_3.body)
       end
 
       it 'marks all messages read when index loaded' do

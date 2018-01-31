@@ -31,6 +31,8 @@ en:
         deactivated: '%{client_full_name} has been successfully deactivated'
         transferred: '%{client_full_name} was transferred to %{user_full_name}.'
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
+  messages:
+    empty: "You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself."
   message:
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.

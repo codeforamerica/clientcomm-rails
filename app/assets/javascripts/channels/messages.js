@@ -8,6 +8,9 @@ var Messages = {
   },
   appendMessage: function(message_html) {
     // append the message to the bottom of the list
+    if (this.msgs.length > 0) {
+      $('#messages-empty-dialog').hide();
+    }
     this.msgs.append(message_html);
     this.messagesToBottom();
 
