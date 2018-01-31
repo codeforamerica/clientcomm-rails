@@ -28,7 +28,7 @@ describe 'import csv', type: :request do
     let!(:user) { create :user, department: department, email: 'test@example.com' }
 
     subject do
-      file = fixture_file_upload('test.csv', 'text/csv')
+      file = fixture_file_upload('test_import_two_clients.csv', 'text/csv')
       post admin_import_csvs_path, params: {
         import_csv: {
           file: file
@@ -51,8 +51,8 @@ describe 'import csv', type: :request do
 
           expect(user.clients.count).to eq 2
 
-          client1 = user.clients.find_by(phone_number: '4155553329')
-          client2 = user.clients.find_by(phone_number: '2125556230')
+          client1 = user.clients.find_by(phone_number: '14155553329')
+          client2 = user.clients.find_by(phone_number: '12125556230')
 
           expect(client1.first_name).to eq 'Person'
           expect(client1.last_name).to eq 'McPersonFace'
@@ -64,7 +64,7 @@ describe 'import csv', type: :request do
 
       context 'client has an inactive relationship with another user' do
         let(:user2) { create :user, department: department }
-        let!(:client) { create :client, user: user2, phone_number: '2125556230' }
+        let!(:client) { create :client, user: user2, phone_number: '12125556230' }
 
         before do
           rr = client.reporting_relationships.find_by(user: user2)
@@ -74,7 +74,7 @@ describe 'import csv', type: :request do
         it 'creates a new relationship' do
           subject
 
-          client1 = user.clients.find_by(phone_number: '2125556230')
+          client1 = user.clients.find_by(phone_number: '12125556230')
           rr1 = client1.reporting_relationships.find_by(user: user)
           expect(rr1.active).to eq true
 
@@ -84,7 +84,7 @@ describe 'import csv', type: :request do
       end
 
       context 'client has inactive relationship with requested user' do
-        let!(:client) { create :client, user: user, phone_number: '2125556230' }
+        let!(:client) { create :client, user: user, phone_number: '12125556230' }
 
         before do
           rr = client.reporting_relationships.find_by(user: user)
@@ -94,7 +94,7 @@ describe 'import csv', type: :request do
         it 'makes the inactive relationship active' do
           subject
 
-          client1 = user.clients.find_by(phone_number: '2125556230')
+          client1 = user.clients.find_by(phone_number: '12125556230')
 
           expect(client1.first_name).to eq client.first_name
           expect(client1.last_name).to eq client.last_name
@@ -107,10 +107,10 @@ describe 'import csv', type: :request do
       context 'client has active relationship with a user in another department' do
         let(:department2) { create :department }
         let(:user2) { create :user, department: department2 }
-        let!(:client) { create :client, user: user2, phone_number: '2125556230' }
+        let!(:client) { create :client, user: user2, phone_number: '12125556230' }
 
         it 'creates a new relationship' do
-          client1 = user2.clients.find_by(phone_number: '2125556230')
+          client1 = user2.clients.find_by(phone_number: '12125556230')
           rr1 = client1.reporting_relationships.find_by(user: user)
           expect(rr1).to be_nil
           rr2 = client1.reporting_relationships.find_by(user: user2)
@@ -126,14 +126,14 @@ describe 'import csv', type: :request do
       end
     end
 
-    context 'invalid clients' do
+    context 'invalid relationships or clients' do
       context 'client has active relationship with a different user in the same department' do
         let(:user3) { create :user, department: department }
-        let!(:client) { create :client, user: user3, phone_number: '2125556230' }
+        let!(:client) { create :client, user: user3, phone_number: '12125556230' }
 
         it 'shows a validation error' do
           subject
-          expect(response.body).to include 'Invalid Clients'
+          expect(response.body).to include 'Invalid Relationships'
         end
 
         it 'does not create clients corresponding to the inputted csv' do
@@ -143,20 +143,51 @@ describe 'import csv', type: :request do
       end
 
       context 'client has active relationship with requested user' do
-        let!(:client) { create :client, user: user, phone_number: '2125556230' }
+        let!(:client) { create :client, user: user, phone_number: '12125556230' }
 
         it 'creates other clients corresponding to the inputted csv' do
           subject
           expect(user.clients.count).to eq 2
 
-          client1 = user.clients.find_by(phone_number: '4155553329')
-          client2 = user.clients.find_by(phone_number: '2125556230')
+          client1 = user.clients.find_by(phone_number: '14155553329')
+          client2 = user.clients.find_by(phone_number: '12125556230')
 
           expect(client1.first_name).to eq 'Person'
           expect(client1.last_name).to eq 'McPersonFace'
 
           expect(client2.first_name).to eq client.first_name
           expect(client2.last_name).to eq client.last_name
+        end
+      end
+
+      context 'client exists but valid matching phone number is not identical' do
+        let(:input_phone_number) { '12125556230' }
+        let(:normalized_phone_number) { '+12125556230' }
+        let(:user2) { create :user, department: department }
+        let!(:client) { create :client, user: user2, phone_number: normalized_phone_number }
+
+        subject do
+          file = fixture_file_upload('test_import_one_client.csv', 'text/csv')
+          post admin_import_csvs_path, params: {
+            import_csv: {
+              file: file
+            }
+          }
+        end
+
+        before do
+          allow(SMSService.instance).to receive(:number_lookup)
+            .and_return(normalized_phone_number)
+        end
+
+        it 'shows a validation error' do
+          subject
+          expect(response.body).to include 'Invalid Clients'
+        end
+
+        it 'does not create clients corresponding to the inputted csv' do
+          subject
+          expect(user.clients.count).to eq 0
         end
       end
     end
