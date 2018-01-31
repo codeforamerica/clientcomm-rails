@@ -5,8 +5,6 @@ class ReportingRelationshipsController < ApplicationController
     @reporting_relationship = ReportingRelationship
                               .find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
 
-    @reporting_relationship.update!(active: false)
-
     @client = Client.find(reporting_relationship_params['client_id'])
     @transfer_users = current_user.department.eligible_users.active
                                   .where.not(id: current_user.id)
@@ -15,7 +13,12 @@ class ReportingRelationshipsController < ApplicationController
     @transfer_reporting_relationship = ReportingRelationship.find_or_initialize_by(reporting_relationship_params)
     @transfer_reporting_relationship.active = true
 
-    unless @transfer_reporting_relationship.save
+    begin
+      ActiveRecord::Base.transaction do
+        @reporting_relationship.update!(active: false)
+        @transfer_reporting_relationship.save!
+      end
+    rescue ActiveRecord::RecordInvalid
       render 'clients/edit'
       return
     end

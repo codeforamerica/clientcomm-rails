@@ -34,7 +34,7 @@ RSpec.describe Message, type: :model do
   describe 'analytics_tracker_data' do
     let(:client_id) { 5 }
     let(:user_id) { 10 }
-    let(:message_id) { 10 }
+    let(:message_id) { Message.count + 1 }
     let(:body_length) { 10 }
     let(:body) { Faker::Lorem.characters(body_length) }
     let(:send_at) { Time.new(2010, 1, 1, 1, 1, 1) }
@@ -44,7 +44,7 @@ RSpec.describe Message, type: :model do
     let(:message) do
       create(
         :message,
-        id: 10,
+        id: message_id,
         client: client,
         body: body,
         user: user,
@@ -127,10 +127,14 @@ RSpec.describe Message, type: :model do
       it 'validates empty body with attachment' do
         m = build :message, body: ''
         m.attachments << build(:attachment)
-        m.save!
 
-        expect(m.save).to be_truthy
-        expect(m.attachments.count).to eq 1
+        expect(m).to be_valid
+      end
+
+      it 'validates empty body for incoming messages' do
+        m = build :message, body: '', inbound: true
+
+        expect(m).to be_valid
       end
     end
 

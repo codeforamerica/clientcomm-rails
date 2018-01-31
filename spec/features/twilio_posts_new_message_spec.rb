@@ -3,11 +3,9 @@ require 'rails_helper'
 feature 'Twilio' do
   let(:phone_number) { 'something explicit' }
   let(:department) { create :department, phone_number: phone_number }
-
-  before do
-    user = create :user, department: department
-    create :client, user: user, phone_number: twilio_new_message_params['From']
-  end
+  let(:user) { create :user, department: department }
+  let(:client) { create :client, user: user, phone_number: twilio_new_message_params['From'] }
+  let(:message_body) { 'some message body' }
 
   after do
     page.driver.header 'X-Twilio-Signature', nil
@@ -23,8 +21,34 @@ feature 'Twilio' do
 
     context 'with correct signature' do
       it 'returns a no content response' do
-        twilio_post_sms(twilio_new_message_params(to_number: phone_number))
+        twilio_post_sms(
+          twilio_new_message_params(
+            to_number: phone_number,
+            from_number: client.phone_number,
+            msg_txt: message_body
+          )
+        )
         expect(page).to have_http_status(:no_content)
+
+        login_as user, scope: :user
+        visit client_messages_path(client)
+        expect(page).to have_content message_body
+      end
+
+      it 'allows blank messages' do
+        twilio_post_sms(
+          twilio_new_message_params(
+            to_number: phone_number,
+            from_number: client.phone_number,
+            msg_txt: ''
+          )
+        )
+
+        expect(page).to have_http_status(:no_content)
+
+        login_as user, scope: :user
+        visit client_messages_path(client)
+        expect(find("#message_#{Message.last.id} .message--content").text).to be_empty
       end
     end
   end

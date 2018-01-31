@@ -4,7 +4,7 @@ class Message < ApplicationRecord
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
-  validates_presence_of :body, unless: ->(message) { message.attachments.present? }
+  validates_presence_of :body, unless: ->(message) { message.attachments.present? || message.inbound }
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
