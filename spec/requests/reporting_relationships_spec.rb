@@ -79,6 +79,11 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
         path = 'activerecord.errors.models.reporting_relationship.attributes.user.blank'
         expect(response.body).to include I18n.t path
       end
+
+      it 'does not deactivate the original rr' do
+        subject
+        expect(ReportingRelationship.find_by(client_id: client.id, user_id: user.id)).to be_active
+      end
     end
   end
 end
