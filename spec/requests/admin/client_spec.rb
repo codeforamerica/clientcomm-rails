@@ -4,10 +4,10 @@ describe 'Clients', type: :request, active_job: true do
   let(:department1) { create :department, name: 'AAA' }
   let(:department2) { create :department, name: 'BBB' }
   let(:department3) { create :department, name: 'CCC' }
-  let(:user1) { create :user, department: department1 }
-  let(:user2) { create :user, department: department1 }
-  let(:user3) { create :user, department: department2 }
-  let(:user4) { create :user, department: department3 }
+  let(:user1) { create :user, department: department1, full_name: 'Jamie Oberg' }
+  let(:user2) { create :user, department: department1, full_name: 'Maureen Brown' }
+  let(:user3) { create :user, department: department2, full_name: 'Rosemary Brown' }
+  let(:user4) { create :user, department: department3, full_name: 'Michael Newberry' }
 
   before do
     @admin_user = create :admin_user
