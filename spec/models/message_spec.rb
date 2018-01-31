@@ -127,10 +127,14 @@ RSpec.describe Message, type: :model do
       it 'validates empty body with attachment' do
         m = build :message, body: ''
         m.attachments << build(:attachment)
-        m.save!
 
-        expect(m.save).to be_truthy
-        expect(m.attachments.count).to eq 1
+        expect(m).to be_valid
+      end
+
+      it 'validates empty body for incoming messages' do
+        m = build :message, body: '', inbound: true
+
+        expect(m).to be_valid
       end
     end
 
