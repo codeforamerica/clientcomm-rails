@@ -121,6 +121,9 @@ Then create an admin user like so:
 AdminUser.create(name: '[USER NAME]', password: '[PASSWORD]', password_confirmation: '[PASSWORD]')
 ```
 
+If you're working on a team, put the login credentials in a shared password manager
+so that your teammates can create new  user and admin user accounts.
+
 Finally, you'll need to log in to mailgun to verify the email domain. Click on the
 *Domains* menu, click the new domain that was just created, and click the *Check DNS Records Now*
 button.
