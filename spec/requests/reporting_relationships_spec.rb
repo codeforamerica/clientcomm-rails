@@ -6,6 +6,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
   let(:transfer_user) { create :user, department: department }
   let(:transfer_note) { Faker::Lorem.characters(10) }
   let!(:client) { create :client, user: user }
+  let!(:scheduled_messages) { create_list :message, 5, client: client, user: user, send_at: Time.now + 1.day }
 
   before do
     sign_in user
@@ -49,6 +50,14 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       )
     end
 
+    it 'transfers scheduled messages' do
+      expect(user.messages).to include(*scheduled_messages)
+      expect(transfer_user.messages).to_not include(*scheduled_messages)
+      subject
+      expect(user.messages).to_not include(*scheduled_messages.map(&:reload))
+      expect(transfer_user.messages.reload).to include(*scheduled_messages)
+    end
+
     context 'transfer user has an inactive relationship' do
       before do
         create :reporting_relationship, user: transfer_user, client: client, active: false
@@ -83,6 +92,22 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       it 'does not deactivate the original rr' do
         subject
         expect(ReportingRelationship.find_by(client_id: client.id, user_id: user.id)).to be_active
+      end
+    end
+
+    context 'user is the unclaimed user' do
+      let!(:unclaimed_messages) { create_list :message, 3, client: client, user: user }
+
+      before do
+        department.update!(unclaimed_user: user)
+      end
+
+      it 'transfers messages received by the unclaimed user' do
+        expect(user.messages).to include(*unclaimed_messages)
+        expect(transfer_user.messages).to_not include(*unclaimed_messages)
+        subject
+        expect(user.messages).to_not include(*unclaimed_messages.map(&:reload))
+        expect(transfer_user.messages.reload).to include(*unclaimed_messages)
       end
     end
   end

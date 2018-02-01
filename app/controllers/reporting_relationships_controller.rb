@@ -27,6 +27,13 @@ class ReportingRelationshipsController < ApplicationController
 
     user = User.find(reporting_relationship_params['user_id'])
 
+    @client.messages.scheduled.where(user: current_user).update(user: user)
+
+    if current_user == current_user.department.unclaimed_user
+      unclaimed_messages = @client.messages.where(user: current_user)
+      unclaimed_messages.update(user: user)
+    end
+
     NotificationMailer.client_transfer_notification(
       current_user: user,
       previous_user: current_user,
