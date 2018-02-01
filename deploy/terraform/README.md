@@ -72,7 +72,6 @@ time_zone = ""
 twilio_account_sid = ""
 twilio_auth_token = ""
 twilio_phone_number = ""
-typeform_link = ""
 ```
 
 While most of these variables may be self explanatory there are a few details
@@ -87,6 +86,10 @@ email with mailgun, as HSTS prevents us from sharing a domain across the app and
 * currently due to the behavior of the heroku provider you must provide an email
 associated with a heroku account that has access to the pipeline you want to use.
 
+The variables that will definitely need to change between deploys are: `mailgun_domain`,
+`heroku_app_name`, `app_domain`, `time_zone`, `twilio_account_sid`, `twilio_auth_token`,
+and `twilio_phone_number`.
+
 Once you have created and saved the var file in lastpass you are ready to deploy:
 ```bash
 terraform plan -var-file =(lpass show --notes [YOUR VAR FILE])
@@ -97,3 +100,27 @@ to make you are ready to run apply:
 ```bash
 terraform apply -var-file =(lpass show --notes [YOUR VAR FILE])
 ```
+
+There is a manual step during the deploy; the [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) interface will
+launch. Add a job for the Twilio status update rake task to run every 10 minutes:
+
+```
+rake messages:update_twilio_statuses
+```
+
+Once the deploy is finished, start up a rails console on the remote server with the
+Heroku CLI:
+
+```
+heroku run rails c --app [APP-NAME]
+```
+
+Then create an admin user like so:
+
+```
+AdminUser.create(name: '[USER NAME]', password: '[PASSWORD]', password_confirmation: '[PASSWORD]')
+```
+
+Finally, you'll need to log in to mailgun to verify the email domain. Click on the
+*Domains* menu, click the new domain that was just created, and click the *Check DNS Records Now*
+button.
