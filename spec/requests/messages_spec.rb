@@ -38,7 +38,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'does not show message dialog if messages exist' do
-        message = create :message, client: client, user: user
+        create :message, client: client, user: user
         get client_messages_path(client)
         message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
         expect(response.body).to_not include(message)
