@@ -25,7 +25,8 @@ terraform init -backend-config =(lpass show --notes terraform-backend) -backend-
 
 ## Prepping a Twilio account
 
-In Twilio, buy a phone number in the appropriate area code. Configure the _A CALL COMES IN_ webhook
+In Twilio, create a new subaccount if you use them to manage your deploys, then buy a
+phone number in the appropriate area code. Configure the _A CALL COMES IN_ webhook
 to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/voice/` and the _A MESSAGE COMES IN_
 webhook to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/sms/`.
 
@@ -115,14 +116,14 @@ Heroku CLI:
 heroku run rails c --app [APP-NAME]
 ```
 
-Then create an admin user like so:
+Then create an admin user:
 
 ```
 AdminUser.create(name: '[USER NAME]', password: '[PASSWORD]', password_confirmation: '[PASSWORD]')
 ```
 
 If you're working on a team, put the login credentials in a shared password manager
-so that your teammates can create new  user and admin user accounts.
+so that your teammates can create new user and admin user accounts.
 
 Finally, you'll need to log in to mailgun to verify the email domain. Click on the
 *Domains* menu, click the new domain that was just created, and click the *Check DNS Records Now*
