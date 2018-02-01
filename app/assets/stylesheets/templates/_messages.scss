@@ -192,6 +192,11 @@
   }
 }
 
-#message-empty-dialog {
+#messages-empty-dialog {
+  margin-top: 70px;
 
+  p {
+    max-width: 300px;
+    margin: auto;
+  }
 }
