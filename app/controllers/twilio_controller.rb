@@ -51,9 +51,7 @@ class TwilioController < ApplicationController
     message = Message.find_by twilio_sid: params[:SmsSid]
     return if message.nil?
 
-    # update the status of the corresponding message in the database
-    # reload before `update` to avoid any DB race conditions from optimistic locking
-    message.reload.update!(twilio_status: params[:SmsStatus])
+    attempt_consistency message
 
     # put the message broadcast in the queue
     MessageBroadcastJob.perform_later(message: message)
@@ -69,6 +67,8 @@ class TwilioController < ApplicationController
         data: message.analytics_tracker_data
       )
     end
+
+    head :no_content
   end
 
   def incoming_voice
@@ -113,6 +113,21 @@ class TwilioController < ApplicationController
           has_desk_phone: false
         }
       )
+    end
+  end
+
+  private
+
+  def attempt_consistency(message)
+    request_start = request.headers['X-Request-Start']
+    # update the status of the corresponding message in the database
+    # reload before `update` to avoid any DB race conditions from optimistic locking
+    begin
+      unless message.last_twilio_update && message.last_twilio_update > request_start
+        message.update!(twilio_status: params[:SmsStatus], last_twilio_update: request_start)
+      end
+    rescue ActiveRecord::StaleObjectError
+      retry unless message.reload.last_twilio_update > request_start
     end
   end
 end

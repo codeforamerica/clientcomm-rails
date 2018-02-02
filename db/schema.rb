@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180112232629) do
+ActiveRecord::Schema.define(version: 20180201222656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20180112232629) do
     t.datetime "send_at", null: false
     t.integer "lock_version", default: 0
     t.boolean "sent", default: false
+    t.string "last_twilio_update"
     t.index ["client_id"], name: "index_messages_on_client_id"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
     t.index ["user_id"], name: "index_messages_on_user_id"

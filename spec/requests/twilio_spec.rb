@@ -284,26 +284,25 @@ describe 'Twilio controller', type: :request, active_job: true do
   end
 
   context 'POST#incoming_sms_status' do
-    let!(:msgone) {
+    let!(:msgone) do
       create :message, client: client, user: user, inbound: false, twilio_status: 'queued'
-    }
+    end
     let(:sms_sid) { msgone.twilio_sid }
+
+    subject do
+      status_params = twilio_status_update_params to_number: phone_number, sms_sid: sms_sid, sms_status: sms_status
+      twilio_post_sms_status status_params
+    end
 
     before do
       allow(SMSService.instance).to receive(:redact_message)
-
-      subject
     end
-
-    subject {
-      status_params = twilio_status_update_params to_number: phone_number, sms_sid: sms_sid, sms_status: sms_status
-      twilio_post_sms_status status_params
-    }
 
     context 'message received' do
       let(:sms_status) { 'received' }
 
       it 'saves a successful sms message status update' do
+        subject
         # validate the updated status
         expect(client.messages.last.twilio_status).to eq 'received'
 
@@ -318,10 +317,12 @@ describe 'Twilio controller', type: :request, active_job: true do
       let(:sms_status) { 'delivered' }
 
       it 'associated client has false message error' do
+        subject
         expect(client.has_message_error(user: user)).to be_falsey
       end
 
       it 'redacts the message' do
+        subject
         expect(SMSService.instance).to have_received(:redact_message).with(message: msgone)
       end
     end
@@ -330,6 +331,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let(:sms_status) { 'failed' }
 
       it 'saves an unsuccessful sms message status update' do
+        subject
         # validate the updated status
         expect(client.messages.last.twilio_status).to eq 'failed'
 
@@ -351,10 +353,12 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
 
       it 'sets error true on associated client' do
+        subject
         expect(client.has_message_error(user: user)).to be_truthy
       end
 
       it 'redacts the message' do
+        subject
         expect(SMSService.instance).to have_received(:redact_message).with(message: msgone)
       end
     end
@@ -364,6 +368,7 @@ describe 'Twilio controller', type: :request, active_job: true do
       let(:sms_status) { 'sent' }
 
       it 'fails silently' do
+        subject
         expect(client.messages.last.twilio_status).to eq 'queued'
         expect(response.code).to eq '204'
       end

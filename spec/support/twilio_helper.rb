@@ -5,10 +5,10 @@ module TwilioHelper
     twilio_post tw_params, post_sig, post_path
   end
 
-  def twilio_post_sms_status(tw_params = twilio_status_update_params, use_correct_signature = true)
+  def twilio_post_sms_status(tw_params = twilio_status_update_params, use_correct_signature = true, tw_headers = {})
     post_path = '/incoming/sms/status'
     post_sig = use_correct_signature ? correct_signature(tw_params, post_path) : nil
-    twilio_post tw_params, post_sig, post_path
+    twilio_post tw_params, post_sig, post_path, tw_headers
   end
 
   def twilio_post_voice(tw_params = {}, use_correct_signature = true)
@@ -19,7 +19,7 @@ module TwilioHelper
   end
 
   def twilio_clear_after
-    if defined?(page)
+    if defined?(page) && !Capybara.current_session.server
       page.driver.header post_header_name, nil
     end
   end
@@ -97,12 +97,13 @@ module TwilioHelper
 
   private
 
-  def twilio_post(tw_params, post_sig, post_url)
+  def twilio_post(tw_params, post_sig, post_url, tw_headers = {})
     if Capybara.current_session.server
       conn = Faraday.new(myhost.to_s)
       conn.post do |req|
         req.url post_url
         req.headers[post_header_name] = post_sig
+        req.headers.merge! tw_headers
         req.body = tw_params
       end
     elsif defined?(page)

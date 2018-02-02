@@ -29,5 +29,33 @@ feature 'Twilio' do
         expect(page).to have_http_status(:no_content)
       end
     end
+
+    context 'many requests at once', :js do
+      let(:user) { create :user }
+      let(:client) { create :client, user: user }
+
+      before do
+        visit root_path
+      end
+
+      it 'handles it' do
+        message = create :message, client: client, user: user, inbound: false, twilio_status: 'queued'
+
+        threads = %w[first second third fourth].each_with_index.map do |status, i|
+          Thread.new do
+            status_params = twilio_status_update_params(
+              to_number: message.number_to,
+              sms_sid: message.twilio_sid,
+              sms_status: status
+            )
+            twilio_post_sms_status status_params, true, 'X-Request-Start' => "151752434924#{i}"
+          end
+        end
+
+        threads.map(&:join)
+
+        expect(message.reload.twilio_status).to eq 'fourth'
+      end
+    end
   end
 end
