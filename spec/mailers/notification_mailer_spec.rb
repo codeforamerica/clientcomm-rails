@@ -4,7 +4,8 @@ describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
     let(:user) { build(:user) }
     let(:client) { build(:client, id: 123456789) }
-    let(:attachment) { build :attachment }
+    let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
+    let(:attachment) { build :attachment, media: File.new(media_path) }
     let(:message) { create(:message, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment]) }
     let(:mail) { NotificationMailer.message_notification(user, message) }
 
@@ -29,7 +30,9 @@ describe NotificationMailer, type: :mailer do
       it_behaves_like 'notification email'
 
       it 'renders the attachment' do
-        expect(subject).to include(attachment.media.url)
+        expect(mail.attachments.count).to eq 1
+        expect(mail.attachments[0].content_type).to include 'image/jpeg'
+        expect(mail.attachments[0].content_type).to include 'fluffy_cat'
       end
     end
 

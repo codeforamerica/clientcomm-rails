@@ -1,0 +1,5 @@
+<% if attachment.image? %>
+  <img style="max-width: 100%;" src="<%= attachments[attachment.media_file_name].url %>" />
+<% else %>
+  <a href="<%= attachment.media.url %>">View Attachment</a>
+<% end %>
