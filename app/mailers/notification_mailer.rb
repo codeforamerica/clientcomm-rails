@@ -4,7 +4,7 @@ class NotificationMailer < ApplicationMailer
   def message_notification(user, message)
     @client = message.client
     @message = message
-    FileUtils.mkdir_p(Rails.root.join('tmp', "attachments"))
+    FileUtils.mkdir_p(Rails.root.join('tmp', 'attachments'))
     @message.attachments.each do |a|
       tmp_path = Rails.root.join('tmp', 'attachments', SecureRandom.urlsafe_base64)
       a.media.copy_to_local_file(:original, tmp_path)

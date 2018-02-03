@@ -48,7 +48,6 @@ describe NotificationMailer, type: :mailer do
       end
     end
 
-
     context 'text part' do
       subject { mail.text_part.body }
 
