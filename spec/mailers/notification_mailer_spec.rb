@@ -24,17 +24,30 @@ describe NotificationMailer, type: :mailer do
       end
     end
 
-    context 'html part' do
+    context 'an image is sent' do
       subject { mail.body.encoded }
 
       it_behaves_like 'notification email'
 
-      it 'renders the attachment' do
+      it 'attaches files to email' do
         expect(mail.attachments.count).to eq 1
         expect(mail.attachments[0].content_type).to include 'image/jpeg'
         expect(mail.attachments[0].content_type).to include 'fluffy_cat'
+        expect(subject).to include 'cid:'
       end
     end
+
+    context 'an vcf file is sent' do
+      let(:media_path) { 'spec/fixtures/cat_contact.vcf' }
+      subject { mail.body.encoded }
+
+      it_behaves_like 'notification email'
+
+      it 'it renders view attachments txt' do
+        expect(subject).to include 'Files sent via text are attached to this emai'
+      end
+    end
+
 
     context 'text part' do
       subject { mail.text_part.body }
