@@ -34,3 +34,7 @@ Metrics/ModuleLength:
 
 Metrics/ParameterLists:
   Max: 8
+
+Style/BlockDelimiters:
+  Exclude:
+  - 'spec/**/*.rb'
