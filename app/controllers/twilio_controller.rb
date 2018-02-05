@@ -122,12 +122,10 @@ class TwilioController < ApplicationController
     request_start = request.headers['X-Request-Start']
     # update the status of the corresponding message in the database
     # reload before `update` to avoid any DB race conditions from optimistic locking
-    begin
-      unless message.last_twilio_update && message.last_twilio_update > request_start
+    Retrier.new retries: 5, errors: [ActiveRecord::StaleObjectError] do
+      if !message.last_twilio_update || request_start > message.last_twilio_update
         message.update!(twilio_status: params[:SmsStatus], last_twilio_update: request_start)
       end
-    rescue ActiveRecord::StaleObjectError
-      retry unless message.reload.last_twilio_update > request_start
     end
   end
 end
