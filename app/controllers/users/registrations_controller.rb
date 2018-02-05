@@ -22,7 +22,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     if updated
       flash[:notice] = 'Profile updated'
-      sign_in(@user, :bypass => true)
+      bypass_sign_in @user
       redirect_to edit_user_registration_path
     else
       render 'edit'

@@ -91,7 +91,6 @@ feature 'creating and editing scheduled messages', active_job: true do
       click_on 'Edit'
       expect(page).to have_current_path(edit_message_path(messageone_id))
       expect(page).to have_content 'Edit your message'
-      # TODO flakes because modal animation doesn't finish
       expect(page).to have_css('.send-later-input', text: new_message_body, visible: :all)
       expect(page).to have_field('Date', with: new_future_date.strftime('%m/%d/%Y'))
       expect(page).to have_select('Time', selected: new_future_date.strftime('%-l:%M%P'))
