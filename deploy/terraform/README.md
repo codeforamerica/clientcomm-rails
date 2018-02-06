@@ -112,7 +112,7 @@ rake messages:update_twilio_statuses
 Once the deploy is finished, start up a rails console on the remote server with the
 Heroku CLI:
 
-```
+```bash
 heroku run rails c --app [APP-NAME]
 ```
 
@@ -125,6 +125,13 @@ AdminUser.create(name: '[USER NAME]', password: '[PASSWORD]', password_confirmat
 If you're working on a team, put the login credentials in a shared password manager
 so that your teammates can create new user and admin user accounts.
 
-Finally, you'll need to log in to mailgun to verify the email domain. Click on the
+You'll also need to log in to mailgun to verify the email domain. Click on the
 *Domains* menu, click the new domain that was just created, and click the *Check DNS Records Now*
 button.
+
+If you have a help page for your deploy, you can add a link to it in the menu bar by
+setting the `HELP_LINK` config variable like so:
+
+```bash
+heroku set:config HELP_LINK='https://example.com/'
+```
