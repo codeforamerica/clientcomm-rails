@@ -1,4 +1,4 @@
-.lt-ie10 {
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   .select {
     &:before {
       display: none;
