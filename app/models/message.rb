@@ -11,12 +11,27 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
+  scope :transfer_markers, -> { where(transfer_marker: true) }
 
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'
   READ = 'read'
   UNREAD = 'unread'
   ERROR = 'error'
+
+  def self.create_transfer_marker(user:, client:)
+    transfer_marker = Message.new(
+      user: user,
+      client: client,
+      transfer_marker: true,
+      send_at: Time.now,
+      inbound: true,
+      number_to: user.department.phone_number,
+      number_from: client.phone_number
+    )
+    transfer_marker.save!
+    transfer_marker
+  end
 
   def self.create_from_twilio!(twilio_params)
     from_phone_number = twilio_params[:From]

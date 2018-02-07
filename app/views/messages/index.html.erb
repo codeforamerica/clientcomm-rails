@@ -35,7 +35,7 @@
 
 <section class="slab slab--padded slab--borderless" id="scroller-target">
   <div id="message-list" class="message--container grid" data-client-id="<%= @client.id %>">
-    <% if @messages.empty? %>
+    <% if @messages_count.zero? %>
       <div id="messages-empty-dialog" class="center-align" >
         <%= image_tag "handshake.png" %>
         <p class="text--help"><%= t('messages.empty', client_first_name: @client.first_name) %></p>

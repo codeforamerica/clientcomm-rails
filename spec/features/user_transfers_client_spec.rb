@@ -30,8 +30,11 @@ feature 'user transfers client', :js, active_job: true do
     select transfer_user.full_name, from: 'reporting_relationship_user_id'
     fill_in 'transfer_note', with: note
 
-    perform_enqueued_jobs do
-      click_on "Transfer #{clientone.full_name}"
+    time = Time.now
+    travel_to time do
+      perform_enqueued_jobs do
+        click_on "Transfer #{clientone.full_name}"
+      end
     end
 
     emails = ActionMailer::Base.deliveries
@@ -49,5 +52,10 @@ feature 'user transfers client', :js, active_job: true do
     login_as transfer_user, :scope => :user
     visit root_path
     expect(page).to have_content clientone.full_name
+
+    click_on clientone.full_name
+
+    expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
+    expect(page).to have_content I18n.t('messages.transferred', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: time)
   end
 end

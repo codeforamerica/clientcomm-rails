@@ -265,4 +265,40 @@ RSpec.describe Message, type: :model do
       end
     end
   end
+
+  describe 'create_transfer_marker' do
+    let(:user) { create :user }
+    let(:client) { create :client, users: [user] }
+
+    subject { Message.create_transfer_marker(user: user, client: client) }
+
+    it 'creates a message with transfer_marker properties' do
+      time = Time.now.change(usec: 0)
+
+      transfer_marker = nil
+      travel_to time do
+        transfer_marker = subject
+      end
+
+      expect(transfer_marker.user).to eq(user)
+      expect(transfer_marker.client).to eq(client)
+      expect(transfer_marker.send_at).to eq(time)
+      expect(transfer_marker).to be_transfer_marker
+      expect(transfer_marker).to be_persisted
+    end
+  end
+
+  describe 'transfer_markers' do
+    let(:user) { create :user }
+    let(:client) { create :client, users: [user] }
+    let(:transfer_marker) { create :message, client: client, user: user, transfer_marker: true }
+
+    subject { client.messages.transfer_markers }
+
+    it 'finds the transfer markers' do
+      create_list :message, 5, user: user, client: client
+
+      expect(subject).to contain_exactly(transfer_marker)
+    end
+  end
 end

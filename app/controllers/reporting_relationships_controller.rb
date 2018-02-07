@@ -29,6 +29,8 @@ class ReportingRelationshipsController < ApplicationController
 
     @client.messages.scheduled.where(user: current_user).update(user: user)
 
+    Message.create_transfer_marker(user: user, client: @client)
+
     if current_user == current_user.department.unclaimed_user
       unclaimed_messages = @client.messages.where(user: current_user)
       unclaimed_messages.update(user: user)
