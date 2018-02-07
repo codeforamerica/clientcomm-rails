@@ -135,6 +135,47 @@
         top: -.1em;
       }
     }
+
+    .message--transfer {
+      width: 100%;
+      text-align: center;
+
+      .message--label {
+        background-color: $color-background;
+        color: $color-grey;
+        font-size: $font-size-small;
+        font-weight: 500;
+        line-height: 1.4em;
+        margin-bottom: 0.1em;
+        display: inline-block;
+        padding: 0 15px;
+        position: relative;
+      }
+
+      .transfer--line {
+        overflow: hidden;
+
+        p {
+          &:before, &:after {
+            background-color: $color-light-grey;
+            content: "";
+            display: block;
+            height: 2px;
+            position: absolute;
+            top: 0.7em;
+            width: 400%;
+          }
+
+          &:before {
+            right: 100%;
+          }
+
+          &:after {
+            left: 100%;
+          }
+        }
+      }
+    }
   }
 
   .message--create {

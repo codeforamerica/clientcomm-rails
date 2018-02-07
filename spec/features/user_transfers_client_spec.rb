@@ -64,7 +64,7 @@ feature 'user transfers client', :js, active_job: true do
       click_on clientone.full_name
 
       expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
-      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: @time_send)
+      expect(page).to have_content "#{I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: myuser.full_name)} #{@time_send.strftime('%-m/%-d/%y, %-l:%M%P')}"
     end
 
     step 'transferring the client back' do
@@ -88,8 +88,8 @@ feature 'user transfers client', :js, active_job: true do
       click_on clientone.full_name
 
       expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
-      expect(page).to have_content I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name, time: @time_send)
-      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: transfer_user.full_name, time: @time_return)
+      expect(page).to have_content "#{I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name)} #{@time_send.strftime('%-m/%-d/%y, %-l:%M%P')}"
+      expect(page).to have_content "#{I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: transfer_user.full_name)} #{@time_return.strftime('%-m/%-d/%y, %-l:%M%P')}"
     end
   end
 end

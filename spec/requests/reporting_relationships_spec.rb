@@ -71,8 +71,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       transfer_message_from_body = I18n.t(
         'messages.transferred_from',
         client_full_name: client.full_name,
-        user_full_name: user.full_name,
-        time: time
+        user_full_name: user.full_name
       )
       expect(marker_from.body).to eq(transfer_message_from_body)
 
@@ -82,8 +81,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
       transfer_message_to_body = I18n.t(
         'messages.transferred_to',
-        user_full_name: transfer_user.full_name,
-        time: time
+        user_full_name: transfer_user.full_name
       )
       expect(marker_to.body).to eq(transfer_message_to_body)
     end

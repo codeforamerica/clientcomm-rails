@@ -22,7 +22,7 @@ class Message < ApplicationRecord
   def self.create_transfer_markers(sending_user:, receiving_user:, client:)
     Message.create!(
       user: sending_user,
-      body: I18n.t('messages.transferred_to', user_full_name: receiving_user.full_name, time: Time.now),
+      body: I18n.t('messages.transferred_to', user_full_name: receiving_user.full_name),
       client: client,
       transfer_marker: true,
       send_at: Time.now,
@@ -33,7 +33,7 @@ class Message < ApplicationRecord
     Message.create!(
       user: receiving_user,
       body: I18n.t('messages.transferred_from', user_full_name: sending_user.full_name,
-                                                client_full_name: client.full_name, time: Time.now),
+                                                client_full_name: client.full_name),
       client: client,
       transfer_marker: true,
       send_at: Time.now,

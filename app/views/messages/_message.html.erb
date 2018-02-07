@@ -13,6 +13,13 @@
   </div>
 <% else %>
   <div class="message--transfer" id="<%= dom_id(message) %>">
-    <%= message.body %>
+    <div class="transfer--line">
+      <p class="message--label">
+        <%= message.body %>
+      </p>
+    </div>
+    <p class="message--label">
+      <%= message.send_at.strftime('%-m/%-d/%y, %-l:%M%P') %>
+    </p>
   </div>
 <% end %>

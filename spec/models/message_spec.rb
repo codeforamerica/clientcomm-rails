@@ -292,8 +292,7 @@ RSpec.describe Message, type: :model do
       transfer_marker_body = I18n.t(
         'messages.transferred_from',
         user_full_name: sending_user.full_name,
-        client_full_name: client.full_name,
-        time: time
+        client_full_name: client.full_name
       )
       expect(transfer_marker_from.body).to eq(transfer_marker_body)
       expect(transfer_marker_from).to be_transfer_marker
@@ -305,8 +304,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_to.send_at).to eq(time)
       transfer_marker_body = I18n.t(
         'messages.transferred_to',
-        user_full_name: receiving_user.full_name,
-        time: time
+        user_full_name: receiving_user.full_name
       )
       expect(transfer_marker_to.body).to eq(transfer_marker_body)
       expect(transfer_marker_to).to be_transfer_marker

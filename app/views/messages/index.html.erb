@@ -35,13 +35,13 @@
 
 <section class="slab slab--padded slab--borderless" id="scroller-target">
   <div id="message-list" class="message--container grid" data-client-id="<%= @client.id %>">
+    <%= render @messages %>
     <% if @messages.where(transfer_marker: false).empty? %>
       <div id="messages-empty-dialog" class="center-align" >
         <%= image_tag "handshake.png" %>
         <p class="text--help"><%= t('messages.empty', client_first_name: @client.first_name) %></p>
       </div>
     <% end %>
-    <%= render @messages %>
   </div>
 </section>
 
