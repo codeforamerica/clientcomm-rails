@@ -405,6 +405,16 @@ describe 'Messages requests', type: :request, active_job: true do
           end
         end
       end
+
+      context 'the user has transfer markers' do
+        it 'displays the transfer marker' do
+          marker = create :message, client: client, user: user, transfer_marker: true, body: 'transferred!'
+
+          get client_messages_download_path(client)
+
+          expect(response.body).to include("-- #{marker.body} --")
+        end
+      end
     end
   end
 end
