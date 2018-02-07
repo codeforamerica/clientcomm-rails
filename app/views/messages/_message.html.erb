@@ -13,6 +13,6 @@
   </div>
 <% else %>
   <div class="message--transfer" id="<%= dom_id(message) %>">
-    <%= t('messages.transferred', time: message.send_at, client_full_name: message.client.full_name, user_full_name: message.user.full_name) %>
+    <%= message.body %>
   </div>
 <% end %>

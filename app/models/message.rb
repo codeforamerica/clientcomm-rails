@@ -19,14 +19,15 @@ class Message < ApplicationRecord
   UNREAD = 'unread'
   ERROR = 'error'
 
-  def self.create_transfer_marker(user:, client:)
+  def self.create_transfer_marker(sending_user:, receiving_user:, client:)
     transfer_marker = Message.new(
-      user: user,
+      user: receiving_user,
+      body: I18n.t('messages.transferred', user_full_name: sending_user.full_name, client_full_name: client.full_name, time: Time.now),
       client: client,
       transfer_marker: true,
       send_at: Time.now,
       inbound: true,
-      number_to: user.department.phone_number,
+      number_to: receiving_user.department.phone_number,
       number_from: client.phone_number
     )
     transfer_marker.save!

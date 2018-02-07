@@ -267,10 +267,17 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'create_transfer_marker' do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
+    let(:sending_user) { create :user }
+    let(:receiving_user) { create :user }
+    let(:client) { create :client, users: [receiving_user] }
 
-    subject { Message.create_transfer_marker(user: user, client: client) }
+    subject do
+      Message.create_transfer_marker(
+        sending_user: sending_user,
+        receiving_user: receiving_user,
+        client: client
+      )
+    end
 
     it 'creates a message with transfer_marker properties' do
       time = Time.now.change(usec: 0)
@@ -280,9 +287,10 @@ RSpec.describe Message, type: :model do
         transfer_marker = subject
       end
 
-      expect(transfer_marker.user).to eq(user)
+      expect(transfer_marker.user).to eq(receiving_user)
       expect(transfer_marker.client).to eq(client)
       expect(transfer_marker.send_at).to eq(time)
+      expect(transfer_marker.body).to eq(I18n.t('messages.transferred', user_full_name: sending_user.full_name, client_full_name: client.full_name, time: time))
       expect(transfer_marker).to be_transfer_marker
       expect(transfer_marker).to be_persisted
     end

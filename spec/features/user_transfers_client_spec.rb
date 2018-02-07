@@ -17,45 +17,79 @@ feature 'user transfers client', :js, active_job: true do
   end
 
   scenario 'successfully' do
-    expect(page).to have_content clientone.full_name
+    step 'editing a client' do
+      expect(page).to have_content clientone.full_name
 
-    within "#client_#{clientone.id}" do
-      find('td', text: 'Manage').click
+      within "#client_#{clientone.id}" do
+        find('td', text: 'Manage').click
+      end
+      expect(page).to have_current_path(edit_client_path(clientone))
+      expect(page).to have_content("also assigned to #{other_user.full_name}")
+      expect(page).to_not have_css 'select#reporting_relationship_user_id', text: myuser.full_name
+      unclaimed_user = User.find(myuser.department.user_id)
+      expect(page).to_not have_css 'select#reporting_relationship_user_id', text: unclaimed_user.full_name
     end
-    expect(page).to have_current_path(edit_client_path(clientone))
-    expect(page).to have_content("also assigned to #{other_user.full_name}")
-    expect(page).to_not have_css 'select#reporting_relationship_user_id', text: myuser.full_name
-    unclaimed_user = User.find(myuser.department.user_id)
-    expect(page).to_not have_css 'select#reporting_relationship_user_id', text: unclaimed_user.full_name
-    select transfer_user.full_name, from: 'reporting_relationship_user_id'
-    fill_in 'transfer_note', with: note
 
-    time = Time.now
-    travel_to time do
-      perform_enqueued_jobs do
-        click_on "Transfer #{clientone.full_name}"
+    step 'transferring a client' do
+      select transfer_user.full_name, from: 'reporting_relationship_user_id'
+      fill_in 'transfer_note', with: note
+
+      @time = Time.now
+      travel_to @time do
+        perform_enqueued_jobs do
+          click_on "Transfer #{clientone.full_name}"
+        end
+      end
+
+      emails = ActionMailer::Base.deliveries
+
+      expect(emails.count).to eq 1
+      expect(emails.first.html_part.to_s).to include clientone.full_name
+      expect(emails.first.html_part.to_s).to include clientone.phone_number
+      expect(emails.first.html_part.to_s).to include note
+    end
+
+    step 'viewing clients list' do
+      expect(page).to have_current_path(clients_path)
+      expect(page).to have_css '.flash p', text: "#{clientone.full_name} was transferred to #{transfer_user.full_name}"
+
+      expect(page).to_not have_css '#client-list', text: clientone.full_name
+    end
+
+    step 'transfer user has client' do
+      login_as transfer_user, :scope => :user
+      visit root_path
+      expect(page).to have_content clientone.full_name
+
+      click_on clientone.full_name
+
+      expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
+      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: @time)
+    end
+
+    step 'transferring the client back' do
+      click_on "Manage #{clientone.full_name}"
+
+      select myuser.full_name, from: 'reporting_relationship_user_id'
+
+      @time = Time.now
+      travel_to @time do
+        perform_enqueued_jobs do
+          click_on "Transfer #{clientone.full_name}"
+        end
       end
     end
 
-    emails = ActionMailer::Base.deliveries
+    step 'original user has both transfer markers' do
+      login_as myuser, :scope => :user
+      visit root_path
+      expect(page).to have_content clientone.full_name
 
-    expect(emails.count).to eq 1
-    expect(emails.first.html_part.to_s).to include clientone.full_name
-    expect(emails.first.html_part.to_s).to include clientone.phone_number
-    expect(emails.first.html_part.to_s).to include note
+      click_on clientone.full_name
 
-    expect(page).to have_current_path(clients_path)
-    expect(page).to have_css '.flash p', text: "#{clientone.full_name} was transferred to #{transfer_user.full_name}"
-
-    expect(page).to_not have_css '#client-list', text: clientone.full_name
-
-    login_as transfer_user, :scope => :user
-    visit root_path
-    expect(page).to have_content clientone.full_name
-
-    click_on clientone.full_name
-
-    expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
-    expect(page).to have_content I18n.t('messages.transferred', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: time)
+      expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
+      expect(page).to have_content I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name, time: @time)
+      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: transfer_user.full_name, time: @time)
+    end
   end
 end

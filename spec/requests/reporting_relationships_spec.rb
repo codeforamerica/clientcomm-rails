@@ -62,7 +62,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       expect(transfer_user.messages.transfer_markers).to be_empty
       subject
       expect(transfer_user.messages.transfer_markers.count).to eq(1)
-      marker = user.messages.transfer_markers.first
+      marker = transfer_user.messages.transfer_markers.first
       expect(marker.user).to eq(transfer_user)
       expect(marker.client).to eq(client)
     end

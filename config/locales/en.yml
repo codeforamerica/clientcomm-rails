@@ -33,7 +33,8 @@ en:
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   messages:
     empty: "You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself."
-    transferred: "%{client_full_name} was transferred to you from %{user_full_name}. %{time}"
+    transferred_from: "%{client_full_name} was transferred to you from %{user_full_name}. %{time}"
+    transferred_to: "Transferred to %{user_full_name}. %{time}"
   message:
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
