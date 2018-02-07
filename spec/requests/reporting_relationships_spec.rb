@@ -58,13 +58,34 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       expect(transfer_user.messages.reload).to include(*scheduled_messages)
     end
 
-    it 'creates a transfer marker' do
+    it 'creates transfer markers' do
       expect(transfer_user.messages.transfer_markers).to be_empty
-      subject
+      time = Time.now
+      travel_to time do
+        subject
+      end
       expect(transfer_user.messages.transfer_markers.count).to eq(1)
-      marker = transfer_user.messages.transfer_markers.first
-      expect(marker.user).to eq(transfer_user)
-      expect(marker.client).to eq(client)
+      marker_from = transfer_user.messages.transfer_markers.first
+      expect(marker_from.client).to eq(client)
+
+      transfer_message_from_body = I18n.t(
+        'messages.transferred_from',
+        client_full_name: client.full_name,
+        user_full_name: user.full_name,
+        time: time
+      )
+      expect(marker_from.body).to eq(transfer_message_from_body)
+
+      expect(user.messages.transfer_markers.count).to eq(1)
+      marker_to = user.messages.transfer_markers.first
+      expect(marker_to.client).to eq(client)
+
+      transfer_message_to_body = I18n.t(
+        'messages.transferred_to',
+        user_full_name: transfer_user.full_name,
+        time: time
+      )
+      expect(marker_to.body).to eq(transfer_message_to_body)
     end
 
     context 'transfer user has an inactive relationship' do

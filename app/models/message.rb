@@ -19,10 +19,10 @@ class Message < ApplicationRecord
   UNREAD = 'unread'
   ERROR = 'error'
 
-  def self.create_transfer_marker(sending_user:, receiving_user:, client:)
-    transfer_marker = Message.new(
-      user: receiving_user,
-      body: I18n.t('messages.transferred', user_full_name: sending_user.full_name, client_full_name: client.full_name, time: Time.now),
+  def self.create_transfer_markers(sending_user:, receiving_user:, client:)
+    Message.create!(
+      user: sending_user,
+      body: I18n.t('messages.transferred_to', user_full_name: receiving_user.full_name, time: Time.now),
       client: client,
       transfer_marker: true,
       send_at: Time.now,
@@ -30,8 +30,18 @@ class Message < ApplicationRecord
       number_to: receiving_user.department.phone_number,
       number_from: client.phone_number
     )
-    transfer_marker.save!
-    transfer_marker
+    Message.create!(
+      user: receiving_user,
+      body: I18n.t('messages.transferred_from', user_full_name: sending_user.full_name,
+                                                client_full_name: client.full_name, time: Time.now),
+      client: client,
+      transfer_marker: true,
+      send_at: Time.now,
+      inbound: true,
+      number_to: receiving_user.department.phone_number,
+      number_from: client.phone_number
+    )
+    true
   end
 
   def self.create_from_twilio!(twilio_params)

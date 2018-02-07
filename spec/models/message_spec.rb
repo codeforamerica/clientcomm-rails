@@ -272,27 +272,45 @@ RSpec.describe Message, type: :model do
     let(:client) { create :client, users: [receiving_user] }
 
     subject do
-      Message.create_transfer_marker(
+      Message.create_transfer_markers(
         sending_user: sending_user,
         receiving_user: receiving_user,
         client: client
       )
     end
 
-    it 'creates a message with transfer_marker properties' do
+    it 'creates two message with transfer_marker properties' do
       time = Time.now.change(usec: 0)
 
-      transfer_marker = nil
       travel_to time do
-        transfer_marker = subject
+        subject
       end
+      transfer_marker_from = receiving_user.messages.transfer_markers.first
+      expect(transfer_marker_from.user).to eq(receiving_user)
+      expect(transfer_marker_from.client).to eq(client)
+      expect(transfer_marker_from.send_at).to eq(time)
+      transfer_marker_body = I18n.t(
+        'messages.transferred_from',
+        user_full_name: sending_user.full_name,
+        client_full_name: client.full_name,
+        time: time
+      )
+      expect(transfer_marker_from.body).to eq(transfer_marker_body)
+      expect(transfer_marker_from).to be_transfer_marker
+      expect(transfer_marker_from).to be_persisted
 
-      expect(transfer_marker.user).to eq(receiving_user)
-      expect(transfer_marker.client).to eq(client)
-      expect(transfer_marker.send_at).to eq(time)
-      expect(transfer_marker.body).to eq(I18n.t('messages.transferred', user_full_name: sending_user.full_name, client_full_name: client.full_name, time: time))
-      expect(transfer_marker).to be_transfer_marker
-      expect(transfer_marker).to be_persisted
+      transfer_marker_to = sending_user.messages.transfer_markers.first
+      expect(transfer_marker_to.user).to eq(sending_user)
+      expect(transfer_marker_to.client).to eq(client)
+      expect(transfer_marker_to.send_at).to eq(time)
+      transfer_marker_body = I18n.t(
+        'messages.transferred_to',
+        user_full_name: receiving_user.full_name,
+        time: time
+      )
+      expect(transfer_marker_to.body).to eq(transfer_marker_body)
+      expect(transfer_marker_to).to be_transfer_marker
+      expect(transfer_marker_to).to be_persisted
     end
   end
 

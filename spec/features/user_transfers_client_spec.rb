@@ -34,8 +34,8 @@ feature 'user transfers client', :js, active_job: true do
       select transfer_user.full_name, from: 'reporting_relationship_user_id'
       fill_in 'transfer_note', with: note
 
-      @time = Time.now
-      travel_to @time do
+      @time_send = Time.now
+      travel_to @time_send do
         perform_enqueued_jobs do
           click_on "Transfer #{clientone.full_name}"
         end
@@ -64,16 +64,16 @@ feature 'user transfers client', :js, active_job: true do
       click_on clientone.full_name
 
       expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
-      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: @time)
+      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: myuser.full_name, time: @time_send)
     end
 
     step 'transferring the client back' do
-      click_on "Manage #{clientone.full_name}"
+      click_on 'Manage client'
 
       select myuser.full_name, from: 'reporting_relationship_user_id'
 
-      @time = Time.now
-      travel_to @time do
+      @time_return = Time.now
+      travel_to @time_return do
         perform_enqueued_jobs do
           click_on "Transfer #{clientone.full_name}"
         end
@@ -88,8 +88,8 @@ feature 'user transfers client', :js, active_job: true do
       click_on clientone.full_name
 
       expect(page).to have_content I18n.t('messages.empty', client_first_name: clientone.first_name)
-      expect(page).to have_content I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name, time: @time)
-      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: transfer_user.full_name, time: @time)
+      expect(page).to have_content I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name, time: @time_send)
+      expect(page).to have_content I18n.t('messages.transferred_from', client_full_name: clientone.full_name, user_full_name: transfer_user.full_name, time: @time_return)
     end
   end
 end
