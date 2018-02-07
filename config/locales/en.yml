@@ -36,6 +36,7 @@ en:
     transferred_from: "%{client_full_name} was transferred to you from %{user_full_name}."
     transferred_to: "Transferred to %{user_full_name}."
   message:
+    unclaimed_response: "AUTO REPLY: We don't recognize this number. Please reply with your name and the name of the person you’re trying to reach. We’ll direct your message to them."
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
   activerecord:

@@ -51,12 +51,14 @@ class Message < ApplicationRecord
     client = Client.find_by(phone_number: from_phone_number)
     department = Department.find_by(phone_number: to_phone_number)
 
+    client_unrecognized = false
     if client.nil?
       client = Client.create!(
         phone_number: from_phone_number,
         last_name: from_phone_number,
         users: [department.unclaimed_user]
       )
+      client_unrecognized = true
     end
 
     user = department.users
@@ -86,6 +88,18 @@ class Message < ApplicationRecord
     end
 
     new_message.save!
+    if client_unrecognized
+      now = Time.now
+      message = Message.create!(
+        client: client,
+        user: user,
+        body: I18n.t('message.unclaimed_response'),
+        number_from: user.department.phone_number,
+        number_to: client.phone_number,
+        send_at: now
+      )
+      ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
+    end
 
     new_message
   end

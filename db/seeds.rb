@@ -71,5 +71,5 @@ end
 puts 'Creating Messages'
 ReportingRelationship.all.each do |rr|
   rr.update!(client_status_id: ClientStatus.all.sample.id)
-  FactoryBot.create_list :message, 10, user: rr.user, client: rr.client
+  FactoryBot.create_list :message, 10, user: rr.user, client: rr.client, read: true
 end
