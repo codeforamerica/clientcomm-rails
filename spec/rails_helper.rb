@@ -59,6 +59,7 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :view
   # So we can use dom_id
   config.include ActionView::RecordIdentifier
+  config.include Rails.application.routes.url_helpers
 
   config.around :each, :type => :feature do |example|
     ActionMailer::Base.deliveries.clear
