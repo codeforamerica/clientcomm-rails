@@ -1,5 +1,9 @@
 # Preview all emails at http://localhost:3000/rails/mailers/notification_mailer
 class NotificationMailerPreview < ActionMailer::Preview
+  def report_usage
+    NotificationMailer.report_usage(recipient: 'test@example.com', metrics: Department.first.message_metrics(Time.now), date: Time.now)
+  end
+
   def message_notification
     user = User.first
     message = user.messages.first

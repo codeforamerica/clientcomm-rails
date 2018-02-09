@@ -99,7 +99,38 @@ describe NotificationMailer, type: :mailer do
     end
   end
 
-  describe 'client_edit_notification' do
+  describe '#report_usage' do
+    let(:now) { Time.now }
+    let(:email) { 'test@example.com' }
+    let(:metrics) do
+      [
+        ['User One', '0', '1'],
+        ['User Two', '3', '4'],
+        ['User Three', '5', '6']
+      ]
+    end
+
+    subject do
+      NotificationMailer.report_usage(recipient: email, metrics: metrics, date: now)
+    end
+
+    it 'renders the email' do
+      body = subject.body.encoded
+      expect(subject.to).to contain_exactly(email)
+      expect(body).to include("#{(now - 7.days).strftime '%-m/%-d/%y'} to #{now.strftime('%-m/%-d/%y')}")
+      expect(body).to include('<td>8</td>') # Outbound Total
+      expect(body).to include('<td>11</td>') # Inbound Total
+      expect(subject.attachments.count).to eq 1
+      csv = subject.attachments.first
+      csv_content = CSV.new(csv.body.raw_source, headers: true)
+      csv_content.each_with_index do |row, i|
+        expect(metrics[i]).to eq(row.values_at)
+      end
+      expect(csv_content.headers).to eq(%w[Name Outbound Inbound])
+    end
+  end
+
+  describe '#client_edit_notification' do
     let(:user1) { create :user, email: 'user1@user1.com' }
     let(:user2) { create :user, email: 'user2@user2.com' }
     let(:user3) { create :user, email: 'user3@user3.com' }

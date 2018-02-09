@@ -31,6 +31,29 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  def report_usage(recipient:, metrics:, date:)
+    @date = date
+    @metrics = metrics
+    @total_inbound = 0
+    @total_outbound = 0
+    csv_str = CSV.generate headers: true do |csv|
+      csv << %w[Name Outbound Inbound]
+
+      metrics.each do |metric|
+        csv << metric
+        @total_outbound += metric[1].to_i
+        @total_inbound += metric[2].to_i
+      end
+    end
+
+    attachments["metrics-#{date.strftime('%-m-%-d-%Y')}.csv"] = csv_str
+
+    mail(
+      to: recipient,
+      subject: 'Here are your weekly metrics from ClientComm'
+    )
+  end
+
   def client_edit_notification(notified_user:, editing_user:, client:, previous_changes:)
     if previous_changes['first_name'].present? || previous_changes['last_name'].present?
       first_name = previous_changes.dig('first_name', 0) || client.first_name

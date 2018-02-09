@@ -12,6 +12,7 @@ class Message < ApplicationRecord
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(transfer_marker: true) }
+  scope :messages, -> { where(transfer_marker: false) }
 
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'

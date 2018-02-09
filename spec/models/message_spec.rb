@@ -370,4 +370,18 @@ RSpec.describe Message, type: :model do
       expect(subject).to contain_exactly(transfer_marker)
     end
   end
+
+  describe 'messages' do
+    let(:user) { create :user }
+    let(:client) { create :client, users: [user] }
+    let(:message) { create :message, client: client, user: user }
+
+    subject { client.messages.messages }
+
+    it 'finds the message' do
+      create_list :message, 5, user: user, client: client, transfer_marker: true
+
+      expect(subject).to contain_exactly(message)
+    end
+  end
 end
