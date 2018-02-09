@@ -174,10 +174,12 @@ RSpec.describe Message, type: :model do
       let(:dept_phone_number) { '+17609996661' }
       let(:department) { create :department, phone_number: dept_phone_number }
       let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
+      let(:autoreply_message) { 'This is the unclaimed auto-reply message.' }
 
       before do
         department.unclaimed_user = unclaimed_user
         department.save
+        ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = autoreply_message
       end
 
       it 'creates a new client with missing information' do
@@ -215,10 +217,31 @@ RSpec.describe Message, type: :model do
         expect(message).to_not be_nil
         expect(message.number_from).to eq(department.phone_number)
         expect(message.number_to).to eq(unknown_number)
-        expect(message.body).to eq(I18n.t('message.unclaimed_response'))
+        expect(message.body).to eq(autoreply_message)
         expect(message.send_at).to eq(time)
         expect(job_args['send_at']).to eq(time.to_i)
         expect(job_args['callback_url']).to eq(incoming_sms_status_url)
+      end
+
+      context 'no environment variable is set' do
+        before do
+          ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = nil
+        end
+
+        it 'autoreply falls back to translation if no environment variable is set' do
+          unknown_number = '+19999999999'
+          params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
+
+          time = Time.now.change(usec: 0)
+          travel_to time do
+            Message.create_from_twilio!(params)
+          end
+
+          job_args = enqueued_jobs.first[:args].first
+          message = GlobalID::Locator.locate job_args['message']['_aj_globalid']
+          expect(message).to_not be_nil
+          expect(message.body).to eq(I18n.t('message.unclaimed_response'))
+        end
       end
     end
 

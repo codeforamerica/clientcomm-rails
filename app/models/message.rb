@@ -90,10 +90,11 @@ class Message < ApplicationRecord
     new_message.save!
     if client_unrecognized
       now = Time.now
+      unclaimed_response = ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] || I18n.t('message.unclaimed_response')
       message = Message.create!(
         client: client,
         user: user,
-        body: I18n.t('message.unclaimed_response'),
+        body: unclaimed_response,
         number_from: user.department.phone_number,
         number_to: client.phone_number,
         send_at: now
