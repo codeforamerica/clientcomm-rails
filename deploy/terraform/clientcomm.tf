@@ -18,7 +18,9 @@ variable "environment" {
 }
 
 variable "intercom_app_id" {}
-variable "intercom_secret_key" {}
+variable "intercom_secret_key" {
+  default = ""
+}
 variable "mixpanel_token" {}
 variable "sentry_endpoint" {}
 variable "skylight_authentication" {}
@@ -45,6 +47,10 @@ variable "route53_email_zone_id" {}
 
 variable "admin_email" {}
 variable "admin_password" {}
+
+variable "unclaimed_autoreply" {
+  default = ""
+}
 
 variable "aws_route53_ttl" {
   default = "300"
@@ -75,6 +81,8 @@ module "app" {
 
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
+
+  unclaimed_autoreply = "${var.unclaimed_autoreply}"
 
   enable_papertrail = "${var.enable_papertrail}"
   papertrail_plan   = "${var.papertrail_plan}"

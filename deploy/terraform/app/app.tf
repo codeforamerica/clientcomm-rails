@@ -34,6 +34,8 @@ variable "sentry_deploy_hook" {}
 variable "admin_email" {}
 variable "admin_password" {}
 
+variable "unclaimed_autoreply" {}
+
 # Configure the Heroku provider
 provider "heroku" {
   email   = "${var.heroku_email}"
@@ -76,6 +78,7 @@ resource "heroku_app" "clientcomm" {
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
+    UNCLAIMED_AUTOREPLY_MESSAGE = "${var.unclaimed_autoreply}"
   }
 }
 
