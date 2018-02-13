@@ -137,6 +137,12 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
         expect(user.messages).to_not include(*unclaimed_messages.map(&:reload))
         expect(transfer_user.messages.reload).to include(*unclaimed_messages)
       end
+
+      it 'does not show the TO transfer marker on the recipient conversation' do
+        subject
+        expect(user.messages.map(&:body)).to include(I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name))
+        expect(transfer_user.messages.map(&:body)).to_not include(I18n.t('messages.transferred_to', user_full_name: transfer_user.full_name))
+      end
     end
   end
 end

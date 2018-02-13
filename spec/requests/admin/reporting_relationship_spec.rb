@@ -178,10 +178,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
   end
 
   describe 'PUT#update' do
-    before do
-      create_list :message, 5, client: client, user: user1, send_at: Time.now + 1.day
-      create_list :message, 2, client: client, user: user1
-    end
+    let!(:scheduled_messages) { create_list :message, 5, client: client, user: user1, send_at: Time.now + 1.day }
+    let!(:messages) { create_list :message, 2, client: client, user: user1 }
 
     context 'transferring a client' do
       let(:client) { create :client, users: [user1, user4] }
@@ -195,20 +193,19 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         }
       end
 
-      it 'transfers only scheduled messages' do
-        scheduled_messages = user1.messages.scheduled
-        scheduled_messages_count = scheduled_messages.count
-        total_messages_count = user1.messages.count
+      it 'transfers scheduled messages' do
+        expect(user1.messages.scheduled).to include(*scheduled_messages.map(&:reload))
+
         perform_enqueued_jobs do
           put admin_reporting_relationship_path(rr.id), params: params
         end
+
         active_users = client.active_users
 
         expect(active_users).to include(user2, user4)
         expect(active_users).to_not include(user1)
-        expect(user2.messages.scheduled.count).to eq(scheduled_messages_count)
-        expect(user2.messages.scheduled).to include(*scheduled_messages.reload)
-        expect(user1.messages.count).to eq(total_messages_count - scheduled_messages_count)
+        expect(user1.messages.scheduled).to_not include(*scheduled_messages.map(&:reload))
+        expect(user2.messages.scheduled).to include(*scheduled_messages.map(&:reload))
         expect(ReportingRelationship.find_by(user: user2, client: client)).to be_active
         expect(ReportingRelationship.find_by(user: user4, client: client)).to be_active
         expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
@@ -233,6 +230,38 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         active_users = client.active_users
         expect(active_users.length).to eq(1)
         expect(ReportingRelationship.find_by(user: user1, client: client)).to_not be_active
+      end
+
+      it 'creates transfer markers' do
+        expect(user2.messages.transfer_markers).to be_empty
+        time = Time.now
+
+        travel_to time do
+          perform_enqueued_jobs do
+            put admin_reporting_relationship_path(rr.id), params: params
+          end
+        end
+
+        expect(user2.messages.transfer_markers.count).to eq(1)
+        marker_from = user2.messages.transfer_markers.first
+        expect(marker_from.client).to eq(client)
+
+        transfer_message_from_body = I18n.t(
+          'messages.transferred_from',
+          client_full_name: client.full_name,
+          user_full_name: user1.full_name
+        )
+        expect(marker_from.body).to eq(transfer_message_from_body)
+
+        expect(user1.messages.transfer_markers.count).to eq(1)
+        marker_to = user1.messages.transfer_markers.first
+        expect(marker_to.client).to eq(client)
+
+        transfer_message_to_body = I18n.t(
+          'messages.transferred_to',
+          user_full_name: user2.full_name
+        )
+        expect(marker_to.body).to eq(transfer_message_to_body)
       end
 
       context 'the user does not change' do
@@ -265,6 +294,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
       context 'the client is transferred from the unclaimed user' do
         let(:unclaimed_user) { create :user, department: department }
         let(:unclaimed_client) { create :client, users: [unclaimed_user] }
+        let!(:unclaimed_messages) { create_list :message, 3, client: unclaimed_client, user: unclaimed_user }
         let(:unclaimed_rr) do
           ReportingRelationship.find_by(
             user: unclaimed_user, client: unclaimed_client
@@ -280,13 +310,11 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
         before do
           department.update!(unclaimed_user: unclaimed_user)
-          create_list :message, 3, client: unclaimed_client, user: unclaimed_user
         end
 
         it 'transfers messages received by the unclaimed user' do
-          unclaimed_messages = unclaimed_user.messages
-          unclaimed_messages_count = unclaimed_messages.count
-          user_messages_count = user1.messages.count
+          expect(unclaimed_user.messages).to include(*unclaimed_messages.map(&:reload))
+
           perform_enqueued_jobs do
             put admin_reporting_relationship_path(unclaimed_rr.id), params: params
           end
@@ -294,14 +322,23 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
           expect(active_users).to include(user1)
           expect(active_users).to_not include(unclaimed_user)
-          expect(user1.messages.count).to eq(unclaimed_messages_count + user_messages_count)
-          expect(user1.messages).to include(*unclaimed_messages.reload)
+          expect(unclaimed_user.messages).to_not include(*unclaimed_messages.map(&:reload))
+          expect(user1.messages).to include(*unclaimed_messages.map(&:reload))
           expect(ReportingRelationship.find_by(user: user1, client: unclaimed_client)).to be_active
           expect(ReportingRelationship.find_by(user: unclaimed_user, client: unclaimed_client)).to_not be_active
 
           emails = ActionMailer::Base.deliveries
           to_addrs = emails.map(&:to)
           expect(to_addrs).to contain_exactly([user1.email])
+        end
+
+        it 'does not show the TO transfer marker on the recipient conversation' do
+          perform_enqueued_jobs do
+            put admin_reporting_relationship_path(unclaimed_rr.id), params: params
+          end
+
+          expect(unclaimed_user.messages.map(&:body)).to include(I18n.t('messages.transferred_to', user_full_name: user1.full_name))
+          expect(user1.messages.map(&:body)).to_not include(I18n.t('messages.transferred_to', user_full_name: user1.full_name))
         end
       end
     end

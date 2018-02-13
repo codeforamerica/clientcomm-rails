@@ -102,6 +102,8 @@ ActiveAdmin.register ReportingRelationship do
         client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note
       )
 
+      Message.create_transfer_markers(sending_user: previous_user, receiving_user: new_user, client: client)
+
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
       redirect_to(admin_client_path(client))
     end
