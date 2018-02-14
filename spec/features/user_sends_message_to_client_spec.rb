@@ -4,10 +4,10 @@ feature 'sending messages', active_job: true do
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:client_1) { build :client }
   let(:client_2) { build :client }
+  let(:myuser) { create :user }
 
   scenario 'user sends message to client', :js do
     step 'when user logs in' do
-      myuser = create :user
       login_as(myuser, scope: :user)
     end
 
@@ -19,8 +19,9 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      myclient_id = Client.find_by(phone_number: client_1.phone_number).id
-      visit client_messages_path(client_id: myclient_id)
+      client = Client.find_by(phone_number: client_1.phone_number).id
+      rr = myuser.reporting_relationships.find_by(client: client)
+      visit reporting_relationship_path(rr)
     end
 
     step 'when user sends a message' do
@@ -58,7 +59,6 @@ feature 'sending messages', active_job: true do
 
   scenario 'user schedules a message to client', :js do
     step 'when user logs in' do
-      myuser = create :user
       login_as(myuser, scope: :user)
     end
 
@@ -69,8 +69,9 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      myclient_id = Client.find_by(phone_number: client_1.phone_number).id
-      visit client_messages_path(client_id: myclient_id)
+      client = Client.find_by(phone_number: client_1.phone_number).id
+      rr = myuser.reporting_relationships.find_by(client: client)
+      visit reporting_relationship_path(rr)
     end
 
     step 'when user schedules a message' do

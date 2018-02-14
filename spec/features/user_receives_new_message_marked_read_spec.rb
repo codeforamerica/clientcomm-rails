@@ -13,7 +13,8 @@ feature 'User receives a message from a client', :js do
   context "while on the client's messages page" do
     it 'marks the message as read' do
       # go to the messages page
-      visit client_messages_path(client_id: client1.id)
+      rr = user1.reporting_relationships.find_by(client: client1)
+      visit reporting_relationship_path(rr)
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(
                         from_number: client1.phone_number,
@@ -37,7 +38,8 @@ feature 'User receives a message from a client', :js do
       end
 
       it 'does not stream messages to the incorrect user' do
-        visit client_messages_path(client_id: client1.id)
+        rr = user1.reporting_relationships.find_by(client: client1)
+        visit reporting_relationship_path(rr)
         # post a message to the twilio endpoint from the user
         twilio_post_sms(twilio_new_message_params(
                           from_number: client1.phone_number,

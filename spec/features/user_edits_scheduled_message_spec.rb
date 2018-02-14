@@ -16,7 +16,8 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      visit client_messages_path(client_id: clientone.id)
+      rr = userone.reporting_relationships.find_by(client: clientone)
+      visit reporting_relationship_path(rr)
       expect(page).not_to have_content '1 message scheduled'
     end
 
@@ -38,7 +39,8 @@ feature 'creating and editing scheduled messages', active_job: true do
 
       perform_enqueued_jobs do
         click_on 'Schedule message'
-        expect(page).to have_current_path(client_messages_path(clientone))
+        rr = userone.reporting_relationships.find_by(client: clientone)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
         expect(page).to have_content '1 message scheduled'
       end
     end
@@ -77,7 +79,8 @@ feature 'creating and editing scheduled messages', active_job: true do
 
       perform_enqueued_jobs do
         click_on 'Update'
-        expect(page).to have_current_path(client_messages_path(clientone))
+        rr = userone.reporting_relationships.find_by(client: clientone)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
       end
     end
 
@@ -132,7 +135,8 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'when the user clicks the delete button' do
       click_on 'Delete message'
 
-      expect(page).to have_current_path(client_messages_path(clientone))
+      rr = userone.reporting_relationships.find_by(client: clientone)
+      expect(page).to have_current_path(reporting_relationship_path(rr))
       expect(page).not_to have_content('1 message scheduled')
     end
   end

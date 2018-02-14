@@ -5,10 +5,9 @@ feature 'User receives a message from a client' do
   let(:department) { create :department, phone_number: phone_number }
   let(:clientone) { build :client, phone_number: '+12431551212' }
   let(:clienttwo) { build :client, phone_number: '+12432551212' }
+  let(:myuser) { create :user, department: department }
 
   before do
-    # log in with a fake user
-    myuser = create :user, department: department
     login_as(myuser, scope: :user)
     # create a new client
     add_client(clientone)
@@ -66,10 +65,10 @@ feature 'User receives a message from a client' do
       flash_text = "You have 1 unread message from #{clientone.full_name}"
       expect(page).to have_css '.flash p', text: flash_text
       # get the saved client record
-      clientone_record = Client.where(phone_number: clientone.phone_number).first
+      clientone_record = Client.find_by(phone_number: clientone.phone_number)
       # click the flash to go to the messages page
       click_on flash_text
-      expect(current_path).to eq client_messages_path(clientone_record.id)
+      expect(current_path).to eq reporting_relationship_path(myuser.reporting_relationships.find_by(client: clientone_record))
       # return to the clients page
       visit clients_path
       # post a second message
@@ -86,8 +85,9 @@ feature 'User receives a message from a client' do
   context "while on the clients' messages page" do
     it "doesn't see a notification for a new message", :js do
       # go to messages page
-      myclient_id = Client.find_by(phone_number: clientone.phone_number).id
-      visit client_messages_path(client_id: myclient_id)
+      client = Client.find_by(phone_number: clientone.phone_number)
+      rr = myuser.reporting_relationships.find_by(client: client)
+      visit reporting_relationship_path(rr)
       # post a message to the twilio endpoint from the user
       twilio_post_sms(twilio_new_message_params(
                         from_number: clientone.phone_number,

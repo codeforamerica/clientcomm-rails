@@ -30,6 +30,7 @@ feature 'feature flags' do
   describe 'templates' do
     let(:myuser) { create :user }
     let(:client) { create :client, user: myuser }
+    let(:rr) { ReportingRelationship.find_by(user: myuser, client: client) }
 
     before do
       login_as(myuser, :scope => :user)
@@ -41,14 +42,14 @@ feature 'feature flags' do
       end
 
       it 'shows templates button' do
-        visit client_messages_path(client)
+        visit reporting_relationship_path(rr)
         expect(page).to have_css '#template-button'
       end
     end
 
     context 'disabled' do
       it 'does not show templates button' do
-        visit client_messages_path(client)
+        visit reporting_relationship_path(rr)
         expect(page).not_to have_css '#template-button'
       end
     end

@@ -97,7 +97,7 @@ class MessagesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to client_messages_path(client.id) }
+      format.html { redirect_to reporting_relationship_path(current_user.reporting_relationships.find_by(client: client)) }
       format.js { head :no_content }
     end
   end
@@ -144,7 +144,8 @@ class MessagesController < ApplicationController
 
     flash[:notice] = 'Your message has been updated'
 
-    redirect_to client_messages_path(@message.client)
+    rr = current_user.reporting_relationships.find_by(client: @message.client)
+    redirect_to reporting_relationship_path(rr)
   end
 
   def destroy
@@ -158,7 +159,8 @@ class MessagesController < ApplicationController
     )
 
     flash[:notice] = 'The scheduled message has been deleted'
-    redirect_to client_messages_path(@message.client)
+    rr = current_user.reporting_relationships.find_by(client: @message.client)
+    redirect_to reporting_relationship_path(rr)
   end
 
   def message_params

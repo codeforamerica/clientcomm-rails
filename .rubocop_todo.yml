@@ -20,17 +20,6 @@ Performance/RegexpMatch:
   Exclude:
     - 'app/models/attachment.rb'
 
-# Offense count: 5
-# Configuration parameters: Include.
-# Include: db/migrate/*.rb
-Rails/CreateTableWithTimestamps:
-  Exclude:
-    - 'db/migrate/20170619175734_create_attachments.rb'
-    - 'db/migrate/20170926210630_create_templates.rb'
-    - 'db/migrate/20170929175554_add_feature_flags_table.rb'
-    - 'db/migrate/20171003215315_create_paperclip_attachments.rb'
-    - 'db/migrate/20171017184404_add_client_statuses_table.rb'
-
 # Offense count: 3
 Rails/FilePath:
   Exclude:

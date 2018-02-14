@@ -1,0 +1,23 @@
+<% if @templates.empty? %>
+  <div class="text-center no-templates">
+    <%= image_tag('empty_templates.png', size: "50x50", class: 'with-padding-small') %>
+    <p class="text--help">Find yourself writing the same message over and over? Make it a reusable template!</p>
+  </div>
+<% else %>
+<div class="template-table-container">
+  <table class="template-table data-table data-table--selectable">
+    <tbody class="template-table">
+      <% @templates.each do |template| %>
+      <tr class="template-row" data-template-body="<%= template.body %>">
+        <td>
+          <span class="truncated-text cell-content"><strong><%= "#{template.title}"%></strong> • <%= "#{template.body}"%></span>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>
+<div class="template-popover-footer text-center">
+  <%= link_to 'Manage templates', templates_path, class: ['text--small'] %>
+</div>

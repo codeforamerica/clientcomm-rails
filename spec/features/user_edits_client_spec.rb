@@ -44,7 +44,8 @@ feature 'user edits client', :js do
     expect(emails.count).to eq 1
     expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
 
-    expect(page).to have_current_path(client_messages_path(clientone))
+    rr = myuser.reporting_relationships.find_by(client: clientone)
+    expect(page).to have_current_path(reporting_relationship_path(rr))
 
     expect(page).to have_content "#{new_first_name} #{new_last_name}"
 

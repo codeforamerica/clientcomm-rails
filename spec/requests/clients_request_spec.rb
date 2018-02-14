@@ -57,7 +57,8 @@ describe 'Clients requests', type: :request do
         subject
 
         expect(response.code).to eq '302'
-        expect(response).to redirect_to client_messages_path(Client.last)
+        rr = user.reporting_relationships.find_by(client: Client.last)
+        expect(response).to redirect_to reporting_relationship_path(rr)
         expect(Client.count).to eq 1
 
         client = Client.first
@@ -179,7 +180,8 @@ describe 'Clients requests', type: :request do
             subject
 
             expect(response.code).to eq '302'
-            expect(response).to redirect_to client_messages_path(client)
+            rr = user.reporting_relationships.find_by(client: client)
+            expect(response).to redirect_to reporting_relationship_path(rr)
             expect(flash[:notice]).to eq 'You already have a client with this phone number.'
           end
 
@@ -198,7 +200,8 @@ describe 'Clients requests', type: :request do
               subject
 
               expect(response.code).to eq '302'
-              expect(response).to redirect_to client_messages_path(client)
+              rr = user.reporting_relationships.find_by(client: client)
+              expect(response).to redirect_to reporting_relationship_path(rr)
               expect(flash[:notice]).to eq 'You already have a client with this phone number.'
             end
           end
@@ -214,7 +217,8 @@ describe 'Clients requests', type: :request do
               subject
 
               expect(response.code).to eq '302'
-              expect(response).to redirect_to client_messages_path(client)
+              rr = user.reporting_relationships.find_by(client: client)
+              expect(response).to redirect_to reporting_relationship_path(rr)
               expect(client.reporting_relationships.find_by(user: user)).to be_active
             end
           end
@@ -277,7 +281,8 @@ describe 'Clients requests', type: :request do
             subject
 
             expect(response.code).to eq '302'
-            expect(response).to redirect_to client_messages_path(client)
+            rr = user.reporting_relationships.find_by(client: client)
+            expect(response).to redirect_to reporting_relationship_path(rr)
 
             rr = client.reporting_relationships.find_by(user: user)
             expect(rr.notes).to eq notes
@@ -403,7 +408,8 @@ describe 'Clients requests', type: :request do
         client = Client.last
 
         expect(response.code).to eq '302'
-        expect(response).to redirect_to client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        expect(response).to redirect_to reporting_relationship_path(rr)
 
         expect(client.first_name).to eq first_name
         expect(client.last_name).to eq last_name

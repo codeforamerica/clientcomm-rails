@@ -44,6 +44,7 @@ Rails.application.routes.draw do
 
   resources :mass_messages, only: [:new, :create]
   resources :reporting_relationships, only: [:create]
+  resources :reporting_relationships, only: [:show], path: 'conversations'
 
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'

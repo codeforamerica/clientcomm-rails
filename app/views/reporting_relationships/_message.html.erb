@@ -1,0 +1,25 @@
+<% unless message.transfer_marker %>
+  <div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
+    <div class="message--content <%= message.twilio_status %>"><%= message.body %>
+    <%= render message.attachments %>
+    </div>
+    <p class="message--label <%= message.twilio_status %>">
+      <% if message.twilio_status == 'undelivered' %>
+        <%= t('message.status.undelivered') %>
+      <% else %>
+        <%= message.twilio_status %> <%= message.send_at.to_s(:message_timestamp) %>
+      <% end %>
+    </p>
+  </div>
+<% else %>
+  <div class="message--transfer" id="<%= dom_id(message) %>">
+    <div class="transfer--line">
+      <p class="message--label">
+        <%= message.body %>
+      </p>
+    </div>
+    <p class="message--label">
+      <%= message.send_at.strftime('%-m/%-d/%y, %-l:%M%P') %>
+    </p>
+  </div>
+<% end %>

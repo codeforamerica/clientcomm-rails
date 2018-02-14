@@ -17,9 +17,9 @@ feature 'User schedules a message for later and submits it', :js, active_job: tr
 
     step 'when user logs in and naviages to the client page' do
       login_as(user, scope: :user)
-      visit client_messages_path(
-        Client.find_by(phone_number: client.phone_number)
-      )
+      existing_client = Client.find_by(phone_number: client.phone_number)
+      rr = user.reporting_relationships.find_by(client: existing_client)
+      visit reporting_relationship_path(rr)
     end
 
     step 'when user clicks on send later button' do

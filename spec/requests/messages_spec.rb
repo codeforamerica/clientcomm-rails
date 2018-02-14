@@ -6,7 +6,8 @@ describe 'Messages requests', type: :request, active_job: true do
       user = create :user
       client = create :client, user: user
 
-      get client_messages_path(client)
+      rr = user.reporting_relationships.find_by(client: client)
+      get reporting_relationship_path(rr)
 
       expect(response.code).to eq '302'
       expect(response).to redirect_to new_user_session_path
@@ -32,14 +33,16 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'shows no message dialog if no messages' do
-        get client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        get reporting_relationship_path(rr)
         message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
         expect(response.body).to include(message)
       end
 
       it 'does not show message dialog if messages exist' do
         create :message, client: client, user: user
-        get client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        get reporting_relationship_path(rr)
         message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
         expect(response.body).to_not include(message)
       end
@@ -49,7 +52,8 @@ describe 'Messages requests', type: :request, active_job: true do
         message_2 = create :message, client: client, user: user
         message_3 = create :message, client: client, user: user2
 
-        get client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        get reporting_relationship_path(rr)
 
         expect(response.body).to include(message.body)
         expect(response.body).to include(message_2.body)
@@ -61,7 +65,8 @@ describe 'Messages requests', type: :request, active_job: true do
         client.reporting_relationship(user: user).update!(has_unread_messages: true)
 
         # when we visit the messages path, it should mark the message read
-        expect { get client_messages_path(client) }
+        rr = user.reporting_relationships.find_by(client: client)
+        expect { get reporting_relationship_path(rr) }
           .to change { message.reload.read? }
           .from(false)
           .to(true)
@@ -72,7 +77,8 @@ describe 'Messages requests', type: :request, active_job: true do
         it 'does not show scheduled messages in the main timeline' do
           message = create :message, user: user, client: client, send_at: Time.now.tomorrow
 
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
           expect(response.body).to_not include(message.body)
         end
 
@@ -81,19 +87,22 @@ describe 'Messages requests', type: :request, active_job: true do
             create :message, user: user, client: client, body: body, send_at: Time.now
           end
 
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
           expect(response.body).to include(body)
         end
 
         it 'shows no link when scheduled messages do not exist' do
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
           expect(response.body).not_to match(/message[s]? scheduled/)
         end
 
         it 'shows a link when scheduled messages exist' do
           create_list :message, 2, user: user, client: client, send_at: Time.now.tomorrow
 
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
           expect(response.body).to include('2 messages scheduled')
         end
       end
@@ -103,7 +112,8 @@ describe 'Messages requests', type: :request, active_job: true do
 
         before do
           create :message, user: user, client: client, attachments: [attachment], inbound: true
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
         end
 
         context 'image files' do
@@ -130,7 +140,8 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'for a client the user has an inactive relationship with' do
         it 'should redirect to the clients index view' do
           ReportingRelationship.find_by(user: user, client: client).update(active: false)
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
 
           expect(response).to redirect_to(clients_path)
           expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
@@ -140,7 +151,7 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'for a client the user has no relationship with' do
         it 'should redirect to the clients index view' do
           unrelated_client = create(:client)
-          get client_messages_path(unrelated_client)
+          get reporting_relationship_path(unrelated_client)
 
           expect(response).to redirect_to(clients_path)
           expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
@@ -149,7 +160,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context "for a client that doesn't exist" do
         it 'should redirect to the clients index view' do
-          get client_messages_path(99999)
+          get reporting_relationship_path(99999)
 
           expect(response).to redirect_to(clients_path)
           expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
@@ -165,9 +176,11 @@ describe 'Messages requests', type: :request, active_job: true do
           delete message_path(message)
 
           expect(response.code).to eq '302'
-          expect(response).to redirect_to client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          expect(response).to redirect_to reporting_relationship_path(rr)
 
-          get client_messages_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_path(rr)
           expect(response.body).to_not include('1 message scheduled')
 
           expect_analytics_events_happened('message_scheduled_delete')

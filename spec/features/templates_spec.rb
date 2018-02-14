@@ -103,17 +103,15 @@ feature 'User deletes template' do
 end
 
 feature 'templates' do
+  let(:user) { create :user }
+  let(:client) { create :client, user: user }
+
   before do
     FeatureFlag.create!(flag: 'templates', enabled: true)
 
-    user = create :user
-    client = create :client, user: user
-
-    saved_client = Client.find_by(first_name: client.first_name)
-
     login_as(user, :scope => :user)
-    visit client_messages_path(client)
-    expect(page).to have_current_path(client_messages_path(saved_client))
+    rr = user.reporting_relationships.find_by(client: client)
+    visit reporting_relationship_path(rr)
   end
 
   scenario 'user fills message send box with template', :js do
@@ -129,7 +127,8 @@ feature 'templates' do
       template = create :template
       add_template(template)
 
-      visit client_messages_path(Client.first)
+      rr = user.reporting_relationships.find_by(client: client)
+      visit reporting_relationship_path(rr)
       page.find('.icon-insert_comment').click
 
       expect(page).to have_content(template.title)

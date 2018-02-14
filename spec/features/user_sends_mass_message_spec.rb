@@ -33,8 +33,9 @@ feature 'sending mass messages', active_job: true do
     end
 
     step 'user sends message to client' do
-      client_id = Client.find_by(phone_number: client_2.phone_number).id
-      visit client_messages_path(client_id)
+      client = Client.find_by(phone_number: client_2.phone_number)
+      rr = user.reporting_relationships.find_by(client: client)
+      visit reporting_relationship_path(rr)
       fill_in 'Send a text message', with: message.body
 
       perform_enqueued_jobs do
