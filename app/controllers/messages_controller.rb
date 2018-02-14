@@ -4,35 +4,6 @@ class MessagesController < ApplicationController
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
-  def index
-    @client = current_user.clients.find params[:client_id]
-
-    unless @client.active(user: current_user)
-      redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
-    end
-
-    reporting_relationship = @client.reporting_relationship(user: current_user)
-
-    analytics_track(
-      label: 'client_messages_view',
-      data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
-    )
-
-    @templates = current_user.templates
-
-    # the list of past messages
-    @messages = past_messages(client: @client)
-    @messages.update_all(read: true)
-    @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
-
-    @message = Message.new(send_at: default_send_at)
-    @sendfocus = true
-
-    @messages_scheduled = scheduled_messages(client: @client)
-  rescue ActiveRecord::RecordNotFound
-    redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
-  end
-
   def download
     @client = current_user.clients.find params[:client_id]
 

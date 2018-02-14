@@ -2,11 +2,12 @@ require 'rails_helper'
 
 describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
-    let(:user) { build(:user) }
-    let(:client) { build(:client, id: 123456789) }
+    let(:user) { create(:user) }
+    let(:client) { create(:client, id: 123456789, user: user) }
+    let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
     let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
     let(:attachment) { build :attachment, media: File.new(media_path) }
-    let(:message) { create(:message, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment]) }
+    let(:message) { create(:message, user: user, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment]) }
     let(:mail) { NotificationMailer.message_notification(user, message) }
 
     shared_examples_for 'notification email' do
@@ -20,7 +21,7 @@ describe NotificationMailer, type: :mailer do
         expect(subject).to include(message.created_at.strftime('7/11'))
         expect(subject).to include(message.created_at.strftime('8:10PM'))
         expect(subject).to include(message.body)
-        expect(subject).to include(client_messages_url(client))
+        expect(subject).to include(reporting_relationship_url(rr))
       end
     end
 
@@ -71,6 +72,11 @@ describe NotificationMailer, type: :mailer do
       )
     end
 
+    before do
+      create :reporting_relationship, user: current_user, client: client
+      create :reporting_relationship, user: previous_user, client: client, active: false
+    end
+
     shared_examples_for 'client_transfer_notification' do
       it 'renders the headers' do
         expect(mail.subject).to eq('You have a new client on ClientComm')
@@ -82,7 +88,8 @@ describe NotificationMailer, type: :mailer do
         expect(subject).to include(client.full_name)
         expect(subject).to include(client.phone_number)
         expect(subject).to include(previous_user.full_name)
-        expect(subject).to include(client_messages_url(client))
+        rr = current_user.reporting_relationships.find_by(client: client)
+        expect(subject).to include(reporting_relationship_url(rr))
       end
     end
 
@@ -163,7 +170,8 @@ describe NotificationMailer, type: :mailer do
           .to include("Joe Schmoe's name is now")
         expect(subject.body.to_s).not_to include('phone number has changed from')
 
-        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        rr = user1.reporting_relationships.find_by(client: client)
+        url = reporting_relationship_url(rr)
         expect(subject.body.to_s)
           .to have_link('John Smith', href: url)
 
@@ -184,7 +192,8 @@ describe NotificationMailer, type: :mailer do
             .to include("Joe Smith's name is now")
           expect(subject.body.to_s).not_to include('phone number has changed from')
 
-          url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+          rr = user1.reporting_relationships.find_by(client: client)
+          url = reporting_relationship_url(rr)
           expect(subject.body.to_s)
             .to have_link('John Smith', href: url)
         end
@@ -203,7 +212,8 @@ describe NotificationMailer, type: :mailer do
             .to include("John Schmoe's name is now")
           expect(subject.body.to_s).not_to include('phone number has changed from')
 
-          url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+          rr = user1.reporting_relationships.find_by(client: client)
+          url = reporting_relationship_url(rr)
           expect(subject.body.to_s)
             .to have_link('John Smith', href: url)
         end
@@ -232,7 +242,8 @@ describe NotificationMailer, type: :mailer do
           .to include('phone number has changed from (408) 867-5309 to (844) 387-6962')
         expect(subject.body.to_s).not_to include('name is now')
 
-        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        rr = user1.reporting_relationships.find_by(client: client)
+        url = reporting_relationship_url(rr)
         expect(subject.body.to_s)
           .to have_link("John Smith's", href: url)
       end
@@ -263,7 +274,8 @@ describe NotificationMailer, type: :mailer do
         expect(subject.body.to_s)
           .to include('phone number has changed from (408) 867-5309 to (844) 387-6962')
 
-        url = url_for(controller: 'messages', action: 'index', client_id: client.id)
+        rr = user1.reporting_relationships.find_by(client: client)
+        url = reporting_relationship_url(rr)
         expect(subject.body.to_s)
           .to have_link('John Smith', href: url)
         expect(subject.body.to_s)

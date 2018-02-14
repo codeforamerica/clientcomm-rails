@@ -7,5 +7,5 @@ ClientComm
 <% end %>
 
 <%= '[Image attached, view on ClientComm]' if @message.attachments.present? %>
-
-Respond on ClientComm: <%= client_messages_url(@client) %>
+<% rr = ReportingRelationship.find_by(client: @message.client, user: @message.user) %>
+Respond on ClientComm: <%= reporting_relationship_url(rr) %>
