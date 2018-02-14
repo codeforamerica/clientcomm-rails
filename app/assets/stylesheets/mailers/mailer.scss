@@ -1,3 +1,5 @@
+$color-white: #FFFFFF;
+
 @media only screen and (max-width: 620px) {
   table.body h1 {
     font-size: 28px !important;
@@ -75,7 +77,7 @@ table.body {
 }
 
 .main {
-  background-color: #FFFFFF;
+  background-color: $color-white;
   border-radius: 3px;
   width: 100%;
 }
@@ -168,37 +170,41 @@ p {
   padding: 12px 25px;
   text-decoration: none;
   background-color: #019C86;
-  color: #FFFFFF;
+  color: $color-white;
 }
 
 /* CSV EMAIL */
+$color-black: #333333;
 table.csv {
   width: 100%;
-  background-color:#FFFFFF;
+  background-color:$color-white;
   border-collapse: collapse;
   th {
     padding: 5px;
-    border-right: 1px solid #FFFFFF;
+    border-right: 1px solid $color-white;
     font-weight: normal;
     text-align: left;
-    color: #FFFFFF;
-    background-color: #000000
+    color: $color-white;
+    background-color: $color-black;
+  }
+  th:first-of-type {
+    border-left: 1px solid $color-black;
   }
   th:last-of-type {
-    border-right: 1px solid #000000;
+    border-right: 1px solid $color-black;
   }
   td {
     padding: 5px;
-    border: 1px solid #000000;
+    border: 1px solid $color-black;
   }
   tr:last-of-type {
-    color: #FFFFFF;
-    background-color: #000000;
+    color: $color-white;
+    background-color: $color-black;
     td {
-      border-right: 1px solid #FFFFFF;
+      border-right: 1px solid $color-white;
     }
     td:last-of-type {
-      border-right: 1px solid #000000;
+      border-right: 1px solid $color-black;
     }
   }
 }

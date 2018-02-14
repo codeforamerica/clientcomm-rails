@@ -34,15 +34,17 @@ class NotificationMailer < ApplicationMailer
   def report_usage(recipient:, metrics:, date:)
     @date = date
     @metrics = metrics
-    @total_inbound = 0
     @total_outbound = 0
+    @total_inbound = 0
+    @total_total = 0
     csv_str = CSV.generate headers: true do |csv|
-      csv << %w[Name Outbound Inbound]
+      csv << %w[Name Outbound Inbound Total]
 
       metrics.each do |metric|
         csv << metric
         @total_outbound += metric[1].to_i
         @total_inbound += metric[2].to_i
+        @total_total += metric[3].to_i
       end
     end
 
