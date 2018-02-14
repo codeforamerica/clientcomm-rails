@@ -111,7 +111,11 @@ describe NotificationMailer, type: :mailer do
     end
 
     subject do
-      NotificationMailer.report_usage(recipient: email, metrics: metrics, date: now)
+      NotificationMailer.report_usage(
+        recipient: email,
+        metrics: metrics,
+        end_date: now.to_s
+      )
     end
 
     it 'renders the email' do

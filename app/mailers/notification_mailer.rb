@@ -31,8 +31,8 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
-  def report_usage(recipient:, metrics:, date:)
-    @date = Time.zone.parse(date)
+  def report_usage(recipient:, metrics:, end_date:)
+    @date = Time.zone.parse(end_date)
     @metrics = metrics
     @total_outbound = 0
     @total_inbound = 0
@@ -48,7 +48,7 @@ class NotificationMailer < ApplicationMailer
       end
     end
 
-    attachments["metrics-#{date.strftime('%-m-%-d-%Y')}.csv"] = csv_str
+    attachments["metrics-#{@date.strftime('%-m-%-d-%Y')}.csv"] = csv_str
 
     mail(
       to: recipient,

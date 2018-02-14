@@ -1,10 +1,13 @@
 namespace :reports do
   task :generate_and_send_reports => :environment do
-    date = Time.now
+    end_date = Time.now
     Department.all.each do |department|
       recipients = department.reports.pluck(:email)
-      metrics = department.message_metrics(date)
-      recipients.each { |recipient| NotificationMailer.report_usage(recipient, metrics, date.to_s).deliver_later }
+      metrics = department.message_metrics(end_date)
+      recipients.each do |recipient|
+        NotificationMailer.report_usage(recipient, metrics, end_date.to_s)
+                          .deliver_later
+      end
     end
   end
 end
