@@ -139,6 +139,7 @@
     .message--transfer {
       width: 100%;
       text-align: center;
+      display: inline-block;
 
       .message--label {
         background-color: $color-background;

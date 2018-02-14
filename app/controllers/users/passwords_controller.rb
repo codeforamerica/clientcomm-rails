@@ -2,9 +2,13 @@ class Users::PasswordsController < Devise::PasswordsController
   append_before_action :assert_reset_link_valid, only: :edit
   append_before_action :assert_reset_token_valid, only: :update
 
-  def edit; end
+  def edit
+    super
+  end
 
-  def update; end
+  def update
+    super
+  end
 
   protected
 
