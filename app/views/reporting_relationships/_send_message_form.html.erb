@@ -2,7 +2,7 @@
   <div class="grid">
     <% if @messages_scheduled.count > 0 %>
       <% rr = @client.reporting_relationship(user: current_user) %>
-      <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, rr: rr %>
+      <%= render "reporting_relationships/scheduled_messages_link", count: @messages_scheduled.count, rr: rr %>
     <% end %>
   </div>
 
@@ -26,7 +26,7 @@
               title="<strong>My templates</strong>"
               data-template-count="<%= @templates.count %>"
               data-client-id="<%= @client.id %>"
-              data-content='<%= render 'messages/templates' %>'
+              data-content='<%= render 'reporting_relationships/templates' %>'
             >
               <i class="icon-insert_comment"></i></a>
             <% end %>

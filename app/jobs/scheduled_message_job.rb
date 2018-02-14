@@ -38,7 +38,7 @@ class ScheduledMessageJob < ApplicationJob
 
   def render_scheduled_message_link(count:, rr:)
     MessagesController.render(
-      partial: 'messages/scheduled_messages_link',
+      partial: 'reporting_relationships/scheduled_messages_link',
       locals: { count: count, rr: rr }
     )
   end

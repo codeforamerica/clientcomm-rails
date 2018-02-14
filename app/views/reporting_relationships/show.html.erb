@@ -45,11 +45,11 @@
   </div>
 </section>
 
-<%= render "send_message_form", autofocus: @sendfocus.present? %>
+<%= render 'reporting_relationships/send_message_form', autofocus: @sendfocus.present? %>
 
 <% rr = @client.reporting_relationship(user: current_user) %>
 <% if @message.id.present? %>
-  <%= render 'edit_message_modal',
+  <%= render 'reporting_relationships/edit_message_modal',
     modal_id: 'edit-message-modal',
     message: @message,
     errors: @message.errors.any?,
@@ -58,7 +58,7 @@
     date_picker_id: 'edit_message_send_at_date',
     submit_text: 'Update' %>
 <% else %>
-  <%= render 'edit_message_modal',
+  <%= render 'reporting_relationships/edit_message_modal',
     modal_id: 'new-message-modal',
     message: @message,
     errors: @message.errors.any?,
