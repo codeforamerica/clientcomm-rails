@@ -1,4 +1,4 @@
 ActiveAdmin.register Report do
-
-permit_params :department_id, :email
+  menu false
+  permit_params :department_id, :email
 end
