@@ -13,7 +13,7 @@ class Department < ApplicationRecord
   def message_metrics(this_date)
     metrics = []
     users.active.order(:full_name).each do |user|
-      all_messages = user.messages.where('send_at < ?', this_date).where('send_at > ?', this_date - 7.days)
+      all_messages = user.messages.messages.where('send_at < ?', this_date).where('send_at > ?', this_date - 7.days)
       metrics << [user.full_name, all_messages.outbound.count, all_messages.inbound.count,
                   all_messages.outbound.count + all_messages.inbound.count]
     end

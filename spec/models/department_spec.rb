@@ -52,8 +52,10 @@ describe Department, type: :model do
     let(:outbound1_count) { 55 }
     let(:inbound2_count) { 34 }
     let(:outbound2_count) { 89 }
+    let!(:transfers1) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, user: user1, client: user1.clients.sample }
     let!(:messages_inbound1) { create_list :message, inbound1_count, send_at: now - 1.day, inbound: true, user: user1, client: user1.clients.sample }
     let!(:messages_outbound1) { create_list :message, outbound1_count, send_at: now - 2.days, inbound: false, user: user1, client: user1.clients.sample }
+    let!(:transfers2) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, user: user2, client: user2.clients.sample }
     let!(:messages_inbound2) { create_list :message, inbound2_count, send_at: now - 3.days, inbound: true, user: user2, client: user2.clients.sample }
     let!(:messages_outbound2) { create_list :message, outbound2_count, send_at: now - 4.days, inbound: false, user: user2, client: user2.clients.sample }
 
