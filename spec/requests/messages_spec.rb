@@ -390,7 +390,8 @@ describe 'Messages requests', type: :request, active_job: true do
       it 'downloads messages as a text file' do
         messages = create_list :message, 10, user: user, client: client
 
-        get client_messages_download_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        get reporting_relationship_messages_download_path(rr)
 
         messages.each do |message|
           expect(response.body).to include(message.number_from) if message.inbound
@@ -411,7 +412,8 @@ describe 'Messages requests', type: :request, active_job: true do
             send_at: message.send_at - i.hours
           )
         end
-        get client_messages_download_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        get reporting_relationship_messages_download_path(rr)
         messages.each_with_index do |message, i|
           if i < msgs_count - 1
             expect(response.body.index(message.body)).to be > response.body.index(messages[i + 1].body)
@@ -423,7 +425,8 @@ describe 'Messages requests', type: :request, active_job: true do
         it 'displays the transfer marker' do
           marker = create :message, client: client, user: user, transfer_marker: true, body: 'transferred!'
 
-          get client_messages_download_path(client)
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_messages_download_path(rr)
 
           expect(response.body).to include("-- #{marker.body} --")
         end

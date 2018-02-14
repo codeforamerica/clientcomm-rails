@@ -1,7 +1,8 @@
 <section class="message--create">
   <div class="grid">
     <% if @messages_scheduled.count > 0 %>
-      <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, client: @client %>
+      <% rr = @client.reporting_relationship(user: current_user) %>
+      <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, rr: rr %>
     <% end %>
   </div>
 

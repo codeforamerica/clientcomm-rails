@@ -5,7 +5,8 @@ class MessagesController < ApplicationController
   skip_after_action :intercom_rails_auto_include
 
   def download
-    @client = current_user.clients.find params[:client_id]
+    rr = current_user.reporting_relationships.find params[:reporting_relationship_id]
+    @client = rr.client
 
     analytics_track(
       label: 'client_messages_transcript_download',
@@ -14,7 +15,7 @@ class MessagesController < ApplicationController
 
     # the list of past messages
     @messages = current_user.messages
-                            .where(client_id: params['client_id'])
+                            .where(client: @client)
                             .where('send_at < ?', Time.now)
                             .order('send_at ASC')
 
@@ -37,13 +38,13 @@ class MessagesController < ApplicationController
       read: true
     )
 
-    if message.invalid? | message.past_message?
+    if message.invalid? || message.past_message?
       @message = message
       @client = client
       @messages = past_messages(client: @client)
       @messages_scheduled = scheduled_messages(client: @client)
 
-      render :index
+      render 'reporting_relationships/show'
       return
     end
 
@@ -87,7 +88,7 @@ class MessagesController < ApplicationController
       data: @message.analytics_tracker_data
     )
 
-    render :index
+    render 'reporting_relationships/show'
   end
 
   def update
@@ -105,7 +106,7 @@ class MessagesController < ApplicationController
       @messages = past_messages(client: @client)
       @messages_scheduled = scheduled_messages(client: @client)
 
-      render :index
+      render 'reporting_relationships/show'
       return
     end
 

@@ -47,12 +47,13 @@
 
 <%= render "send_message_form", autofocus: @sendfocus.present? %>
 
+<% rr = @client.reporting_relationship(user: current_user) %>
 <% if @message.id.present? %>
   <%= render 'edit_message_modal',
     modal_id: 'edit-message-modal',
     message: @message,
     errors: @message.errors.any?,
-    back_link: client_scheduled_messages_index_path(@client),
+    back_link: reporting_relationship_scheduled_messages_index_path(rr),
     modal_title: 'Edit your message',
     date_picker_id: 'edit_message_send_at_date',
     submit_text: 'Update' %>

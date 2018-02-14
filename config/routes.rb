@@ -28,9 +28,6 @@ Rails.application.routes.draw do
     scope module: :clients do
       resource :archive, only: :create
     end
-
-    get 'scheduled_messages/index'
-    get 'messages/download', to: 'messages#download'
   end
 
   resources :templates, only: [:index, :new, :create, :edit, :update, :destroy]
@@ -43,7 +40,10 @@ Rails.application.routes.draw do
 
   resources :mass_messages, only: [:new, :create]
   resources :reporting_relationships, only: [:create]
-  resources :reporting_relationships, only: [:show], path: 'conversations'
+  resources :reporting_relationships, only: [:show], path: 'conversations' do
+    get 'scheduled_messages/index'
+    get 'messages/download', to: 'messages#download'
+  end
 
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'

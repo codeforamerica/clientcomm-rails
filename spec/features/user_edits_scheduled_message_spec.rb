@@ -7,6 +7,7 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:userone) { create :user }
   let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }
+  let(:rrone) { ReportingRelationship.find_by(client: clientone, user: userone) }
   let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
   let(:new_future_date) { future_date.change(min: 0, day: 4) }
 
@@ -47,7 +48,7 @@ feature 'creating and editing scheduled messages', active_job: true do
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content truncated_message_body
     end
@@ -87,7 +88,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'then when user edits the message again' do
       messageone_id = Message.last.id
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
 
@@ -106,7 +107,7 @@ feature 'creating and editing scheduled messages', active_job: true do
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
     end
@@ -119,7 +120,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'then when user edits the message again' do
       messageone_id = Message.last.id
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
 
