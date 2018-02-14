@@ -32,7 +32,7 @@ class NotificationMailer < ApplicationMailer
   end
 
   def report_usage(recipient:, metrics:, date:)
-    @date = date
+    @date = Time.zone.parse(date)
     @metrics = metrics
     @total_outbound = 0
     @total_inbound = 0

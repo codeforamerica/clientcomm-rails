@@ -4,7 +4,7 @@ namespace :reports do
     Department.all.each do |department|
       recipients = department.reports.pluck(:email)
       metrics = department.message_metrics(date)
-      recipients.each { |recipient| NotificationMailer.report_usage(recipient, metrics, date).deliver_later }
+      recipients.each { |recipient| NotificationMailer.report_usage(recipient, metrics, date.to_s).deliver_later }
     end
   end
 end
