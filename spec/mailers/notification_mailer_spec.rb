@@ -100,7 +100,7 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#report_usage' do
-    let(:now) { Time.now }
+    let(:end_date) { Time.now }
     let(:email) { 'test@example.com' }
     let(:metrics) do
       [
@@ -111,17 +111,13 @@ describe NotificationMailer, type: :mailer do
     end
 
     subject do
-      NotificationMailer.report_usage(
-        recipient: email,
-        metrics: metrics,
-        end_date: now.to_s
-      )
+      NotificationMailer.report_usage(email, metrics, end_date.to_s)
     end
 
     it 'renders the email' do
       body = subject.body.encoded
       expect(subject.to).to contain_exactly(email)
-      expect(body).to include("#{(now - 7.days).strftime '%-m/%-d/%y'} to #{now.strftime('%-m/%-d/%y')}")
+      expect(body).to include("#{(end_date - 7.days).strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
       expect(body).to include('<td>8</td><td>11</td><td>19</td>') # Outbound, Inbound, Total Totals
       expect(subject.attachments.count).to eq 1
       csv = subject.attachments.first
