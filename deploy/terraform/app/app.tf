@@ -79,6 +79,7 @@ resource "heroku_app" "clientcomm" {
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
     TYPEFORM_LINK = "${var.typeform_link}"
     UNCLAIMED_AUTOREPLY_MESSAGE = "${var.unclaimed_autoreply}"
+    REPORT_DAY  = "${var.report_day}"
   }
 }
 
