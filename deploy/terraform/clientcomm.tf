@@ -64,6 +64,11 @@ terraform {
   backend "s3" {}
 }
 
+variable "report_day" {
+  default = "1"
+}
+
+
 # Modules
 module "app" {
   source = "./app"
@@ -78,7 +83,7 @@ module "app" {
   heroku_pipeline_id   = "${var.heroku_pipeline_id}"
   heroku_team          = "${var.heroku_team}"
   heroku_database_plan = "${var.heroku_database_plan}"
-
+  report_day         = "${var.report_day}"
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
 
