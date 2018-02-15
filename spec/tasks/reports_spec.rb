@@ -20,7 +20,7 @@ describe 'reports rake tasks' do
       ENV['REPORT_DAY'] = @weekday
     end
 
-      it 'calls NotificationMailer.report_usage' do
+    it 'calls NotificationMailer.report_usage' do
       metrics = department.message_metrics(report_date)
       report_list.each do |report|
         expect(NotificationMailer).to receive(:report_usage)
