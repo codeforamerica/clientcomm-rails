@@ -38,3 +38,8 @@ Metrics/ParameterLists:
 Style/BlockDelimiters:
   Exclude:
   - 'spec/**/*.rb'
+
+# we can't remove this until we're certain prod has no invalid messages
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'app/controllers/reporting_relationships_controller.rb'
