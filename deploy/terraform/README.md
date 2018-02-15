@@ -73,6 +73,7 @@ time_zone = ""
 twilio_account_sid = ""
 twilio_auth_token = ""
 twilio_phone_number = ""
+report_day = ""
 ```
 
 While most of these variables may be self explanatory there are a few details
@@ -103,11 +104,21 @@ terraform apply -var-file =(lpass show --notes [YOUR VAR FILE])
 ```
 
 There is a manual step during the deploy; the [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) interface will
-launch. Add a job for the Twilio status update rake task to run every 10 minutes:
+launch. Add two jobs; one for the Twilio status update rake task to run every 10 minutes:
 
 ```
 rake messages:update_twilio_statuses
 ```
+
+And one for the usage report rake task to run every day:
+
+```
+rake reports:generate_and_send_reports
+```
+
+Although that task will run daily, it'll only send when the day of the week matches
+the value of the `report_day` variable mentioned above, with Sunday = "0" and
+Saturday = "6".
 
 Once the deploy is finished, start up a rails console on the remote server with the
 Heroku CLI:

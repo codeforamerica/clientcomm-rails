@@ -32,8 +32,20 @@ describe 'reports rake tasks' do
         Rake.application.invoke_task 'reports:generate_and_send_reports'
       end
     end
+
     context 'on incorrect day' do
       let(:day_of_week) { (report_date + 1.day).wday.to_s }
+      it 'does not call NotificationMailer.report_usage' do
+        expect(NotificationMailer).to_not receive(:report_usage)
+        travel_to report_date do
+          Rake::Task['reports:generate_and_send_reports'].reenable
+          Rake.application.invoke_task 'reports:generate_and_send_reports'
+        end
+      end
+    end
+
+    context 'with no default day set' do
+      let(:day_of_week) { '' }
       it 'does not call NotificationMailer.report_usage' do
         expect(NotificationMailer).to_not receive(:report_usage)
         travel_to report_date do
