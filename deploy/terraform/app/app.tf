@@ -33,7 +33,7 @@ variable "sentry_deploy_hook" {}
 
 variable "admin_email" {}
 variable "admin_password" {}
-
+variable "report_day" {}
 variable "unclaimed_autoreply" {}
 
 # Configure the Heroku provider
