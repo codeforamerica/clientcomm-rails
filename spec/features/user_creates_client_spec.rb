@@ -66,7 +66,8 @@ feature 'User creates client' do
         expect(page).to have_content("The number #{phone_number_display} already exists in ClientComm")
         click_on 'Yes, use this client'
 
-        expect(page).to have_current_path(client_messages_path(client))
+        rr = myuser.reporting_relationships.find_by(client: client)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
 
         click_on 'Manage client'
 

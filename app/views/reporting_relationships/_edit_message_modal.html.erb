@@ -13,7 +13,7 @@
             <h2 class="form-card__title" id="myModalLabel"><%= modal_title %></h2>
             </td>
             <td>
-            <a href="<%= client_messages_path(@client) %>" class="close no-underline" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+            <a href="<%= reporting_relationship_path(current_user.reporting_relationships.find_by(client: @client)) %>" class="close no-underline" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
             </td>
           </tr>
         </table>

@@ -4,37 +4,9 @@ class MessagesController < ApplicationController
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
-  def index
-    @client = current_user.clients.find params[:client_id]
-
-    unless @client.active(user: current_user)
-      redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
-    end
-
-    reporting_relationship = @client.reporting_relationship(user: current_user)
-
-    analytics_track(
-      label: 'client_messages_view',
-      data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
-    )
-
-    @templates = current_user.templates
-
-    # the list of past messages
-    @messages = past_messages(client: @client)
-    @messages.update_all(read: true)
-    @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
-
-    @message = Message.new(send_at: default_send_at)
-    @sendfocus = true
-
-    @messages_scheduled = scheduled_messages(client: @client)
-  rescue ActiveRecord::RecordNotFound
-    redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
-  end
-
   def download
-    @client = current_user.clients.find params[:client_id]
+    rr = current_user.reporting_relationships.find params[:reporting_relationship_id]
+    @client = rr.client
 
     analytics_track(
       label: 'client_messages_transcript_download',
@@ -43,7 +15,7 @@ class MessagesController < ApplicationController
 
     # the list of past messages
     @messages = current_user.messages
-                            .where(client_id: params['client_id'])
+                            .where(client: @client)
                             .where('send_at < ?', Time.now)
                             .order('send_at ASC')
 
@@ -66,13 +38,13 @@ class MessagesController < ApplicationController
       read: true
     )
 
-    if message.invalid? | message.past_message?
+    if message.invalid? || message.past_message?
       @message = message
       @client = client
       @messages = past_messages(client: @client)
       @messages_scheduled = scheduled_messages(client: @client)
 
-      render :index
+      render 'reporting_relationships/show'
       return
     end
 
@@ -97,7 +69,7 @@ class MessagesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to client_messages_path(client.id) }
+      format.html { redirect_to reporting_relationship_path(current_user.reporting_relationships.find_by(client: client)) }
       format.js { head :no_content }
     end
   end
@@ -116,7 +88,7 @@ class MessagesController < ApplicationController
       data: @message.analytics_tracker_data
     )
 
-    render :index
+    render 'reporting_relationships/show'
   end
 
   def update
@@ -134,7 +106,7 @@ class MessagesController < ApplicationController
       @messages = past_messages(client: @client)
       @messages_scheduled = scheduled_messages(client: @client)
 
-      render :index
+      render 'reporting_relationships/show'
       return
     end
 
@@ -144,7 +116,8 @@ class MessagesController < ApplicationController
 
     flash[:notice] = 'Your message has been updated'
 
-    redirect_to client_messages_path(@message.client)
+    rr = current_user.reporting_relationships.find_by(client: @message.client)
+    redirect_to reporting_relationship_path(rr)
   end
 
   def destroy
@@ -158,7 +131,8 @@ class MessagesController < ApplicationController
     )
 
     flash[:notice] = 'The scheduled message has been deleted'
-    redirect_to client_messages_path(@message.client)
+    rr = current_user.reporting_relationships.find_by(client: @message.client)
+    redirect_to reporting_relationship_path(rr)
   end
 
   def message_params

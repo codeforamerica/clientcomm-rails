@@ -5,7 +5,7 @@ describe 'Messages requests', type: :request, active_job: true do
     it 'rejects unauthenticated user' do
       client = create(:client)
 
-      get client_scheduled_messages_index_path(client)
+      get reporting_relationship_scheduled_messages_index_path(client)
 
       expect(response.code).to eq '302'
       expect(response).to redirect_to new_user_session_path
@@ -26,7 +26,8 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#index' do
       it 'displays list of scheduled messages' do
-        get client_scheduled_messages_index_path(client)
+        rr = client.reporting_relationship(user: user)
+        get reporting_relationship_scheduled_messages_index_path(rr)
 
         expect(response.body).to include message_one_body
         expect(response.body).to include message_two_body

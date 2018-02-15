@@ -12,6 +12,154 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
     sign_in user
   end
 
+  describe 'GET#show' do
+    let(:department2) { create :department }
+    let(:user2) { create :user, department: department2 }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+
+    subject do
+      get reporting_relationship_path(rr)
+    end
+
+    before do
+      user2.clients << client
+    end
+
+    it 'shows no message dialog if no messages' do
+      subject
+      message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
+      expect(response.body).to include(message)
+    end
+
+    it 'does not show message dialog if messages exist' do
+      create :message, client: client, user: user
+      subject
+      message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
+      expect(response.body).to_not include(message)
+    end
+
+    it 'shows all past messages for a given relationship' do
+      message = create :message, client: client, user: user
+      message2 = create :message, client: client, user: user
+      message3 = create :message, client: client, user: user2
+
+      subject
+
+      expect(response.body).to include(message.body)
+      expect(response.body).to include(message2.body)
+      expect(response.body).to_not include(message3.body)
+    end
+
+    it 'marks all messages read when index loaded' do
+      message = create :message, user: user, client: client, inbound: true
+      client.reporting_relationship(user: user).update!(has_unread_messages: true)
+
+      # when we visit the messages path, it should mark the message read
+      expect { subject }
+        .to change { message.reload.read? }
+        .from(false)
+        .to(true)
+      expect(client.reporting_relationship(user: user).has_unread_messages).to eq(false)
+    end
+
+    context 'there are scheduled messages' do
+      it 'does not show scheduled messages in the main timeline' do
+        message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+
+        subject
+        expect(response.body).to_not include(message.body)
+      end
+
+      it 'shows messages after their send_at date' do
+        travel_to 1.day.ago do
+          create :message, user: user, client: client, body: body, send_at: Time.now
+        end
+
+        subject
+        expect(response.body).to include(body)
+      end
+
+      context 'there are no scheduled messages' do
+        let!(:scheduled_messages) { nil }
+
+        it 'shows no link when scheduled messages do not exist' do
+          subject
+          expect(response.body).not_to match(/message[s]? scheduled/)
+        end
+      end
+
+      it 'shows a link when scheduled messages exist' do
+        subject
+        expect(response.body).to include("#{scheduled_messages.count} messages scheduled")
+      end
+    end
+
+    context 'there are attachments' do
+      let(:attachment) { build :attachment, media: File.new(media_path) }
+
+      before do
+        create :message, user: user, client: client, attachments: [attachment], inbound: true
+        subject
+      end
+
+      context 'image files' do
+        let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
+
+        it 'displays files' do
+          parsed_response = Nokogiri.parse(response.body)
+
+          expect(parsed_response.css('.message--inbound img').attr('src').text).to include 'fluffy_cat.jpg'
+        end
+      end
+
+      context 'other file types' do
+        let(:media_path) { 'spec/fixtures/cat_contact.vcf' }
+
+        it 'displays files' do
+          parsed_response = Nokogiri.parse(response.body)
+
+          expect(parsed_response.css('.message--inbound a').attr('href').text).to include 'cat_contact.vcf'
+        end
+      end
+    end
+
+    context 'for a client the user has an inactive relationship with' do
+      it 'should redirect to the clients index view' do
+        ReportingRelationship.find_by(user: user, client: client).update(active: false)
+        subject
+
+        expect(response).to redirect_to(clients_path)
+        expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
+      end
+    end
+
+    context 'for a client the user has no relationship with' do
+      subject do
+        get reporting_relationship_path(create(:reporting_relationship))
+      end
+
+      it 'should redirect to the clients index view' do
+        subject
+
+        expect(response).to redirect_to(clients_path)
+        expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
+      end
+    end
+
+    context "for a client that doesn't exist" do
+      subject do
+        get reporting_relationship_path(99999)
+      end
+
+      it 'should redirect to the clients index view' do
+        subject
+
+        expect(response).to redirect_to(clients_path)
+        expect(flash[:notice]).to include 'The client you tried to view is not in your caseload.'
+      end
+    end
+  end
+
   describe 'POST#create' do
     subject do
       post reporting_relationships_path, params: {

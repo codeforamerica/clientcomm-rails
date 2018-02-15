@@ -31,14 +31,15 @@ class ScheduledMessageJob < ApplicationJob
 
   def broadcast(message:, count:)
     channel = "scheduled_messages_#{message.user.id}_#{message.client.id}"
-    link_content = render_scheduled_message_link(count: count, client: message.client)
+    rr = message.client.reporting_relationship(user: message.user)
+    link_content = render_scheduled_message_link(count: count, rr: rr)
     ActionCable.server.broadcast(channel, link_html: link_content, count: count)
   end
 
-  def render_scheduled_message_link(count:, client:)
+  def render_scheduled_message_link(count:, rr:)
     MessagesController.render(
-      partial: 'messages/scheduled_messages_link',
-      locals: { count: count, client: client }
+      partial: 'reporting_relationships/scheduled_messages_link',
+      locals: { count: count, rr: rr }
     )
   end
 end

@@ -6,8 +6,8 @@ describe 'Tracking of message analytics events', type: :request do
       user = create :user
       sign_in user
       client = create :client, user: user
-
-      get client_messages_path client
+      rr = user.reporting_relationships.find_by(client: client)
+      get reporting_relationship_path(rr)
       expect(response.code).to eq '200'
 
       expect_analytics_events({

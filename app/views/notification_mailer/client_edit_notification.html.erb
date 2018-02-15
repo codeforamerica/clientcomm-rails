@@ -1,3 +1,4 @@
+<% rr = ReportingRelationship.find_by(user: @notified_user, client: @client) %>
 <table border="0" cellpadding="0" cellspacing="0" class="body">
   <tr>
     <td>&nbsp;</td>
@@ -21,12 +22,12 @@
                     </p>
                     <p class="message-well">
                       <% if @full_name.present? %>
-                        <%= @full_name %>'s name is now <%= link_to @client.full_name, client_messages_url(@client) %>.
+                        <%= @full_name %>'s name is now <%= link_to @client.full_name, reporting_relationship_url(rr) %>.
                       <% end %>
                       <br />
                       <br />
                       <% if @phone_number.present? %>
-                        <%= link_to "#{@client.full_name}'s", client_messages_url(@client) %> phone number has changed from <%= phone_number_display(@phone_number) %> to <%= phone_number_display(@client.phone_number) %>.
+                        <%= link_to "#{@client.full_name}'s", reporting_relationship_url(rr) %> phone number has changed from <%= phone_number_display(@phone_number) %> to <%= phone_number_display(@client.phone_number) %>.
                       <% end %>
                     </p>
                     <p>
@@ -37,7 +38,7 @@
                       <tbody>
                         <tr>
                           <td>
-                            <%= link_to('View client on ClientComm', client_messages_url(@client), { target: '_blank', class: 'email-cta' }) %>
+                            <%= link_to('View client on ClientComm', reporting_relationship_url(rr), { target: '_blank', class: 'email-cta' }) %>
                           </td>
                         </tr>
                       </tbody>

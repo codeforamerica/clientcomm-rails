@@ -4,6 +4,7 @@ feature 'User clicks on client in list', :js do
   describe 'and sees the messages page' do
     let!(:myuser) { create :user }
     let!(:myclient) { create :client, user: myuser }
+    let(:rr) { ReportingRelationship.find_by(user: myuser, client: myclient) }
 
     context 'on the client list page' do
       before do
@@ -21,14 +22,14 @@ feature 'User clicks on client in list', :js do
 
       it 'clicking on the client leads to client messages path' do
         find('td', text: myclient.full_name).click
-        expect(page).to have_current_path(client_messages_path(myclient))
+        expect(page).to have_current_path(reporting_relationship_path(rr))
       end
     end
 
     context 'on the messages page' do
       before do
         login_as(myuser, :scope => :user)
-        visit client_messages_path(myclient)
+        visit reporting_relationship_path(rr)
       end
 
       it 'shows the client name in the header' do
@@ -41,8 +42,8 @@ feature 'User clicks on client in list', :js do
 
       # get the id from the saved client record
       it 'has the correct path for the client' do
-        myclient_id = Client.find_by(phone_number: myclient.phone_number).id
-        expect(page).to have_current_path(client_messages_path(client_id: myclient_id))
+        rr = myuser.reporting_relationships.find_by(client: myclient)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
       end
 
       context 'sorting' do
@@ -62,7 +63,8 @@ feature 'User clicks on client in list', :js do
             messagetwo.save
           end
 
-          visit client_messages_path(myclient)
+          rr = myuser.reporting_relationships.find_by(client: myclient)
+          visit reporting_relationship_path(rr)
         end
 
         it 'sorts messages by send_at' do
@@ -91,7 +93,7 @@ feature 'User sees client notes on messages page', :js do
 
     it 'hides notes on mobile' do
       login_as(myuser, :scope => :user)
-      visit client_messages_path(myclient)
+      visit reporting_relationship_path(rr)
       expect(page).to_not have_content truncated_notes
     end
   end
@@ -103,7 +105,7 @@ feature 'User sees client notes on messages page', :js do
 
     it 'shows notes on desktop' do
       login_as(myuser, :scope => :user)
-      visit client_messages_path(myclient)
+      visit reporting_relationship_path(rr)
       expect(page).to have_content truncated_notes
     end
   end
@@ -117,7 +119,7 @@ feature 'User sees client notes on messages page', :js do
 
     before do
       login_as(myuser, :scope => :user)
-      visit client_messages_path(client_with_long_note)
+      visit reporting_relationship_path(rr)
     end
 
     it 'has show more button' do

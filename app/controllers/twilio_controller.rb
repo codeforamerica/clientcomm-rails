@@ -26,7 +26,7 @@ class TwilioController < ApplicationController
     # construct and queue an alert
     message_alert = MessageAlertBuilder.build_alert(
       user: new_message.user,
-      client_messages_path: client_messages_path(client.id),
+      reporting_relationship_path: reporting_relationship_path(rr),
       clients_path: clients_path
     )
 

@@ -42,7 +42,8 @@
                       <tbody>
                         <tr>
                           <td>
-                            <%= link_to('Introduce yourself on ClientComm', client_messages_url(@client), { target: '_blank', class: 'email-cta' }) %>
+                            <% rr = ReportingRelationship.find_by(user: @current_user, client: @client) %>
+                            <%= link_to('Introduce yourself on ClientComm', reporting_relationship_url(rr), { target: '_blank', class: 'email-cta' }) %>
                           </td>
                         </tr>
                       </tbody>

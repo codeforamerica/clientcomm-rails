@@ -35,7 +35,8 @@ class ClientsController < ApplicationController
         data: @client.reload.analytics_tracker_data
       )
 
-      redirect_to client_messages_path(@client)
+      rr = current_user.reporting_relationships.find_by(client: @client)
+      redirect_to reporting_relationship_path(rr)
       return
     end
 
@@ -54,14 +55,14 @@ class ClientsController < ApplicationController
         existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
         flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
         existing_relationship.update(active: true)
-        redirect_to client_messages_path(@existing_client)
+        redirect_to reporting_relationship_path(existing_relationship)
         return
       else
         rr_params = client_params[:reporting_relationships_attributes]['0']
         @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
         if params[:user_confirmed] == 'true'
           @reporting_relationship.save!
-          redirect_to client_messages_path(@existing_client)
+          redirect_to reporting_relationship_path(@reporting_relationship)
           return
         end
         render :confirm
@@ -106,7 +107,7 @@ class ClientsController < ApplicationController
                   .merge(@reporting_relationship.analytics_tracker_data)
         )
 
-        redirect_to client_messages_path(@client)
+        redirect_to reporting_relationship_path(@reporting_relationship)
       else
         analytics_track(
           label: 'client_deactivate_success',

@@ -7,6 +7,7 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:userone) { create :user }
   let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }
+  let(:rrone) { ReportingRelationship.find_by(client: clientone, user: userone) }
   let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
   let(:new_future_date) { future_date.change(min: 0, day: 4) }
 
@@ -16,7 +17,8 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user goes to messages page' do
-      visit client_messages_path(client_id: clientone.id)
+      rr = userone.reporting_relationships.find_by(client: clientone)
+      visit reporting_relationship_path(rr)
       expect(page).not_to have_content '1 message scheduled'
     end
 
@@ -38,14 +40,15 @@ feature 'creating and editing scheduled messages', active_job: true do
 
       perform_enqueued_jobs do
         click_on 'Schedule message'
-        expect(page).to have_current_path(client_messages_path(clientone))
+        rr = userone.reporting_relationships.find_by(client: clientone)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
         expect(page).to have_content '1 message scheduled'
       end
     end
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content truncated_message_body
     end
@@ -77,14 +80,15 @@ feature 'creating and editing scheduled messages', active_job: true do
 
       perform_enqueued_jobs do
         click_on 'Update'
-        expect(page).to have_current_path(client_messages_path(clientone))
+        rr = userone.reporting_relationships.find_by(client: clientone)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
       end
     end
 
     step 'then when user edits the message again' do
       messageone_id = Message.last.id
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
 
@@ -103,7 +107,7 @@ feature 'creating and editing scheduled messages', active_job: true do
 
     step 'when user clicks on scheduled message notice' do
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
     end
@@ -116,7 +120,7 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'then when user edits the message again' do
       messageone_id = Message.last.id
       click_on '1 message scheduled'
-      expect(page).to have_current_path(client_scheduled_messages_index_path(clientone))
+      expect(page).to have_current_path(reporting_relationship_scheduled_messages_index_path(rrone))
       expect(page).to have_content 'Manage scheduled messages'
       expect(page).to have_content new_message_body
 
@@ -132,7 +136,8 @@ feature 'creating and editing scheduled messages', active_job: true do
     step 'when the user clicks the delete button' do
       click_on 'Delete message'
 
-      expect(page).to have_current_path(client_messages_path(clientone))
+      rr = userone.reporting_relationships.find_by(client: clientone)
+      expect(page).to have_current_path(reporting_relationship_path(rr))
       expect(page).not_to have_content('1 message scheduled')
     end
   end

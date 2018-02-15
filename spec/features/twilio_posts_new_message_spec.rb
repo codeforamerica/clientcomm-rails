@@ -31,7 +31,8 @@ feature 'Twilio' do
         expect(page).to have_http_status(:no_content)
 
         login_as user, scope: :user
-        visit client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        visit reporting_relationship_path(rr)
         expect(page).to have_content message_body
       end
 
@@ -47,7 +48,8 @@ feature 'Twilio' do
         expect(page).to have_http_status(:no_content)
 
         login_as user, scope: :user
-        visit client_messages_path(client)
+        rr = user.reporting_relationships.find_by(client: client)
+        visit reporting_relationship_path(rr)
         expect(find("#message_#{Message.last.id} .message--content").text).to be_empty
       end
     end

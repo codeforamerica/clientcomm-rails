@@ -28,7 +28,8 @@
                     <% end %>
                     <p>Your new clients are:</p>
                     <% @transferred_clients.each do |hash| %>
-                      <p><%= link_to "#{hash[:client].full_name}, #{hash[:client].phone_number}, from #{hash[:previous_user].full_name}.", client_messages_url(hash[:client]) %>.</p>
+                      <% rr = ReportingRelationship.find_by(user: @current_user, client: hash[:client]) %>
+                      <p><%= link_to "#{hash[:client].full_name}, #{hash[:client].phone_number}, from #{hash[:previous_user].full_name}.", reporting_relationship_url(rr) %>.</p>
                     <% end %>
                   </td>
                 </tr>

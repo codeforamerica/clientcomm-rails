@@ -2,13 +2,13 @@ require 'rails_helper'
 
 describe MessageAlertBuilder do
   describe '#build' do
-    let(:client_messages_path) { 'some client messages path' }
+    let(:reporting_relationship_path) { 'some client messages path' }
     let(:clients_path) { 'all clients path' }
     let(:user) { create :user }
     subject do
       described_class.build_alert(
         user: user,
-        client_messages_path: client_messages_path,
+        reporting_relationship_path: reporting_relationship_path,
         clients_path: clients_path
       )
     end
@@ -23,7 +23,7 @@ describe MessageAlertBuilder do
 
       expect(subject).to eq({
                               text: 'You have 1 unread message from Senay Haylom',
-                              link_to: client_messages_path
+                              link_to: reporting_relationship_path
                             })
     end
 
@@ -34,7 +34,7 @@ describe MessageAlertBuilder do
 
       expect(subject).to eq({
                               text: 'You have 2 unread messages from Anna Futsum',
-                              link_to: client_messages_path
+                              link_to: reporting_relationship_path
                             })
     end
 
@@ -56,7 +56,7 @@ describe MessageAlertBuilder do
       create :message, user: user, client: client, inbound: true, read: false
       expect(subject).to eq({
                               text: 'You have 1 unread message from Luwam Sayid',
-                              link_to: client_messages_path
+                              link_to: reporting_relationship_path
                             })
     end
 

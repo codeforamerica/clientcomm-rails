@@ -1,5 +1,37 @@
 class ReportingRelationshipsController < ApplicationController
+  include ScheduledMessagesHelper
   before_action :authenticate_user!
+
+  def show
+    rr = current_user.reporting_relationships.find params[:id]
+
+    @client = rr.client
+
+    unless @client.active(user: current_user)
+      redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
+    end
+
+    reporting_relationship = @client.reporting_relationship(user: current_user)
+
+    analytics_track(
+      label: 'client_messages_view',
+      data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
+    )
+
+    @templates = current_user.templates
+
+    # the list of past messages
+    @messages = past_messages(client: @client)
+    @messages.update_all(read: true)
+    @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
+
+    @message = Message.new(send_at: default_send_at)
+    @sendfocus = true
+
+    @messages_scheduled = scheduled_messages(client: @client)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
+  end
 
   def create
     @reporting_relationship = ReportingRelationship
@@ -72,5 +104,16 @@ class ReportingRelationshipsController < ApplicationController
 
   def reporting_relationship_params
     params.require(:reporting_relationship).permit(:user_id, :client_id)
+  end
+
+  def default_send_at
+    Time.current.beginning_of_day + 9.hours
+  end
+
+  def past_messages(client:)
+    client.messages
+          .where(user: current_user)
+          .where('send_at < ?', Time.now)
+          .order('send_at ASC')
   end
 end
