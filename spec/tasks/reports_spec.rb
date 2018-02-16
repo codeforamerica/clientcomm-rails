@@ -6,7 +6,7 @@ describe 'reports rake tasks' do
     let(:department) { create :department }
     let(:report_count) { 5 }
     let!(:report_list) { create_list :report, report_count, department: department }
-    let(:report_date) { Time.now.change(usec: 0, hour: 5, day: 14, month: 2, year: 2018) }
+    let(:report_date) { Time.zone.now.change(usec: 0, hour: 5, day: 14, month: 2, year: 2018) }
     let(:day_of_week) { report_date.wday.to_s }
 
     before do
