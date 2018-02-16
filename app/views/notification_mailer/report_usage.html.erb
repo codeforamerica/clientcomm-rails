@@ -14,7 +14,7 @@
                   <td>
                     <!-- START CSV STUFF -->
                     <p class="header-appname">ClientComm</p>
-                    <p>Usage statistics for the week of <%= (@date - 7.days).strftime('%-m/%-d/%y') %> to <%= @date.strftime('%-m/%-d/%y') %></p>
+                    <p>Usage statistics for the week of <%= @start_date.strftime('%-m/%-d/%y') %> to <%= @end_date.strftime('%-m/%-d/%y') %></p>
                     <table class="csv">
                       <tr><th>User</th><th>Outbound</th><th>Inbound</th><th>Total</th></tr>
                       <% @metrics.each do |row| %>

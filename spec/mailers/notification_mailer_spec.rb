@@ -122,9 +122,11 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the email' do
+      start_date = end_date - 7.days
       body = subject.body.encoded
       expect(subject.to).to contain_exactly(email)
-      expect(body).to include("#{(end_date - 7.days).strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
+      expect(subject.subject).to eq(I18n.t('report_mailer.subject', start_date: start_date.strftime('%-m/%-d/%y'), end_date: end_date.strftime('%-m/%-d/%y')))
+      expect(body).to include("#{start_date.strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
       expect(body).to include('<td>8</td><td>11</td><td>19</td>') # Outbound, Inbound, Total Totals
       expect(subject.attachments.count).to eq 1
       csv = subject.attachments.first

@@ -1,6 +1,6 @@
 namespace :reports do
   task :generate_and_send_reports => :environment do
-    end_date = Time.now
+    end_date = Time.zone.now
     if end_date.wday.to_s == ENV['REPORT_DAY']
       Department.all.each do |department|
         recipients = department.reports.pluck(:email)

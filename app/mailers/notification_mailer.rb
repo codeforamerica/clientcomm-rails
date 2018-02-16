@@ -32,7 +32,8 @@ class NotificationMailer < ApplicationMailer
   end
 
   def report_usage(recipient, metrics, end_date)
-    @date = Time.zone.parse(end_date)
+    @end_date = Time.zone.parse(end_date)
+    @start_date = @end_date - 7.days
     @metrics = metrics
     @total_outbound = 0
     @total_inbound = 0
@@ -48,11 +49,11 @@ class NotificationMailer < ApplicationMailer
       end
     end
 
-    attachments["metrics-#{@date.strftime('%-m-%-d-%Y')}.csv"] = csv_str
+    attachments["metrics-#{@end_date.strftime('%-m-%-d-%Y')}.csv"] = csv_str
 
     mail(
       to: recipient,
-      subject: 'Here are your weekly metrics from ClientComm'
+      subject: I18n.t('report_mailer.subject', start_date: @start_date.strftime('%-m/%-d/%y'), end_date: @end_date.strftime('%-m/%-d/%y'))
     )
   end
 
