@@ -5,7 +5,7 @@ feature 'user transfers client', :js, active_job: true do
   let!(:transfer_user) { create :user, department: myuser.department }
   let!(:unclaimed_user) { create :user, department: myuser.department }
   let!(:other_user) { create :user }
-  let!(:clientone) { create :client, user: myuser }
+  let!(:clientone) { create :client, user: myuser, first_name: 'User', last_name: 'Test' }
 
   let(:note) { 'I am transfering this client to you' }
 
@@ -57,6 +57,7 @@ feature 'user transfers client', :js, active_job: true do
     end
 
     step 'transfer user has client' do
+      logout(:user)
       login_as transfer_user, :scope => :user
       visit root_path
       expect(page).to have_content clientone.full_name
@@ -81,6 +82,7 @@ feature 'user transfers client', :js, active_job: true do
     end
 
     step 'original user has both transfer markers' do
+      logout(:user)
       login_as myuser, :scope => :user
       visit root_path
       expect(page).to have_content clientone.full_name
