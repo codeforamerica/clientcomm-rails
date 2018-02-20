@@ -1,3 +1,5 @@
 class ClientStatus < ApplicationRecord
-  validates_presence_of :followup_date, :name
+  belongs_to :department
+
+  validates_presence_of :followup_date, :name, :icon_color
 end

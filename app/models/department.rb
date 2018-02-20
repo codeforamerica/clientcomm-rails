@@ -1,6 +1,7 @@
 class Department < ApplicationRecord
   has_many :users, dependent: :nullify, inverse_of: :department
-  has_many :reports, dependent: :destroy
+  has_many :reports, dependent: :destroy, inverse_of: :department
+  has_many :client_statuses, dependent: :destroy
   belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id', inverse_of: :department
 
   before_validation :normalize_phone_number, if: :phone_number_changed?
@@ -19,7 +20,9 @@ class Department < ApplicationRecord
     end
     metrics
   end
-
+  def has_client_statuses
+    client_statuses.count() > 0
+  end
   private
 
   def normalize_phone_number

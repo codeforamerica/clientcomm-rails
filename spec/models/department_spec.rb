@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Department, type: :model do
   it { should have_many :users }
   it { should have_many :reports }
+  it { should have_many :client_statuses }
   it { should belong_to :unclaimed_user }
 
   describe 'validations' do
@@ -37,6 +38,20 @@ describe Department, type: :model do
 
     it 'formats the phone number' do
       expect(subject.reload.phone_number).to eq(normalized_phone_number)
+    end
+  end
+
+  describe '#has_client_statuses' do
+    before do
+      @department = create :department
+      create_list :client_status, 5
+    end
+    it 'returns false if it has no clients' do
+      expect(@department.has_client_statuses).to eq(false)
+    end
+    it 'returns true if it has no clients' do
+      create_list :client_status, 5, department: @department
+      expect(@department.has_client_statuses).to eq(true)
     end
   end
 
