@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe ScheduledMessageJob, active_job: true, type: :job do
-  let(:count) { 4 }
+  let(:count) { 1 }
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
   let(:send_at_time) { Time.now.tomorrow }
@@ -13,9 +13,6 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
   it 'calls SMSService when performed' do
     expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
-    expect_any_instance_of(ScheduledMessageJob).to receive(:scheduled_messages)
-      .with(client: message.client)
-      .and_return(scheduled_messages)
 
     rr = message.client.reporting_relationship(user: message.user)
     expect(MessagesController).to receive(:render)
@@ -35,7 +32,6 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   shared_examples 'does not send' do
     it 'does not send the message' do
       expect(SMSService.instance).to_not receive(:send_message)
-      expect_any_instance_of(ScheduledMessageJob).to_not receive(:scheduled_messages)
 
       expect(MessagesController).to_not receive(:render)
 
