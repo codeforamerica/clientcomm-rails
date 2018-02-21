@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe ScheduledMessagesHelper, type: :helper do
+RSpec.describe ClientStatusHelper, type: :helper do
   context '#client_statuses' do
     let(:user) { create :user }
 

@@ -1,6 +1,5 @@
 class ScheduledMessageJob < ApplicationJob
   include ActionView::RecordIdentifier
-  include ScheduledMessagesHelper
 
   queue_as :default
 
@@ -25,7 +24,7 @@ class ScheduledMessageJob < ApplicationJob
 
     broadcast(
       message: message,
-      count: scheduled_messages(client: message.client).count
+      count: message.user.messages.where(client: message.client).scheduled.count
     )
   end
 

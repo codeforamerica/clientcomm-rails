@@ -1,5 +1,4 @@
 class ReportingRelationshipsController < ApplicationController
-  include ScheduledMessagesHelper
   before_action :authenticate_user!
 
   def show
@@ -28,7 +27,7 @@ class ReportingRelationshipsController < ApplicationController
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
 
-    @messages_scheduled = scheduled_messages(client: @client)
+    @messages_scheduled = current_user.messages.scheduled.where(client: @client)
   rescue ActiveRecord::RecordNotFound
     redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
   end

@@ -1,6 +1,4 @@
 class MessagesController < ApplicationController
-  include ScheduledMessagesHelper
-
   before_action :authenticate_user!
   skip_after_action :intercom_rails_auto_include
 
@@ -42,7 +40,7 @@ class MessagesController < ApplicationController
       @message = message
       @client = client
       @messages = past_messages(client: @client)
-      @messages_scheduled = scheduled_messages(client: @client)
+      @messages_scheduled = current_user.messages.scheduled.where(client: @client)
 
       render 'reporting_relationships/show'
       return
@@ -81,7 +79,7 @@ class MessagesController < ApplicationController
     @client = @message.client
 
     @messages = past_messages(client: @message.client)
-    @messages_scheduled = scheduled_messages(client: @client)
+    @messages_scheduled = current_user.messages.scheduled.where(client: @client)
 
     analytics_track(
       label: 'message_scheduled_edit_view',
@@ -104,7 +102,7 @@ class MessagesController < ApplicationController
       @client = @message.client
 
       @messages = past_messages(client: @client)
-      @messages_scheduled = scheduled_messages(client: @client)
+      @messages_scheduled = current_user.messages.scheduled.where(client: @client)
 
       render 'reporting_relationships/show'
       return
