@@ -540,10 +540,10 @@ describe 'Clients requests', type: :request do
         subject
 
         user.clients.each do |client|
-          expect(Nokogiri.parse(response.body).to_s).to include("#{client.first_name} #{client.last_name}")
+          expect(response.body).to include("#{client.first_name} #{client.last_name}")
         end
 
-        expect(Nokogiri.parse(response.body).to_s).not_to include("#{another_client.first_name} #{another_client.last_name}")
+        expect(response.body).not_to include("#{another_client.first_name} #{another_client.last_name}")
       end
 
       context 'there are deactivated clients' do
@@ -562,8 +562,7 @@ describe 'Clients requests', type: :request do
 
       context 'client status enabled' do
         before do
-          FeatureFlag.create!(flag: 'client_status', enabled: true)
-          ClientStatus.create!(name: 'Active', followup_date: 30)
+          @client_status = create :client_status, name: 'Active', followup_date: 30, icon_color: '#333333', department: user.department
         end
 
         subject { get clients_path }
@@ -576,16 +575,32 @@ describe 'Clients requests', type: :request do
             ReportingRelationship.create(
               client: client,
               user: user,
-              client_status: ClientStatus.find_by(name: 'Active'),
+              client_status: @client_status,
               last_contacted_at: active_contacted_at
             )
 
             subject
-
-            expect(Nokogiri.parse(response.body).text)
+            page = Nokogiri.parse(response.body)
+            expect(page.text)
               .to include('You have 1 active client due for follow up')
-            expect(Nokogiri.parse(response.body).to_s)
+            expect(response.body)
               .to include('clients%5B%5D=' + client.id.to_s)
+            icon = page.css('i.status-icon').to_s
+            expect(icon).to include('style="background-color:#333333"')
+          end
+          it 'shows status color' do
+            client = create :client
+            ReportingRelationship.create(
+              client: client,
+              user: user,
+              client_status: @client_status,
+              last_contacted_at: active_contacted_at
+            )
+
+            subject
+            page = Nokogiri.parse(response.body)
+            icon = page.css('i.status-icon').to_s
+            expect(icon).to include('style="background-color:#333333"')
           end
         end
       end

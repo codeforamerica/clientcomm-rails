@@ -24,7 +24,7 @@
             <%= f.hidden_field :phone_number %>
 
             <%= f.fields_for :reporting_relationships, @reporting_relationship do |rr| %>
-              <% if FeatureFlag.enabled? 'client_status' %>
+              <% if current_user.department.client_statuses? %>
                 <%= rr.hidden_field :client_status_id %>
               <% end %>
 

@@ -2,10 +2,10 @@ require 'rails_helper'
 
 feature 'Client status banner' do
   before do
-    FeatureFlag.create!(flag: 'client_status', enabled: true)
-    ClientStatus.create!(name: 'Active', followup_date: 30)
+    department = create :department
+    create :client_status, name: 'Active', followup_date: 30, department: department
 
-    user = create :user
+    user = create :user, department: department
     login_as(user, :scope => :user)
 
     recent_clients = create_list :client, 2

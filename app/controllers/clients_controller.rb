@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
 
   def index
     @clients = SortClients.clients_list(user: current_user)
-    @clients_by_status = client_statuses(user: current_user) if FeatureFlag.enabled?('client_status')
+    @clients_by_status = client_statuses(user: current_user)
 
     analytics_track(
       label: 'clients_view',

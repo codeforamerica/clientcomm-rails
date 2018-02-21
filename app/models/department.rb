@@ -20,9 +20,11 @@ class Department < ApplicationRecord
     end
     metrics
   end
-  def has_client_statuses
-    client_statuses.count() > 0
+
+  def client_statuses?
+    client_statuses.count.positive?
   end
+
   private
 
   def normalize_phone_number

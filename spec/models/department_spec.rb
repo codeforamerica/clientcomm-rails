@@ -41,17 +41,17 @@ describe Department, type: :model do
     end
   end
 
-  describe '#has_client_statuses' do
+  describe '#client_statuses?' do
     before do
       @department = create :department
       create_list :client_status, 5
     end
     it 'returns false if it has no clients' do
-      expect(@department.has_client_statuses).to eq(false)
+      expect(@department.client_statuses?).to eq(false)
     end
     it 'returns true if it has no clients' do
       create_list :client_status, 5, department: @department
-      expect(@department.has_client_statuses).to eq(true)
+      expect(@department.client_statuses?).to eq(true)
     end
   end
 

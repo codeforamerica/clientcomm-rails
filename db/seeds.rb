@@ -14,12 +14,7 @@ admin_password = ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_password
 puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
-FeatureFlag.find_or_create_by(flag: 'client_status').update!(enabled: true)
 
-puts 'Populating Client Statuses'
-ClientStatus.find_or_create_by!(name: 'Exited', followup_date: 90)
-ClientStatus.find_or_create_by!(name: 'Training', followup_date: 30)
-ClientStatus.find_or_create_by!(name: 'Active', followup_date: 30)
 
 puts "Creating Admin User with password #{admin_password}"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
@@ -32,7 +27,7 @@ puts 'Deleting Old Records'
 Message.delete_all
 ReportingRelationship.delete_all
 Client.delete_all
-User.where.not(id: [test_user.id]).delete_all
+User.delete_all
 Department.delete_all
 Survey.delete_all
 
@@ -40,6 +35,11 @@ puts 'Creating Departments'
 FactoryBot.create_list :department, 3
 User.all.each do |user|
   user.update_attributes(department: Department.all.sample)
+end
+
+puts 'Create Client Status'
+Department.all.each do |dept|
+  FactoryBot.create_list :client_status, rand(1..5), department: dept
 end
 
 test_user.reload.department.update(phone_number: ENV['TWILIO_PHONE_NUMBER'])

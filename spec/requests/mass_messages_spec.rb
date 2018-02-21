@@ -113,7 +113,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     context 'client status feature flag enabled' do
-      let(:status) { create :client_status }
+      let(:status) { create :client_status, department: department }
 
       before do
         FeatureFlag.create!(flag: 'client_status', enabled: true)

@@ -77,7 +77,7 @@ feature 'User creates client' do
   end
 
   context 'client status feature flag enabled' do
-    let!(:status) { create :client_status, name: 'Active' }
+    let!(:status) { create :client_status, name: 'Active', department: myuser.department }
     before do
       FeatureFlag.create!(flag: 'client_status', enabled: true)
     end

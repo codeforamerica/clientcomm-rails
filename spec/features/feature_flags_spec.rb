@@ -54,46 +54,4 @@ feature 'feature flags' do
       end
     end
   end
-
-  describe 'client status' do
-    let(:myuser) { create :user }
-    let!(:status) { create :client_status }
-
-    before do
-      login_as(myuser, :scope => :user)
-      create :client, user: myuser, client_status: status
-    end
-
-    context 'enabled' do
-      before do
-        FeatureFlag.create!(flag: 'client_status', enabled: true)
-      end
-
-      it 'shows status radio button' do
-        visit new_client_path
-        expect(page).to have_css '.radio-button', text: status.name
-      end
-
-      it 'shows status on the clients list' do
-        visit clients_path
-        expect(page).to have_css '.status-banner-container'
-        expect(page).to have_css 'th', text: 'Status'
-        expect(page).to have_css 'td', text: status.name
-      end
-    end
-
-    context 'disabled' do
-      it 'does not show templates button' do
-        visit new_client_path
-        expect(page).not_to have_css '.radio-button'
-      end
-
-      it 'shows status on the clients list' do
-        visit clients_path
-        expect(page).not_to have_css '.status-banner-container'
-        expect(page).to have_css 'th', text: 'Action'
-        expect(page).to have_css 'td', text: 'Manage'
-      end
-    end
-  end
 end

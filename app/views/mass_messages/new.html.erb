@@ -49,7 +49,7 @@
                       <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
                       Last contact
                     </th>
-                    <% if FeatureFlag.enabled? 'client_status' %>
+                    <% if current_user.department.client_statuses? %>
                       <th class="sort hidden-xs" data-sort="client-status">
                           <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                           <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
@@ -78,7 +78,7 @@
                           <%= client.last_contacted_at(user: current_user) ? time_ago_in_words(client.last_contacted_at(user: current_user)) : '--' %>
                         <% end %>
                       </td>
-                      <% if FeatureFlag.enabled? 'client_status' %>
+                      <% if current_user.department.client_statuses? %>
                         <td class="hidden-xs client-status" data-client-status="<%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>">
                           <%= b.label(class: ['cell-content']) do %>
                             <i class="status-icon <%= client.client_status(user: current_user).name.downcase if client.client_status(user: current_user) %>"></i>

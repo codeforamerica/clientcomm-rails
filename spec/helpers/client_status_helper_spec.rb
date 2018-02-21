@@ -6,7 +6,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
     subject { helper.client_statuses(user: user) }
 
     before do
-      ClientStatus.create!(name: 'Active', followup_date: 60)
+      create :client_status, name: 'Active', followup_date: 60, department: user.department
       client = create :client, id: 5
       ReportingRelationship.create(
         user: user,
@@ -22,7 +22,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
 
     context 'there are inactive clients' do
       before do
-        ClientStatus.create!(name: 'Active', followup_date: 60)
+        create :client_status, name: 'Active', followup_date: 60, department: user.department
         client = create :client, id: 6
         ReportingRelationship.create(
           user: user,
@@ -40,7 +40,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
 
     context 'multiple statuses' do
       before do
-        ClientStatus.create!(name: 'Exited', followup_date: 90)
+        create :client_status, name: 'Exited', followup_date: 90, department: user.department
         client = create :client, id: 6
         ReportingRelationship.create(
           user: user,
@@ -56,7 +56,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
 
       context 'multiple clients within a status' do
         before do
-          ClientStatus.create!(name: 'Exited', followup_date: 90)
+          create :client_status, name: 'Exited', followup_date: 90, department: user.department
           client = create :client, id: 7
           ReportingRelationship.create(
             user: user,
@@ -75,7 +75,7 @@ RSpec.describe ScheduledMessagesHelper, type: :helper do
 
     context 'there are clients that do not require follow-up' do
       before do
-        ClientStatus.create!(name: 'Exited', followup_date: 90)
+        create :client_status, name: 'Exited', followup_date: 90, department: user.department
         client = create :client, id: 6
         ReportingRelationship.create(
           user: user,
