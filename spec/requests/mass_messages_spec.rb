@@ -98,7 +98,17 @@ describe 'Mass messages requests', type: :request, active_job: true do
       )
     end
 
-    context 'using a url to pre-populate' do
+    context 'using a url to pre-populate body' do
+      let(:params) { { message: 'this is the body' } }
+
+      it 'renders checkboxes selected correctly' do
+        subject
+
+        expect(response.body).to include('this is the body</textarea>')
+      end
+    end
+
+    context 'using a url to pre-populate clients' do
       let(:params) { { clients: [user.clients[0].id, user.clients[2].id] } }
 
       it 'renders checkboxes selected correctly' do

@@ -2,7 +2,7 @@ class MassMessagesController < ApplicationController
   before_action :authenticate_user!
 
   def new
-    @mass_message = MassMessage.new(params.permit(clients: []))
+    @mass_message = MassMessage.new(params.permit(:message, clients: []))
     @clients = SortClients.mass_messages_list(user: current_user, selected_clients: @mass_message.clients)
 
     analytics_track(
