@@ -15,7 +15,6 @@ puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
 
-
 puts "Creating Admin User with password #{admin_password}"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
 
@@ -27,8 +26,8 @@ puts 'Deleting Old Records'
 Message.delete_all
 ReportingRelationship.delete_all
 Client.delete_all
-User.delete_all
-Department.delete_all
+Department.destroy_all
+User.where.not(id: [test_user.id]).delete_all
 Survey.delete_all
 
 puts 'Creating Departments'

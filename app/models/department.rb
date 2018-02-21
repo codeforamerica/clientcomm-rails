@@ -1,6 +1,6 @@
 class Department < ApplicationRecord
-  has_many :users, dependent: :nullify, inverse_of: :department
-  has_many :reports, dependent: :destroy, inverse_of: :department
+  has_many :users, dependent: :nullify
+  has_many :reports, dependent: :destroy
   has_many :client_statuses, dependent: :destroy
   belongs_to :unclaimed_user, class_name: 'User', foreign_key: 'user_id', inverse_of: :department
 
