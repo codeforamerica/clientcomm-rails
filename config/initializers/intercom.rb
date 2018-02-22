@@ -64,7 +64,7 @@ IntercomRails.config do |config|
   # in your controllers. 'Companies' are generic groupings of users, so this
   # could be a company, app or group.
 
-  config.company.current = proc { ENV['DEPLOYMENT'] }
+  config.company.current = proc { { id: ENV['DEPLOYMENT'], name: ENV['DEPLOYMENT'] } }
 
   # Or if you are using devise you can just use the following config
   #
