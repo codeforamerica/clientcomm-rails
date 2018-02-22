@@ -56,8 +56,7 @@ IntercomRails.config do |config|
   config.user.custom_data = {
     user_id: proc { |user| user.email },
     name: proc { |user| user.try(:full_name) },
-    phone: proc { |user| user.try(:phone_number) },
-    in_treatment_group: proc { |user| user.try(:in_treatment_group) || false }
+    phone: proc { |user| user.try(:phone_number) }
   }
 
   # == Current company method/variable
