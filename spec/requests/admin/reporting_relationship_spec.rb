@@ -341,6 +341,23 @@ describe 'ReportingRelationships', type: :request, active_job: true do
           expect(user1.messages.map(&:body)).to_not include(I18n.t('messages.transferred_to', user_full_name: user1.full_name))
         end
       end
+      context 'has client status' do
+        let(:status) { create :client_status }
+
+        before do
+          rr.client_status = status
+          rr.save!
+        end
+
+        it 'transfers client status' do
+          expect(user1.messages.scheduled).to include(*scheduled_messages.map(&:reload))
+
+          perform_enqueued_jobs do
+            put admin_reporting_relationship_path(rr.id), params: params
+          end
+          expect(ReportingRelationship.find_by(user: user2, client: client).client_status).to eq(status)
+        end
+      end
     end
   end
 end

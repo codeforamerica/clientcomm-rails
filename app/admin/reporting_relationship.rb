@@ -1,17 +1,6 @@
 ActiveAdmin.register ReportingRelationship do
   menu false
 
-  breadcrumb do
-    crumbs = [
-      link_to('ADMIN', admin_root_path),
-      link_to('CLIENTS', admin_client_relationships_path)
-    ]
-    if resource.persisted?
-      crumbs << link_to(resource.client.full_name.upcase, admin_client_path(resource.client))
-    end
-    crumbs
-  end
-
   form title: 'Transfer Client' do |f|
     active_user = resource.user
     department = active_user&.department || Department.find(params['department_id'])
@@ -64,7 +53,7 @@ ActiveAdmin.register ReportingRelationship do
       deactivate_old_relationships(client: client, users: old_users)
 
       transfer_client_and_mail_and_track(
-        client: client, previous_user: nil, new_user: new_user, transfer_note: transfer_note
+        client: client, previous_user: nil, new_user: new_user, transfer_note: transfer_note, client_status: nil
       )
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
@@ -99,7 +88,7 @@ ActiveAdmin.register ReportingRelationship do
       end
 
       transfer_client_and_mail_and_track(
-        client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note
+        client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note, client_status: rr.client_status
       )
 
       Message.create_transfer_markers(sending_user: previous_user, receiving_user: new_user, client: client)
@@ -127,9 +116,8 @@ ActiveAdmin.register ReportingRelationship do
       end
     end
 
-    def transfer_client_and_mail_and_track(client:, previous_user:, new_user:, transfer_note:)
-      new_user.reporting_relationships.find_or_create_by(client: client).update!(active: true)
-
+    def transfer_client_and_mail_and_track(client:, previous_user:, new_user:, transfer_note:, client_status:)
+      new_user.reporting_relationships.find_or_create_by(client: client).update!(active: true, client_status: client_status)
       NotificationMailer.client_transfer_notification(
         current_user: new_user,
         previous_user: previous_user,

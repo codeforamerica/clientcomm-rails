@@ -35,37 +35,20 @@ class ReportingRelationshipsController < ApplicationController
   def create
     @reporting_relationship = ReportingRelationship
                               .find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
-
     @client = Client.find(reporting_relationship_params['client_id'])
-    @transfer_users = current_user.department.eligible_users.active
-                                  .where.not(id: current_user.id)
-                                  .order(:full_name).pluck(:full_name, :id)
-
     @transfer_reporting_relationship = ReportingRelationship.find_or_initialize_by(reporting_relationship_params)
-    @transfer_reporting_relationship.active = true
-
     begin
-      ActiveRecord::Base.transaction do
-        @reporting_relationship.update!(active: false)
-        @transfer_reporting_relationship.save!
-      end
+      @reporting_relationship.transfer_to(@transfer_reporting_relationship)
     rescue ActiveRecord::RecordInvalid
+      @transfer_users = current_user.department.eligible_users.active
+                                    .where.not(id: current_user.id)
+                                    .order(:full_name).pluck(:full_name, :id)
       render 'clients/edit'
       return
     end
 
     transferred_by = 'user'
-
     user = User.find(reporting_relationship_params['user_id'])
-
-    @client.messages.scheduled.where(user: current_user).update(user: user)
-
-    if current_user == current_user.department.unclaimed_user
-      unclaimed_messages = @client.messages.where(user: current_user)
-      unclaimed_messages.update(user: user)
-    end
-
-    Message.create_transfer_markers(receiving_user: user, sending_user: current_user, client: @client)
 
     NotificationMailer.client_transfer_notification(
       current_user: user,

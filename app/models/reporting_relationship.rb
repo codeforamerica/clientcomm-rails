@@ -26,6 +26,31 @@ class ReportingRelationship < ApplicationRecord
     }
   end
 
+  def transfer_to(new_reporting_relationship)
+    # Requires that current RR is active and transfer_user is in same dept.
+    # If not it will behave improperly and have more than one active
+    new_reporting_relationship.active = true
+    self.active = false
+    ActiveRecord::Base.transaction do
+      save!
+      new_reporting_relationship.save!
+    end
+
+    client.messages.scheduled.where(user: user).update(user: new_reporting_relationship.user)
+
+    if user == new_reporting_relationship.user.department.unclaimed_user
+      client.messages.update(user: new_reporting_relationship.user)
+    else
+      client.messages.scheduled.where(user: user).update(user: new_reporting_relationship.user)
+    end
+    new_reporting_relationship.client_status = client_status
+    Message.create_transfer_markers(receiving_user: new_reporting_relationship.user, sending_user: user, client: client)
+  end
+
+  def display_name
+    client.full_name
+  end
+
   private
 
   def attachments

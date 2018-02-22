@@ -62,4 +62,64 @@ RSpec.describe ReportingRelationship, type: :model do
       end
     end
   end
+
+  describe '#transter_to' do
+    let(:dept) { create :department }
+    let(:old_user) { create :user, department: dept }
+    let(:new_user) { create :user, department: dept }
+    let(:client) { create :client, user: old_user }
+    let!(:scheduled_messages) { create_list :message, 5, user: old_user, client: client, send_at: Time.now + 1.day }
+    let(:old_reporting_relationship) { ReportingRelationship.find_by(user: old_user, client: client) }
+    let(:new_reporting_relationship) { ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id) }
+
+    subject do
+      old_reporting_relationship.transfer_to(new_reporting_relationship)
+    end
+
+    it 'transfers client to user' do
+      subject
+
+      expect(old_reporting_relationship.reload).to_not be_active
+      expect(new_reporting_relationship.reload).to be_active
+    end
+
+    it 'transfers creates transfer markers' do
+      expect(Message).to receive(:create_transfer_markers).with(receiving_user: new_user, sending_user: old_user, client: client)
+      subject
+    end
+
+    it 'transfers scheduled messages' do
+      subject
+      expect(old_user.messages.scheduled.count).to eq(0)
+      expect(new_user.messages.scheduled).to contain_exactly(*scheduled_messages)
+    end
+
+    context 'the sending user is the unclaimed user' do
+      let!(:messages) { create_list :message, 5, user: old_user, client: client }
+
+      before do
+        dept.update(unclaimed_user: old_user)
+      end
+
+      it 'transfers all messages' do
+        subject
+        expect(old_user.messages.messages.count).to eq(0)
+        expect(new_user.messages.messages).to include(*messages)
+      end
+    end
+    context 'has client statuses' do
+      let!(:status) { create :client_status, department: dept }
+
+      before do
+        old_reporting_relationship.client_status = status
+        old_reporting_relationship.save!
+      end
+
+      it 'transfers client statuses' do
+        subject
+        expect(old_reporting_relationship.client_status).to eq(status)
+        expect(new_reporting_relationship.client_status).to eq(status)
+      end
+    end
+  end
 end
