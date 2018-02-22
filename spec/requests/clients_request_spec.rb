@@ -152,7 +152,7 @@ describe 'Clients requests', type: :request do
 
       context 'client has a relationship with a user in the same department' do
         context 'client already exists under this user' do
-          let!(:client) { create :client, user: user, phone_number: phone_number }
+          let!(:client) { create :client, first_name: 'Yaco', last_name: 'Romero', user: user, phone_number: phone_number }
           let(:abnormal_number) { '1-466-336-4863' }
 
           subject do
@@ -207,7 +207,7 @@ describe 'Clients requests', type: :request do
           end
 
           context 'client has a prior, inactive, relationship with this user' do
-            let!(:client) { create :client, user: user, phone_number: phone_number, active: false }
+            let!(:client) { create :client, first_name: 'Sandro', last_name: 'Adame', user: user, phone_number: phone_number, active: false }
 
             it 'redirects to the messages page' do
               allow(SMSService.instance).to receive(:number_lookup)
@@ -226,7 +226,7 @@ describe 'Clients requests', type: :request do
 
         context 'client exists under a different user' do
           let(:other_user) { create :user, department: user.department }
-          let!(:client) { create :client, user: other_user, phone_number: phone_number }
+          let!(:client) { create :client, first_name: 'Archer', last_name: 'Cadena', user: other_user, phone_number: phone_number }
 
           it 'shows an error flash' do
             subject
@@ -297,7 +297,7 @@ describe 'Clients requests', type: :request do
       let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
-      let!(:existing_client) { create :client, user: user, created_at: 10.days.ago }
+      let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
 
       subject do
         put client_path(existing_client), params: {
@@ -477,7 +477,7 @@ describe 'Clients requests', type: :request do
           context 'phone_number' do
             context 'the existing client has a same-department relationship' do
               let(:other_user) { create :user, department: user.department }
-              let(:other_client) { create :client, user: other_user }
+              let(:other_client) { create :client, first_name: 'Raquildis', last_name: 'Cordero', user: other_user }
               let(:phone_number) { other_client.phone_number }
 
               it 'shows an error flash' do
@@ -511,10 +511,14 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'GET#index' do
-      let!(:another_client) { create :client }
+      let!(:another_client) { create :client, first_name: 'Angelines', last_name: 'Luevano' }
 
       before do
-        create_list :client, 5, user: user
+        create :client, first_name: 'Vespasiano', last_name: 'Laureano', user: user
+        create :client, first_name: 'Mirta', last_name: 'Prieto', user: user
+        create :client, first_name: 'Liberto', last_name: 'Jiminez', user: user
+        create :client, first_name: 'Peregrino', last_name: 'Pena', user: user
+        create :client, first_name: 'Baldo', last_name: 'Godoy', user: user
       end
 
       subject { get clients_path }
@@ -571,7 +575,7 @@ describe 'Clients requests', type: :request do
           let(:active_contacted_at) { Time.now - 26.days }
 
           it 'shows active followup banner' do
-            client = create :client
+            client = create :client, first_name: 'Celest', last_name: 'Maldonado'
             ReportingRelationship.create(
               client: client,
               user: user,
@@ -589,7 +593,7 @@ describe 'Clients requests', type: :request do
             expect(icon).to include('style="background-color:#333333"')
           end
           it 'shows status color' do
-            client = create :client
+            client = create :client, first_name: 'Cibeles', last_name: 'Verdugo'
             ReportingRelationship.create(
               client: client,
               user: user,
