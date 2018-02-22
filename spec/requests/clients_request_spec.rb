@@ -651,6 +651,19 @@ describe 'Clients requests', type: :request do
         expect(response.body).to include(survey_response_text)
       end
 
+      context 'has client statuses' do
+        let!(:status) { create :client_status, department: user.department }
+        before do
+          create :client_status
+        end
+        it 'does not display inactive users in transfer dropdown' do
+          subject
+          radio_buttons = Nokogiri.parse(response.body).css('label.radio-button')
+          expect(radio_buttons.length).to eq(1)
+          expect(radio_buttons.first.text).to include(status.name)
+        end
+      end
+
       context 'has inactivate users' do
         let(:full_name_inactive) { 'My Name' }
         let(:full_name_active) { 'Not Same' }
