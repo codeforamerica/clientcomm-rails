@@ -4,6 +4,11 @@ namespace :setup do
     user.update!(password: args.password, password_confirmation: args.password)
   end
 
+  task :unclaimed_account, [:unclaimed_email, :password] => :environment do |_, args|
+    user = User.find_or_initialize_by(email: args.unclaimed_email)
+    user.update!(password: args.password, password_confirmation: args.password)
+  end
+
   task :install_department, [:department_name] => :environment do |_, args|
     unclaimed_user = User.find_by(email: ENV['UNCLAIMED_EMAIL'])
 

@@ -47,6 +47,8 @@ variable "route53_email_zone_id" {}
 variable "admin_email" {}
 variable "admin_password" {}
 
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
 variable "unclaimed_autoreply" {
   default = ""
 }
@@ -86,6 +88,8 @@ module "app" {
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
 
+  unclaimed_email     = "${var.unclaimed_email}"
+  unclaimed_password  = "${var.unclaimed_password}"
   unclaimed_autoreply = "${var.unclaimed_autoreply}"
 
   enable_papertrail = "${var.enable_papertrail}"

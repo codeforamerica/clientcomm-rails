@@ -33,6 +33,8 @@ variable "sentry_deploy_hook" {}
 variable "admin_email" {}
 variable "admin_password" {}
 variable "report_day" {}
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
 variable "unclaimed_autoreply" {}
 
 # Configure the Heroku provider
@@ -239,11 +241,15 @@ resource "null_resource" "ssl" {
   }
 }
 
-resource "null_resource" "unclaimed_account" {
+resource "null_resource" "provision_accounts" {
   depends_on = ["null_resource.provision_app"]
 
   provisioner "local-exec" {
     command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:admin_account[${var.admin_email}, ${var.admin_password}]'"
+  }
+
+  provisioner "local-exec" {
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}]'"
   }
 }
 
