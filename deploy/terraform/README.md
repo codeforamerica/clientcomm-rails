@@ -130,7 +130,7 @@ heroku run rails c --app [APP-NAME]
 Then create an admin user:
 
 ```
-AdminUser.create(name: '[USER NAME]', password: '[PASSWORD]', password_confirmation: '[PASSWORD]')
+AdminUser.create(email: '[USER EMAIL]', password: '[PASSWORD]', password_confirmation: '[PASSWORD]')
 ```
 
 If you're working on a team, put the login credentials in a shared password manager
