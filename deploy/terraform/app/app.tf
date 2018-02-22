@@ -24,7 +24,6 @@ variable "time_zone" {}
 variable "twilio_account_sid" {}
 variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
-variable "typeform_link" {}
 
 variable "enable_papertrail" {}
 variable "papertrail_plan" {}
@@ -34,6 +33,8 @@ variable "sentry_deploy_hook" {}
 variable "admin_email" {}
 variable "admin_password" {}
 variable "report_day" {}
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
 variable "unclaimed_autoreply" {}
 
 # Configure the Heroku provider
@@ -77,7 +78,6 @@ resource "heroku_app" "clientcomm" {
     AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
-    TYPEFORM_LINK = "${var.typeform_link}"
     UNCLAIMED_AUTOREPLY_MESSAGE = "${var.unclaimed_autoreply}"
     REPORT_DAY  = "${var.report_day}"
   }
@@ -241,11 +241,15 @@ resource "null_resource" "ssl" {
   }
 }
 
-resource "null_resource" "unclaimed_account" {
+resource "null_resource" "provision_accounts" {
   depends_on = ["null_resource.provision_app"]
 
   provisioner "local-exec" {
     command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:admin_account[${var.admin_email}, ${var.admin_password}]'"
+  }
+
+  provisioner "local-exec" {
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}]'"
   }
 }
 

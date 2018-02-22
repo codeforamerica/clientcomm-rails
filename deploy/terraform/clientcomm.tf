@@ -28,7 +28,6 @@ variable "time_zone" {}
 variable "twilio_account_sid" {}
 variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
-variable "typeform_link" {}
 
 variable "enable_papertrail" {
   default = true
@@ -48,6 +47,8 @@ variable "route53_email_zone_id" {}
 variable "admin_email" {}
 variable "admin_password" {}
 
+variable "unclaimed_email" {}
+variable "unclaimed_password" {}
 variable "unclaimed_autoreply" {
   default = ""
 }
@@ -87,6 +88,8 @@ module "app" {
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
 
+  unclaimed_email     = "${var.unclaimed_email}"
+  unclaimed_password  = "${var.unclaimed_password}"
   unclaimed_autoreply = "${var.unclaimed_autoreply}"
 
   enable_papertrail = "${var.enable_papertrail}"
@@ -110,7 +113,6 @@ module "app" {
   twilio_account_sid      = "${var.twilio_account_sid}"
   twilio_auth_token       = "${var.twilio_auth_token}"
   twilio_phone_number     = "${var.twilio_phone_number}"
-  typeform_link           = "${var.typeform_link}"
 }
 
 module "email" {
