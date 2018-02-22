@@ -19,7 +19,7 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'GET#new' do
-      let(:client) { create :client, user: user }
+      let(:client) { create :client, user: user, first_name: 'FirstName', last_name: 'LastName' }
       subject { get edit_client_path(client) }
 
       it 'tracks a visit to the edit client form' do
