@@ -10,18 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180220194359) do
+ActiveRecord::Schema.define(version: 20180222191401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "active_admin_comments", id: :serial, force: :cascade do |t|
+  create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_type"
-    t.integer "resource_id"
+    t.bigint "resource_id"
     t.string "author_type"
-    t.integer "author_id"
+    t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
@@ -142,8 +142,8 @@ ActiveRecord::Schema.define(version: 20180220194359) do
   end
 
   create_table "reports", force: :cascade do |t|
-    t.string "email", null: false
-    t.bigint "department_id", null: false
+    t.string "email"
+    t.bigint "department_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_reports_on_department_id"
@@ -206,6 +206,7 @@ ActiveRecord::Schema.define(version: 20180220194359) do
     t.boolean "active", default: true, null: false
     t.string "phone_number"
     t.bigint "department_id"
+    t.boolean "in_treatment_group", default: false
     t.index ["department_id"], name: "index_users_on_department_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
