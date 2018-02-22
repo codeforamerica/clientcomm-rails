@@ -5,12 +5,6 @@ class AddClientStatusesTable < ActiveRecord::Migration[5.1]
     end
 
     add_reference :clients, :client_status, foreign_key: true
-
-    ClientStatus.create!(name: 'Active')
-    ClientStatus.create!(name: 'Training')
-    ClientStatus.create!(name: 'Exited')
-
-    FeatureFlag.create!(flag: 'client_status', enabled: false)
   end
 end
 

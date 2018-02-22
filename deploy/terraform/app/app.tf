@@ -24,7 +24,6 @@ variable "time_zone" {}
 variable "twilio_account_sid" {}
 variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
-variable "typeform_link" {}
 
 variable "enable_papertrail" {}
 variable "papertrail_plan" {}
@@ -77,7 +76,6 @@ resource "heroku_app" "clientcomm" {
     AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
-    TYPEFORM_LINK = "${var.typeform_link}"
     UNCLAIMED_AUTOREPLY_MESSAGE = "${var.unclaimed_autoreply}"
     REPORT_DAY  = "${var.report_day}"
   }

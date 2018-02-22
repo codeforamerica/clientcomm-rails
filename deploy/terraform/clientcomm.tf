@@ -28,7 +28,6 @@ variable "time_zone" {}
 variable "twilio_account_sid" {}
 variable "twilio_auth_token" {}
 variable "twilio_phone_number" {}
-variable "typeform_link" {}
 
 variable "enable_papertrail" {
   default = true
@@ -110,7 +109,6 @@ module "app" {
   twilio_account_sid      = "${var.twilio_account_sid}"
   twilio_auth_token       = "${var.twilio_auth_token}"
   twilio_phone_number     = "${var.twilio_phone_number}"
-  typeform_link           = "${var.typeform_link}"
 }
 
 module "email" {
