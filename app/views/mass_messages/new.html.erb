@@ -81,7 +81,7 @@
                       <% if current_user.department.client_statuses? %>
                         <td class="hidden-xs client-status" data-client-status="<%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>">
                           <%= b.label(class: ['cell-content']) do %>
-                            <i class="status-icon <%= client.client_status(user: current_user).name.downcase if client.client_status(user: current_user) %>"></i>
+                            <i class="hidden-xs status-icon" style="background-color:<%= client.client_status(user: current_user).icon_color if client.client_status(user: current_user) %>"></i>
                             <%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>
                           <% end %>
                         </td>
