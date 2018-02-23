@@ -1,5 +1,6 @@
 class ReportingRelationshipsController < ApplicationController
   before_action :authenticate_user!
+  skip_after_action :intercom_rails_auto_include
 
   def show
     rr = current_user.reporting_relationships.find params[:id]
