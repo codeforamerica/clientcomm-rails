@@ -228,7 +228,28 @@ RSpec.describe Message, type: :model do
           ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = nil
         end
 
-        it 'autoreply falls back to translation if no environment variable is set' do
+        it 'autoreply falls back to translation' do
+          unknown_number = '+19999999999'
+          params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
+
+          time = Time.now.change(usec: 0)
+          travel_to time do
+            Message.create_from_twilio!(params)
+          end
+
+          job_args = enqueued_jobs.first[:args].first
+          message = GlobalID::Locator.locate job_args['message']['_aj_globalid']
+          expect(message).to_not be_nil
+          expect(message.body).to eq(I18n.t('message.unclaimed_response'))
+        end
+      end
+
+      context 'an empty environment variable is set' do
+        before do
+          ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = ' '
+        end
+
+        it 'autoreply falls back to translation' do
           unknown_number = '+19999999999'
           params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
 

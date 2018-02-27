@@ -58,6 +58,7 @@ feature 'user transfers client', :js, active_job: true do
 
     step 'transfer user has client' do
       logout(:user)
+
       login_as transfer_user, :scope => :user
       visit root_path
       expect(page).to have_content clientone.full_name
@@ -79,6 +80,8 @@ feature 'user transfers client', :js, active_job: true do
           click_on "Transfer #{clientone.full_name}"
         end
       end
+      visit root_path
+      expect(page).to_not have_content clientone.full_name
     end
 
     step 'original user has both transfer markers' do

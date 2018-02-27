@@ -89,21 +89,25 @@ class Message < ApplicationRecord
     end
 
     new_message.save!
-    if client_unrecognized
-      now = Time.now
-      unclaimed_response = ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] || I18n.t('message.unclaimed_response')
-      message = Message.create!(
-        client: client,
-        user: user,
-        body: unclaimed_response,
-        number_from: user.department.phone_number,
-        number_to: client.phone_number,
-        send_at: now
-      )
-      ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
-    end
+
+    send_unclaimed_autoreply(client: client, user: user) if client_unrecognized
 
     new_message
+  end
+
+  def self.send_unclaimed_autoreply(client:, user:)
+    now = Time.now
+    unclaimed_response = ENV['UNCLAIMED_AUTOREPLY_MESSAGE']
+    unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
+    message = Message.create!(
+      client: client,
+      user: user,
+      body: unclaimed_response,
+      number_from: user.department.phone_number,
+      number_to: client.phone_number,
+      send_at: now
+    )
+    ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
   end
 
   def analytics_tracker_data
