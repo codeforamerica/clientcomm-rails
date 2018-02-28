@@ -44,6 +44,7 @@ class ReportingRelationship < ApplicationRecord
       client.messages.scheduled.where(user: user).update(user: new_reporting_relationship.user)
     end
     new_reporting_relationship.client_status = client_status
+    new_reporting_relationship.save!
     Message.create_transfer_markers(receiving_user: new_reporting_relationship.user, sending_user: user, client: client)
   end
 

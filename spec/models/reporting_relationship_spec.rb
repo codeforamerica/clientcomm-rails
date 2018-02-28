@@ -117,6 +117,8 @@ RSpec.describe ReportingRelationship, type: :model do
 
       it 'transfers client statuses' do
         subject
+        old_reporting_relationship.reload
+        new_reporting_relationship.reload
         expect(old_reporting_relationship.client_status).to eq(status)
         expect(new_reporting_relationship.client_status).to eq(status)
       end

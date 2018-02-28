@@ -142,8 +142,8 @@ ActiveRecord::Schema.define(version: 20180222202720) do
   end
 
   create_table "reports", force: :cascade do |t|
-    t.string "email"
-    t.bigint "department_id"
+    t.string "email", null: false
+    t.bigint "department_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_reports_on_department_id"
