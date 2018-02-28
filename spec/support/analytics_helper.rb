@@ -42,6 +42,18 @@ module AnalyticsHelper
     end
   end
 
+  def expect_not_in_analytics_events(*event_hashes)
+    # all the passed events happened, independent of order
+    # and all the tracker data parameters and values match
+    event_hashes.each do |event_description|
+      event_name = event_description.keys.first
+      event_properties = event_description.values.first
+      found_request = @mixpanel_requests.find { |req| req.key? event_name }
+      fail "Could not find #{event_name} in the requests" unless found_request
+      expect(found_request[event_name]).to_not include event_properties
+    end
+  end
+
   def expect_analytics_events_with_keys(*event_arrays)
     # all the passed events happened with these keys
     # key values are not tested

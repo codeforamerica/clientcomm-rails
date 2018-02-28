@@ -57,6 +57,7 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
+  config.include Devise::Test::ControllerHelpers, type: :helper
   # So we can use dom_id
   config.include ActionView::RecordIdentifier
   config.include Rails.application.routes.url_helpers

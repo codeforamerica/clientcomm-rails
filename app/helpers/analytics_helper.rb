@@ -1,6 +1,4 @@
 module AnalyticsHelper
-  private
-
   # Send the provided tracking data through to the AnalyticsService
   def analytics_track(label:, data: {})
     # NOTE: May eventually want to diverge distinct and visitor IDs, so
@@ -10,8 +8,7 @@ module AnalyticsHelper
       ip: visitor_ip,
       deploy: deploy_prefix,
       visitor_id: visitor_id
-    )
-
+    ).merge(utm)
     # prefer current_user_id if it was included in the data
     tracking_id = distinct_id tracking_data.slice(:current_user_id).values.first
     # but don't leave it in
@@ -23,6 +20,16 @@ module AnalyticsHelper
       user_agent: user_agent,
       data: tracking_data
     )
+  end
+
+  private
+
+  def utm
+    utm_params = {}
+    request.GET.each do |k, v|
+      utm_params[k] = v if /^utm_(.*)/.match?(k)
+    end
+    utm_params
   end
 
   def user_agent
