@@ -89,5 +89,23 @@ RSpec.describe ClientStatusHelper, type: :helper do
         expect(subject).to eq({ 'Active' => [5] })
       end
     end
+
+    context 'there are clients with null follow-up dates' do
+      before do
+        @status = create :client_status, name: 'Exited', department: user.department
+        client = create :client, id: 6
+        ReportingRelationship.create(
+          user: user,
+          client: client,
+          client_status: @status,
+          last_contacted_at: 0
+        )
+      end
+
+      it 'does not return clients with statuses with nil followup_date' do
+        subject
+        expect(subject).to eq({ 'Active' => [5] })
+      end
+    end
   end
 end

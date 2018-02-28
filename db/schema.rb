@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222202720) do
+ActiveRecord::Schema.define(version: 20180228011744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(version: 20180222202720) do
 
   create_table "client_statuses", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "followup_date", null: false
+    t.integer "followup_date"
     t.string "icon_color", limit: 7
     t.bigint "department_id"
     t.index ["department_id"], name: "index_client_statuses_on_department_id"

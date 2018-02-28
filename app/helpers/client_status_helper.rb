@@ -2,7 +2,7 @@ module ClientStatusHelper
   def client_statuses(user:)
     output = {}
 
-    ClientStatus.all.map do |status|
+    ClientStatus.where.not(followup_date: nil).map do |status|
       followup_date = Time.now - status.followup_date.days
       warning_period = 5.days
 
