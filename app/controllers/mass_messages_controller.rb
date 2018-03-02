@@ -65,7 +65,6 @@ class MassMessagesController < ApplicationController
 
       message.send_message
       if mass_message_params[:send_at].present?
-        flash[:notice] = 'Your message has been scheduled'
         analytics_track(
           label: 'message_scheduled',
           data: message.analytics_tracker_data.merge(mass_message: true)
@@ -80,6 +79,6 @@ class MassMessagesController < ApplicationController
   end
 
   def mass_message_params
-    params.require(:mass_message).permit(:message, clients: [])
+    params.require(:mass_message).permit(:message, :send_at, clients: [])
   end
 end
