@@ -151,6 +151,7 @@ class Message < ApplicationRecord
       MessageBroadcastJob.perform_now(message: self)
     end
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
+    client
   end
 
   private

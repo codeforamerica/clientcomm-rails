@@ -378,7 +378,7 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'transfer_markers' do
+  describe 'scope transfer_markers' do
     let(:user) { create :user }
     let(:client) { create :client, users: [user] }
     let(:transfer_marker) { create :message, client: client, user: user, transfer_marker: true }
@@ -392,7 +392,7 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'messages' do
+  describe 'scope messages' do
     let(:user) { create :user }
     let(:client) { create :client, users: [user] }
     let(:message) { create :message, client: client, user: user }
@@ -403,6 +403,28 @@ RSpec.describe Message, type: :model do
       create_list :message, 5, user: user, client: client, transfer_marker: true
 
       expect(subject).to contain_exactly(message)
+    end
+  end
+
+  describe '#send_message' do
+    let(:user) { create :user }
+    let(:client) { create :client, users: [user] }
+    let(:message) { create :message, client: client, user: user }
+
+    subject { message.send_message() }
+
+    it 'sends message' do
+      subject
+      expect(ScheduledMessageJob).to have_been_enqueued.with(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url).at(message.send_at)
+    end
+
+    context 'send_at before now' do
+      it 'runs MessageBroadcastJob' do
+        subject
+        expect(MessageBroadcastJob).to receive(:perform_now).with(
+          message: message
+        )
+      end
     end
   end
 end
