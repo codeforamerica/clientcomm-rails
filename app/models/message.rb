@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+  include Rails.application.routes.url_helpers
   belongs_to :client
   belongs_to :user
   has_many :attachments
@@ -142,6 +143,14 @@ class Message < ApplicationRecord
 
   def first?
     self.client.messages.where(user: self.user).order(send_at: :desc).first == self
+  end
+
+  def send_message
+    sent = Time.now >= send_at
+    if sent
+      MessageBroadcastJob.perform_now(message: self)
+    end
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
   end
 
   private

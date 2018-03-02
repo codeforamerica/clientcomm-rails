@@ -26,16 +26,23 @@ class MassMessagesController < ApplicationController
     end
 
     send_mass_message(mass_message)
-
-    flash[:notice] = 'Your mass message has been sent.'
-
-    analytics_track(
-      label: 'mass_message_send',
-      data: {
-        recipients_count: mass_message.clients.count
-      }
-    )
-
+    if mass_message_params[:send_at].present?
+      flash[:notice] = 'Your mass message has been scheduled.'
+      analytics_track(
+        label: 'mass_message_scheduled',
+        data: {
+          recipients_count: mass_message.clients.count
+        }
+      )
+    else
+      flash[:notice] = 'Your mass message has been sent.'
+      analytics_track(
+        label: 'mass_message_send',
+        data: {
+          recipients_count: mass_message.clients.count
+        }
+      )
+    end
     redirect_to clients_path
   end
 
@@ -56,12 +63,19 @@ class MassMessagesController < ApplicationController
         send_at: Time.now
       )
 
-      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
-
-      analytics_track(
-        label: 'message_send',
-        data: message.analytics_tracker_data.merge(mass_message: true)
-      )
+      message.send_message
+      if mass_message_params[:send_at].present?
+        flash[:notice] = 'Your message has been scheduled'
+        analytics_track(
+          label: 'message_scheduled',
+          data: message.analytics_tracker_data.merge(mass_message: true)
+        )
+      else
+        analytics_track(
+          label: 'message_send',
+          data: message.analytics_tracker_data.merge(mass_message: true)
+        )
+      end
     end
   end
 
