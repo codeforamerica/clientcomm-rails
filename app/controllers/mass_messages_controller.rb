@@ -27,7 +27,7 @@ class MassMessagesController < ApplicationController
 
     send_mass_message(mass_message)
     if mass_message_params[:send_at].present?
-      flash[:notice] = 'Your mass message has been scheduled.'
+      flash[:notice] = I18n.t('flash.notices.mass_message.scheduled')
       analytics_track(
         label: 'mass_message_scheduled',
         data: {
@@ -35,7 +35,7 @@ class MassMessagesController < ApplicationController
         }
       )
     else
-      flash[:notice] = 'Your mass message has been sent.'
+      flash[:notice] = I18n.t('flash.notices.mass_message.sent')
       analytics_track(
         label: 'mass_message_send',
         data: {

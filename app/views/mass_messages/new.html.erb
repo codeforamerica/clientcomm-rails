@@ -96,8 +96,14 @@
             </div>
 
             <div class="form-card__footer">
+              <div id='schedule-later-form' class='notice'>
+                <%= t('views.mass_message.new.schedule_form.title') %>
+              </div>
               <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Send', class: 'button button--cta', role: 'button' %></div>
+                <div class="toolbar__left">
+                  <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
+                  <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
+                </div>
                 <div class="toolbar__right">
                   <%= link_to clients_path, class: "button" do %>
                     Cancel

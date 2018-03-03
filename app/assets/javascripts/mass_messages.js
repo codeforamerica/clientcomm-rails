@@ -18,6 +18,26 @@ $(document).ready(function() {
       if (this.checked !== selected) {
         this.click();
       }
-    })
+    });
+  });
+
+  var formState = {
+    scheduleFormVisible: false,
+  };
+
+  $('#send_later').click(function(e) {
+    if (!formState.scheduleFormVisible) {
+      e.preventDefault();
+      $(this).prop('disabled', true);
+      $(this).addClass('button--cta button--disabled');
+      $('#schedule-later-form').show();
+      formState.scheduleFormVisible = true;
+    }
+  });
+
+  $('#schedule-later-form').click(function() {
+    checked = ($(this).find(":checkbox:checked").length > 0);
+    $('#send_later').prop('disabled', !checked);
+    $('#send_later').toggleClass('button--disabled', !checked);
   });
 });

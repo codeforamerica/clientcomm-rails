@@ -3,6 +3,7 @@ require 'rails_helper'
 feature 'sending mass messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
+  let(:scheduled_message_body) { 'This is the text of a scheduled message' }
   let(:user) { create :user }
   let!(:client_1) { build :client, first_name: 'a', last_name: 'a' }
   let!(:client_2) { build :client, first_name: 'b', last_name: 'b' }
@@ -14,11 +15,11 @@ feature 'sending mass messages', active_job: true do
   end
 
   scenario 'user sends mass message', :js do
-    step 'when user logs' do
+    step 'when user logs in' do
       login_as(user, scope: :user)
     end
 
-    step 'user creates clients' do
+    step 'user has created clients' do
       travel_to 7.days.ago do
         add_client(client_1)
       end
@@ -123,6 +124,42 @@ feature 'sending mass messages', active_job: true do
       expect(Message.where(body: long_message_body).count).to eq 2
       expect(Client.find_by(phone_number: client_2.phone_number).messages.last.body).to eq long_message_body
       expect(Client.find_by(phone_number: client_3.phone_number).messages.last.body).to eq long_message_body
+    end
+
+    step 'user navigates back to the mass messages page' do
+      click_on 'Mass message'
+      expect(page).to have_content 'New mass message'
+    end
+
+    step 'user fills in message and selects clients' do
+      fill_in 'Your message', with: scheduled_message_body
+
+      check client_1.full_name
+      check client_2.full_name
+    end
+
+    step 'user clicks the send later button' do
+      expect(page).to_not have_content I18n.t('views.mass_message.new.schedule_form.title')
+      click_button 'Send later'
+      expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
+    end
+
+    step 'user selects a date and sends the mass message' do
+      future_date = (Time.zone.today + 1.month).beginning_of_month
+
+      # if we don't interact with the datepicker, it persists and
+      # covers other ui elements
+      fill_in 'Date', with: ''
+      find('.ui-datepicker-next').click
+      click_on future_date.strftime('%-d')
+      select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
+
+      perform_enqueued_jobs do
+        click_on 'Schedule message'
+      end
+
+      expect(page).to have_current_path(clients_path)
+      expect(page).to have_content I18n.t('flash.notices.mass_message.scheduled')
     end
   end
 end

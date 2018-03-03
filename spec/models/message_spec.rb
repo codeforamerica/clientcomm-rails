@@ -411,7 +411,7 @@ RSpec.describe Message, type: :model do
     let(:client) { create :client, users: [user] }
     let(:message) { create :message, client: client, user: user }
 
-    subject { message.send_message() }
+    subject { message.send_message }
 
     it 'sends message' do
       subject
