@@ -94,7 +94,6 @@ class ClientsController < ApplicationController
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
     if @client.update_attributes(client_params)
-      flash[:notice] = 'Client updated'
       # if params rr.active == false
       # then it was a deactivation and follow that logic
 
