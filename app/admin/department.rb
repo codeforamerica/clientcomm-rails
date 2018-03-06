@@ -1,5 +1,5 @@
 ActiveAdmin.register Department do
-  permit_params :user_id, :name, :phone_number
+  permit_params :user_id, :name, :phone_number, :unclaimed_response
 
   index do
     column :name
@@ -15,6 +15,7 @@ ActiveAdmin.register Department do
       end
       f.input :name
       f.input :phone_number
+      f.input :unclaimed_response
     end
     f.actions
   end

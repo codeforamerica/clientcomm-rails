@@ -52,24 +52,21 @@ class Message < ApplicationRecord
     client = Client.find_by(phone_number: from_phone_number)
     department = Department.find_by(phone_number: to_phone_number)
 
-    client_unrecognized = false
     if client.nil?
+      user = department.unclaimed_user
       client = Client.create!(
         phone_number: from_phone_number,
         last_name: from_phone_number,
         users: [department.unclaimed_user]
       )
-      client_unrecognized = true
+    else
+      user = department.users
+                       .active
+                       .joins(:reporting_relationships)
+                       .order('reporting_relationships.updated_at DESC')
+                       .find_by(reporting_relationships: { client: client })
+      user ||= department.unclaimed_user
     end
-
-    user = department.users
-                     .active
-                     .joins(:reporting_relationships)
-                     .order('reporting_relationships.updated_at DESC')
-                     .find_by(reporting_relationships: { client: client })
-
-    user ||= department.unclaimed_user
-
     new_message = Message.new(
       client: client,
       user: user,
@@ -90,24 +87,9 @@ class Message < ApplicationRecord
 
     new_message.save!
 
-    send_unclaimed_autoreply(client: client, user: user) if client_unrecognized
+    send_unclaimed_autoreply(client: client, department: department) if user == department.unclaimed_user
 
     new_message
-  end
-
-  def self.send_unclaimed_autoreply(client:, user:)
-    now = Time.now
-    unclaimed_response = ENV['UNCLAIMED_AUTOREPLY_MESSAGE']
-    unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
-    message = Message.create!(
-      client: client,
-      user: user,
-      body: unclaimed_response,
-      number_from: user.department.phone_number,
-      number_to: client.phone_number,
-      send_at: now
-    )
-    ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
   end
 
   def analytics_tracker_data
@@ -142,6 +124,21 @@ class Message < ApplicationRecord
 
   def first?
     self.client.messages.where(user: self.user).order(send_at: :desc).first == self
+  end
+
+  def self.send_unclaimed_autoreply(client:, department:)
+    now = Time.now
+    unclaimed_response = department.unclaimed_response
+    unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
+    message = Message.create!(
+      client: client,
+      user: department.unclaimed_user,
+      body: unclaimed_response,
+      number_from: department.phone_number,
+      number_to: client.phone_number,
+      send_at: now
+    )
+    ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
   end
 
   private

@@ -172,14 +172,13 @@ RSpec.describe Message, type: :model do
   describe '#create_from_twilio' do
     context 'client does not exist', active_job: true do
       let(:dept_phone_number) { '+17609996661' }
-      let(:department) { create :department, phone_number: dept_phone_number }
-      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
       let(:autoreply_message) { 'This is the unclaimed auto-reply message.' }
+      let(:department) { create :department, phone_number: dept_phone_number, unclaimed_response: autoreply_message }
+      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
 
       before do
         department.unclaimed_user = unclaimed_user
         department.save
-        ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = autoreply_message
       end
 
       it 'creates a new client with missing information' do
@@ -223,30 +222,10 @@ RSpec.describe Message, type: :model do
         expect(job_args['callback_url']).to eq(incoming_sms_status_url)
       end
 
-      context 'no environment variable is set' do
+      context 'unclaimed_response is not set' do
         before do
-          ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = nil
-        end
-
-        it 'autoreply falls back to translation' do
-          unknown_number = '+19999999999'
-          params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
-
-          time = Time.now.change(usec: 0)
-          travel_to time do
-            Message.create_from_twilio!(params)
-          end
-
-          job_args = enqueued_jobs.first[:args].first
-          message = GlobalID::Locator.locate job_args['message']['_aj_globalid']
-          expect(message).to_not be_nil
-          expect(message.body).to eq(I18n.t('message.unclaimed_response'))
-        end
-      end
-
-      context 'an empty environment variable is set' do
-        before do
-          ENV['UNCLAIMED_AUTOREPLY_MESSAGE'] = ' '
+          department.unclaimed_response = nil
+          department.save!
         end
 
         it 'autoreply falls back to translation' do
@@ -270,6 +249,18 @@ RSpec.describe Message, type: :model do
       let(:dept_phone_number) { '+17609996661' }
       let!(:user) { create :user, dept_phone_number: dept_phone_number }
       let!(:client) { create :client, users: [user] }
+      let(:other_department) { create :department }
+
+      it 'messages other department and sends alert' do
+        params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
+        Message.create_from_twilio!(params)
+        time = Time.now.change(usec: 0)
+        expect {
+          travel_to time do
+            Message.create_from_twilio!(params)
+          end
+        }.to have_enqueued_job(ScheduledMessageJob)
+      end
 
       it 'creates a message if proper params are sent' do
         params = twilio_new_message_params from_number: client.phone_number, to_number: dept_phone_number
