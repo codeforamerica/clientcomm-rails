@@ -420,10 +420,11 @@ RSpec.describe Message, type: :model do
 
     context 'send_at before now' do
       it 'runs MessageBroadcastJob' do
-        subject
         expect(MessageBroadcastJob).to receive(:perform_now).with(
           message: message
         )
+
+        subject
       end
     end
   end

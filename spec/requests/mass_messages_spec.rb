@@ -24,19 +24,18 @@ describe 'Mass messages requests', type: :request, active_job: true do
       }
     end
 
-    it 'called message.send_message for each client' do
-      # Message.any_instance.stub(:send_message) do
-      #   binding.pry
-      # end
+    it 'sends message to multiple clients' do
       subject
-      # expect(user.messages.count).to eq 2
-      # expect(client_1.messages.count).to eq 1
-      # expect(client_1.messages.first.body).to eq message_body
-      # expect(client_1.messages.first.number_from).to eq department.phone_number
-      # expect(client_2.messages.count).to eq 0
-      # expect(client_3.messages.count).to eq 1
-      # expect(client_3.messages.first.body).to eq message_body
-      # expect(client_3.messages.first.number_from).to eq department.phone_number
+
+      expect(ScheduledMessageJob).to have_been_enqueued.twice
+      expect(user.messages.count).to eq 2
+      expect(client_1.messages.count).to eq 1
+      expect(client_1.messages.first.body).to eq message_body
+      expect(client_1.messages.first.number_from).to eq department.phone_number
+      expect(client_2.messages.count).to eq 0
+      expect(client_3.messages.count).to eq 1
+      expect(client_3.messages.first.body).to eq message_body
+      expect(client_3.messages.first.number_from).to eq department.phone_number
     end
 
     it 'sends an analytics event for each message in mass message' do
@@ -80,6 +79,53 @@ describe 'Mass messages requests', type: :request, active_job: true do
       it 're-renders the page with errors' do
         subject
         expect(response.body).to include 'You need to pick at least one recipient.'
+      end
+    end
+
+    context 'a send_at date is set' do
+      let(:send_at) { Time.now.change(usec: 0) }
+
+      subject do
+        post mass_messages_path, params: {
+          mass_message: {
+            message: message_body,
+            clients: clients,
+            send_at: send_at
+          }
+        }
+      end
+
+      it 'sends message to multiple clients at the right time' do
+        subject
+
+        expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
+        expect(client_1.messages.first.send_at).to eq send_at
+        expect(client_3.messages.first.send_at).to eq send_at
+      end
+
+      it 'sends an analytics event for each message in mass message' do
+        subject
+        expect_analytics_events(
+          'message_scheduled' => {
+            'mass_message' => true
+          }
+        )
+
+        expect_analytics_event_sequence(
+          'login_success',
+          'message_scheduled',
+          'message_scheduled',
+          'mass_message_scheduled'
+        )
+      end
+
+      it 'sends a single mass_message_send event with recipient_count' do
+        subject
+        expect_analytics_events(
+          'mass_message_scheduled' => {
+            'recipients_count' => 2
+          }
+        )
       end
     end
   end

@@ -5,7 +5,7 @@ class MassMessage
 
   validates_presence_of :message, :clients
 
-  attr_accessor :user, :message, :clients
+  attr_accessor :user, :message, :send_at, :clients
 
   def initialize(attributes = {})
     super

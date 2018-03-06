@@ -26,7 +26,7 @@ class MassMessagesController < ApplicationController
     end
 
     send_mass_message(mass_message)
-    if mass_message_params[:send_at].present?
+    if mass_message.send_at.present?
       flash[:notice] = I18n.t('flash.notices.mass_message.scheduled')
       analytics_track(
         label: 'mass_message_scheduled',
@@ -51,7 +51,7 @@ class MassMessagesController < ApplicationController
   def send_mass_message(mass_message)
     mass_message.clients.each do |client_id|
       client = current_user.clients.find(client_id)
-
+      send_at = mass_message.send_at || Time.now
       message = Message.create!(
         body: mass_message.message,
         user: mass_message.user,
@@ -60,11 +60,11 @@ class MassMessagesController < ApplicationController
         number_to: client.phone_number,
         read: true,
         inbound: false,
-        send_at: Time.now
+        send_at: send_at
       )
 
       message.send_message
-      if mass_message_params[:send_at].present?
+      if mass_message.send_at.present?
         analytics_track(
           label: 'message_scheduled',
           data: message.analytics_tracker_data.merge(mass_message: true)
