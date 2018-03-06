@@ -83,14 +83,17 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     context 'a send_at date is set' do
-      let(:send_at) { Time.now.change(usec: 0) }
+      let(:send_at) { Time.now.change(sec: 0, usec: 0) + 2.days }
 
       subject do
         post mass_messages_path, params: {
           mass_message: {
             message: message_body,
             clients: clients,
-            send_at: send_at
+            send_at: {
+              date: send_at.strftime('%m/%d/%Y'),
+              time: send_at.strftime('%-l:%M%P')
+            }
           }
         }
       end

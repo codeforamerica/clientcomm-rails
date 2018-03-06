@@ -25,7 +25,7 @@ $(document).ready(function() {
     scheduleFormVisible: false,
   };
 
-  $('#send_later').click(function(e) {
+  $('#mass_message_send_later').click(function(e) {
     if (!formState.scheduleFormVisible) {
       e.preventDefault();
       $(this).prop('disabled', true);

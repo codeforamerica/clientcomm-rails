@@ -14,7 +14,19 @@ class MassMessagesController < ApplicationController
   end
 
   def create
-    mass_message = MassMessage.new(mass_message_params.merge(user: current_user))
+    send_at = if mass_message_params[:send_at].present?
+                DateParser.parse(mass_message_params[:send_at][:date], mass_message_params[:send_at][:time])
+              else
+                Time.now
+              end
+
+    mass_message = MassMessage.new(
+      clients: mass_message_params[:clients],
+      message: mass_message_params[:message],
+      user: current_user,
+      send_at: send_at
+    )
+
     mass_message.clients = mass_message.clients.reject(&:zero?)
 
     if mass_message.invalid?
@@ -26,7 +38,7 @@ class MassMessagesController < ApplicationController
     end
 
     send_mass_message(mass_message)
-    if mass_message.send_at.present?
+    if mass_message.send_at > Time.now
       flash[:notice] = I18n.t('flash.notices.mass_message.scheduled')
       analytics_track(
         label: 'mass_message_scheduled',
@@ -64,7 +76,7 @@ class MassMessagesController < ApplicationController
       )
 
       message.send_message
-      if mass_message.send_at.present?
+      if mass_message.send_at > Time.now
         analytics_track(
           label: 'message_scheduled',
           data: message.analytics_tracker_data.merge(mass_message: true)
@@ -79,6 +91,6 @@ class MassMessagesController < ApplicationController
   end
 
   def mass_message_params
-    params.require(:mass_message).permit(:message, :send_at, clients: [])
+    params.require(:mass_message).permit(:message, send_at: %i[date time], clients: [])
   end
 end
