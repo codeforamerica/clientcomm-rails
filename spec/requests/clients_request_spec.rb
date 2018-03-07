@@ -550,6 +550,18 @@ describe 'Clients requests', type: :request do
         expect(response.body).not_to include("#{another_client.first_name} #{another_client.last_name}")
       end
 
+      context 'the user is in the 1-4 treatment group' do
+        let(:treatment_prompt) { 'just a reminder' }
+        it 'displays a tips and tricks prompt' do
+          subject
+          expect(response.body).to_not include(treatment_prompt)
+
+          user.update!(treatment_group: 'ebp-1-4')
+          get clients_path
+          expect(response.body).to include(treatment_prompt)
+        end
+      end
+
       context 'there are deactivated clients' do
         let(:deactivated_client) { user.clients.first }
 

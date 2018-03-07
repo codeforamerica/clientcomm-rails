@@ -8,7 +8,9 @@
           <% if current_user.department.client_statuses? %>
             <%= render "clients/client_status" %>
           <% end %>
-
+          <% if current_user.treatment_group == 'ebp-1-4' %>
+            <div>just a reminder</div>
+          <% end %>
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">
               <h1>My clients</h1>
