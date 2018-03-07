@@ -407,7 +407,7 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe '#send_message' do
+  describe '#send_message', active_job: true do
     let(:user) { create :user }
     let(:client) { create :client, users: [user] }
     let!(:message) { create :message, client: client, user: user }
@@ -416,6 +416,7 @@ RSpec.describe Message, type: :model do
 
     it 'sends message' do
       subject
+#      binding.pry
       expect(ScheduledMessageJob).to have_been_enqueued.with(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url).at(message.send_at)
     end
 
