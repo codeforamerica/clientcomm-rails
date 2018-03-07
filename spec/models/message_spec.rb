@@ -416,7 +416,6 @@ RSpec.describe Message, type: :model do
 
     it 'sends message' do
       subject
-#      binding.pry
       expect(ScheduledMessageJob).to have_been_enqueued.with(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url).at(message.send_at)
     end
 
