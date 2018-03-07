@@ -29,6 +29,72 @@ feature 'Admin Panel' do
     end
   end
 
+  describe 'User Edit' do
+    let(:department_from) { create :department }
+    let(:department_to) { create :department }
+    let(:user_no_shared_clients) { create :user, department: department_from, full_name: 'Gabriel Robel' }
+    let!(:user_inactive_shared_client) { create :user, department: department_from, full_name: 'Nile Hagos' }
+    let!(:user_active_shared_client) { create :user, department: department_from, full_name: 'Kinfe Fikru' }
+    let!(:user4) { create :user, department: department_to, full_name: 'Nebay Mehari' }
+    let!(:client1) { create :client, user: user_inactive_shared_client, first_name: 'Simret', last_name: 'Abaalom' }
+    let!(:client2) { create :client, user: user_active_shared_client, first_name: 'Abraham', last_name: 'Haylom' }
+
+    before do
+      ReportingRelationship.create(client: client1, user: user4, active: false)
+      ReportingRelationship.create(client: client2, user: user4, active: true)
+    end
+
+    scenario 'Changing users departments' do
+      step 'visits the view user page for user_no_shared_clients' do
+        visit admin_user_path(user_no_shared_clients)
+
+        expect(page).to have_content(user_no_shared_clients.full_name)
+        expect(page).to have_content(department_from.name)
+        expect(page).to_not have_content(department_to.name)
+      end
+
+      step 'edits the user' do
+        click_on 'Edit User'
+
+        expect(page.current_path).to eq(edit_admin_user_path(user_no_shared_clients))
+        expect(page).to have_content(user_no_shared_clients.full_name)
+        expect(page).to have_content('Edit User')
+        expect(page).to have_select(
+          'Department',
+          options: [department_from.name, department_to.name],
+          selected: department_from.name
+        )
+      end
+
+      step 'selects a new department and submits the form' do
+        select department_to.name, from: 'Department'
+        click_on 'Update User'
+
+        expect(page.current_path).to eq(admin_user_path(user_no_shared_clients))
+        expect(page).to have_content('User was successfully updated.')
+        expect(page).to have_content(department_to.name)
+        expect(page).to_not have_content(department_from.name)
+      end
+
+      step 'visits the edit page for user_inactive_shared_client' do
+        visit edit_admin_user_path(user_inactive_shared_client)
+
+        expect(page).to have_content(user_inactive_shared_client.full_name)
+        expect(page).to have_content('Edit User')
+      end
+
+      step 'selects a new department and submits the form' do
+        select department_to.name, from: 'Department'
+        click_on 'Update User'
+
+        expect(page.current_path).to eq(admin_user_path(user_inactive_shared_client))
+        expect(page).to have_content('User was successfully updated.')
+        expect(page).to have_content(department_to.name)
+        expect(page).to_not have_content(department_from.name)
+      end
+    end
+  end
+
   describe 'Client Index' do
     let(:department1) { create :department }
     let(:department2) { create :department }
