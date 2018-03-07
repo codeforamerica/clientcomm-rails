@@ -3,6 +3,7 @@ class MassMessagesController < ApplicationController
 
   def new
     @mass_message = MassMessage.new(params.permit(:message, clients: []))
+    @mass_message.send_at = default_send_at
     @clients = SortClients.mass_messages_list(user: current_user, selected_clients: @mass_message.clients)
 
     analytics_track(
@@ -14,7 +15,7 @@ class MassMessagesController < ApplicationController
   end
 
   def create
-    send_at = if mass_message_params[:send_at].present?
+    send_at = if params[:commit] == 'Schedule messages'
                 DateParser.parse(mass_message_params[:send_at][:date], mass_message_params[:send_at][:time])
               else
                 Time.now
@@ -88,6 +89,10 @@ class MassMessagesController < ApplicationController
         )
       end
     end
+  end
+
+  def default_send_at
+    Time.current.beginning_of_day + 9.hours
   end
 
   def mass_message_params

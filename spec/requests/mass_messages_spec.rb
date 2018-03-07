@@ -87,6 +87,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
 
       subject do
         post mass_messages_path, params: {
+          commit: 'Schedule messages',
           mass_message: {
             message: message_body,
             clients: clients,
@@ -104,6 +105,33 @@ describe 'Mass messages requests', type: :request, active_job: true do
         expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
         expect(client_1.messages.first.send_at).to eq send_at
         expect(client_3.messages.first.send_at).to eq send_at
+      end
+
+      context 'the scheduled commit is not present' do
+        let(:now) { Time.now.change(usec: 0) }
+
+        subject do
+          post mass_messages_path, params: {
+            mass_message: {
+              message: message_body,
+              clients: clients,
+              send_at: {
+                date: send_at.strftime('%m/%d/%Y'),
+                time: send_at.strftime('%-l:%M%P')
+              }
+            }
+          }
+        end
+
+        it 'sends message to multiple clients immediately' do
+          travel_to now do
+            subject
+          end
+
+          expect(ScheduledMessageJob).to have_been_enqueued.at(now).twice
+          expect(client_1.messages.first.send_at).to eq now
+          expect(client_3.messages.first.send_at).to eq now
+        end
       end
 
       it 'sends an analytics event for each message in mass message' do

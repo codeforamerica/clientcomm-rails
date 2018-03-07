@@ -140,7 +140,7 @@ feature 'sending mass messages', active_job: true do
 
     step 'user clicks the send later button' do
       expect(page).to_not have_content I18n.t('views.mass_message.new.schedule_form.title')
-      click_button 'Send later'
+      click_on 'Send later'
       expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
     end
 
@@ -155,7 +155,7 @@ feature 'sending mass messages', active_job: true do
       select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
 
       perform_enqueued_jobs do
-        click_on 'Schedule message'
+        click_on 'Schedule messages'
       end
 
       expect(page).to have_current_path(clients_path)

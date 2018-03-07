@@ -25,14 +25,30 @@ $(document).ready(function() {
     scheduleFormVisible: false,
   };
 
+  function initializeDatepicker(datepickerSelector) {
+    var $datepicker = $(datepickerSelector);
+    $datepicker.datepicker();
+    $datepicker.datepicker("option", "showAnim", "");
+  }
+
+  initializeDatepicker("#mass_message_send_at_date");
+
   $('#mass_message_send_later').click(function(e) {
-    if (!formState.scheduleFormVisible) {
+    e.preventDefault();
+    $('#schedule-later-form').toggle();
+    $('#schedule-later-buttons').toggle();
+    $('#send-now-buttons').toggle();
+    $('#cancel-mass-message').toggleClass('scheduled');
+  });
+
+  $('#cancel-mass-message').click(function(e) {
+    if ($(this).hasClass('scheduled')) {
       e.preventDefault();
-      $(this).prop('disabled', true);
-      $(this).addClass('button--cta button--disabled');
-      $('#schedule-later-form').show();
-      formState.scheduleFormVisible = true;
-    }
+      $('#schedule-later-form').toggle();
+      $('#schedule-later-buttons').toggle();
+      $('#send-now-buttons').toggle();
+      $('#cancel-mass-message').toggleClass('scheduled');
+    };
   });
 
   $('#schedule-later-form').click(function() {
