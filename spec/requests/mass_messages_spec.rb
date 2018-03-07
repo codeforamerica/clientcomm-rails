@@ -15,7 +15,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     let(:message_body) { 'hello this is message one' }
     let(:clients) { ['', client_1.id, client_3.id] }
 
-    before do
+    subject do
       post mass_messages_path, params: {
         mass_message: {
           message: message_body,
@@ -25,8 +25,9 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     it 'sends message to multiple clients' do
-      expect(ScheduledMessageJob).to have_been_enqueued.twice
+      subject
 
+      expect(ScheduledMessageJob).to have_been_enqueued.twice
       expect(user.messages.count).to eq 2
       expect(client_1.messages.count).to eq 1
       expect(client_1.messages.first.body).to eq message_body
@@ -38,6 +39,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     it 'sends an analytics event for each message in mass message' do
+      subject
       expect_analytics_events(
         'message_send' => {
           'mass_message' => true
@@ -53,6 +55,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     it 'sends a single mass_message_send event with recipient_count' do
+      subject
       expect_analytics_events(
         'mass_message_send' => {
           'recipients_count' => 2
@@ -64,6 +67,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       let(:message_body) { '' }
 
       it 're-renders the page with errors' do
+        subject
         expect(response.body).to include 'You need to add a message.'
       end
     end
@@ -73,7 +77,97 @@ describe 'Mass messages requests', type: :request, active_job: true do
       let(:clients) { [''] }
 
       it 're-renders the page with errors' do
+        subject
         expect(response.body).to include 'You need to pick at least one recipient.'
+      end
+    end
+
+    context 'a send_at date is set' do
+      let(:send_at) { Time.now.change(sec: 0, usec: 0) + 2.days }
+
+      subject do
+        post mass_messages_path, params: {
+          commit: 'Schedule messages',
+          mass_message: {
+            message: message_body,
+            clients: clients,
+            send_at: {
+              date: send_at.strftime('%m/%d/%Y'),
+              time: send_at.strftime('%-l:%M%P')
+            }
+          }
+        }
+      end
+
+      it 'sends message to multiple clients at the right time' do
+        subject
+
+        expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
+        expect(client_1.messages.first.send_at).to eq send_at
+        expect(client_3.messages.first.send_at).to eq send_at
+      end
+
+      context 'the scheduled commit is not present' do
+        let(:now) { Time.now.change(usec: 0) }
+
+        subject do
+          post mass_messages_path, params: {
+            mass_message: {
+              message: message_body,
+              clients: clients,
+              send_at: {
+                date: send_at.strftime('%m/%d/%Y'),
+                time: send_at.strftime('%-l:%M%P')
+              }
+            }
+          }
+        end
+
+        it 'sends message to multiple clients immediately' do
+          travel_to now do
+            subject
+          end
+
+          expect(ScheduledMessageJob).to have_been_enqueued.at(now).twice
+          expect(client_1.messages.first.send_at).to eq now
+          expect(client_3.messages.first.send_at).to eq now
+        end
+      end
+
+      it 'sends an analytics event for each message in mass message' do
+        subject
+        expect_analytics_events(
+          'message_scheduled' => {
+            'mass_message' => true
+          }
+        )
+
+        expect_analytics_event_sequence(
+          'login_success',
+          'message_scheduled',
+          'message_scheduled',
+          'mass_message_scheduled'
+        )
+      end
+
+      it 'sends a single mass_message_send event with recipient_count' do
+        subject
+        expect_analytics_events(
+          'mass_message_scheduled' => {
+            'recipients_count' => 2
+          }
+        )
+      end
+
+      context 'the date is in the past' do
+        let(:send_at) { Time.now.change(sec: 0, usec: 0) - 2.days }
+
+        it 'renders an error' do
+          subject
+
+          # do not use I18n because the single-quote gets rendered wrong in the body
+          expect(response.body).to include('in the past')
+        end
       end
     end
   end

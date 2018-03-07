@@ -30,6 +30,9 @@ en:
         unauthorized: The client you tried to view is not in your caseload.
         deactivated: '%{client_full_name} has been successfully deactivated'
         transferred: '%{client_full_name} was transferred to %{user_full_name}.'
+      mass_message:
+        sent: Your mass message has been sent.
+        scheduled: Your mass message has been scheduled.
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   messages:
     empty: "You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself."
@@ -99,6 +102,10 @@ en:
       less_than_x_minutes:
         one: just now
   views:
+    mass_message:
+      new:
+        schedule_form:
+          title: Schedule message
     shared:
       cancel: Cancel
       home: Home
@@ -132,8 +139,6 @@ en:
           delete: Delete template
           delete_confirmation: Are you sure you want to delete this template?
           submit: Update
-
-
     users:
       registrations:
         edit:

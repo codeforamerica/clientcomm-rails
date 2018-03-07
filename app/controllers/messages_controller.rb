@@ -48,22 +48,19 @@ class MessagesController < ApplicationController
 
     message.save!
 
+    message.send_message
+
     if message_params[:send_at].present?
       flash[:notice] = 'Your message has been scheduled'
-
       analytics_track(
         label: 'message_scheduled',
-        data: message.analytics_tracker_data
+        data: message.analytics_tracker_data.merge(mass_message: false)
       )
-      ScheduledMessageJob.set(wait_until: message.send_at).perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     else
-      MessageBroadcastJob.perform_now(message: message)
-
       analytics_track(
         label: 'message_send',
         data: message.analytics_tracker_data.merge(mass_message: false)
       )
-      ScheduledMessageJob.perform_later(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url)
     end
 
     respond_to do |format|

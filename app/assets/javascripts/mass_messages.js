@@ -18,6 +18,42 @@ $(document).ready(function() {
       if (this.checked !== selected) {
         this.click();
       }
-    })
+    });
+  });
+
+  var formState = {
+    scheduleFormVisible: false,
+  };
+
+  function initializeDatepicker(datepickerSelector) {
+    var $datepicker = $(datepickerSelector);
+    $datepicker.datepicker();
+    $datepicker.datepicker("option", "showAnim", "");
+  }
+
+  initializeDatepicker("#mass_message_send_at_date");
+
+  $('#mass_message_send_later').click(function(e) {
+    e.preventDefault();
+    $('#schedule-later-form').toggle();
+    $('#schedule-later-buttons').toggle();
+    $('#send-now-buttons').toggle();
+    $('#cancel-mass-message').toggleClass('scheduled');
+  });
+
+  $('#cancel-mass-message').click(function(e) {
+    if ($(this).hasClass('scheduled')) {
+      e.preventDefault();
+      $('#schedule-later-form').toggle();
+      $('#schedule-later-buttons').toggle();
+      $('#send-now-buttons').toggle();
+      $('#cancel-mass-message').toggleClass('scheduled');
+    };
+  });
+
+  $('#schedule-later-form').click(function() {
+    checked = ($(this).find(":checkbox:checked").length > 0);
+    $('#send_later').prop('disabled', !checked);
+    $('#send_later').toggleClass('button--disabled', !checked);
   });
 });

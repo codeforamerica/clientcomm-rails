@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+  include Rails.application.routes.url_helpers
   belongs_to :client
   belongs_to :user
   has_many :attachments
@@ -139,6 +140,12 @@ class Message < ApplicationRecord
       send_at: now
     )
     ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
+  end
+
+  def send_message
+    sent = Time.now >= send_at
+    MessageBroadcastJob.perform_now(message: self) if sent
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
   end
 
   private

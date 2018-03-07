@@ -94,12 +94,63 @@
                 Your search didn't return any results. Clear your search to view all clients.
               </div>
             </div>
+            <div id='schedule-later-form'>
+              <h1 class="form-card__title"><%= t('views.mass_message.new.schedule_form.title') %></h1>
+              <div class="form-group <%= 'form-group--error' if @mass_message.errors[:send_at].any? %>">
+                <div class="grid">
+                  <div class="grid__item width-one-half">
+                    <label for="mass_message_send_at_date" class="form-question">Date</label>
+                    <%
+                        send_at_date = ''
+                        send_at_time = '09:00'
+                        if @mass_message.send_at.present?
+                          send_at_date = @mass_message.send_at.strftime('%m/%d/%Y')
+                          send_at_time = @mass_message.send_at.strftime('%H:%M')
+                        end
+                    %>
+                    <input type="text" class="form-width--date text-input" name="mass_message[send_at][date]" id="mass_message_send_at_date" value="<%= send_at_date %>" />
+                    <% if @mass_message.errors[:send_at].any? %>
+                      <p class="text--error"><%= @mass_message.errors[:send_at].first %></p>
+                    <% end %>
+                  </div>
+
+                  <div class="grid__item width-one-half">
+                    <label for="scheduled_message_send_at_time" class="form-question">Time</label>
+                    <div class="select">
+                      <select class="select__element" name="mass_message[send_at][time]" id="scheduled_message_send_at_time">
+                      <%
+                        start = Time.now.change(min: 0, hour: 0)
+                        times = []
+                        48.times do
+                          times << start
+                          start += 30.minutes
+                        end
+                      %>
+                      <% times.each_with_index do |time, i| %>
+                        <option <%= "selected" if time.strftime('%H:%M') == send_at_time %> value="<%= time.strftime('%-l:%M%P') %>"><%= time.strftime('%-l:%M%P') %></option>
+                      <% end %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="form-card__footer">
               <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Send', class: 'button button--cta', role: 'button' %></div>
+                <div id="send-now-buttons">
+                  <div class="toolbar__left">
+                    <%= f.submit 'Send', id: :send_message, class: %w[sendbar__button button--primary] %>
+                    <a href="#" id="mass_message_send_later" class="sendbar__button">Send later</a>
+                  </div>
+                </div>
+                <div id="schedule-later-buttons">
+                  <div class="toolbar__left">
+                    <%= f.submit 'Schedule messages', id: :send_message, class: %w[sendbar__button button--primary] %>
+                  </div>
+                </div>
                 <div class="toolbar__right">
-                  <%= link_to clients_path, class: "button" do %>
+                  <%= link_to clients_path, class: "button", id: "cancel-mass-message" do %>
                     Cancel
                   <% end %>
                 </div>
