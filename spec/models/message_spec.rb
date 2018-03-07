@@ -253,13 +253,22 @@ RSpec.describe Message, type: :model do
 
       it 'messages other department and sends alert' do
         params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
-        Message.create_from_twilio!(params)
         time = Time.now.change(usec: 0)
         expect {
           travel_to time do
             Message.create_from_twilio!(params)
           end
         }.to have_enqueued_job(ScheduledMessageJob)
+      end
+
+      it 'does not get autoreply after first response' do
+        params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
+
+        expect(Message).to receive(:send_unclaimed_autoreply)
+        Message.create_from_twilio!(params)
+
+        expect(Message).to_not receive(:send_unclaimed_autoreply)
+        Message.create_from_twilio!(params)
       end
 
       it 'creates a message if proper params are sent' do
