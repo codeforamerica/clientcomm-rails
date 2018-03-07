@@ -7,7 +7,8 @@ module AnalyticsHelper
     tracking_data = data.merge(
       ip: visitor_ip,
       deploy: deploy_prefix,
-      visitor_id: visitor_id
+      visitor_id: visitor_id,
+      treatment_group: treatment_group
     ).merge(utm)
     # prefer current_user_id if it was included in the data
     tracking_id = distinct_id tracking_data.slice(:current_user_id).values.first
@@ -23,6 +24,10 @@ module AnalyticsHelper
   end
 
   private
+
+  def treatment_group
+    current_user&.treatment_group
+  end
 
   def utm
     utm_params = {}

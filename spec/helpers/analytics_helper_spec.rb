@@ -17,8 +17,8 @@ RSpec.describe AnalyticsHelper, type: :helper do
         end
       end
     end
-
-    let(:user) { create :user }
+    let(:treatment_group) { 'la lal la' }
+    let(:user) { create :user, treatment_group: treatment_group }
     let(:request) {
       double(
         'request',
@@ -32,6 +32,11 @@ RSpec.describe AnalyticsHelper, type: :helper do
       helper_class.new(request, user).analytics_track(
         label: 'test_label', data: {}
       )
+    end
+
+    it 'includes treamentgroup' do
+      subject
+      expect_analytics_events('test_label' => { 'treatment_group' => treatment_group })
     end
 
     it 'includes utm data if it is in the request' do
