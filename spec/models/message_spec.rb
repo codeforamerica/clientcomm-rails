@@ -249,7 +249,8 @@ RSpec.describe Message, type: :model do
       let(:dept_phone_number) { '+17609996661' }
       let!(:user) { create :user, dept_phone_number: dept_phone_number }
       let!(:client) { create :client, users: [user] }
-      let(:other_department) { create :department }
+      let!(:unclaimed_user) { create :user }
+      let(:other_department) { create :department, users: [unclaimed_user], unclaimed_user: unclaimed_user }
 
       it 'messages other department and sends alert' do
         params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
@@ -409,7 +410,7 @@ RSpec.describe Message, type: :model do
   describe '#send_message' do
     let(:user) { create :user }
     let(:client) { create :client, users: [user] }
-    let(:message) { create :message, client: client, user: user }
+    let!(:message) { create :message, client: client, user: user }
 
     subject { message.send_message }
 

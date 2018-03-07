@@ -87,7 +87,6 @@ class Message < ApplicationRecord
     end
 
     new_message.save!
-    message_count = Message.where(client: client, user: department.users).count <= 1
     if user == department.unclaimed_user && Message.where(client: client, user: department.users).count <= 1
       send_unclaimed_autoreply(client: client, department: department)
     end
