@@ -158,6 +158,17 @@ describe 'Mass messages requests', type: :request, active_job: true do
           }
         )
       end
+
+      context 'the date is in the past' do
+        let(:send_at) { Time.now.change(sec: 0, usec: 0) - 2.days }
+
+        it 'renders an error' do
+          subject
+
+          # do not use I18n because the single-quote gets rendered wrong in the body
+          expect(response.body).to include('in the past')
+        end
+      end
     end
   end
 

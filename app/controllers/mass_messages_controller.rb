@@ -30,7 +30,7 @@ class MassMessagesController < ApplicationController
 
     mass_message.clients = mass_message.clients.reject(&:zero?)
 
-    if mass_message.invalid?
+    if mass_message.invalid? || mass_message.past_message?
       @mass_message = mass_message
       @clients = SortClients.mass_messages_list(user: current_user)
 
