@@ -65,6 +65,10 @@ ActiveAdmin.register User do
   end
 
   form do |f|
+    if f.object.errors.messages.keys.include? :reporting_relationships
+      f.object.errors.add(:department, f.object.errors.messages[:reporting_relationships].first)
+    end
+
     panel 'View Clients' do
       link_to 'Clients', admin_client_relationships_path(q: { user_id_eq: user.id })
     end

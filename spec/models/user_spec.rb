@@ -62,6 +62,15 @@ RSpec.describe User, type: :model do
       expect(user.valid?).to eq(false)
       expect(user.errors.keys).to contain_exactly(:active)
     end
+
+    it 'cannot be transferred into a department with conflicting reporting relationships' do
+      other_department = create :department
+      other_user = create :user, department: other_department
+      other_user.clients << client
+
+      user.update(department: other_department)
+      expect(user.valid?).to eq(false)
+    end
   end
 
   describe 'scopes' do

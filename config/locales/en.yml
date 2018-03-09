@@ -58,6 +58,8 @@ en:
               invalid: This is not a valid phone number.
             active:
               active_reporting_relationships: User with active reporting relationships cannot be deactivated.
+            reporting_relationships:
+              invalid: A reporting relationship conflict occurred.
         client:
           attributes:
             phone_number:

@@ -16,6 +16,7 @@ class User < ApplicationRecord
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
   validate :no_active_reporting_relationships_if_inactive
+  validates_associated :reporting_relationships, on: :update, message: I18n.t('activerecord.errors.models.user.attributes.reporting_relationships.invalid')
 
   validates_presence_of :full_name
 
