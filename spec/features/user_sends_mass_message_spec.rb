@@ -144,6 +144,20 @@ feature 'sending mass messages', active_job: true do
       expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
     end
 
+    step 'user selects a date in the past and sends the mass message' do
+      future_date = (Time.zone.today - 1.month - 12.hours).beginning_of_month
+
+      # if we don't interact with the datepicker, it persists and
+      # covers other ui elements
+      fill_in 'Date', with: ''
+      find('.ui-datepicker-next').click
+      click_on future_date.strftime('%-d')
+      select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
+      click_on 'Schedule messages'
+      expect(page).to have_current_path(mass_messages_path)
+      expect(page).to have_content I18n.t('activerecord.errors.models.message.attributes.send_at.on_or_after')
+    end
+
     step 'user selects a date and sends the mass message' do
       future_date = (Time.zone.today + 1.month).beginning_of_month
 

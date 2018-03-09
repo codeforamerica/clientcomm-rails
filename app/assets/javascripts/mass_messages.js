@@ -1,4 +1,17 @@
 $(document).ready(function() {
+  function toggleMassMessage() {
+    $('#schedule-later-form').toggle();
+    $('#schedule-later-buttons').toggle();
+    $('#send-now-buttons').toggle();
+    $('#cancel-mass-message').toggleClass('scheduled');
+  }
+  $('#mass_message_send_later').click(function(e) {
+    e.preventDefault();
+    toggleMassMessage();
+  });
+  if ($('div#schedule-later-form p.text--error').length > 0) {
+    toggleMassMessage();
+  }
   $('.template--mass-messages').find('tbody :checkbox').each(function(index, checkbox) {
     $(checkbox).change(function(event) {
       $(checkbox).closest('tr').toggleClass('row--warning');
@@ -32,14 +45,6 @@ $(document).ready(function() {
   }
 
   initializeDatepicker("#mass_message_send_at_date");
-
-  $('#mass_message_send_later').click(function(e) {
-    e.preventDefault();
-    $('#schedule-later-form').toggle();
-    $('#schedule-later-buttons').toggle();
-    $('#send-now-buttons').toggle();
-    $('#cancel-mass-message').toggleClass('scheduled');
-  });
 
   $('#cancel-mass-message').click(function(e) {
     if ($(this).hasClass('scheduled')) {
