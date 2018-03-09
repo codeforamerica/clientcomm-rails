@@ -94,14 +94,14 @@ feature 'sending mass messages', active_job: true do
       expect(find('#select_all')['checked']).to eq(false)
     end
 
-    step 'user can sort clients' do
+    step 'user sorts clients' do
       find('th', text: 'Name').click
       expect(page).to have_content(/#{client_1.full_name}.*#{client_2.full_name}.*#{client_3.full_name}/)
       find('th', text: 'Name').click
       expect(page).to have_content(/#{client_3.full_name}.*#{client_2.full_name}.*#{client_1.full_name}/)
     end
 
-    step 'user can search for clients' do
+    step 'user searches for clients' do
       fill_in 'Search clients by name', with: 'a'
       expect(page).to have_content client_1.full_name
       expect(page).to_not have_content client_2.full_name
@@ -138,32 +138,30 @@ feature 'sending mass messages', active_job: true do
       check client_2.full_name
     end
 
-    step 'user clicks the send later button' do
+    step 'user clicks the send later button, revealing the scheduling form' do
       expect(page).to_not have_content I18n.t('views.mass_message.new.schedule_form.title')
       click_on 'Send later'
       expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
     end
 
-    step 'user selects a date in the past and sends the mass message' do
-      future_date = (Time.zone.today - 1.month - 12.hours).beginning_of_month
+    step 'user selects a date in the past and tries to schedule the message' do
+      past_date = (Time.zone.today - 1.month).beginning_of_month
 
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
-      find('.ui-datepicker-next').click
-      click_on future_date.strftime('%-d')
-      select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
+      find('.ui-datepicker-prev').click
+      click_on past_date.strftime('%-d')
+      select past_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
       click_on 'Schedule messages'
       expect(page).to have_current_path(mass_messages_path)
+      expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
       expect(page).to have_content I18n.t('activerecord.errors.models.message.attributes.send_at.on_or_after')
     end
 
-    step 'user selects a date and sends the mass message' do
+    step 'user selects a date in the future and schedules the message' do
       future_date = (Time.zone.today + 1.month).beginning_of_month
 
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
+      find('.ui-datepicker-next').click
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')
       select future_date.change(min: 0).strftime('%-l:%M%P'), from: 'Time'
