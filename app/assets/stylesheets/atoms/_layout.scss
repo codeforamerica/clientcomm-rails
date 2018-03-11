@@ -22,7 +22,7 @@
 
 .slab--padded {
     padding: {
-        top: 3em;
+        top: 2em;
         bottom: 3em;
     }
 }
@@ -66,6 +66,21 @@
 
   .text-with-button {
     line-height: 36px;
+  }
+}
+
+.tip {
+  background-color: $color-light-green;
+  padding: $site-margins/2;
+  margin-bottom: 2em;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+
+  .tip-title {
+    font-weight: bold;
+    position: relative;
+    top: -0.2em;
   }
 }
 

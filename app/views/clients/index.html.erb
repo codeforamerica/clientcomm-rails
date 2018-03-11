@@ -7,7 +7,15 @@
         <div class="media-box__content">
           <%= render "clients/client_status" %>
           <% if current_user.treatment_group == 'ebp-1-4' %>
-            <div>just a reminder</div>
+          <div class="tip">
+            <div class="emoji emoji--tiny emoji--electric-light-bulb"></div>
+            <span class="tip-title">ClientComm Tips &amp; Tricks</span>
+            <div class="media-body">
+              Clients who get four positive reinforcements for every
+              sanction are more likely to succeed. <a href="/mass_messages/new?message=Just+wanted+to+say+keep+up+the+good+compliance...+good+job!&utm_source=intercom&utm_campaign=ebp">Click here</a>
+              to send a positive reinforcement.
+            </div>
+          </div>
           <% end %>
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">
