@@ -551,14 +551,13 @@ describe 'Clients requests', type: :request do
       end
 
       context 'the user is in the 1-4 treatment group' do
-        let(:treatment_prompt) { 'just a reminder' }
         it 'displays a tips and tricks prompt' do
           subject
-          expect(response.body).to_not include(treatment_prompt)
+          expect(response.body).to_not include(I18n.t('views.tips.positive_reinforcement_html'))
 
           user.update!(treatment_group: 'ebp-1-4')
           get clients_path
-          expect(response.body).to include(treatment_prompt)
+          expect(response.body).to include(I18n.t('views.tips.positive_reinforcement_html'))
         end
       end
 

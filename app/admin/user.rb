@@ -55,6 +55,7 @@ ActiveAdmin.register User do
         row :phone_number
         row :active
         row :message_notification_emails
+        row :treatment_group
         row :current_sign_in_at
         row :current_sign_in_ip
         row :updated_at
