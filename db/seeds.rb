@@ -8,8 +8,8 @@
 
 # pass passwords to db:reset, db:setup, or db:seed like so:
 # `upw=myuserpassword apw=myadminpassword rails db:seed`
-user_password = ENV['UPW'] || ENV['USER_PASSWORD'] || SecureRandom.hex(14)
-admin_password = ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_password
+user_password = ENV['upw'] || ENV['UPW'] || ENV['USER_PASSWORD'] || SecureRandom.hex(14)
+admin_password = ENV['apw'] || ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_password
 
 puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
