@@ -5,9 +5,7 @@
     <div class="grid__item width-two-thirds shift-one-sixth">
       <div class="media-box--bleed media-box">
         <div class="media-box__content">
-          <% if current_user.department.client_statuses? %>
-            <%= render "clients/client_status" %>
-          <% end %>
+          <%= render "clients/client_status" %>
           <% if current_user.treatment_group == 'ebp-1-4' %>
             <div>just a reminder</div>
           <% end %>

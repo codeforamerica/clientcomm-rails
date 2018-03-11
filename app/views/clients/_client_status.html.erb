@@ -1,3 +1,4 @@
+<% if current_user.department.client_statuses? && @clients_by_status.any? %>
 <div class="status-banner-container with-padding-large">
   <% @clients_by_status.each do |status, ids| %>
     <div class="notice">
@@ -12,3 +13,4 @@
     </div>
   <% end %>
 </div>
+<% end %>
