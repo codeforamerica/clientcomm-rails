@@ -106,7 +106,7 @@ en:
   views:
     tips:
       title: ClientComm Tips & Tricks
-      positive_reinforcement_html: Clients who get four positive reinforcements for every sanction are more likely to succeed. <a href="/mass_messages/new?message=Just+wanted+to+say+keep+up+the+good+compliance...+good+job!&utm_source=intercom&utm_campaign=ebp">Click here</a> to send a positive reinforcement.
+      positive_reinforcement_html: Clients who get four positive reinforcements for every sanction are more likely to succeed. <a href="/mass_messages/new?message=I'm+proud+of+your+progress.+Keep+it+up+and+let+me+know+if+you+need+anything.&utm_source=clientcomm&utm_campaign=ebp">Click here</a> to send a positive reinforcement.
     mass_message:
       new:
         schedule_form:
