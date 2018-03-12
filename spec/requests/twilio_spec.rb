@@ -294,10 +294,6 @@ describe 'Twilio controller', type: :request, active_job: true do
       twilio_post_sms_status status_params
     end
 
-    before do
-      allow(SMSService.instance).to receive(:redact_message)
-    end
-
     context 'message received' do
       let(:sms_status) { 'received' }
 
@@ -319,11 +315,6 @@ describe 'Twilio controller', type: :request, active_job: true do
       it 'associated client has false message error' do
         subject
         expect(client.has_message_error(user: user)).to be_falsey
-      end
-
-      it 'redacts the message' do
-        subject
-        expect(SMSService.instance).to have_received(:redact_message).with(message: msgone)
       end
     end
 
@@ -355,11 +346,6 @@ describe 'Twilio controller', type: :request, active_job: true do
       it 'sets error true on associated client' do
         subject
         expect(client.has_message_error(user: user)).to be_truthy
-      end
-
-      it 'redacts the message' do
-        subject
-        expect(SMSService.instance).to have_received(:redact_message).with(message: msgone)
       end
     end
 

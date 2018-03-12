@@ -33,6 +33,7 @@ class SMSService
     )
 
     MessageBroadcastJob.perform_now(message: message)
+    MessageRedactionJob.perform_later(message: message)
   end
 
   def redact_message(message:)

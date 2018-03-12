@@ -62,6 +62,14 @@ describe SMSService do
 
       subject
     end
+
+    it 'creates a delayed MessageRedactionJob' do
+      expect(MessageRedactionJob).to receive(:perform_later).with(
+        message: factory_message
+      )
+
+      subject
+    end
   end
 
   describe '#status_lookup' do
