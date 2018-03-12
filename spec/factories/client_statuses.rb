@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :client_status do
-    sequence(:name) { Faker::Lorem.word }
+    sequence(:name) { Faker::Lorem.unique.word }
     followup_date { nil }
     icon_color { "\##{SecureRandom.hex(3)}" }
     department do
