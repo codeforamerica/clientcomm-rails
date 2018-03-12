@@ -376,6 +376,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_to.body).to eq(transfer_marker_body)
       expect(transfer_marker_to).to be_transfer_marker
       expect(transfer_marker_to).to be_persisted
+      expect(transfer_marker_to).to be_read
     end
   end
 

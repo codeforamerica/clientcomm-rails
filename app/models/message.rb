@@ -27,6 +27,7 @@ class Message < ApplicationRecord
       body: I18n.t('messages.transferred_to', user_full_name: receiving_user.full_name),
       client: client,
       transfer_marker: true,
+      read: true,
       send_at: Time.now,
       inbound: true,
       number_to: receiving_user.department.phone_number,
