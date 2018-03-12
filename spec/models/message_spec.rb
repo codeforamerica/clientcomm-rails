@@ -364,6 +364,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_from.body).to eq(transfer_marker_body)
       expect(transfer_marker_from).to be_transfer_marker
       expect(transfer_marker_from).to be_persisted
+      expect(transfer_marker_from).to be_read
 
       transfer_marker_to = sending_user.messages.transfer_markers.first
       expect(transfer_marker_to.user).to eq(sending_user)

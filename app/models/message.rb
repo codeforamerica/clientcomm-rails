@@ -39,6 +39,7 @@ class Message < ApplicationRecord
                                                 client_full_name: client.full_name),
       client: client,
       transfer_marker: true,
+      read: true,
       send_at: Time.now,
       inbound: true,
       number_to: receiving_user.department.phone_number,
