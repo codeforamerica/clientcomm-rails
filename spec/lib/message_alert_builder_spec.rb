@@ -77,6 +77,9 @@ describe MessageAlertBuilder do
         create :message, user: user, client: clientone, inbound: true, read: false
         create :message, user: user, client: clienttwo, inbound: true, read: false
         create :message, user: user, client: clientthree, inbound: true, read: false
+        ReportingRelationship.find_by(user: user, client: clientone).update!(has_unread_messages: true)
+        ReportingRelationship.find_by(user: user, client: clienttwo).update!(has_unread_messages: true)
+        ReportingRelationship.find_by(user: user, client: clientthree).update!(has_unread_messages: true)
       end
 
       context 'only one is inactive' do
