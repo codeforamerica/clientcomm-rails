@@ -3,8 +3,7 @@ module MessageAlertBuilder
 
   def self.build_alert(user:, reporting_relationship_path:, clients_path:)
     # return an alert appropriate for the state of unread messages
-    unread_messages = user.messages.where(read: false, client: user.clients)
-    # TODO: after [#155918976] replace above line with unread_messages = user.messages.where(read: false)
+    unread_messages = user.messages.where(read: false, client: user.clients.active)
     if unread_messages.empty?
       nil
     else
