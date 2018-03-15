@@ -70,7 +70,7 @@ class ClientsController < ApplicationController
       end
     end
     track_errors('create')
-    flash[:alert] = t('flash.errors.client.invalid')
+    flash.now[:alert] = t('flash.errors.client.invalid')
     render :new
   end
   # rubocop:enable Metrics/PerceivedComplexity
@@ -135,7 +135,7 @@ class ClientsController < ApplicationController
     end
 
     track_errors('edit')
-    flash[:alert] = t('flash.errors.client.invalid')
+    flash.now[:alert] = t('flash.errors.client.invalid')
     render :edit
   end
 
