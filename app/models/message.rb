@@ -140,7 +140,8 @@ class Message < ApplicationRecord
       body: unclaimed_response,
       number_from: department.phone_number,
       number_to: client.phone_number,
-      send_at: now
+      send_at: now,
+      read: true
     )
     ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
   end

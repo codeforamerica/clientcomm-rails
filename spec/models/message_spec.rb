@@ -218,6 +218,7 @@ RSpec.describe Message, type: :model do
         expect(message.number_to).to eq(unknown_number)
         expect(message.body).to eq(autoreply_message)
         expect(message.send_at).to eq(time)
+        expect(message.read).to eq(true)
         expect(job_args['send_at']).to eq(time.to_i)
         expect(job_args['callback_url']).to eq(incoming_sms_status_url)
       end
