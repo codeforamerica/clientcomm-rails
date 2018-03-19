@@ -13,7 +13,8 @@ end
 feature 'user edits client', :js do
   let(:myuser) { create :user }
   let(:other_user) { create :user }
-  let!(:clientone) { create :client, user: myuser }
+  let(:phone_number) { '2024042233' }
+  let!(:clientone) { create :client, user: myuser, phone_number: phone_number }
 
   before do
     other_user.clients << clientone
@@ -27,6 +28,7 @@ feature 'user edits client', :js do
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     expect(page).to have_content("also assigned to #{other_user.full_name}")
+    expect(find_field('Phone number').value).to eq('(202) 404-2233')
 
     new_first_name = 'Vinicius'
     new_last_name = 'Lima'

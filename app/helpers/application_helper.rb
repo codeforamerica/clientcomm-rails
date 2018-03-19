@@ -1,6 +1,7 @@
 module ApplicationHelper
   def phone_number_display(phone_number)
     # format the passed phone number for display
+    return nil if phone_number.blank?
     PhoneNumberParser.format_for_display(phone_number)
   end
 
