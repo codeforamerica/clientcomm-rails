@@ -26,7 +26,13 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  routes.default_url_options = { host: 'localhost', port: 3000 }
+  url_options = if ENV['DEPLOY_BASE_URL']
+                  { host: ENV['DEPLOY_BASE_URL'] }
+                else
+                  { host: 'localhost', port: 3000 }
+                end
+
+  routes.default_url_options = url_options
 
   config.action_mailer.delivery_method = :test
 
