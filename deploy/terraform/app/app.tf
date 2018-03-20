@@ -35,7 +35,6 @@ variable "admin_password" {}
 variable "report_day" {}
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
-variable "unclaimed_autoreply" {}
 
 # Configure the Heroku provider
 provider "heroku" {
@@ -78,7 +77,6 @@ resource "heroku_app" "clientcomm" {
     AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
-    UNCLAIMED_AUTOREPLY_MESSAGE = "${var.unclaimed_autoreply}"
     REPORT_DAY  = "${var.report_day}"
   }
 }

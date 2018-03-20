@@ -49,9 +49,6 @@ variable "admin_password" {}
 
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
-variable "unclaimed_autoreply" {
-  default = ""
-}
 
 variable "aws_route53_ttl" {
   default = "300"
@@ -90,7 +87,6 @@ module "app" {
 
   unclaimed_email     = "${var.unclaimed_email}"
   unclaimed_password  = "${var.unclaimed_password}"
-  unclaimed_autoreply = "${var.unclaimed_autoreply}"
 
   enable_papertrail = "${var.enable_papertrail}"
   papertrail_plan   = "${var.papertrail_plan}"
