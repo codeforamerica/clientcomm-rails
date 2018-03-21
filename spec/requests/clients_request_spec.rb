@@ -376,10 +376,11 @@ describe 'Clients requests', type: :request do
       end
 
       it 'tracks the updating of a client' do
-        create :message, user: user, client: existing_client, inbound: false
-        create :message, user: user, client: existing_client, inbound: false, send_at: Time.now.tomorrow
-        create :message, user: user, client: existing_client, inbound: true
-        attachment_message = create :message, user: user, client: existing_client, inbound: true
+        rr = ReportingRelationship.find_by(user: user, client: existing_client)
+        create :message, reporting_relationship: rr, inbound: false
+        create :message, reporting_relationship: rr, inbound: false, send_at: Time.now.tomorrow
+        create :message, reporting_relationship: rr, inbound: true
+        attachment_message = create :message, reporting_relationship: rr, inbound: true
         create :attachment, message: attachment_message
         existing_client.reporting_relationships.where(user: user).update(
           last_contacted_at: 5.days.ago,
@@ -524,9 +525,14 @@ describe 'Clients requests', type: :request do
       subject { get clients_path }
 
       it 'tracks a visit to the client index with clients and messages' do
-        create :message, user: user, client: user.clients.first, inbound: true
-        create :message, user: user, client: user.clients.second, inbound: true
-        create :message, user: user, client: user.clients.third, inbound: true
+        rr1 = ReportingRelationship.find_by(user: user, client: user.clients.first)
+        create :message, reporting_relationship: rr1, inbound: true
+
+        rr2 = ReportingRelationship.find_by(user: user, client: user.clients.second)
+        create :message, reporting_relationship: rr2, inbound: true
+
+        rr3 = ReportingRelationship.find_by(user: user, client: user.clients.third)
+        create :message, reporting_relationship: rr3, inbound: true
 
         subject
 

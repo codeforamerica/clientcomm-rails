@@ -2,6 +2,7 @@ class ReportingRelationship < ApplicationRecord
   belongs_to :user
   belongs_to :client
   belongs_to :client_status
+  has_many :messages
 
   scope :active, -> { where(active: true) }
 
@@ -36,16 +37,14 @@ class ReportingRelationship < ApplicationRecord
       new_reporting_relationship.save!
     end
 
-    client.messages.scheduled.where(user: user).update(user: new_reporting_relationship.user)
+    messages.scheduled.update(reporting_relationship: new_reporting_relationship)
 
     if user == new_reporting_relationship.user.department.unclaimed_user
-      client.messages.update(user: new_reporting_relationship.user)
-    else
-      client.messages.scheduled.where(user: user).update(user: new_reporting_relationship.user)
+      messages.update(reporting_relationship: new_reporting_relationship)
     end
     new_reporting_relationship.client_status = client_status
     new_reporting_relationship.save!
-    Message.create_transfer_markers(receiving_user: new_reporting_relationship.user, sending_user: user, client: client)
+    Message.create_transfer_markers(receiving_rr: new_reporting_relationship, sending_rr: self)
   end
 
   def display_name
@@ -57,10 +56,6 @@ class ReportingRelationship < ApplicationRecord
   def attachments
     Attachment.where(message: messages)
     # select * from attachments where attachments.message_id in [1, 2, 3]
-  end
-
-  def messages
-    client.messages.where(user: user)
   end
 
   def hours_since_contact
