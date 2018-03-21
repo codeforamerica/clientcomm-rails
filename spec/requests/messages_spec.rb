@@ -321,7 +321,8 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'PUT#update' do
-      let!(:message) { create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
+      let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+      let!(:message) { create(:message, reporting_relationship: rr, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
       let(:post_params) {
         {
           message: { body: new_body, send_at: message_send_at }

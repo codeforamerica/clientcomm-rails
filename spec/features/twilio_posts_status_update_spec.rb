@@ -7,7 +7,8 @@ feature 'Twilio' do
   before do
     userone = create :user
     clientone = create :client, user: userone, phone_number: message_params['From']
-    create :message, user: userone, client: clientone, twilio_sid: message_params['SmsSid'], twilio_status: 'queued'
+    rr = ReportingRelationship.find_by(user: userone, client: clientone)
+    create :message, reporting_relationship: rr, twilio_sid: message_params['SmsSid'], twilio_status: 'queued'
   end
 
   after do
@@ -33,13 +34,14 @@ feature 'Twilio' do
     context 'many requests at once', :js do
       let(:user) { create :user }
       let(:client) { create :client, user: user }
+      let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
 
       before do
         visit root_path
       end
 
       it 'handles it' do
-        message = create :message, client: client, user: user, inbound: false, twilio_status: 'queued'
+        message = create :message, reporting_relationship: rr, inbound: false, twilio_status: 'queued'
 
         threads = %w[first second third fourth].each_with_index.map do |status, i|
           Thread.new do

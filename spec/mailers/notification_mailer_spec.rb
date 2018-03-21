@@ -7,7 +7,7 @@ describe NotificationMailer, type: :mailer do
     let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
     let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
     let(:attachment) { build :attachment, media: File.new(media_path) }
-    let(:message) { create(:message, user: user, client: client, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment]) }
+    let(:message) { create(:message, reporting_relationship: rr, created_at: Time.zone.local(2012, 07, 11, 20, 10, 0), attachments: [attachment]) }
     let(:mail) { NotificationMailer.message_notification(user, message) }
 
     shared_examples_for 'notification email' do

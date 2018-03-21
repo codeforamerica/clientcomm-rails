@@ -92,11 +92,14 @@ describe MessageAlertBuilder do
       let(:clientone) { create :client, user: user, first_name: 'Zarka', last_name: 'Viktor' }
       let(:clienttwo) { create :client, user: user, first_name: 'Thury', last_name: 'Izsak' }
       let(:clientthree) { create :client, user: user, first_name: 'Asztalos', last_name: 'Bernadett' }
+      let(:rrone) { ReportingRelationship.find_by(user: user, client: clientone) }
+      let(:rrtwo) { ReportingRelationship.find_by(user: user, client: clienttwo) }
+      let(:rrthree) { ReportingRelationship.find_by(user: user, client: clientthree) }
 
       before do
-        create :message, user: user, client: clientone, inbound: true, read: false
-        create :message, user: user, client: clienttwo, inbound: true, read: false
-        create :message, user: user, client: clientthree, inbound: true, read: false
+        create :message, reporting_relationship: rrone, inbound: true, read: false
+        create :message, reporting_relationship: rrtwo, inbound: true, read: false
+        create :message, reporting_relationship: rrthree, inbound: true, read: false
         ReportingRelationship.find_by(user: user, client: clientone).update!(has_unread_messages: true)
         ReportingRelationship.find_by(user: user, client: clienttwo).update!(has_unread_messages: true)
         ReportingRelationship.find_by(user: user, client: clientthree).update!(has_unread_messages: true)
