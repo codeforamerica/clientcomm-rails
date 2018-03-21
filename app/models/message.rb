@@ -1,7 +1,10 @@
 class Message < ApplicationRecord
   include Rails.application.routes.url_helpers
-  belongs_to :client
-  belongs_to :user
+
+  belongs_to :reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'reporting_relationship_id'
+  belongs_to :original_reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'original_reporting_relationship_id'
+  has_one :client, through: :reporting_relationship
+  has_one :user, through: :reporting_relationship
   has_many :attachments
 
   validates_presence_of :send_at, message: "That date didn't look right."
@@ -15,35 +18,37 @@ class Message < ApplicationRecord
   scope :transfer_markers, -> { where(transfer_marker: true) }
   scope :messages, -> { where(transfer_marker: false) }
 
+  class TransferClientMismatch < StandardError; end
+
   INBOUND = 'inbound'
   OUTBOUND = 'outbound'
   READ = 'read'
   UNREAD = 'unread'
   ERROR = 'error'
 
-  def self.create_transfer_markers(sending_user:, receiving_user:, client:)
+  def self.create_transfer_markers(sending_rr:, receiving_rr:)
+    raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
+
     Message.create!(
-      user: sending_user,
-      body: I18n.t('messages.transferred_to', user_full_name: receiving_user.full_name),
-      client: client,
+      reporting_relationship: sending_rr,
+      body: I18n.t('messages.transferred_to', user_full_name: receiving_rr.user.full_name),
       transfer_marker: true,
       read: true,
       send_at: Time.now,
       inbound: true,
-      number_to: receiving_user.department.phone_number,
-      number_from: client.phone_number
+      number_to: sending_rr.user.department.phone_number,
+      number_from: sending_rr.client.phone_number
     )
     Message.create!(
-      user: receiving_user,
-      body: I18n.t('messages.transferred_from', user_full_name: sending_user.full_name,
-                                                client_full_name: client.full_name),
-      client: client,
+      reporting_relationship: receiving_rr,
+      body: I18n.t('messages.transferred_from', user_full_name: sending_rr.user.full_name,
+                                                client_full_name: sending_rr.client.full_name),
       transfer_marker: true,
       read: true,
       send_at: Time.now,
       inbound: true,
-      number_to: receiving_user.department.phone_number,
-      number_from: client.phone_number
+      number_to: receiving_rr.user.department.phone_number,
+      number_from: receiving_rr.client.phone_number
     )
     true
   end
@@ -70,9 +75,11 @@ class Message < ApplicationRecord
                        .find_by(reporting_relationships: { client: client })
       user ||= department.unclaimed_user
     end
+
+    rr = ReportingRelationship.find_by(user: user, client: client)
+
     new_message = Message.new(
-      client: client,
-      user: user,
+      reporting_relationship: rr,
       number_to: to_phone_number,
       number_from: from_phone_number,
       inbound: true,
@@ -89,7 +96,9 @@ class Message < ApplicationRecord
     end
 
     new_message.save!
-    if user == department.unclaimed_user && Message.where(client: client, user: department.users).count <= 1
+
+    dept_rrs = ReportingRelationship.where(client: client, user: department.users)
+    if user == department.unclaimed_user && Message.where(reporting_relationship: dept_rrs).count <= 1
       send_unclaimed_autoreply(client: client, department: department)
     end
 
@@ -122,12 +131,8 @@ class Message < ApplicationRecord
     end
   end
 
-  def reporting_relationship
-    ReportingRelationship.find_by(user: user, client: client)
-  end
-
   def first?
-    self.client.messages.where(user: self.user).order(send_at: :desc).first == self
+    reporting_relationship.messages.order(send_at: :asc).first == self
   end
 
   def self.send_unclaimed_autoreply(client:, department:)

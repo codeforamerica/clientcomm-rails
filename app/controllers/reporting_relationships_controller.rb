@@ -3,9 +3,9 @@ class ReportingRelationshipsController < ApplicationController
   skip_after_action :intercom_rails_auto_include
 
   def show
-    rr = current_user.reporting_relationships.find params[:id]
+    @rr = current_user.reporting_relationships.find params[:id]
 
-    @client = rr.client
+    @client = @rr.client
 
     unless @client.active(user: current_user)
       redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
@@ -21,14 +21,14 @@ class ReportingRelationshipsController < ApplicationController
     @templates = current_user.templates
 
     # the list of past messages
-    @messages = past_messages(client: @client)
+    @messages = past_messages
     @messages.update_all(read: true)
     @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
 
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
 
-    @messages_scheduled = current_user.messages.scheduled.where(client: @client)
+    @messages_scheduled = @rr.messages.scheduled
   rescue ActiveRecord::RecordNotFound
     redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
   end
@@ -93,10 +93,9 @@ class ReportingRelationshipsController < ApplicationController
     Time.current.beginning_of_day + 9.hours
   end
 
-  def past_messages(client:)
-    client.messages
-          .where(user: current_user)
-          .where('send_at < ?', Time.now)
-          .order('send_at ASC')
+  def past_messages
+    @rr.messages
+       .where('send_at < ?', Time.now)
+       .order('send_at ASC')
   end
 end

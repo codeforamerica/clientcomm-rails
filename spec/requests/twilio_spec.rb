@@ -284,8 +284,9 @@ describe 'Twilio controller', type: :request, active_job: true do
   end
 
   context 'POST#incoming_sms_status' do
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let!(:msgone) do
-      create :message, client: client, user: user, inbound: false, twilio_status: 'queued'
+      create :message, reporting_relationship: rr, inbound: false, twilio_status: 'queued'
     end
     let(:sms_sid) { msgone.twilio_sid }
 

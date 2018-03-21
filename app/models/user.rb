@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_many :reporting_relationships
   has_many :clients, through: :reporting_relationships
-  has_many :messages
+  has_many :messages, through: :reporting_relationships
   has_many :templates
   belongs_to :department
 

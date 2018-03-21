@@ -15,12 +15,11 @@ class ScheduledMessagesController < ApplicationController
     )
 
     # the list of past messages
-    @messages = current_user.messages
-                            .where(client: @client)
-                            .where('send_at < ? OR send_at IS NULL', Time.now)
-                            .order('created_at ASC')
+    @messages = reporting_relationship.messages
+                                      .where('send_at < ? OR send_at IS NULL', Time.now)
+                                      .order('created_at ASC')
     @messages.update_all(read: true)
 
-    @messages_scheduled = current_user.messages.scheduled.where(client: @client)
+    @messages_scheduled = reporting_relationship.messages.scheduled
   end
 end
