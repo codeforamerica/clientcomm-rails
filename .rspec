@@ -4,3 +4,4 @@
 --format documentation
 --format RspecJunitFormatter
 --out results/rspec/junit.xml
+--exclude-pattern 'spec/migrations/**/*'
