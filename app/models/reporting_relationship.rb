@@ -2,7 +2,8 @@ class ReportingRelationship < ApplicationRecord
   belongs_to :user
   belongs_to :client
   belongs_to :client_status
-  has_many :messages
+  has_one :department, through: :user
+  has_many :messages, dependent: :nullify
 
   scope :active, -> { where(active: true) }
 
