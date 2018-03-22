@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(version: 20180314000756) do
     t.string "last_twilio_update"
     t.boolean "transfer_marker", default: false
     t.bigint "reporting_relationship_id"
-    t.bigint "original_reporting_relationship_id"
+    t.bigint "original_reporting_relationship_id", null: false
     t.index ["original_reporting_relationship_id"], name: "index_messages_on_original_reporting_relationship_id"
     t.index ["reporting_relationship_id"], name: "index_messages_on_reporting_relationship_id"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
