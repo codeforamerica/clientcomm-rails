@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180311020035) do
+ActiveRecord::Schema.define(version: 20180314000756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,8 +105,6 @@ ActiveRecord::Schema.define(version: 20180311020035) do
   end
 
   create_table "messages", id: :serial, force: :cascade do |t|
-    t.integer "client_id"
-    t.integer "user_id"
     t.string "body", default: ""
     t.string "number_from", null: false
     t.string "number_to", null: false
@@ -121,9 +119,11 @@ ActiveRecord::Schema.define(version: 20180311020035) do
     t.boolean "sent", default: false
     t.string "last_twilio_update"
     t.boolean "transfer_marker", default: false
-    t.index ["client_id"], name: "index_messages_on_client_id"
+    t.bigint "reporting_relationship_id"
+    t.bigint "original_reporting_relationship_id", null: false
+    t.index ["original_reporting_relationship_id"], name: "index_messages_on_original_reporting_relationship_id"
+    t.index ["reporting_relationship_id"], name: "index_messages_on_reporting_relationship_id"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
-    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "reporting_relationships", force: :cascade do |t|
@@ -216,8 +216,8 @@ ActiveRecord::Schema.define(version: 20180311020035) do
   add_foreign_key "attachments", "messages"
   add_foreign_key "clients", "users"
   add_foreign_key "departments", "users"
-  add_foreign_key "messages", "clients"
-  add_foreign_key "messages", "users"
+  add_foreign_key "messages", "reporting_relationships"
+  add_foreign_key "messages", "reporting_relationships", column: "original_reporting_relationship_id"
   add_foreign_key "reporting_relationships", "client_statuses"
   add_foreign_key "reporting_relationships", "clients"
   add_foreign_key "reporting_relationships", "users"

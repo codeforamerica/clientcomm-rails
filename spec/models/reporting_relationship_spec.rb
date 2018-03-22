@@ -4,6 +4,7 @@ RSpec.describe ReportingRelationship, type: :model do
   it { should belong_to :user }
   it { should belong_to :client }
   it { should belong_to :client_status }
+  it { should have_one(:department).through(:user) }
 
   describe 'Validations' do
     it { should validate_presence_of :user }
@@ -68,7 +69,8 @@ RSpec.describe ReportingRelationship, type: :model do
     let(:old_user) { create :user, department: dept }
     let(:new_user) { create :user, department: dept }
     let(:client) { create :client, user: old_user }
-    let!(:scheduled_messages) { create_list :message, 5, user: old_user, client: client, send_at: Time.now + 1.day }
+    let(:rr) { ReportingRelationship.find_by(user: old_user, client: client) }
+    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day }
     let(:old_reporting_relationship) { ReportingRelationship.find_by(user: old_user, client: client) }
     let(:new_reporting_relationship) { ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id) }
 
@@ -84,7 +86,7 @@ RSpec.describe ReportingRelationship, type: :model do
     end
 
     it 'transfers creates transfer markers' do
-      expect(Message).to receive(:create_transfer_markers).with(receiving_user: new_user, sending_user: old_user, client: client)
+      expect(Message).to receive(:create_transfer_markers).with(sending_rr: old_reporting_relationship, receiving_rr: new_reporting_relationship)
       subject
     end
 
@@ -95,7 +97,7 @@ RSpec.describe ReportingRelationship, type: :model do
     end
 
     context 'the sending user is the unclaimed user' do
-      let!(:messages) { create_list :message, 5, user: old_user, client: client }
+      let!(:messages) { create_list :message, 5, reporting_relationship: rr }
 
       before do
         dept.update(unclaimed_user: old_user)

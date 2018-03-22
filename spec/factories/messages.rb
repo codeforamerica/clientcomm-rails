@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :message do
-    user { create :user }
-    client { create :client, user: user }
+    reporting_relationship { create :reporting_relationship }
     body { "i am a message #{SecureRandom.hex(17)}" }
     sequence(:number_from) { Faker::PhoneNumber.cell_phone }
     sequence(:number_to) { Faker::PhoneNumber.cell_phone }

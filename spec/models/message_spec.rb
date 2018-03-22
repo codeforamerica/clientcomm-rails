@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe Message, type: :model do
   describe '#first?' do
     let(:message) { create :message, send_at: send_at }
+    let(:rr) { message.reporting_relationship }
 
     before do
-      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 2)
-      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 3)
-      create :message, user: message.user, client: message.client, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 2)
+      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 3)
+      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 4)
     end
 
     subject do
@@ -40,14 +41,14 @@ RSpec.describe Message, type: :model do
     let(:created_at) { Time.new(2009, 2, 1, 1, 1, 1) }
     let(:user) { create :user, id: user_id }
     let(:client) { create :client, id: client_id, user: user }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:message) do
       create(
         :message,
-        client: client,
-        body: body,
-        user: user,
+        reporting_relationship: rr,
         send_at: send_at,
-        created_at: created_at
+        created_at: created_at,
+        body: body
       )
     end
     let(:message_id) { message.id }
@@ -74,9 +75,9 @@ RSpec.describe Message, type: :model do
       let(:send_at) { Time.new(2010, 1, 1, 1, 1, 5) }
 
       before do
-        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 2)
-        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 3)
-        create :message, user: user, client: client, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 2)
+        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 3)
+        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 4)
       end
 
       it 'sends analytics tracking data' do
@@ -108,13 +109,33 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'relationships' do
-    it { should belong_to :client }
-    it { should belong_to :user }
+    it { should have_one :client }
+    it { should have_one :user }
     it { should have_many :attachments }
+    it { should validate_presence_of :reporting_relationship }
 
     it do
       should validate_presence_of(:send_at)
         .with_message("That date didn't look right.")
+    end
+
+    it 'sets the original_reporting_relationship before create validations' do
+      rr = create :reporting_relationship
+      message = build :message, reporting_relationship: rr
+      expect(message.original_reporting_relationship).to be_nil
+      message.save!
+      expect(message.original_reporting_relationship).to eq(rr)
+    end
+
+    it 'does not change original_reporting_relationship on update' do
+      rr = create :reporting_relationship
+      message = create :message, reporting_relationship: rr
+      expect(message.original_reporting_relationship).to eq(rr)
+      new_rr = create :reporting_relationship
+      message.reporting_relationship = new_rr
+      message.save!
+      expect(message.original_reporting_relationship).to eq(rr)
+      expect(message.reporting_relationship).to eq(new_rr)
     end
 
     context 'validating body of message' do
@@ -156,180 +177,166 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'accessors' do
-    describe '#reporting_relationship:user' do
-      let(:user) { create :user }
-      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
-      let!(:rr) { ReportingRelationship.create(user: user, client: client) }
-      let!(:message) { create :message, user: user, client: client }
+  describe '#create_from_twilio', active_job: true do
+    let(:dept_phone_number) { '+17609996661' }
+    let(:unknown_number) { '+19999999999' }
+    let(:unclaimed_user) { create :user }
+    let(:department) { create :department, users: [unclaimed_user], unclaimed_user: unclaimed_user, phone_number: dept_phone_number }
+    let(:twilio_params) { twilio_new_message_params from_number: unknown_number, to_number: department.phone_number }
 
-      it 'returns the relevant value' do
-        expect(message.reporting_relationship).to eq(rr)
+    subject { Message.create_from_twilio!(twilio_params) }
+
+    before do
+      allow(Message).to receive(:send_unclaimed_autoreply)
+    end
+
+    it 'creates a message with the proper information' do
+      expect(subject.number_to).to eq department.phone_number
+      expect(subject.number_from).to eq unknown_number
+      expect(subject.inbound).to be_truthy
+      expect(subject.send_at).to be_present
+    end
+
+    it 'creates the client' do
+      client = subject.client
+      expect(client.last_name).to eq('+19999999999')
+    end
+
+    it 'attaches the new client to the unclaimed user' do
+      client = subject.client
+      expect(client.users).to include(unclaimed_user)
+    end
+
+    it 'autoreplies to the message' do
+      client = subject.client
+      rr = ReportingRelationship.find_by(user: unclaimed_user, client: client)
+      expect(Message).to have_received(:send_unclaimed_autoreply).with(rr: rr)
+    end
+
+    context 'there is an attachment' do
+      let(:body) { '' }
+      let(:twilio_params) do
+        twilio_new_message_params(
+          from_number: unknown_number,
+          to_number: department.phone_number,
+          msg_txt: body
+        ).merge(NumMedia: 2,
+                MediaUrl0: 'http://cats.com/fluffy_cat.png',
+                MediaUrl1: 'http://cats.com/fluffy_cat.png',
+                MediaContentType0: 'text/png',
+                MediaContentType1: 'text/png')
+      end
+
+      before do
+        stub_request(:get, 'http://cats.com/fluffy_cat.png')
+          .to_return(status: 200,
+                     body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                     headers: {
+                       'Accept-Ranges' => 'bytes',
+                       'Content-Length' => '4379330',
+                       'Content-Type' => 'image/jpeg'
+                     })
+      end
+
+      it 'creates a message with an attachment' do
+        attachments = subject.attachments.all
+        expect(attachments.length).to eq 2
+
+        attachments.each do |attachment|
+          expect(attachment.media.exists?).to eq true
+        end
+      end
+
+      context 'message body is present' do
+        let(:body) { 'some_body' }
+
+        it 'creates a message with attachments' do
+          attachments = subject.attachments.all
+          expect(attachments.length).to eq 2
+
+          attachments.each do |attachment|
+            expect(attachment.media.exists?).to eq true
+          end
+        end
+      end
+    end
+
+    context 'client already exists' do
+      let(:client) { create :client }
+      let(:twilio_params) { twilio_new_message_params from_number: client.phone_number, to_number: department.phone_number }
+
+      it 'assigns the client to the unclaimed user' do
+        subject
+        expect(client.users).to include(unclaimed_user)
+      end
+
+      it 'sends an autoreply' do
+        subject
+        rr = ReportingRelationship.find_by(user: unclaimed_user, client: client)
+        expect(Message).to have_received(:send_unclaimed_autoreply).with(rr: rr)
+      end
+
+      context 'a second message is sent' do
+        before do
+          Message.create_from_twilio!(twilio_params)
+        end
+
+        it 'does not send an autoreply' do
+          subject
+          expect(Message).to have_received(:send_unclaimed_autoreply).exactly(:once)
+        end
+      end
+
+      context 'the client already has a relationship with a user' do
+        let(:user) { create :user, department: department }
+
+        before do
+          user.clients << client
+        end
+
+        it 'creates the message on the correct rr' do
+          rr = ReportingRelationship.find_by(user: user, client: client)
+          message = subject
+
+          expect(rr.messages).to include(message)
+        end
+
+        context 'the user is in another department' do
+          let(:user) { create :user }
+
+          it 'attaches the client to the relevant unclaimed user' do
+            subject
+            expect(client.users).to include(unclaimed_user)
+          end
+        end
       end
     end
   end
 
-  describe '#create_from_twilio' do
-    context 'client does not exist', active_job: true do
-      let(:dept_phone_number) { '+17609996661' }
-      let(:autoreply_message) { 'This is the unclaimed auto-reply message.' }
-      let(:department) { create :department, phone_number: dept_phone_number, unclaimed_response: autoreply_message }
-      let(:unclaimed_user) { create :user, full_name: 'Unclaimed User', department: department }
+  describe 'send_unclaimed_autoreply', active_job: true do
+    let(:user) { create :user }
+    let(:client) { create :client, users: [user] }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+    let(:message) { instance_double(Message) }
+    let(:callback_url) { Rails.application.routes.url_helpers.incoming_sms_status_url }
+    let(:now) { Time.now.change(usec: 0) }
 
-      before do
-        department.unclaimed_user = unclaimed_user
-        department.save
-      end
+    subject { Message.send_unclaimed_autoreply(rr: rr) }
 
-      it 'creates a new client with missing information' do
-        unknown_number = '+19999999999'
-        params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
+    it 'sends the autoreply message' do
+      expect(Message).to receive(:create!) .with(
+        reporting_relationship: rr,
+        body: I18n.t('message.unclaimed_response'),
+        number_from: user.department.phone_number,
+        number_to: client.phone_number,
+        send_at: now
+      ).and_return(message)
 
-        message = Message.create_from_twilio!(params)
+      expect(ScheduledMessageJob).to receive(:perform_later)
+        .with(message: message, send_at: now.to_i, callback_url: callback_url)
 
-        expect(message.user).to eq unclaimed_user
-        expect(message.number_to).to eq dept_phone_number
-        expect(message.number_from).to eq unknown_number
-        expect(message.inbound).to be_truthy
-        expect(message.send_at).to be_present
-
-        client = message.client
-        expect(client.first_name).to be_nil
-        expect(client.last_name).to eq unknown_number
-        expect(client.phone_number).to eq unknown_number
-        expect(client.users).to include unclaimed_user
-      end
-
-      it 'autoreplies to the new client' do
-        unknown_number = '+19999999999'
-        params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
-
-        time = Time.now.change(usec: 0)
-        expect {
-          travel_to time do
-            Message.create_from_twilio!(params)
-          end
-        }.to have_enqueued_job(ScheduledMessageJob)
-
-        job_args = enqueued_jobs.first[:args].first
-        message = GlobalID::Locator.locate job_args['message']['_aj_globalid']
-        expect(message).to_not be_nil
-        expect(message.number_from).to eq(department.phone_number)
-        expect(message.number_to).to eq(unknown_number)
-        expect(message.body).to eq(autoreply_message)
-        expect(message.send_at).to eq(time)
-        expect(message.read).to eq(true)
-        expect(job_args['send_at']).to eq(time.to_i)
-        expect(job_args['callback_url']).to eq(incoming_sms_status_url)
-      end
-
-      context 'unclaimed_response is not set' do
-        before do
-          department.unclaimed_response = nil
-          department.save!
-        end
-
-        it 'autoreply falls back to translation' do
-          unknown_number = '+19999999999'
-          params = twilio_new_message_params from_number: unknown_number, to_number: dept_phone_number
-
-          time = Time.now.change(usec: 0)
-          travel_to time do
-            Message.create_from_twilio!(params)
-          end
-
-          job_args = enqueued_jobs.first[:args].first
-          message = GlobalID::Locator.locate job_args['message']['_aj_globalid']
-          expect(message).to_not be_nil
-          expect(message.body).to eq(I18n.t('message.unclaimed_response'))
-        end
-      end
-    end
-
-    context 'client exists' do
-      let(:dept_phone_number) { '+17609996661' }
-      let!(:user) { create :user, dept_phone_number: dept_phone_number }
-      let!(:client) { create :client, users: [user] }
-      let!(:unclaimed_user) { create :user }
-      let(:other_department) { create :department, users: [unclaimed_user], unclaimed_user: unclaimed_user }
-
-      it 'messages other department and sends alert' do
-        params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
-        time = Time.now.change(usec: 0)
-        expect {
-          travel_to time do
-            Message.create_from_twilio!(params)
-          end
-        }.to have_enqueued_job(ScheduledMessageJob)
-      end
-
-      it 'does not get autoreply after first response' do
-        params = twilio_new_message_params from_number: client.phone_number, to_number: other_department.phone_number
-
-        expect(Message).to receive(:send_unclaimed_autoreply)
-        Message.create_from_twilio!(params)
-
-        expect(Message).to_not receive(:send_unclaimed_autoreply)
-        Message.create_from_twilio!(params)
-      end
-
-      it 'creates a message if proper params are sent' do
-        params = twilio_new_message_params from_number: client.phone_number, to_number: dept_phone_number
-        msg = Message.create_from_twilio!(params)
-        expect(client.messages.last).to eq msg
-      end
-
-      context 'there is an attachment' do
-        let(:params) do
-          twilio_new_message_params(
-            from_number: client.phone_number,
-            to_number: dept_phone_number,
-            msg_txt: body
-          ).merge(NumMedia: 2,
-                  MediaUrl0: 'http://cats.com/fluffy_cat.png',
-                  MediaUrl1: 'http://cats.com/fluffy_cat.png',
-                  MediaContentType0: 'text/png',
-                  MediaContentType1: 'text/png')
-        end
-
-        before do
-          stub_request(:get, 'http://cats.com/fluffy_cat.png')
-            .to_return(status: 200,
-                       body: File.read('spec/fixtures/fluffy_cat.jpg'),
-                       headers: {
-                         'Accept-Ranges' => 'bytes',
-                         'Content-Length' => '4379330',
-                         'Content-Type' => 'image/jpeg'
-                       })
-        end
-
-        subject { Message.create_from_twilio!(params) }
-
-        context 'message body is present' do
-          let(:body) { 'some_body' }
-
-          it 'creates a message with attachments' do
-            attachments = subject.attachments.all
-            expect(attachments.length).to eq 2
-
-            attachments.each do |attachment|
-              expect(attachment.media.exists?).to eq true
-            end
-          end
-        end
-
-        context 'message body is not present' do
-          let(:body) { '' }
-
-          it 'creates a message with no body but an attachment' do
-            attachments = subject.attachments.all
-            expect(attachments.length).to eq 2
-
-            attachments.each do |attachment|
-              expect(attachment.media.exists?).to eq true
-            end
-          end
-        end
+      travel_to now do
+        subject
       end
     end
   end
@@ -337,13 +344,17 @@ RSpec.describe Message, type: :model do
   describe 'create_transfer_marker' do
     let(:sending_user) { create :user }
     let(:receiving_user) { create :user }
-    let(:client) { create :client, users: [receiving_user] }
+    let(:client) { create :client }
+    let(:sending_rr) { create :reporting_relationship, user: sending_user, client: client, active: false }
+    let(:receiving_rr) { create :reporting_relationship, user: receiving_user, client: client }
+
+    before do
+    end
 
     subject do
       Message.create_transfer_markers(
-        sending_user: sending_user,
-        receiving_user: receiving_user,
-        client: client
+        sending_rr: sending_rr,
+        receiving_rr: receiving_rr
       )
     end
 
@@ -380,40 +391,46 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_to).to be_persisted
       expect(transfer_marker_to).to be_read
     end
+
+    context 'the clients in the rrs do not match' do
+      let(:other_client) { create :client }
+      let(:receiving_rr) { create :reporting_relationship, user: receiving_user, client: other_client }
+
+      it 'raises an exception' do
+        expect { subject }.to raise_error(Message::TransferClientMismatch)
+      end
+    end
   end
 
   describe 'scope transfer_markers' do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let(:transfer_marker) { create :message, client: client, user: user, transfer_marker: true }
+    let(:rr) { create :reporting_relationship }
+    let(:transfer_marker) { create :message, reporting_relationship: rr, transfer_marker: true }
 
-    subject { client.messages.transfer_markers }
+    subject { rr.client.messages.transfer_markers }
 
     it 'finds the transfer markers' do
-      create_list :message, 5, user: user, client: client
+      create_list :message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(transfer_marker)
     end
   end
 
   describe 'scope messages' do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let(:message) { create :message, client: client, user: user }
+    let(:rr) { create :reporting_relationship }
+    let(:message) { create :message, reporting_relationship: rr }
 
-    subject { client.messages.messages }
+    subject { rr.client.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 5, user: user, client: client, transfer_marker: true
+      create_list :message, 5, reporting_relationship: rr, transfer_marker: true
 
       expect(subject).to contain_exactly(message)
     end
   end
 
   describe '#send_message', active_job: true do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let!(:message) { create :message, client: client, user: user }
+    let(:rr) { create :reporting_relationship }
+    let!(:message) { create :message, reporting_relationship: rr }
 
     subject { message.send_message }
 

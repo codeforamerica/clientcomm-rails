@@ -67,12 +67,12 @@ describe Department, type: :model do
     let(:outbound1_count) { 55 }
     let(:inbound2_count) { 34 }
     let(:outbound2_count) { 89 }
-    let!(:transfers1) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, user: user1, client: user1.clients.sample }
-    let!(:messages_inbound1) { create_list :message, inbound1_count, send_at: now - 1.day, inbound: true, user: user1, client: user1.clients.sample }
-    let!(:messages_outbound1) { create_list :message, outbound1_count, send_at: now - 2.days, inbound: false, user: user1, client: user1.clients.sample }
-    let!(:transfers2) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, user: user2, client: user2.clients.sample }
-    let!(:messages_inbound2) { create_list :message, inbound2_count, send_at: now - 3.days, inbound: true, user: user2, client: user2.clients.sample }
-    let!(:messages_outbound2) { create_list :message, outbound2_count, send_at: now - 4.days, inbound: false, user: user2, client: user2.clients.sample }
+    let!(:transfers1) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, reporting_relationship: user1.reporting_relationships.active.sample }
+    let!(:messages_inbound1) { create_list :message, inbound1_count, send_at: now - 1.day, inbound: true, reporting_relationship: user1.reporting_relationships.active.sample }
+    let!(:messages_outbound1) { create_list :message, outbound1_count, send_at: now - 2.days, inbound: false, reporting_relationship: user1.reporting_relationships.active.sample }
+    let!(:transfers2) { create_list :message, 2, send_at: now - 1.day, transfer_marker: true, reporting_relationship: user2.reporting_relationships.active.sample }
+    let!(:messages_inbound2) { create_list :message, inbound2_count, send_at: now - 3.days, inbound: true, reporting_relationship: user2.reporting_relationships.active.sample }
+    let!(:messages_outbound2) { create_list :message, outbound2_count, send_at: now - 4.days, inbound: false, reporting_relationship: user2.reporting_relationships.active.sample }
 
     it 'returns accurate metrics' do
       metrics = department.message_metrics now
@@ -83,7 +83,7 @@ describe Department, type: :model do
 
     context 'scoping by date' do
       before do
-        create :message, send_at: now + 2.days, user: user1, client: user1.clients.first
+        create :message, send_at: now + 2.days, reporting_relationship: user1.reporting_relationships.first
       end
 
       it 'scopes metrics by the date passed in' do

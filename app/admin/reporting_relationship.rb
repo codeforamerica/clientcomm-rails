@@ -78,8 +78,6 @@ ActiveAdmin.register ReportingRelationship do
       department = Department.find(department_id)
       old_users = department.users
 
-      transfer_messages(client: client, old_users: old_users, new_user: new_user)
-
       deactivate_old_relationships(client: client, users: old_users)
 
       if new_user.blank?
@@ -91,7 +89,10 @@ ActiveAdmin.register ReportingRelationship do
         client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note, client_status: rr.client_status
       )
 
-      Message.create_transfer_markers(sending_user: previous_user, receiving_user: new_user, client: client)
+      transfer_messages(client: client, old_users: old_users, new_user: new_user)
+
+      new_rr = ReportingRelationship.find_by(client: client, user: new_user)
+      Message.create_transfer_markers(sending_rr: rr, receiving_rr: new_rr)
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
       redirect_to(admin_client_path(client))
@@ -100,12 +101,17 @@ ActiveAdmin.register ReportingRelationship do
     private
 
     def transfer_messages(client:, old_users:, new_user:)
-      client.messages.scheduled.where(user: old_users).update(user: new_user)
+      original_rrs = ReportingRelationship.where(client: client, user: old_users)
+      original_messages = Message.where(reporting_relationship: original_rrs).scheduled
+
+      new_rr = ReportingRelationship.find_by(client: client, user: new_user)
+      original_messages.update(reporting_relationship: new_rr)
 
       # rubocop:disable Style/GuardClause
       if new_user.present?
-        unclaimed_messages = client.messages.where(user: new_user.department.unclaimed_user)
-        unclaimed_messages.update(user: new_user) if unclaimed_messages.any?
+        unclaimed_rr = ReportingRelationship.find_by(client: client, user: new_user.department.unclaimed_user)
+        unclaimed_messages = unclaimed_rr.messages if unclaimed_rr
+        unclaimed_messages.update(reporting_relationship: new_rr) if unclaimed_messages.present?
       end
       # rubocop:enable Style/GuardClause
     end

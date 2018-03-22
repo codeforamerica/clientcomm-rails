@@ -18,6 +18,7 @@ describe 'Messages requests', type: :request, active_job: true do
     let(:department) { create :department }
     let(:user) { create :user, department: department }
     let(:client) { create :client, user: user }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:body) { 'hello, my friend' }
 
     before do
@@ -40,7 +41,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'does not show message dialog if messages exist' do
-        create :message, client: client, user: user
+        create :message, reporting_relationship: rr
         rr = user.reporting_relationships.find_by(client: client)
         get reporting_relationship_path(rr)
         message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
@@ -48,11 +49,10 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'shows all past messages for a given relationship' do
-        message = create :message, client: client, user: user
-        message_2 = create :message, client: client, user: user
-        message_3 = create :message, client: client, user: user2
+        message = create :message, reporting_relationship: rr
+        message_2 = create :message, reporting_relationship: rr
+        message_3 = create :message
 
-        rr = user.reporting_relationships.find_by(client: client)
         get reporting_relationship_path(rr)
 
         expect(response.body).to include(message.body)
@@ -61,7 +61,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'marks all messages read when index loaded' do
-        message = create :message, user: user, client: client, inbound: true
+        message = create :message, reporting_relationship: rr, inbound: true
         client.reporting_relationship(user: user).update!(has_unread_messages: true)
 
         # when we visit the messages path, it should mark the message read
@@ -75,7 +75,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'there are scheduled messages' do
         it 'does not show scheduled messages in the main timeline' do
-          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+          message = create :message, reporting_relationship: rr, send_at: Time.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -84,7 +84,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
         it 'shows messages after their send_at date' do
           travel_to 1.day.ago do
-            create :message, user: user, client: client, body: body, send_at: Time.now
+            create :message, reporting_relationship: rr, body: body, send_at: Time.now
           end
 
           rr = user.reporting_relationships.find_by(client: client)
@@ -99,7 +99,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         it 'shows a link when scheduled messages exist' do
-          create_list :message, 2, user: user, client: client, send_at: Time.now.tomorrow
+          create_list :message, 2, reporting_relationship: rr, send_at: Time.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -111,7 +111,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:attachment) { build :attachment, media: File.new(media_path) }
 
         before do
-          create :message, user: user, client: client, attachments: [attachment], inbound: true
+          create :message, reporting_relationship: rr, attachments: [attachment], inbound: true
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
         end
@@ -171,7 +171,7 @@ describe 'Messages requests', type: :request, active_job: true do
     describe 'DELETE#destroy' do
       context 'there are scheduled messages' do
         it 'deletes a scheduled message' do
-          message = create :message, user: user, client: client, send_at: Time.now.tomorrow
+          message = create :message, reporting_relationship: rr, send_at: Time.now.tomorrow
 
           delete message_path(message)
 
@@ -190,7 +190,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#edit' do
       it 'renders the requested message template' do
-        message = create :message, user: user, client: client, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)
+        message = create :message, reporting_relationship: rr, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)
 
         get edit_message_path(message)
 
@@ -321,7 +321,8 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'PUT#update' do
-      let!(:message) { create(:message, user: user, client: client, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
+      let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+      let!(:message) { create(:message, reporting_relationship: rr, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
       let(:post_params) {
         {
           message: { body: new_body, send_at: message_send_at }
@@ -388,7 +389,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#download' do
       it 'downloads messages as a text file' do
-        messages = create_list :message, 10, user: user, client: client
+        messages = create_list :message, 10, reporting_relationship: rr
 
         rr = user.reporting_relationships.find_by(client: client)
         get reporting_relationship_messages_download_path(rr)
@@ -408,7 +409,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       it 'orders downloaded messages by send_at' do
         msgs_count = 10
-        messages = create_list :message, msgs_count, user: user, client: client
+        messages = create_list :message, msgs_count, reporting_relationship: rr
         messages.each_with_index do |message, i|
           message.update(
             created_at: message.created_at - (msgs_count - i).hours,
@@ -426,7 +427,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has transfer markers' do
         it 'displays the transfer marker' do
-          marker = create :message, client: client, user: user, transfer_marker: true, body: 'transferred!'
+          marker = create :message, reporting_relationship: rr, transfer_marker: true, body: 'transferred!'
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
