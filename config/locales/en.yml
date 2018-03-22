@@ -42,6 +42,16 @@ en:
     unclaimed_response: "AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them."
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
+    transcript:
+      status:
+        accepted: accepted
+        queued: queued
+        sending: sending
+        sent: sent
+        delivered: delivered
+        received: received
+        failed: NOT DELIVERED
+        undelivered: NOT DELIVERED
   report_mailer:
       subject: "[ClientComm] Usage report for %{start_date} - %{end_date}"
   activerecord:

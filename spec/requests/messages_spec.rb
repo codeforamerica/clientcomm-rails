@@ -394,10 +394,13 @@ describe 'Messages requests', type: :request, active_job: true do
         get reporting_relationship_messages_download_path(rr)
 
         messages.each do |message|
+          transcript_status = %w[undelivered failed].include?(message.twilio_status) ? 'NOT DELIVERED' : message.twilio_status
+
           expect(response.body).to include(message.number_from) if message.inbound
           expect(response.body).to include(message.number_to) unless message.inbound
           expect(response.body).to include(message.send_at.strftime('%b %-d %Y, %-l:%M:%S %P'))
           expect(response.body).to include(message.body)
+          expect(response.body).to include(transcript_status)
           expect(response.body).to include(client.first_name)
           expect(response.body).to include(user.full_name)
         end
@@ -429,6 +432,21 @@ describe 'Messages requests', type: :request, active_job: true do
           get reporting_relationship_messages_download_path(rr)
 
           expect(response.body).to include("-- #{marker.body} --")
+        end
+      end
+
+      context 'a message has an error' do
+        before do
+          create :message, inbound: false, user: user, client: client, twilio_status: 'undelivered'
+        end
+
+        it 'displays the issue prominently' do
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_messages_download_path(rr)
+
+          expect(response.body).to include('UNDELIVERED')
+          expect(response.body).to include('NOT DELIVERED to cell')
+          expect(response.body).to include('ERROR: Message could not be')
         end
       end
     end
