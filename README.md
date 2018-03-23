@@ -135,8 +135,8 @@ AdminUser.create(email: '', password: '', password_confirmation: '')
 
 # Restoring the DB
 
-1. Get the public URL for the databse backup: `heroku pg:backups:url --app [APP_NAME]` This should return a long AWS url for the most recent backup.
-1. Restore the DB: `heroku pg:backups:restore [previously found url] DATABASE_URL --app [APP_NAME]` Do not forget to correctly escape the db url, either with backslashes or with single quotes.
+1. Get the public URL for the database backup: `heroku pg:backups:url --app [APP_NAME]` This should return a long AWS URL for the most recent backup.
+1. Restore the database: `heroku pg:backups:restore [previously found url] DATABASE_URL --app [APP_NAME]` Don't forget to correctly escape the database URL, either with backslashes or with single quotes.
 
 ## Contact
 
