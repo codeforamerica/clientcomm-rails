@@ -45,12 +45,12 @@ en:
     transcript:
       status:
         accepted: accepted
+        delivered: delivered
+        failed: NOT DELIVERED
         queued: queued
+        received: received
         sending: sending
         sent: sent
-        delivered: delivered
-        received: received
-        failed: NOT DELIVERED
         undelivered: NOT DELIVERED
   report_mailer:
       subject: "[ClientComm] Usage report for %{start_date} - %{end_date}"

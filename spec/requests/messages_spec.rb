@@ -449,6 +449,21 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(response.body).to include('ERROR: Message could not be')
         end
       end
+
+      context 'a message has a nil status' do
+        before do
+          create :message, inbound: false, user: user, client: client, twilio_status: nil
+        end
+
+        it 'displays the issue prominently' do
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_messages_download_path(rr)
+
+          expect(response.body).to include('UNDELIVERED')
+          expect(response.body).to include('NOT DELIVERED to cell')
+          expect(response.body).to include('ERROR: Message could not be')
+        end
+      end
     end
   end
 end
