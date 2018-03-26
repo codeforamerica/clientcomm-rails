@@ -3,7 +3,7 @@ load 'db/migrate/20180314000756_add_reporting_relationship_to_message.rb'
 
 describe AddReportingRelationshipToMessage do
   before do
-    ActiveRecord::Migrator.migrate Rails.root.join("db/migrate"), 20180311020035
+    ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180311020035
     Message.reset_column_information
   end
 
@@ -12,7 +12,7 @@ describe AddReportingRelationshipToMessage do
     let(:client) { create :client, users: [user] }
 
     subject do
-      ActiveRecord::Migrator.migrate Rails.root.join("db/migrate"), 20180314000756
+      ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180314000756
       Message.reset_column_information
     end
 
@@ -41,7 +41,6 @@ describe AddReportingRelationshipToMessage do
                                  number_to: '+17605559331',
                                  number_from: '+17605556230',
                                  send_at: Time.now)
-
 
         expect(client.users).to_not include(user)
         subject

@@ -4,6 +4,7 @@ RSpec.describe ReportingRelationship, type: :model do
   it { should belong_to :user }
   it { should belong_to :client }
   it { should belong_to :client_status }
+  it { should have_one(:department).through(:user) }
 
   describe 'Validations' do
     it { should validate_presence_of :user }
