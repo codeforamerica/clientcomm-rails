@@ -199,6 +199,13 @@
 .chat--header {
   z-index: 1;
   background: $color-background;
+  .button__icon--left {
+    margin-right: 0;
+
+    @include media($site-max-up){
+      margin-right: .5em;
+    }
+  }
 
   .header--paragraph {
     font-size: $font-size-small;
