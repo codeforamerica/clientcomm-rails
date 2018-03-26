@@ -198,7 +198,9 @@
 
 .chat--header {
   z-index: 1;
+  display: flex;
   background: $color-background;
+
   .button__icon--left {
     margin-right: 0;
 
@@ -206,7 +208,11 @@
       margin-right: .5em;
     }
   }
-
+  div.client-name {
+    overflow: hidden;
+    flex: 1 auto;
+    margin: 5px 10px 5px 10px;
+  }
   .header--paragraph {
     font-size: $font-size-small;
     margin-top: 4px;
@@ -222,10 +228,11 @@
   }
 
   h2.client-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: $font-size-normal;
-    padding-right: .3em;
-
-    @include media($tablet-up){
+    @include media($tablet-up) {
       font-size: $font-size-h3;
     }
   }

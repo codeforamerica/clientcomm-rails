@@ -1,35 +1,31 @@
 <% content_for(:template_name) { "messages" }  %>
 
 <section class="slab slab--header chat--header" data-spy="affix" data-offset-top="60">
-  <div class="grid">
-    <div class="row">
-      <div class="col-md-2 col-sm-2">
-        <%= link_to clients_path, class: 'button button--small pull-left nudge--small' do %>
-            <i class="button__icon--left icon-arrow_back"></i><span class="hidden-sm hidden-xs">Home</span>
-        <% end %>
-      </div>
-      <div class="col-xs-7 col-sm-6 col-md-7">
-        <h2 class="client-name">
-          <%= @client.full_name %>
-        </h2>
-        <span class="header--paragraph no-margin hidden-xs">
-            <%= phone_number_display(@client.phone_number) %>
-          <% unless @client.notes(user: current_user).blank? %> &#8226; <% end %>
-          </span>
-        <span id="truncated_note" class="header--paragraph hidden-xs">
-            <%= truncate(@client.notes(user: current_user), length: 40, separator: ' ', omission: '... ') { link_to 'More', '#0', { id: 'show_note' } } %>
-          </span>
-        <span id="full_note" style="display:none" class="header--paragraph hidden-xs">
-            <%= @client.notes(user: current_user) %> <%= link_to 'Less', '#0', { id: 'hide_note' } %>
-          </span>
-      </div>
-      <div class="col-sm-4 col-md-3 hidden-xs">
-        <%= link_to "Manage client", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
-      </div>
-      <div class="col-xs-5 hidden-sm hidden-md hidden-lg">
-        <%= link_to "Manage", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
-      </div>
-    </div>
+  <div id="home-button">
+    <%= link_to clients_path, class: 'button button--small pull-left nudge--small' do %>
+        <i class="button__icon--left icon-arrow_back"></i><span class="hidden-sm hidden-xs">Home</span>
+    <% end %>
+  </div>
+  <div class="client-name">
+    <h2 class="client-name">
+      <%= @client.full_name %>
+    </h2>
+    <span class="header--paragraph no-margin hidden-xs">
+        <%= phone_number_display(@client.phone_number) %>
+      <% unless @client.notes(user: current_user).blank? %> &#8226; <% end %>
+      </span>
+    <span id="truncated_note" class="header--paragraph hidden-xs">
+        <%= truncate(@client.notes(user: current_user), length: 40, separator: ' ', omission: '... ') { link_to 'More', '#0', { id: 'show_note' } } %>
+      </span>
+    <span id="full_note" style="display:none" class="header--paragraph hidden-xs">
+        <%= @client.notes(user: current_user) %> <%= link_to 'Less', '#0', { id: 'hide_note' } %>
+      </span>
+  </div>
+  <div class="manage-button hidden-xs">
+    <%= link_to "Manage client", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
+  </div>
+  <div class="manage-button hidden-sm hidden-md hidden-lg">
+    <%= link_to "Manage", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
   </div>
 </section>
 
