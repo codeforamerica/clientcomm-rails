@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   let!(:user) { create :user }
-  let!(:client) { create :client, :user => user }
-  let!(:message) { create :message, :user => user, :client => client }
+  let!(:client) { create :client, user: user }
+  let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+  let!(:message) { create :message, reporting_relationship: rr }
 
   it { should belong_to :department }
   it { should have_many(:clients).through(:reporting_relationships) }

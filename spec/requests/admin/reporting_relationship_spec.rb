@@ -60,6 +60,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
     context 'adding a relationship in a department where the user has inactive relationships' do
       context 'creating a new relationship' do
         let(:client) { create :client, users: [user1] }
+        let(:rr) { ReportingRelationship.find_by(client: client, user: user1) }
         let(:department) { user1.department }
         let(:params) do
           {
@@ -72,7 +73,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         end
 
         before do
-          create_list :message, 5, client: client, user: user1, send_at: Time.now + 1.day
+          create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day
           ReportingRelationship.find_by(client: client, user: user1).update!(active: false)
         end
 
@@ -178,8 +179,9 @@ describe 'ReportingRelationships', type: :request, active_job: true do
   end
 
   describe 'PUT#update' do
-    let!(:scheduled_messages) { create_list :message, 5, client: client, user: user1, send_at: Time.now + 1.day }
-    let!(:messages) { create_list :message, 2, client: client, user: user1 }
+    let(:rr) { ReportingRelationship.find_by(user: user1, client: client) }
+    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day }
+    let!(:messages) { create_list :message, 2, reporting_relationship: rr }
 
     context 'transferring a client' do
       let(:client) { create :client, users: [user1, user4] }
@@ -294,7 +296,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
       context 'the client is transferred from the unclaimed user' do
         let(:unclaimed_user) { create :user, department: department }
         let(:unclaimed_client) { create :client, users: [unclaimed_user] }
-        let!(:unclaimed_messages) { create_list :message, 3, client: unclaimed_client, user: unclaimed_user }
+        let(:rr) { ReportingRelationship.find_by(user: unclaimed_user, client: unclaimed_client) }
+        let!(:unclaimed_messages) { create_list :message, 3, reporting_relationship: rr }
         let(:unclaimed_rr) do
           ReportingRelationship.find_by(
             user: unclaimed_user, client: unclaimed_client

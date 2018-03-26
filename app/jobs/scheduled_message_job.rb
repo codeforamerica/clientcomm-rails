@@ -24,7 +24,7 @@ class ScheduledMessageJob < ApplicationJob
 
     broadcast(
       message: message,
-      count: message.user.messages.where(client: message.client).scheduled.count
+      count: message.reporting_relationship.messages.scheduled.count
     )
   end
 

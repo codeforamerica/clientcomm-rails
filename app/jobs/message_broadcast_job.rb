@@ -3,7 +3,7 @@ class MessageBroadcastJob < ApplicationJob
   queue_as :default
 
   def perform(message:)
-    channel = "messages_#{message.reporting_relationship.user_id}_#{message.reporting_relationship.client_id}"
+    channel = "messages_#{message.user.id}_#{message.client.id}"
     content = render_message_partial(message)
     message_dom_id = dom_id(message)
     ActionCable.server.broadcast(
@@ -12,7 +12,7 @@ class MessageBroadcastJob < ApplicationJob
       message_dom_id: message_dom_id,
       message_id: message.id
     )
-    ActionCable.server.broadcast("clients_#{message.reporting_relationship.user_id}", {})
+    ActionCable.server.broadcast("clients_#{message.user.id}", {})
   end
 
   def render_message_partial(message)

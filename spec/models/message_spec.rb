@@ -45,7 +45,6 @@ RSpec.describe Message, type: :model do
     let(:message) do
       create(
         :message,
-        client: client,
         reporting_relationship: rr,
         send_at: send_at,
         created_at: created_at,
@@ -384,37 +383,34 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'scope transfer_markers' do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let(:transfer_marker) { create :message, client: client, user: user, transfer_marker: true }
+    let(:rr) { create :reporting_relationship }
+    let(:transfer_marker) { create :message, reporting_relationship: rr, transfer_marker: true }
 
-    subject { client.messages.transfer_markers }
+    subject { rr.client.messages.transfer_markers }
 
     it 'finds the transfer markers' do
-      create_list :message, 5, user: user, client: client
+      create_list :message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(transfer_marker)
     end
   end
 
   describe 'scope messages' do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let(:message) { create :message, client: client, user: user }
+    let(:rr) { create :reporting_relationship }
+    let(:message) { create :message, reporting_relationship: rr }
 
-    subject { client.messages.messages }
+    subject { rr.client.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 5, user: user, client: client, transfer_marker: true
+      create_list :message, 5, reporting_relationship: rr, transfer_marker: true
 
       expect(subject).to contain_exactly(message)
     end
   end
 
   describe '#send_message', active_job: true do
-    let(:user) { create :user }
-    let(:client) { create :client, users: [user] }
-    let!(:message) { create :message, client: client, user: user }
+    let(:rr) { create :reporting_relationship }
+    let!(:message) { create :message, reporting_relationship: rr }
 
     subject { message.send_message }
 

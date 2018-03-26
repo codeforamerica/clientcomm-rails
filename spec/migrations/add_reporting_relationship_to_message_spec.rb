@@ -1,9 +1,15 @@
-load 'spec/rails_helper.rb'
-load 'db/migrate/20180314000756_add_reporting_relationship_to_message.rb'
+require 'rails_helper.rb'
+require_relative '../../db/migrate/20180314000756_add_reporting_relationship_to_message.rb'
 
 describe AddReportingRelationshipToMessage do
   before do
+    @current_migration = ActiveRecord::Migrator.current_version
     ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180311020035
+    Message.reset_column_information
+  end
+
+  after do
+    ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), @current_migration
     Message.reset_column_information
   end
 
