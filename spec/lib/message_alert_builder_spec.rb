@@ -87,44 +87,5 @@ describe MessageAlertBuilder do
         )
       end
     end
-
-    context 'there are multiple clients' do
-      let(:clientone) { create :client, user: user, first_name: 'Zarka', last_name: 'Viktor' }
-      let(:clienttwo) { create :client, user: user, first_name: 'Thury', last_name: 'Izsak' }
-      let(:clientthree) { create :client, user: user, first_name: 'Asztalos', last_name: 'Bernadett' }
-      let(:rrone) { ReportingRelationship.find_by(user: user, client: clientone) }
-      let(:rrtwo) { ReportingRelationship.find_by(user: user, client: clienttwo) }
-      let(:rrthree) { ReportingRelationship.find_by(user: user, client: clientthree) }
-
-      before do
-        create :message, reporting_relationship: rrone, inbound: true, read: false
-        create :message, reporting_relationship: rrtwo, inbound: true, read: false
-        create :message, reporting_relationship: rrthree, inbound: true, read: false
-        ReportingRelationship.find_by(user: user, client: clientone).update!(has_unread_messages: true)
-        ReportingRelationship.find_by(user: user, client: clienttwo).update!(has_unread_messages: true)
-        ReportingRelationship.find_by(user: user, client: clientthree).update!(has_unread_messages: true)
-      end
-
-      context 'only one is inactive' do
-        specify 'when there are unread messages on a deactivated client' do
-          ReportingRelationship.find_by(user: user, client: clienttwo).update!(active: false)
-          expect(subject).to eq({
-                                  text: 'You have 2 unread messages',
-                                  link_to: clients_path
-                                })
-        end
-      end
-
-      context 'only one is active' do
-        specify 'when there are unread messages on a deactivated client' do
-          ReportingRelationship.find_by(user: user, client: clientone).update!(active: false)
-          ReportingRelationship.find_by(user: user, client: clienttwo).update!(active: false)
-          expect(subject).to eq({
-                                  text: 'You have 1 unread message from Asztalos Bernadett',
-                                  link_to: reporting_relationship_path
-                                })
-        end
-      end
-    end
   end
 end
