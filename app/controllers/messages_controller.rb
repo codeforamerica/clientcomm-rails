@@ -12,10 +12,9 @@ class MessagesController < ApplicationController
     )
 
     # the list of past messages
-    @messages = current_user.messages
-                            .where(client: @client)
-                            .where('send_at < ?', Time.now)
-                            .order('send_at ASC')
+    @messages = rr.messages
+                  .where('send_at < ?', Time.now)
+                  .order('send_at ASC')
 
     transcript = render_to_string file: 'messages/transcript_download.txt'
     send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
@@ -23,13 +22,13 @@ class MessagesController < ApplicationController
 
   def create
     client = current_user.clients.find params[:client_id]
+    rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.now
     @templates = current_user.templates
 
     message = Message.new(
       body: message_params[:body],
-      user: current_user,
-      client: client,
+      reporting_relationship: ReportingRelationship.find_by(user: current_user, client: client),
       number_from: current_user.department.phone_number,
       number_to: client.phone_number,
       send_at: send_at,
@@ -40,7 +39,7 @@ class MessagesController < ApplicationController
       @message = message
       @client = client
       @messages = past_messages(client: @client)
-      @messages_scheduled = current_user.messages.scheduled.where(client: @client)
+      @messages_scheduled = rr.messages.scheduled
 
       render 'reporting_relationships/show'
       return
@@ -76,7 +75,7 @@ class MessagesController < ApplicationController
     @client = @message.client
 
     @messages = past_messages(client: @message.client)
-    @messages_scheduled = current_user.messages.scheduled.where(client: @client)
+    @messages_scheduled = @message.reporting_relationship.messages.scheduled
 
     analytics_track(
       label: 'message_scheduled_edit_view',
@@ -99,7 +98,7 @@ class MessagesController < ApplicationController
       @client = @message.client
 
       @messages = past_messages(client: @client)
-      @messages_scheduled = current_user.messages.scheduled.where(client: @client)
+      @messages_scheduled = @message.reporting_relationship.messages.scheduled
 
       render 'reporting_relationships/show'
       return
@@ -141,9 +140,9 @@ class MessagesController < ApplicationController
   end
 
   def past_messages(client:)
-    client.messages
-          .where(user: current_user)
-          .where('send_at < ?', Time.now)
-          .order('send_at ASC')
+    rr = ReportingRelationship.find_by(user: current_user, client: client)
+    rr.messages
+      .where('send_at < ?', Time.now)
+      .order(send_at: :asc)
   end
 end

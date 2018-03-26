@@ -63,14 +63,13 @@ class MassMessagesController < ApplicationController
 
   def send_mass_message(mass_message)
     mass_message.clients.each do |client_id|
-      client = current_user.clients.find(client_id)
+      rr = ReportingRelationship.find_by(client_id: client_id, user: current_user)
       send_at = mass_message.send_at || Time.now
       message = Message.create!(
         body: mass_message.message,
-        user: mass_message.user,
-        client: client,
+        reporting_relationship: rr,
         number_from: current_user.department.phone_number,
-        number_to: client.phone_number,
+        number_to: rr.client.phone_number,
         read: true,
         inbound: false,
         send_at: send_at

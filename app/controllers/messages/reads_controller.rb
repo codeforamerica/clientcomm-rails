@@ -5,7 +5,7 @@ class Messages::ReadsController < ApplicationController
   def create
     message = current_user.messages.update(params[:message_id], read: message_params[:read])
 
-    ReportingRelationship.find_by(client: message.client, user: message.user).update!(has_unread_messages: false)
+    message.reporting_relationship.update!(has_unread_messages: false)
 
     head :no_content
   end
