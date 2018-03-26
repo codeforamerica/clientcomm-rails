@@ -112,10 +112,30 @@ RSpec.describe Message, type: :model do
     it { should have_one :client }
     it { should have_one :user }
     it { should have_many :attachments }
+    it { should validate_presence_of :reporting_relationship }
 
     it do
       should validate_presence_of(:send_at)
         .with_message("That date didn't look right.")
+    end
+
+    it 'sets the original_reporting_relationship before create validations' do
+      rr = create :reporting_relationship
+      message = build :message, reporting_relationship: rr
+      expect(message.original_reporting_relationship).to be_nil
+      message.save!
+      expect(message.original_reporting_relationship).to eq(rr)
+    end
+
+    it 'does not change original_reporting_relationship on update' do
+      rr = create :reporting_relationship
+      message = create :message, reporting_relationship: rr
+      expect(message.original_reporting_relationship).to eq(rr)
+      new_rr = create :reporting_relationship
+      message.reporting_relationship = new_rr
+      message.save!
+      expect(message.original_reporting_relationship).to eq(rr)
+      expect(message.reporting_relationship).to eq(new_rr)
     end
 
     context 'validating body of message' do

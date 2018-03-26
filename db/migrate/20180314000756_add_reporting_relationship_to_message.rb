@@ -74,6 +74,7 @@ class AddReportingRelationshipToMessage < ActiveRecord::Migration[5.1]
         end
       end
     end
+    change_column :messages, :original_reporting_relationship_id, :bigint, null: false
     remove_reference :messages, :user, index: true, foreign_key: true
     remove_reference :messages, :client, index: true, foreign_key: true
   end

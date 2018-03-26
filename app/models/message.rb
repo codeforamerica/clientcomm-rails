@@ -7,8 +7,12 @@ class Message < ApplicationRecord
   has_one :user, through: :reporting_relationship
   has_many :attachments
 
+  before_validation :set_original_reporting_relationship, on: :create
+
   validates_presence_of :send_at, message: "That date didn't look right."
   validates_presence_of :body, unless: ->(message) { message.attachments.present? || message.inbound }
+  validates_presence_of :reporting_relationship
+  validates_presence_of :original_reporting_relationship
   validates_datetime :send_at, :before => :max_future_date
 
   scope :inbound, -> { where(inbound: true) }
@@ -156,6 +160,10 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def set_original_reporting_relationship
+    self.original_reporting_relationship = reporting_relationship
+  end
 
   def time_buffer
     Time.current - 5.minutes

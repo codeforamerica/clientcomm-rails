@@ -437,12 +437,13 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'a message has an error' do
+        let(:rr) { user.reporting_relationships.find_by(client: client) }
+
         before do
-          create :message, inbound: false, user: user, client: client, twilio_status: 'undelivered'
+          create :message, inbound: false, reporting_relationship: rr, twilio_status: 'undelivered'
         end
 
         it 'displays the issue prominently' do
-          rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
           expect(response.body).to include('UNDELIVERED')
@@ -452,12 +453,13 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'a message has a nil status' do
+        let(:rr) { user.reporting_relationships.find_by(client: client) }
+
         before do
-          create :message, inbound: false, user: user, client: client, twilio_status: nil
+          create :message, inbound: false, reporting_relationship: rr, twilio_status: nil
         end
 
         it 'displays the issue prominently' do
-          rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
           expect(response.body).to include('UNDELIVERED')
