@@ -20,6 +20,7 @@ class Message < ApplicationRecord
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
+  scope :profile_change_markers, -> { where(marker_type: MARKER_PROFILE_CHANGE) }
   scope :messages, -> { where(marker_type: nil) }
 
   class TransferClientMismatch < StandardError; end
@@ -31,6 +32,7 @@ class Message < ApplicationRecord
   ERROR = 'error'
 
   MARKER_TRANSFER = 0
+  MARKER_PROFILE_CHANGE = 1
 
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
@@ -133,8 +135,8 @@ class Message < ApplicationRecord
     }
   end
 
-  def transfer_marker?
-    marker_type == MARKER_TRANSFER
+  def marker?
+    !marker_type.nil?
   end
 
   def past_message?

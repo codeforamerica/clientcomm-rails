@@ -442,6 +442,19 @@ RSpec.describe Message, type: :model do
     end
   end
 
+  describe 'scope profile_change_markers' do
+    let(:rr) { create :reporting_relationship }
+    let(:profile_change_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE }
+
+    subject { rr.client.messages.profile_change_markers }
+
+    it 'finds the profile change markers' do
+      create_list :message, 5, reporting_relationship: rr
+
+      expect(subject).to contain_exactly(profile_change_marker)
+    end
+  end
+
   describe 'scope messages' do
     let(:rr) { create :reporting_relationship }
     let(:message) { create :message, reporting_relationship: rr }
@@ -449,7 +462,8 @@ RSpec.describe Message, type: :model do
     subject { rr.client.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 5, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
+      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
+      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE
 
       expect(subject).to contain_exactly(message)
     end
