@@ -61,6 +61,16 @@ Department.all.each do |department|
   end
 end
 
+puts 'Transferring Clients'
+Client.all.sample(15).each do |client|
+  client_user = client.users.first
+  client_dept = client_user.department
+  client_rr = ReportingRelationship.find_by(user: client_user, client: client)
+  new_user = User.where(department: client_dept).where.not(id: client_user.id).order('RANDOM()').first
+  new_rr = ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id)
+  client_rr.transfer_to(new_rr)
+end
+
 puts 'Fuzzing Clients'
 Client.all.sample(15).each do |client|
   existing_users = client.users
