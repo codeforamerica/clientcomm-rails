@@ -14,7 +14,13 @@ feature 'user edits client', :js do
   let(:myuser) { create :user }
   let(:other_user) { create :user }
   let(:phone_number) { '2024042233' }
+  let(:phone_number_display) { '(202) 404-2233' }
   let!(:clientone) { create :client, user: myuser, phone_number: phone_number }
+  let(:new_first_name) { 'Vinicius' }
+  let(:new_last_name) { 'Lima' }
+  let(:new_note) { 'Here is a note.' }
+  let(:new_phone_number) { '2024042234' }
+  let(:new_phone_number_display) { '(202) 404-2234' }
 
   before do
     other_user.clients << clientone
@@ -23,37 +29,43 @@ feature 'user edits client', :js do
   end
 
   scenario 'successfully' do
-    within "#client_#{clientone.id}" do
-      find('td', text: 'Manage').click
+    step 'navigates to edit client form' do
+      within "#client_#{clientone.id}" do
+        find('td', text: 'Manage').click
+      end
+
+      expect(page).to have_current_path(edit_client_path(clientone))
+      expect(page).to have_content("also assigned to #{other_user.full_name}")
+      expect(find_field('Phone number').value).to eq(phone_number_display)
     end
-    expect(page).to have_current_path(edit_client_path(clientone))
-    expect(page).to have_content("also assigned to #{other_user.full_name}")
-    expect(find_field('Phone number').value).to eq('(202) 404-2233')
 
-    new_first_name = 'Vinicius'
-    new_last_name = 'Lima'
-    note = 'Here is a note.'
+    step 'fills and submits edit client form' do
+      fill_in 'First name', with: new_first_name
+      fill_in 'Last name', with: new_last_name
+      fill_in 'Notes', with: new_note
+      fill_in 'Phone number', with: new_phone_number
 
-    fill_in 'First name', with: new_first_name
-    fill_in 'Last name', with: new_last_name
-    fill_in 'Notes', with: note
+      old_name = clientone.full_name
+      click_on 'Save changes'
 
-    old_name = clientone.full_name
-    click_on 'Save changes'
-    clientone.reload
+      emails = ActionMailer::Base.deliveries
+      expect(emails.count).to eq 1
+      expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
+    end
 
-    emails = ActionMailer::Base.deliveries
-    expect(emails.count).to eq 1
-    expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
+    step 'loads the conversation page' do
+      clientone.reload
+      rr = myuser.reporting_relationships.find_by(client: clientone)
+      expect(page).to have_current_path(reporting_relationship_path(rr))
+      expect(page).to have_content "#{new_first_name} #{new_last_name}"
+      expect(page).to have_content new_phone_number_display
+      expect(page).to have_css '.message--event', text: I18n.t('messages.phone_number_edited_by_you', new_phone_number: new_phone_number_display)
+    end
 
-    rr = myuser.reporting_relationships.find_by(client: clientone)
-    expect(page).to have_current_path(reporting_relationship_path(rr))
-
-    expect(page).to have_content "#{new_first_name} #{new_last_name}"
-
-    click_on 'Manage client'
-
-    expect(find_field('Notes').value).to eq note
+    step 'navigates to edit client form' do
+      click_on 'Manage client'
+      expect(find_field('Notes').value).to eq new_note
+    end
   end
 
   scenario 'and fails validation' do

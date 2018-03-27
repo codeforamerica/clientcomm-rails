@@ -436,6 +436,16 @@ describe 'Messages requests', type: :request, active_job: true do
         end
       end
 
+      context 'the user has profile change markers' do
+        it 'displays the profile change marker' do
+          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE, body: 'profile changed!'
+          rr = user.reporting_relationships.find_by(client: client)
+          get reporting_relationship_messages_download_path(rr)
+
+          expect(response.body).to include("-- #{marker.body} --")
+        end
+      end
+
       context 'a message has an error' do
         let(:rr) { user.reporting_relationships.find_by(client: client) }
 
