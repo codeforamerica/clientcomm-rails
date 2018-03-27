@@ -431,7 +431,7 @@ RSpec.describe Message, type: :model do
 
   describe 'scope transfer_markers' do
     let(:rr) { create :reporting_relationship }
-    let(:transfer_marker) { create :message, reporting_relationship: rr, transfer_marker: true }
+    let(:transfer_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER }
 
     subject { rr.client.messages.transfer_markers }
 
@@ -449,7 +449,7 @@ RSpec.describe Message, type: :model do
     subject { rr.client.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 5, reporting_relationship: rr, transfer_marker: true
+      create_list :message, 5, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
 
       expect(subject).to contain_exactly(message)
     end

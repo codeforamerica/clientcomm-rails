@@ -19,8 +19,8 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
-  scope :transfer_markers, -> { where(transfer_marker: true) }
-  scope :messages, -> { where(transfer_marker: false) }
+  scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
+  scope :messages, -> { where(marker_type: nil) }
 
   class TransferClientMismatch < StandardError; end
 
@@ -30,13 +30,18 @@ class Message < ApplicationRecord
   UNREAD = 'unread'
   ERROR = 'error'
 
+  MARKER_TRANSFER = 0
+
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
 
     Message.create!(
       reporting_relationship: sending_rr,
-      body: I18n.t('messages.transferred_to', user_full_name: receiving_rr.user.full_name),
-      transfer_marker: true,
+      body: I18n.t(
+        'messages.transferred_to',
+        user_full_name: receiving_rr.user.full_name
+      ),
+      marker_type: MARKER_TRANSFER,
       read: true,
       send_at: Time.now,
       inbound: true,
@@ -45,9 +50,12 @@ class Message < ApplicationRecord
     )
     Message.create!(
       reporting_relationship: receiving_rr,
-      body: I18n.t('messages.transferred_from', user_full_name: sending_rr.user.full_name,
-                                                client_full_name: sending_rr.client.full_name),
-      transfer_marker: true,
+      body: I18n.t(
+        'messages.transferred_from',
+        user_full_name: sending_rr.user.full_name,
+        client_full_name: sending_rr.client.full_name
+      ),
+      marker_type: MARKER_TRANSFER,
       read: true,
       send_at: Time.now,
       inbound: true,
@@ -123,6 +131,10 @@ class Message < ApplicationRecord
       client_active: self.client.active(user: self.user),
       first_message: self.first?
     }
+  end
+
+  def transfer_marker?
+    marker_type == MARKER_TRANSFER
   end
 
   def past_message?

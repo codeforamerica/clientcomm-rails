@@ -427,7 +427,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has transfer markers' do
         it 'displays the transfer marker' do
-          marker = create :message, reporting_relationship: rr, transfer_marker: true, body: 'transferred!'
+          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER, body: 'transferred!'
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
