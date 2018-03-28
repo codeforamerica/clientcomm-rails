@@ -49,8 +49,7 @@ class AddReportingRelationshipToMessage < ActiveRecord::Migration[5.1]
     reversible do |dir|
       dir.up do
         Message.reset_column_information
-        msgs = Message.all
-        msgs.each do |msg|
+        Message.find_each do |msg|
           reporting_relationship = ReportingRelationship.find_by(user: msg.user, client: msg.client)
           if reporting_relationship.blank?
             reporting_relationship = ReportingRelationship.create!(
@@ -63,8 +62,10 @@ class AddReportingRelationshipToMessage < ActiveRecord::Migration[5.1]
           msg.original_reporting_relationship = reporting_relationship
           msg.save!
         end
+        change_column :messages, :original_reporting_relationship_id, :bigint, null: false
       end
       dir.down do
+        change_column :messages, :original_reporting_relationship_id, :bigint, null: true
         Message.reset_column_information
         msgs = Message.all
         msgs.each do |msg|
@@ -74,7 +75,6 @@ class AddReportingRelationshipToMessage < ActiveRecord::Migration[5.1]
         end
       end
     end
-    change_column :messages, :original_reporting_relationship_id, :bigint, null: false
     remove_reference :messages, :user, index: true, foreign_key: true
     remove_reference :messages, :client, index: true, foreign_key: true
   end
