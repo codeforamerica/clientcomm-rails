@@ -19,8 +19,8 @@ class ReportingRelationship < ApplicationRecord
     {
       has_unread_messages: has_unread_messages,
       hours_since_contact: hours_since_contact,
-      messages_all_count: messages.count,
-      messages_received_count: messages.inbound.count,
+      messages_all_count: messages.messages.count,
+      messages_received_count: messages.messages.inbound.count,
       messages_sent_count: messages.outbound.count - messages.outbound.scheduled.count,
       messages_attachments_count: attachments.count,
       messages_scheduled_count: messages.scheduled.count,
