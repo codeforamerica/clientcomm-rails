@@ -34,7 +34,7 @@ class Message < ApplicationRecord
   MARKER_TRANSFER = 0
   MARKER_PROFILE_CHANGE = 1
 
-  def self.create_profile_change_markers(user:, phone_number:, rrs:)
+  def self.create_profile_change_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = 'An admin user'
     user_id = nil
     if user.class.name.demodulize == 'User'
@@ -42,7 +42,7 @@ class Message < ApplicationRecord
       user_id = user.id
     end
 
-    rrs.each do |rr|
+    reporting_relationships.each do |rr|
       message_body = if rr.user_id == user_id
                        I18n.t(
                          'messages.phone_number_edited_by_you',

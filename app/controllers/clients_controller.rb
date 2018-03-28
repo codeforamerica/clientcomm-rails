@@ -94,11 +94,8 @@ class ClientsController < ApplicationController
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
     if @client.update_attributes(client_params)
-      # if params rr.active == false
-      # then it was a deactivation and follow that logic
-
       if @reporting_relationship.reload.active
-        notify_other_users
+        notify_users_of_changes
 
         analytics_track(
           label: 'client_edit_success',
@@ -155,7 +152,15 @@ class ClientsController < ApplicationController
     )
   end
 
-  def notify_other_users
+  def notify_users_of_changes
+    if @client.phone_number_previously_changed?
+      Message.create_profile_change_markers(
+        user: current_user,
+        phone_number: @client.phone_number,
+        reporting_relationships: @client.reporting_relationships.active
+      )
+    end
+
     other_active_relationships = @client.reporting_relationships
                                         .active.where.not(user: current_user)
 

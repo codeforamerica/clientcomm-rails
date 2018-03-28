@@ -19,8 +19,7 @@ feature 'user edits client', :js do
   let(:new_first_name) { 'Vinicius' }
   let(:new_last_name) { 'Lima' }
   let(:new_note) { 'Here is a note.' }
-  let(:new_phone_number) { '2024042234' }
-  let(:new_phone_number_display) { '(202) 404-2234' }
+  let(:new_phone_number) { '(202) 404-2234' }
 
   before do
     other_user.clients << clientone
@@ -58,8 +57,8 @@ feature 'user edits client', :js do
       rr = myuser.reporting_relationships.find_by(client: clientone)
       expect(page).to have_current_path(reporting_relationship_path(rr))
       expect(page).to have_content "#{new_first_name} #{new_last_name}"
-      expect(page).to have_content new_phone_number_display
-      expect(page).to have_css '.message--event', text: I18n.t('messages.phone_number_edited_by_you', new_phone_number: new_phone_number_display)
+      expect(page).to have_content new_phone_number
+      expect(page).to have_css '.message--event', text: I18n.t('messages.phone_number_edited_by_you', new_phone_number: new_phone_number)
     end
 
     step 'navigates to edit client form' do
