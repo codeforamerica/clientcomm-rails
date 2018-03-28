@@ -368,7 +368,7 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'create_profile_change_markers' do
+  describe 'create_client_edit_markers' do
     let(:editing_user) { create :user, full_name: 'Lisa Sokol' }
     let!(:other_user) { create :user, full_name: 'Kyle Chan' }
     let!(:client) { create :client, user: editing_user }
@@ -377,21 +377,21 @@ RSpec.describe Message, type: :model do
     let(:new_phone_number) { '(415) 555-1234' }
 
     subject do
-      Message.create_profile_change_markers(
+      Message.create_client_edit_markers(
         user: editing_user,
         phone_number: new_phone_number,
         reporting_relationships: [editing_rr, other_rr]
       )
     end
 
-    it 'creates two messages with profile change marker properties' do
+    it 'creates two messages with client edit marker properties' do
       time = Time.now.change(usec: 0)
 
       travel_to time do
         subject
       end
 
-      marker_editing = editing_user.messages.profile_change_markers.first
+      marker_editing = editing_user.messages.client_edit_markers.first
       expect(marker_editing.user).to eq(editing_user)
       expect(marker_editing.client).to eq(client)
       expect(marker_editing.send_at).to eq(time)
@@ -400,11 +400,11 @@ RSpec.describe Message, type: :model do
         new_phone_number: new_phone_number
       )
       expect(marker_editing.body).to eq(marker_body)
-      expect(marker_editing).to be_profile_change_marker
+      expect(marker_editing).to be_client_edit_marker
       expect(marker_editing).to be_persisted
       expect(marker_editing).to be_read
 
-      marker_other = other_user.messages.profile_change_markers.first
+      marker_other = other_user.messages.client_edit_markers.first
       expect(marker_other.user).to eq(other_user)
       expect(marker_other.client).to eq(client)
       expect(marker_other.send_at).to eq(time)
@@ -414,7 +414,7 @@ RSpec.describe Message, type: :model do
         new_phone_number: new_phone_number
       )
       expect(marker_other.body).to eq(marker_body)
-      expect(marker_other).to be_profile_change_marker
+      expect(marker_other).to be_client_edit_marker
       expect(marker_other).to be_persisted
       expect(marker_other).to be_read
     end
@@ -491,16 +491,16 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'scope profile_change_markers' do
+  describe 'scope client_edit_markers' do
     let(:rr) { create :reporting_relationship }
-    let(:profile_change_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE }
+    let(:client_edit_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT }
 
-    subject { rr.client.messages.profile_change_markers }
+    subject { rr.client.messages.client_edit_markers }
 
-    it 'finds the profile change markers' do
+    it 'finds the client edit markers' do
       create_list :message, 5, reporting_relationship: rr
 
-      expect(subject).to contain_exactly(profile_change_marker)
+      expect(subject).to contain_exactly(client_edit_marker)
     end
   end
 
@@ -512,7 +512,7 @@ RSpec.describe Message, type: :model do
 
     it 'finds the message' do
       create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
-      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE
+      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT
 
       expect(subject).to contain_exactly(message)
     end

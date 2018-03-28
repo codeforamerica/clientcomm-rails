@@ -20,7 +20,7 @@ class Message < ApplicationRecord
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
-  scope :profile_change_markers, -> { where(marker_type: MARKER_PROFILE_CHANGE) }
+  scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
   scope :messages, -> { where(marker_type: nil) }
 
   class TransferClientMismatch < StandardError; end
@@ -32,9 +32,9 @@ class Message < ApplicationRecord
   ERROR = 'error'
 
   MARKER_TRANSFER = 0
-  MARKER_PROFILE_CHANGE = 1
+  MARKER_CLIENT_EDIT = 1
 
-  def self.create_profile_change_markers(user:, phone_number:, reporting_relationships:)
+  def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = 'An admin user'
     user_id = nil
     if user.class.name.demodulize == 'User'
@@ -59,7 +59,7 @@ class Message < ApplicationRecord
       Message.create!(
         reporting_relationship: rr,
         body: message_body,
-        marker_type: MARKER_PROFILE_CHANGE,
+        marker_type: MARKER_CLIENT_EDIT,
         read: true,
         send_at: Time.now,
         inbound: true,
@@ -178,8 +178,8 @@ class Message < ApplicationRecord
     marker_type == MARKER_TRANSFER
   end
 
-  def profile_change_marker?
-    marker_type == MARKER_PROFILE_CHANGE
+  def client_edit_marker?
+    marker_type == MARKER_CLIENT_EDIT
   end
 
   def past_message?
