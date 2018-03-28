@@ -326,6 +326,10 @@ RSpec.describe Message, type: :model do
               ReportingRelationship.find_by(user: user, client: client).update(updated_at: Time.now)
             end
 
+            after do
+              travel_back
+            end
+
             it 'selects the active reporting realtionship' do
               message = subject
               expect(message.user).to eq(less_recent_active_user)
