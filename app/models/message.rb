@@ -34,6 +34,41 @@ class Message < ApplicationRecord
   MARKER_TRANSFER = 0
   MARKER_PROFILE_CHANGE = 1
 
+  def self.create_profile_change_markers(user:, phone_number:, rrs:)
+    user_full_name = 'An admin user'
+    user_id = nil
+    if user.class.name.demodulize == 'User'
+      user_full_name = user.full_name
+      user_id = user.id
+    end
+
+    rrs.each do |rr|
+      message_body = if rr.user_id == user_id
+                       I18n.t(
+                         'messages.phone_number_edited_by_you',
+                         new_phone_number: phone_number
+                       )
+                     else
+                       I18n.t(
+                         'messages.phone_number_edited',
+                         user_full_name: user_full_name,
+                         new_phone_number: phone_number
+                       )
+                     end
+
+      Message.create!(
+        reporting_relationship: rr,
+        body: message_body,
+        marker_type: MARKER_PROFILE_CHANGE,
+        read: true,
+        send_at: Time.now,
+        inbound: true,
+        number_to: rr.user.department.phone_number,
+        number_from: rr.client.phone_number
+      )
+    end
+  end
+
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
 
@@ -137,6 +172,14 @@ class Message < ApplicationRecord
 
   def marker?
     !marker_type.nil?
+  end
+
+  def transfer_marker?
+    marker_type == MARKER_TRANSFER
+  end
+
+  def profile_change_marker?
+    marker_type == MARKER_PROFILE_CHANGE
   end
 
   def past_message?
