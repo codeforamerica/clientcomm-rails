@@ -380,7 +380,7 @@ RSpec.describe Message, type: :model do
       Message.create_profile_change_markers(
         user: editing_user,
         phone_number: new_phone_number,
-        rrs: [editing_rr, other_rr]
+        reporting_relationships: [editing_rr, other_rr]
       )
     end
 
@@ -468,7 +468,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_to).to be_read
     end
 
-    context 'the clients in the rrs do not match' do
+    context 'the clients in the reporting relationships do not match' do
       let(:other_client) { create :client }
       let(:receiving_rr) { create :reporting_relationship, user: receiving_user, client: other_client }
 
