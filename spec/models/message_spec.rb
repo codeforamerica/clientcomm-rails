@@ -309,6 +309,29 @@ RSpec.describe Message, type: :model do
             expect(client.users).to include(unclaimed_user)
           end
         end
+
+        context 'the client has an inactive relationship with a user' do
+          before do
+            ReportingRelationship.find_by(user: user, client: client).update(active: false)
+          end
+
+          it 'reactivates the inactive relationship'
+
+          context 'the client has an active relationship with an older updated_at' do
+            let(:less_recent_active_user) { create :user, department: department }
+
+            before do
+              create :reporting_relationship, user: less_recent_active_user, client: client
+              travel_to Time.now + 1.day
+              ReportingRelationship.find_by(user: user, client: client).update(updated_at: Time.now)
+            end
+
+            it 'selects the active reporting realtionship' do
+              message = subject
+              expect(message.user).to eq(less_recent_active_user)
+            end
+          end
+        end
       end
     end
   end

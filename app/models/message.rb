@@ -75,8 +75,10 @@ class Message < ApplicationRecord
       user = department.users
                        .active
                        .joins(:reporting_relationships)
+                       .order('reporting_relationships.active DESC')
                        .order('reporting_relationships.updated_at DESC')
                        .find_by(reporting_relationships: { client: client })
+
       user ||= department.unclaimed_user
     end
 
