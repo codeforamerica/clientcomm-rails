@@ -368,15 +368,64 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'create_transfer_marker' do
+  describe 'create_profile_change_markers' do
+    let(:editing_user) { create :user, full_name: 'Lisa Sokol' }
+    let!(:other_user) { create :user, full_name: 'Kyle Chan' }
+    let!(:client) { create :client, user: editing_user }
+    let(:editing_rr) { ReportingRelationship.find_by(user: editing_user, client: client) }
+    let(:other_rr) { create :reporting_relationship, user: other_user, client: client }
+    let(:new_phone_number) { '(415) 555-1234' }
+
+    subject do
+      Message.create_profile_change_markers(
+        user: editing_user,
+        phone_number: new_phone_number,
+        rrs: [editing_rr, other_rr]
+      )
+    end
+
+    it 'creates two messages with profile change marker properties' do
+      time = Time.now.change(usec: 0)
+
+      travel_to time do
+        subject
+      end
+
+      marker_editing = editing_user.messages.profile_change_markers.first
+      expect(marker_editing.user).to eq(editing_user)
+      expect(marker_editing.client).to eq(client)
+      expect(marker_editing.send_at).to eq(time)
+      marker_body = I18n.t(
+        'messages.phone_number_edited_by_you',
+        new_phone_number: new_phone_number
+      )
+      expect(marker_editing.body).to eq(marker_body)
+      expect(marker_editing).to be_profile_change_marker
+      expect(marker_editing).to be_persisted
+      expect(marker_editing).to be_read
+
+      marker_other = other_user.messages.profile_change_markers.first
+      expect(marker_other.user).to eq(other_user)
+      expect(marker_other.client).to eq(client)
+      expect(marker_other.send_at).to eq(time)
+      marker_body = I18n.t(
+        'messages.phone_number_edited',
+        user_full_name: editing_user.full_name,
+        new_phone_number: new_phone_number
+      )
+      expect(marker_other.body).to eq(marker_body)
+      expect(marker_other).to be_profile_change_marker
+      expect(marker_other).to be_persisted
+      expect(marker_other).to be_read
+    end
+  end
+
+  describe 'create_transfer_markers' do
     let(:sending_user) { create :user }
     let(:receiving_user) { create :user }
     let(:client) { create :client }
     let(:sending_rr) { create :reporting_relationship, user: sending_user, client: client, active: false }
     let(:receiving_rr) { create :reporting_relationship, user: receiving_user, client: client }
-
-    before do
-    end
 
     subject do
       Message.create_transfer_markers(
