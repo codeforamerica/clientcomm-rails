@@ -154,7 +154,7 @@ class ClientsController < ApplicationController
 
   def notify_users_of_changes
     if @client.phone_number_previously_changed?
-      Message.create_profile_change_markers(
+      Message.create_client_edit_markers(
         user: current_user,
         phone_number: @client.phone_number,
         reporting_relationships: @client.reporting_relationships.active

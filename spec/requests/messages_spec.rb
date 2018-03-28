@@ -436,9 +436,9 @@ describe 'Messages requests', type: :request, active_job: true do
         end
       end
 
-      context 'the user has profile change markers' do
-        it 'displays the profile change marker' do
-          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_PROFILE_CHANGE, body: 'profile changed!'
+      context 'the user has client edit markers' do
+        it 'displays the client edit marker' do
+          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT, body: 'client edited!'
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
