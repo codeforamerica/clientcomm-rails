@@ -16,7 +16,12 @@
       </fieldset>
       <%= transfer_form.hidden_field :client_id, value: @client.id %>
       <%= transfer_form.submit "Transfer #{@client.first_name} #{@client.last_name}", id: :transfer_client, class: :button %>
-      <div id="unread-warning" class="<%= "hidden" unless @reporting_relationship.messages.unread.any? %>"><%= t('views.clients.edit.manage.unread_transfer', href: reporting_relationship_path(@reporting_relationship)).html_safe %></div>
+      <div id="unread-warning" class="notice <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
+        <div class="icon-warning-container"><i class="icon-warning"></i></div>
+        <div>
+          <%= t('views.clients.edit.manage.unread_transfer', href: reporting_relationship_path(@reporting_relationship)).html_safe %>
+        </div>
+      </div>
     <% end %>
     <%= form_for @client do |client_form| %>
       <h4>Deactivate client</h4>

@@ -1,3 +1,20 @@
+div#unread-warning {
+  a {
+    font-weight: bold;
+    color: black;
+  }
+
+  .icon-warning {
+    color: #D40000;
+  }
+
+  .icon-warning-container {
+    float: left;
+    height: 115px;
+    margin-right: 10px;
+  }
+}
+
 .template--clients, .template--mass-messages {
   .unread {
     font-weight: 700;
