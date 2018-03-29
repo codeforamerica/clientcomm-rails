@@ -42,17 +42,19 @@ class Message < ApplicationRecord
       user_id = user.id
     end
 
+    display_phone_number = PhoneNumberParser.format_for_display(phone_number)
+
     reporting_relationships.each do |rr|
       message_body = if rr.user_id == user_id
                        I18n.t(
                          'messages.phone_number_edited_by_you',
-                         new_phone_number: phone_number
+                         new_phone_number: display_phone_number
                        )
                      else
                        I18n.t(
                          'messages.phone_number_edited',
                          user_full_name: user_full_name,
-                         new_phone_number: phone_number
+                         new_phone_number: display_phone_number
                        )
                      end
 
