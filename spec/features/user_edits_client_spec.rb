@@ -2,8 +2,8 @@ require 'rails_helper'
 
 feature 'logged-out user visits manage client page' do
   scenario 'and is redirected to the login form' do
-    myuser = create :user
-    clientone = create :client, user: myuser
+    my_user = create :user
+    clientone = create :client, user: my_user
     visit edit_client_path(clientone.id)
     expect(page).to have_text 'Log in'
     expect(page).to have_current_path(new_user_session_path)
@@ -11,11 +11,11 @@ feature 'logged-out user visits manage client page' do
 end
 
 feature 'user edits client', :js do
-  let(:myuser) { create :user }
-  let(:other_user) { create :user }
+  let(:my_user) { create :user, full_name: 'Joshua Terrones' }
+  let(:other_user) { create :user, full_name: 'Debra Nelson' }
   let(:phone_number) { '2024042233' }
   let(:phone_number_display) { '(202) 404-2233' }
-  let!(:clientone) { create :client, user: myuser, phone_number: phone_number }
+  let!(:clientone) { create :client, user: my_user, phone_number: phone_number }
   let(:new_first_name) { 'Vinicius' }
   let(:new_last_name) { 'Lima' }
   let(:new_note) { 'Here is a note.' }
@@ -24,7 +24,7 @@ feature 'user edits client', :js do
 
   before do
     other_user.clients << clientone
-    login_as myuser, :scope => :user
+    login_as my_user, :scope => :user
     visit root_path
   end
 
@@ -55,16 +55,38 @@ feature 'user edits client', :js do
 
     step 'loads the conversation page' do
       clientone.reload
-      rr = myuser.reporting_relationships.find_by(client: clientone)
+      rr = my_user.reporting_relationships.find_by(client: clientone)
       expect(page).to have_current_path(reporting_relationship_path(rr))
       expect(page).to have_content "#{new_first_name} #{new_last_name}"
       expect(page).to have_content new_phone_number_display
-      expect(page).to have_css '.message--event', text: I18n.t('messages.phone_number_edited_by_you', new_phone_number: new_phone_number_display)
+      expect(page).to have_css '.message--event', text:
+        I18n.t(
+          'messages.phone_number_edited_by_you',
+          new_phone_number: new_phone_number_display
+        )
     end
 
     step 'navigates to edit client form' do
       click_on 'Manage client'
       expect(find_field('Notes').value).to eq new_note
+    end
+
+    step 'logs in as the other user' do
+      logout(my_user)
+      login_as other_user, :scope => :user
+      visit root_path
+    end
+
+    step 'loads the conversation page' do
+      click_on clientone.full_name
+      other_rr = other_user.reporting_relationships.find_by(client: clientone)
+      expect(page).to have_current_path(reporting_relationship_path(other_rr))
+      expect(page).to have_css '.message--event', text:
+        I18n.t(
+          'messages.phone_number_edited',
+          user_full_name: my_user.full_name,
+          new_phone_number: new_phone_number_display
+        )
     end
   end
 
