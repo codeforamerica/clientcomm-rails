@@ -38,8 +38,9 @@ en:
     empty: "You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself."
     transferred_from: "%{client_full_name} was transferred to you from %{user_full_name}."
     transferred_to: "Transferred to %{user_full_name}."
-    phone_number_edited_by_you: "Updated phone number to %{new_phone_number}"
-    phone_number_edited: "%{user_full_name} updated phone number to %{new_phone_number}"
+    phone_number_edited_by_you: "Updated the phone number to %{new_phone_number}"
+    phone_number_edited: "%{user_full_name} updated the phone number to %{new_phone_number}"
+    admin_user_description: A ClientComm Admin
   message:
     unclaimed_response: "AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them."
     status:
