@@ -117,6 +117,10 @@ en:
       less_than_x_minutes:
         one: just now
   views:
+    admin:
+      reporting_relationships:
+        edit:
+          unread_transfer: "This client has unread messages. The messages will not be transferred to the new user."
     clients:
       edit:
         manage:
