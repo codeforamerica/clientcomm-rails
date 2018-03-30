@@ -136,5 +136,17 @@ ActiveAdmin.register Client do
     def index
       redirect_to admin_client_relationships_path
     end
+
+    def update
+      super do |_format|
+        if @client.phone_number_previously_changed?
+          Message.create_client_edit_markers(
+            user: current_admin_user,
+            phone_number: @client.phone_number,
+            reporting_relationships: @client.reporting_relationships.active
+          )
+        end
+      end
+    end
   end
 end

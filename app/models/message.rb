@@ -35,7 +35,7 @@ class Message < ApplicationRecord
   MARKER_CLIENT_EDIT = 1
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
-    user_full_name = 'An admin user'
+    user_full_name = I18n.t('messages.admin_user_description')
     user_id = nil
     if user.class.name.demodulize == 'User'
       user_full_name = user.full_name

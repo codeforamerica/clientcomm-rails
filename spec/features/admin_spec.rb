@@ -164,7 +164,10 @@ feature 'Admin Panel' do
     let!(:user1) { create :user, department: department1 }
     let!(:user2) { create :user, department: department1 }
     let!(:user3) { create :user, department: department2 }
-    let!(:client1) { create :client, users: [user1] }
+    let(:phone_number) { '+14155551212' }
+    let(:new_phone_number) { '+14155551213' }
+    let(:new_phone_number_display) { '(415) 555-1213' }
+    let!(:client1) { create :client, users: [user1], phone_number: phone_number }
 
     scenario 'assigning a client to a user' do
       step 'visits the edit client page' do
@@ -198,6 +201,62 @@ feature 'Admin Panel' do
         expect(emails.count).to eq 1
         expect(emails.first.html_part.to_s).to include transfer_note
         expect(emails.first.html_part.to_s).to include 'An administrator has transferred'
+      end
+    end
+
+    context 'shared client' do
+      before do
+        ReportingRelationship.create(client: client1, user: user3)
+      end
+
+      scenario 'editing a client profile' do
+        step 'visits the edit_page' do
+          visit edit_admin_client_path(client1)
+          expect(find_field('Phone number').value).to eq(phone_number)
+        end
+
+        step 'enters new phone number and submits form' do
+          fill_in 'Phone number', with: new_phone_number
+          click_on 'Update Client'
+          expect(page).to have_content('Client was successfully updated.')
+          expect(page).to have_css '.row-phone_number', text: new_phone_number
+        end
+
+        step 'logs out and logs in as one of the client users' do
+          logout(admin_user)
+          login_as(user1, scope: :user)
+          visit root_path
+        end
+
+        step 'loads the conversation page' do
+          click_on client1.full_name
+          user1_rr = user1.reporting_relationships.find_by(client: client1)
+          expect(page).to have_current_path(reporting_relationship_path(user1_rr))
+          expect(page).to have_css '.message--event', text:
+            I18n.t(
+              'messages.phone_number_edited',
+              user_full_name: I18n.t('messages.admin_user_description'),
+              new_phone_number: new_phone_number_display
+            )
+        end
+
+        step 'logs out and logs in as the other client user' do
+          logout(user1)
+          login_as(user3, scope: :user)
+          visit root_path
+        end
+
+        step 'loads the conversation page' do
+          click_on client1.full_name
+          user3_rr = user3.reporting_relationships.find_by(client: client1)
+          expect(page).to have_current_path(reporting_relationship_path(user3_rr))
+          expect(page).to have_css '.message--event', text:
+            I18n.t(
+              'messages.phone_number_edited',
+              user_full_name: I18n.t('messages.admin_user_description'),
+              new_phone_number: new_phone_number_display
+            )
+        end
       end
     end
 
