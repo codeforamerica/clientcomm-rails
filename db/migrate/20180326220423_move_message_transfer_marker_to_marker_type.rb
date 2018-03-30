@@ -6,8 +6,7 @@ class MoveMessageTransferMarkerToMarkerType < ActiveRecord::Migration[5.1]
   def change
     reversible do |dir|
       dir.up do
-        msgs = Message.all
-        msgs.each do |msg|
+        Message.find_each do |msg|
           if msg.transfer_marker
             msg.marker_type = Message::MARKER_TRANSFER
             msg.save!
@@ -16,8 +15,7 @@ class MoveMessageTransferMarkerToMarkerType < ActiveRecord::Migration[5.1]
       end
 
       dir.down do
-        msgs = Message.all
-        msgs.each do |msg|
+        Message.find_each do |msg|
           if msg.marker_type == Message::MARKER_TRANSFER
             msg.transfer_marker = true
             msg.save!
