@@ -12,22 +12,27 @@ ActiveAdmin.register ReportingRelationship do
       active_user.try(:id)
     )
 
+    unread_warning = resource.messages.unread.any? ? I18n.t('views.admin.reporting_relationships.edit.unread_transfer') : ''
+    transfer_label = resource.messages.unread.any? ? 'Transfer Client and Mark Messages As Read' : 'Transfer Client'
+
     form_user = f.object.user || User.new(department: department)
     f.inputs 'Change user', for: form_user do |u|
       u.input :department_id, as: :hidden
       # rubocop:disable Rails/OutputSafety
       u.template.concat "<input type='hidden' id='reporting_relationship_client_id' name='reporting_relationship[client_id]' value='#{params['client_id']}'>".html_safe
+      u.template.concat "<input type='hidden' id='reporting_relationship_force_transfer' name='reporting_relationship[force_transfer]' value='true'>".html_safe if resource.messages.unread.any?
       u.template.concat "<li><label class='label'>Current user</label><span>#{form_user.full_name || 'None'}</span></li>".html_safe
       u.input :id, label: 'Transfer to:',
                    as: :select,
                    collection: options,
                    include_blank: true,
+                   hint: unread_warning,
                    input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
       u.template.concat "<li><label class='label' for='transfer_note'>Include a message for the new user</label><textarea id='transfer_note' name='transfer[note]'></textarea></li>".html_safe
       # rubocop:enable Rails/OutputSafety
     end
     f.actions do
-      f.action :submit, as: :button, label: 'Transfer Client'
+      f.action :submit, as: :button, label: transfer_label
       f.action :cancel, label: 'Cancel', wrapper_html: { class: 'cancel' }
     end
   end
@@ -71,6 +76,13 @@ ActiveAdmin.register ReportingRelationship do
       new_user = User.find_by(id: target_user_id, department_id: department_id)
 
       previous_user = rr.user
+
+      if rr.messages.unread.any? && !params['reporting_relationship']['force_transfer']
+        redirect_to(edit_admin_reporting_relationship_path(rr))
+        return
+      end
+
+      rr.messages.unread.update(read: true)
 
       redirect_to(admin_client_path(rr.client)) && return if new_user == previous_user
 
