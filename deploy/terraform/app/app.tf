@@ -204,6 +204,10 @@ resource "null_resource" "provision_app" {
   provisioner "local-exec" {
     command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
   }
+
+  provisioner "local-exec" {
+    command = "heroku labs:enable runtime-dyno-metadata --app ${heroku_app.clientcomm.name}"
+  }
 }
 
 resource "null_resource" "schedule_backups" {
