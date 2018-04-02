@@ -22,6 +22,7 @@ feature 'user edits client', :js do
   let(:new_phone_number) { '2024042234' }
   let(:new_phone_number_display) { '(202) 404-2234' }
 
+  let(:unread_error_message) { 'This client has unread messages. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   before do
     other_user.clients << clientone
     login_as my_user, :scope => :user
@@ -87,6 +88,50 @@ feature 'user edits client', :js do
           user_full_name: my_user.full_name,
           new_phone_number: new_phone_number_display
         )
+    end
+  end
+
+  context 'there are unread messages' do
+    let(:rr) { ReportingRelationship.find_by(user: my_user, client: clientone) }
+
+    before do
+      create :message, reporting_relationship: rr, read: false, inbound: true
+    end
+
+    scenario 'it shows a warning about the unread messages' do
+      within "#client_#{clientone.id}" do
+        find('td', text: 'Manage').click
+      end
+
+      expect(page).to have_current_path(edit_client_path(clientone))
+      expect(page).to have_content(unread_error_message)
+    end
+  end
+
+  context 'a message is received while editing' do
+    let(:rr) { ReportingRelationship.find_by(user: my_user, client: clientone) }
+
+    scenario 'the page displays the warning when the message is received' do
+      within "#client_#{clientone.id}" do
+        find('td', text: 'Manage').click
+      end
+
+      expect(page).to have_current_path(edit_client_path(clientone))
+      expect(page).to_not have_content('This client has unread messages. The messages will not be transferred to the new user. Transfer now, or click here to read them.')
+
+      twilio_post_sms(twilio_new_message_params(
+                        from_number: clientone.phone_number,
+                        to_number: my_user.department.phone_number
+      ))
+
+      wait_for_ajax
+      expect(page).to have_content(unread_error_message)
+
+      within '#unread-warning' do
+        click_on 'click here'
+      end
+
+      expect(page).to have_current_path(reporting_relationship_path(rr))
     end
   end
 
