@@ -189,7 +189,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
       let(:department) { user1.department }
       let(:params) do
         {
-          reporting_relationship: { user: { department_id: department.id, id: user2.id } },
+          reporting_relationship: { force_transfer: true, user: { department_id: department.id, id: user2.id } },
           transfer: { note: 'This is a transfer note.' },
           id: rr.id
         }
@@ -223,7 +223,10 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
         perform_enqueued_jobs do
           put admin_reporting_relationship_path(rr.id), params: {
-            reporting_relationship: { user: { department_id: department.id, id: '' } },
+            reporting_relationship: {
+              force_transfer: true,
+              user: { department_id: department.id, id: '' }
+            },
             transfer: { note: '' },
             id: rr.id
           }
@@ -305,7 +308,10 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         end
         let(:params) do
           {
-            reporting_relationship: { user: { department_id: department.id, id: user1.id } },
+            reporting_relationship: {
+              force_transfer: true,
+              user: { department_id: department.id, id: user1.id }
+            },
             transfer: { note: 'This is a transfer note.' },
             id: unclaimed_rr.id
           }
