@@ -130,15 +130,6 @@ resource "heroku_addon" "database" {
   plan = "${var.heroku_database_plan}"
 }
 
-resource "heroku_addon" "sentry_deploy_hook" {
-  app = "${heroku_app.clientcomm.name}"
-  plan = "deployhooks:http"
-
-  config = {
-    url = "${var.sentry_deploy_hook}"
-  }
-}
-
 resource "heroku_addon" "logging" {
   count = "${var.enable_papertrail ? 1 : 0}"
   app  = "${heroku_app.clientcomm.name}"
@@ -204,10 +195,6 @@ resource "null_resource" "provision_app" {
   provisioner "local-exec" {
     command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
   }
-
-  provisioner "local-exec" {
-    command = "heroku labs:enable runtime-dyno-metadata --app ${heroku_app.clientcomm.name}"
-  }
 }
 
 resource "null_resource" "schedule_backups" {
@@ -240,6 +227,14 @@ resource "null_resource" "ssl" {
 
   provisioner "local-exec" {
     command = "heroku certs:auto:enable --app ${heroku_app.clientcomm.name}"
+  }
+}
+
+resource "null_resource" "dyno_metadata" {
+  depends_on = ["null_resource.provision_app"]
+
+  provisioner "local-exec" {
+    command = "heroku labs:enable runtime-dyno-metadata --app ${heroku_app.clientcomm.name}"
   }
 }
 
