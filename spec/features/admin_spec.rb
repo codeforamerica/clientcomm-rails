@@ -325,5 +325,60 @@ feature 'Admin Panel' do
         )
       end
     end
+
+    context 'unread messages' do
+      scenario 'transferring a client to a new user' do
+        step 'visits the edit client page' do
+          visit edit_admin_client_path(client1)
+
+          expect(page).to have_content(department1.name.capitalize)
+          expect(page).to have_content(user1.full_name)
+          expect(page).to have_content(department2.name.capitalize)
+          expect(page).to have_content('Assign user')
+        end
+
+        step 'clicks the change link next to a user' do
+          click_on('Change')
+
+          expect(page).to have_content('Transfer Client')
+          expect(page).to have_content('Change user')
+          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+          expect(page).to have_content('Include a message for the new user')
+        end
+
+        step 'a new message has come in and an error is shown' do
+          msg = create :message, reporting_relationship: ReportingRelationship.find_by(user: user1, client: client1), read: false
+
+          select user2.full_name, from: 'Transfer to'
+          fill_in 'transfer_note', with: 'Notes notes notes.'
+
+          click_on 'Transfer Client'
+
+          expect(page).to have_content('Transfer Client and Mark Messages As Read')
+          expect(page).to have_content('Change user')
+          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+          expect(page).to have_content('Include a message for the new user')
+
+          expect(page).to have_content('This client has unread messages. The messages will not be transferred to the new user.')
+
+          select user2.full_name, from: 'Transfer to'
+          fill_in 'transfer_note', with: 'Notes notes notes.'
+
+          click_on 'Transfer Client and Mark Messages As Read'
+
+          expect(msg.reload).to be_read
+
+          expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
+          expect(page.current_path).to eq(admin_client_path(client1))
+          expect_most_recent_analytics_event(
+            'client_transfer' => {
+              'clients_transferred_count' => 1,
+              'transferred_by' => 'admin',
+              'has_transfer_note' => true
+            }
+          )
+        end
+      end
+    end
   end
 end
