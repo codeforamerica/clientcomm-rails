@@ -33,13 +33,14 @@ class ReportingRelationship < ApplicationRecord
     # If not it will behave improperly and have more than one active
     new_reporting_relationship.active = true
     self.active = false
+    self.has_unread_messages = false
     ActiveRecord::Base.transaction do
       save!
       new_reporting_relationship.save!
     end
 
     messages.scheduled.update(reporting_relationship: new_reporting_relationship)
-
+    messages.messages.unread.update(read: true)
     if user == new_reporting_relationship.user.department.unclaimed_user
       messages.update(reporting_relationship: new_reporting_relationship)
     end

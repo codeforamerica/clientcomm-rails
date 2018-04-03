@@ -111,13 +111,17 @@ feature 'user edits client', :js do
   context 'a message is received while editing' do
     let(:rr) { ReportingRelationship.find_by(user: my_user, client: clientone) }
 
+    before do
+      rr.update!(has_unread_messages: true)
+    end
+
     scenario 'the page displays the warning when the message is received' do
       within "#client_#{clientone.id}" do
         find('td', text: 'Manage').click
       end
 
       expect(page).to have_current_path(edit_client_path(clientone))
-      expect(page).to_not have_content('This client has unread messages. The messages will not be transferred to the new user. Transfer now, or click here to read them.')
+      expect(page).to_not have_content(unread_error_message)
 
       twilio_post_sms(twilio_new_message_params(
                         from_number: clientone.phone_number,

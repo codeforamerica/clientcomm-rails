@@ -235,6 +235,23 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       expect(marker_to.body).to eq(transfer_message_to_body)
     end
 
+    context 'the user has received messages from the client' do
+      let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+
+      before do
+        rr.update!(has_unread_messages: true)
+      end
+
+      it 'marks all messages as read' do
+        msg = create :message, reporting_relationship: rr, read: false
+
+        subject
+
+        expect(rr.reload.has_unread_messages).to eq(false)
+        expect(msg.reload).to be_read
+      end
+    end
+
     context 'transfer user has an inactive relationship' do
       before do
         create :reporting_relationship, user: transfer_user, client: client, active: false
