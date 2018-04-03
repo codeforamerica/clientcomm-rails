@@ -72,11 +72,7 @@ feature 'creating and editing scheduled messages', active_job: true do
 
       select new_future_date.strftime('%-l:%M%P'), from: 'Time'
 
-      expect(page.find('form.edit_message .character-count')).to have_content(123)
-
       fill_in 'scheduled_message_body', with: new_message_body
-
-      expect(page.find('form.edit_message .character-count')).to have_content(44)
 
       perform_enqueued_jobs do
         click_on 'Update'

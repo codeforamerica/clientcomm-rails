@@ -65,16 +65,9 @@ feature 'sending mass messages', active_job: true do
     end
 
     step 'user sees character count or appropriate warning message' do
-      expect(page.find('.new_mass_message .character-count')).to have_content(0)
-
-      fill_in 'Your message', with: message_body
-
-      expect(page.find('.new_mass_message .character-count')).to have_content(40)
-
       fill_in 'Your message', with: long_message_body
 
-      expect(page.find('.new_mass_message .character-count')).to have_content('This message may be sent as 2 texts.')
-      expect(page.find('.relative-container')).to have_css('.character-count.text--error')
+      expect(page.find('.new_mass_message .character-count')).to have_content('Because of its length, this message may be sent as 2 texts')
     end
 
     step 'user can select all clients' do

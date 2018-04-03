@@ -25,22 +25,16 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when user sends a message' do
-      expect(page.find('.sendbar .character-count')).to have_content(/^0$/)
-
-      fill_in 'Send a text message', with: message_body
-
-      expect(page.find('.sendbar .character-count')).to have_content(/^40$/)
-
       fill_in 'Send a text message', with: long_message_body
 
-      expect(page.find('.sendbar .character-count')).to have_content('This message may be sent as 2 texts.')
+      expect(page).to have_content('Because of its length, this message may be sent as 2 texts.')
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
 
       fill_in 'Send a text message', with: message_body
 
       perform_enqueued_jobs do
         click_on 'send_message'
-        expect(page.find('.sendbar .character-count')).to have_content(/^0$/)
+        expect(page).to_not have_content('Because of its length, this message may be sent as 2 texts.')
         expect(page).to have_css '.message--outbound div', text: message_body
       end
     end
@@ -82,15 +76,9 @@ feature 'sending messages', active_job: true do
 
       expect(find_field('Your message text').value).to eq incomplete_message
 
-      expect(page.find('#scheduled_new_message .character-count')).to have_content(18)
-
-      fill_in 'Your message text', with: message_body
-
-      expect(page.find('#scheduled_new_message  .character-count')).to have_content(40)
-
       fill_in 'Your message text', with: long_message_body
 
-      expect(page.find('#scheduled_new_message  .character-count')).to have_content('This message may be sent as 2 texts.')
+      expect(page.find('#scheduled_new_message  .character-count')).to have_content('Because of its length, this message may be sent as 2 texts.')
       expect(page.find('#scheduled_new_message')).to have_css('.character-count.text--error')
 
       fill_in 'Your message text', with: message_body

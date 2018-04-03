@@ -20,21 +20,6 @@ describe('Messages', function() {
       jasmine.clock().uninstall();
     });
 
-    it('creates and modifies the counter', function() {
-      var $page = $('body');
-      var $element = $("input[type='text']");
-
-      characterCount($element);
-
-      $element.val('test');
-
-      $element.trigger('keydown');
-
-      jasmine.clock().tick();
-
-      expect($('.character-count').text()).toBe('4');
-    });
-
     it('shows a warning message for texts over 160 characters', function () {
       var $page = $('body');
       var $element = $("input[type='text']");
@@ -51,7 +36,7 @@ describe('Messages', function() {
 
       jasmine.clock().tick();
 
-      expect($('.character-count').text()).toBe("This message may be sent as 2 texts.");
+      expect($('.character-count').text()).toBe("Because of its length, this message may be sent as 2 texts.");
     });
   });
 });

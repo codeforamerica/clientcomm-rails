@@ -6,13 +6,14 @@
   #sendbar-buttons {
 
     @include media($site-max-up){
-      margin-top: 17px;
+      &.warning-visible {
+        margin-top: 17px;
+      }
     }
   }
 
   #template-button {
     position: absolute;
-    margin-top: 16px;
     padding: 13px;
     font-size: 24px;
     color: $color-grey;
@@ -22,6 +23,10 @@
 
     &:hover {
       color: #a6005e;
+    }
+
+    &.warning-visible {
+      margin-top: 16px;
     }
   }
 }

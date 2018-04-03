@@ -89,11 +89,11 @@ $(document).ready(function(){
 function characterCount(element) {
   if(element.length === 0) { return; }
 
-  var initialLength = $(element).val().length;
-
   var
     label = $("label[for='" + element.attr('id') + "']"),
-    counter = $('<span class="character-count pull-right">' + initialLength + '</span>');
+    counter = $('<span class="character-count pull-right hidden"></span>');
+
+  var modalVisible = label.length > 0
 
   if (label.length > 0) {
     counter.addClass('pull-bottom');
@@ -110,19 +110,24 @@ function characterCount(element) {
 
   element.on('keydown keyup focus paste', function(e){
     setTimeout(function(){
-      setCounter(counter, element);
+      setCounter(counter, element, modalVisible);
     });
   });
 }
 
-function setCounter(counter, textField) {
+function setCounter(counter, textField, modalVisible) {
   var length = $(textField).val().length;
   var tooLongForSingleText = length > 160;
   counter.toggleClass('text--error', tooLongForSingleText);
+  counter.toggleClass('hidden', !tooLongForSingleText);
+
+  if (!modalVisible) {
+    $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
+    $('#template-button').toggleClass('warning-visible', tooLongForSingleText);
+  }
+
   if (tooLongForSingleText) {
-    counter.html("This message may be sent as "+Math.ceil(length/160)+" texts.");
-  } else {
-    counter.html(length);
+    counter.html("Because of its length, this message may be sent as "+Math.ceil(length/160)+" texts.");
   }
 }
 
