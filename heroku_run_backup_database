@@ -1,0 +1,4 @@
+#!/bin/bash
+
+heroku pg:reset --app clientcomm-migration-test --confirm clientcomm-migration-test
+heroku run ./backup_database --app $1
