@@ -327,6 +327,8 @@ feature 'Admin Panel' do
     end
 
     context 'unread messages' do
+      let(:rr) { ReportingRelationship.find_by(user: user1, client: client1) }
+
       scenario 'transferring a client to a new user' do
         step 'visits the edit client page' do
           visit edit_admin_client_path(client1)
@@ -347,7 +349,8 @@ feature 'Admin Panel' do
         end
 
         step 'a new message has come in and an error is shown' do
-          msg = create :message, reporting_relationship: ReportingRelationship.find_by(user: user1, client: client1), read: false
+          msg = create :message, reporting_relationship: rr, read: false
+          rr.update!(has_unread_messages: true)
 
           select user2.full_name, from: 'Transfer to'
           fill_in 'transfer_note', with: 'Notes notes notes.'
@@ -367,6 +370,7 @@ feature 'Admin Panel' do
           click_on 'Transfer Client and Mark Messages As Read'
 
           expect(msg.reload).to be_read
+          expect(rr.reload.has_unread_messages).to eq(false)
 
           expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
           expect(page.current_path).to eq(admin_client_path(client1))
