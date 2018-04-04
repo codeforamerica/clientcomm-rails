@@ -22,7 +22,7 @@ feature 'user edits client', :js do
   let(:new_phone_number) { '2024042234' }
   let(:new_phone_number_display) { '(202) 404-2234' }
 
-  let(:unread_error_message) { 'This client has unread messages. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
+  let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   before do
     other_user.clients << clientone
     login_as my_user, :scope => :user

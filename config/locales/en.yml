@@ -124,7 +124,7 @@ en:
     clients:
       edit:
         manage:
-          unread_transfer: "This client has unread messages. The messages will not be transferred to the new user. Transfer now, or <a href='%{href}'>click here</a> to read them."
+          unread_transfer: "You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or <a href='%{href}'>click here</a> to read them."
     tips:
       title: ClientComm Tips & Tricks
       positive_reinforcement_html: Clients who get four positive reinforcements for every sanction are more likely to succeed. <a href="/mass_messages/new?message=I%27m+proud+of+your+progress.+Keep+it+up+and+let+me+know+if+you+need+anything.&utm_source=clientcomm&utm_campaign=ebp">Click here</a> to send a positive reinforcement.
