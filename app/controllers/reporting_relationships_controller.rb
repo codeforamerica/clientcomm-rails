@@ -38,6 +38,9 @@ class ReportingRelationshipsController < ApplicationController
                               .find_by(user: current_user.id, client_id: reporting_relationship_params['client_id'])
     @client = Client.find(reporting_relationship_params['client_id'])
     @transfer_reporting_relationship = ReportingRelationship.find_or_initialize_by(reporting_relationship_params)
+
+    had_unread_messages = @reporting_relationship.has_unread_messages
+
     begin
       @reporting_relationship.transfer_to(@transfer_reporting_relationship)
     rescue ActiveRecord::RecordInvalid
@@ -65,7 +68,8 @@ class ReportingRelationshipsController < ApplicationController
         admin_id: nil,
         clients_transferred_count: 1,
         transferred_by: transferred_by,
-        has_transfer_note: transfer_note.present?
+        has_transfer_note: transfer_note.present?,
+        unread_messages: had_unread_messages
       }
     )
 

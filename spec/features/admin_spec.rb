@@ -320,7 +320,8 @@ feature 'Admin Panel' do
           'client_transfer' => {
             'clients_transferred_count' => 1,
             'transferred_by' => 'admin',
-            'has_transfer_note' => true
+            'has_transfer_note' => true,
+            'unread_messages' => false
           }
         )
       end
@@ -378,7 +379,8 @@ feature 'Admin Panel' do
             'client_transfer' => {
               'clients_transferred_count' => 1,
               'transferred_by' => 'admin',
-              'has_transfer_note' => true
+              'has_transfer_note' => true,
+              'unread_messages' => true
             }
           )
         end

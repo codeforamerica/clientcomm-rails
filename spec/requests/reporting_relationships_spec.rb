@@ -194,7 +194,8 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
         'client_transfer' => {
           'clients_transferred_count' => 1,
           'transferred_by' => 'user',
-          'has_transfer_note' => true
+          'has_transfer_note' => true,
+          'unread_messages' => false
         }
       )
     end
@@ -249,6 +250,15 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
         expect(rr.reload.has_unread_messages).to eq(false)
         expect(msg.reload).to be_read
+
+        expect_most_recent_analytics_event(
+          'client_transfer' => {
+            'clients_transferred_count' => 1,
+            'transferred_by' => 'user',
+            'has_transfer_note' => true,
+            'unread_messages' => true
+          }
+        )
       end
     end
 

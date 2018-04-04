@@ -90,6 +90,8 @@ ActiveAdmin.register ReportingRelationship do
       department = Department.find(department_id)
       old_users = department.users
 
+      had_unread_messages = rr.has_unread_messages
+
       deactivate_old_relationships(client: client, users: old_users)
 
       if new_user.blank?
@@ -98,7 +100,12 @@ ActiveAdmin.register ReportingRelationship do
       end
 
       transfer_client_and_mail_and_track(
-        client: client, previous_user: previous_user, new_user: new_user, transfer_note: transfer_note, client_status: rr.client_status
+        client: client,
+        previous_user: previous_user,
+        new_user: new_user,
+        transfer_note: transfer_note,
+        client_status: rr.client_status,
+        unread_messages: had_unread_messages
       )
 
       transfer_messages(client: client, old_users: old_users, new_user: new_user)
@@ -134,7 +141,7 @@ ActiveAdmin.register ReportingRelationship do
       end
     end
 
-    def transfer_client_and_mail_and_track(client:, previous_user:, new_user:, transfer_note:, client_status:)
+    def transfer_client_and_mail_and_track(client:, previous_user:, new_user:, transfer_note:, client_status:, unread_messages:)
       new_user.reporting_relationships.find_or_create_by(client: client).update!(active: true, client_status: client_status)
       NotificationMailer.client_transfer_notification(
         current_user: new_user,
@@ -150,7 +157,8 @@ ActiveAdmin.register ReportingRelationship do
           admin_id: current_admin_user.id,
           clients_transferred_count: 1,
           transferred_by: 'admin',
-          has_transfer_note: transfer_note.present?
+          has_transfer_note: transfer_note.present?,
+          unread_messages: unread_messages
         }
       )
     end
