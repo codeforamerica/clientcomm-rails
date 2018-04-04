@@ -45,6 +45,8 @@ Rails.application.routes.draw do
     get 'messages/download', to: 'messages#download'
   end
 
+  resources :help, only: [:index]
+
   # TWILIO
   post '/incoming/sms', to: 'twilio#incoming_sms'
   post '/incoming/voice', to: 'twilio#incoming_voice'
