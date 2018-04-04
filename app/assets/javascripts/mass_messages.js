@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#send-now-buttons').toggle();
     $('#cancel-mass-message').toggleClass('scheduled');
   }
-  $('#mass_message_send_later').click(function(e) {
+  $('#new_mass_message #send_later').click(function(e) {
     e.preventDefault();
     toggleMassMessage();
   });

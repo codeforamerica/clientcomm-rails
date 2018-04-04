@@ -130,6 +130,9 @@ function setCounter(counter, textField, modalVisible) {
   $('#send_message').prop('disabled', tooLongToSend);
   $('#send_message').toggleClass('button--disabled', tooLongToSend);
 
+  $('#send_later').prop('disabled', tooLongToSend);
+  $('#send_later').toggleClass('button--disabled', tooLongToSend);
+
   $('#schedule_message').prop('disabled', tooLongToSend);
   $('#schedule_message').toggleClass('button--disabled', tooLongToSend);
 

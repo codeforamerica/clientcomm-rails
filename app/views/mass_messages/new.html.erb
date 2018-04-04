@@ -141,7 +141,7 @@
                 <div id="send-now-buttons">
                   <div class="toolbar__left">
                     <%= f.submit 'Send', id: :send_message, class: %w[sendbar__button button--primary] %>
-                    <a href="#" id="mass_message_send_later" class="sendbar__button">Send later</a>
+                    <input type="button" id="send_later" class="sendbar__button" value="Send later" />
                   </div>
                 </div>
                 <div id="schedule-later-buttons">

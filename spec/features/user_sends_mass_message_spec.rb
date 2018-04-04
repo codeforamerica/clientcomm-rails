@@ -70,6 +70,7 @@ feature 'sending mass messages', active_job: true do
 
       expect(page).to have_content('This message is too long to send.')
       expect(page).to have_button('Send', disabled: true)
+      expect(page).to have_button('Send later', disabled: true)
     end
 
     step 'user sees character count or appropriate warning message' do
@@ -77,6 +78,7 @@ feature 'sending mass messages', active_job: true do
 
       expect(page.find('.new_mass_message .character-count')).to have_content('Because of its length, this message may be sent as 2 texts')
       expect(page).to have_button('Send', disabled: false)
+      expect(page).to have_button('Send later', disabled: false)
     end
 
     step 'user can select all clients' do
