@@ -49,6 +49,8 @@ ActiveAdmin.register ReportingRelationship do
 
       rr = ReportingRelationship.find_or_create_by(id: rr_id, user: new_user, client_id: client_id)
 
+      had_unread_messages = rr.has_unread_messages
+
       client = rr.client
       department = Department.find(department_id)
       old_users = department.users
@@ -58,7 +60,12 @@ ActiveAdmin.register ReportingRelationship do
       deactivate_old_relationships(client: client, users: old_users)
 
       transfer_client_and_mail_and_track(
-        client: client, previous_user: nil, new_user: new_user, transfer_note: transfer_note, client_status: nil
+        client: client,
+        previous_user: nil,
+        new_user: new_user,
+        transfer_note: transfer_note,
+        client_status: nil,
+        unread_messages: had_unread_messages
       )
 
       flash[:success] = "#{client.full_name} has been assigned to #{new_user.full_name} in #{department.name}"
