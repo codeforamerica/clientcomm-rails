@@ -93,7 +93,7 @@ function characterCount(element) {
     label = $("label[for='" + element.attr('id') + "']"),
     counter = $('<span class="character-count pull-right hidden"></span>');
 
-  var modalVisible = label.length > 0
+  var modalVisible = label.length > 0;
 
   if (label.length > 0) {
     counter.addClass('pull-bottom');
@@ -118,16 +118,31 @@ function characterCount(element) {
 function setCounter(counter, textField, modalVisible) {
   var length = $(textField).val().length;
   var tooLongForSingleText = length > 160;
+  var tooLongToSend = length >= 1600;
   counter.toggleClass('text--error', tooLongForSingleText);
   counter.toggleClass('hidden', !tooLongForSingleText);
+
+  $('#send_message').prop('disabled', tooLongToSend);
+  $('#send_message').toggleClass('button--disabled', tooLongToSend);
+
+  $('#send_later').prop('disabled', tooLongToSend);
+  $('#send_later').toggleClass('button--disabled', tooLongToSend);
+
+  $('#schedule_message').prop('disabled', tooLongToSend);
+  $('#schedule_message').toggleClass('button--disabled', tooLongToSend);
+
+  $('#schedule_messages').prop('disabled', tooLongToSend);
+  $('#schedule_messages').toggleClass('button--disabled', tooLongToSend);
 
   if (!modalVisible) {
     $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
     $('#template-button').toggleClass('warning-visible', tooLongForSingleText);
   }
 
-  if (tooLongForSingleText) {
-    counter.html("Because of its length, this message may be sent as "+Math.ceil(length/160)+" texts.");
+  if (tooLongToSend) {
+    counter.html("This message is too long to send.");
+  } else if (tooLongForSingleText) {
+    counter.html("Because of its length, this message may be sent as " + Math.ceil(length/160) + " texts.");
   }
 }
 

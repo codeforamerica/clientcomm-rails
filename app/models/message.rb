@@ -15,6 +15,8 @@ class Message < ApplicationRecord
   validates_presence_of :original_reporting_relationship
   validates_datetime :send_at, :before => :max_future_date
 
+  validates :body, length: { maximum: 1600 }
+
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }

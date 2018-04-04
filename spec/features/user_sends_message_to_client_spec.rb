@@ -2,6 +2,7 @@ require 'rails_helper'
 feature 'sending messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
+  let(:too_long_message_body) { 'abcd' * 401 }
   let(:client_1) { build :client }
   let(:client_2) { build :client }
   let(:myuser) { create :user }
@@ -24,11 +25,21 @@ feature 'sending messages', active_job: true do
       visit reporting_relationship_path(rr)
     end
 
+    step 'when user enters a message that is too long' do
+      fill_in 'Send a text message', with: too_long_message_body
+
+      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_button('Send', disabled: true)
+      expect(page).to have_button('Send later', disabled: true)
+    end
+
     step 'when user sends a message' do
       fill_in 'Send a text message', with: long_message_body
 
       expect(page).to have_content('Because of its length, this message may be sent as 2 texts.')
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
+      expect(page).to have_button('Send', disabled: false)
+      expect(page).to have_button('Send later', disabled: false)
 
       fill_in 'Send a text message', with: message_body
 
@@ -73,9 +84,17 @@ feature 'sending messages', active_job: true do
       fill_in 'Send a text message', with: incomplete_message
       click_button 'Send later'
       expect(page).to have_content('Send message later')
-
       expect(find_field('Your message text').value).to eq incomplete_message
+    end
 
+    step 'when user enters a message that is too long' do
+      fill_in 'Send a text message', with: too_long_message_body
+
+      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_button('Schedule message', disabled: true)
+    end
+
+    step 'enters a valid message' do
       fill_in 'Your message text', with: long_message_body
 
       expect(page.find('#scheduled_new_message  .character-count')).to have_content('Because of its length, this message may be sent as 2 texts.')

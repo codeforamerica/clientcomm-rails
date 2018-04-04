@@ -3,6 +3,7 @@ require 'rails_helper'
 feature 'sending mass messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
+  let(:too_long_message_body) { 'abcd' * 401 }
   let(:scheduled_message_body) { 'This is the text of a scheduled message' }
   let(:user) { create :user }
   let!(:client_1) { build :client, first_name: 'a', last_name: 'a' }
@@ -62,6 +63,13 @@ feature 'sending mass messages', active_job: true do
     step 'user tries to submit invalid message' do
       click_on 'Send'
       expect(page).to have_content 'You need to add a message.'
+    end
+
+    step 'when user enters a message that is too long' do
+      fill_in 'Your message', with: too_long_message_body
+
+      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_button('Send', disabled: true)
     end
 
     step 'user sees character count or appropriate warning message' do
@@ -137,7 +145,15 @@ feature 'sending mass messages', active_job: true do
       expect(page).to have_content I18n.t('views.mass_message.new.schedule_form.title')
     end
 
+    step 'when user enters a message that is too long' do
+      fill_in 'Your message', with: too_long_message_body
+
+      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_button('Schedule messages', disabled: true)
+    end
+
     step 'user selects a date in the past and tries to schedule the message' do
+      fill_in 'Your message', with: scheduled_message_body
       past_date = (Time.zone.today - 1.month).beginning_of_month
 
       fill_in 'Date', with: ''
