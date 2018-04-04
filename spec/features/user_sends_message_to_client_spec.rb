@@ -30,7 +30,6 @@ feature 'sending messages', active_job: true do
 
       expect(page).to have_content('This message is too long to send.')
       expect(page).to have_button('Send', disabled: true)
-      expect(page).to have_button('Send later', disabled: true)
     end
 
     step 'when user sends a message' do
@@ -39,7 +38,6 @@ feature 'sending messages', active_job: true do
       expect(page).to have_content('Because of its length, this message may be sent as 2 texts.')
       expect(page.find('.sendbar')).to have_css('.character-count.text--error')
       expect(page).to have_button('Send', disabled: false)
-      expect(page).to have_button('Send later', disabled: false)
 
       fill_in 'Send a text message', with: message_body
 

@@ -53,6 +53,11 @@ $(document).ready(function(){
     $modal.on('shown.bs.modal', function () {
       $('textarea#scheduled_message_body.send-later-input.textarea').focus();
     });
+    $modal.on('hidden.bs.modal', function () {
+      element = $('.main-message-input');
+      counter = $('<span class="character-count pull-right hidden"></span>');
+      setCounter(counter, element);
+    });
   }
 
   initializeModal('#new-message-modal');
@@ -124,9 +129,6 @@ function setCounter(counter, textField, modalVisible) {
 
   $('#send_message').prop('disabled', tooLongToSend);
   $('#send_message').toggleClass('button--disabled', tooLongToSend);
-
-  $('#send_later').prop('disabled', tooLongToSend);
-  $('#send_later').toggleClass('button--disabled', tooLongToSend);
 
   $('#schedule_message').prop('disabled', tooLongToSend);
   $('#schedule_message').toggleClass('button--disabled', tooLongToSend);
