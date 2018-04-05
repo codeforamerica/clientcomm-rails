@@ -315,11 +315,16 @@ RSpec.describe Message, type: :model do
         end
 
         context 'the client has an inactive relationship with a user' do
+          let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+
           before do
-            ReportingRelationship.find_by(user: user, client: client).update(active: false)
+            rr.update(active: false)
           end
 
-          it 'reactivates the inactive relationship'
+          it 'reactivates the inactive relationship' do
+            message = subject
+            expect(message.user).to eq(user)
+          end
 
           context 'the client has an active relationship with an older updated_at' do
             let(:less_recent_active_user) { create :user, department: department }
@@ -327,7 +332,7 @@ RSpec.describe Message, type: :model do
             before do
               create :reporting_relationship, user: less_recent_active_user, client: client
               travel_to Time.now + 1.day
-              ReportingRelationship.find_by(user: user, client: client).update(updated_at: Time.now)
+              rr.update(updated_at: Time.now)
             end
 
             after do

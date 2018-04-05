@@ -7,7 +7,7 @@ class TwilioController < ApplicationController
     new_message = Message.create_from_twilio! params
     client = new_message.client
 
-    rr = client.reporting_relationships.find_by(user: new_message.user)
+    rr = new_message.reporting_relationship
 
     client_previously_active = rr.active
 
