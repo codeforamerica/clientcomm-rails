@@ -77,8 +77,13 @@ resource "heroku_app" "clientcomm" {
     AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
     AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
-    REPORT_DAY  = "${var.report_day}"
+    REPORT_DAY = "${var.report_day}"
+    AWS_KMS_KEY_ID = "${aws_kms_key.bucket_key.arn}"
   }
+}
+
+resource "aws_kms_key" "bucket_key" {
+  description = "This key is used to encrypt bucket objects"
 }
 
 resource "aws_s3_bucket" "paperclip" {
@@ -86,6 +91,14 @@ resource "aws_s3_bucket" "paperclip" {
   region = "us-east-1"
   versioning {
     enabled = true
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = "${aws_kms_key.bucket_key.arn}"
+        sse_algorithm     = "aws:kms"
+      }
+    }
   }
 }
 

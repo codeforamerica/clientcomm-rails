@@ -111,6 +111,10 @@ Rails.application.configure do
       access_key_id: ENV['AWS_ACCESS_KEY_ID'],
       secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
       bucket: ENV['AWS_ATTACHMENTS_BUCKET']
+    },
+    s3_server_side_encryption: 'aws:kms',
+    s3_headers: {
+      ssekms_key_id: ENV['AWS_KMS_KEY_ID']
     }
   }
 end
