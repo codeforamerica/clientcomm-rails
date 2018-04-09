@@ -5,7 +5,10 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
   let(:send_at_time) { Time.now.tomorrow }
-  let(:message) { create :message, send_at: send_at_time }
+  let(:user) { create :user }
+  let(:client) { create :client, users: [user] }
+  let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
+  let(:message) { create :message, reporting_relationship: rr, send_at: send_at_time }
 
   subject do
     perform_enqueued_jobs { ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
@@ -51,5 +54,19 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     let(:message) { create :message, sent: true }
 
     it_behaves_like 'does not send'
+  end
+
+  context 'When the user is the unclaimed user' do
+    before do
+      user.department.update(unclaimed_user: user)
+    end
+
+    it 'logs that scheduled messages were sent' do
+      expect(Rails.logger).to receive(:warn) do |&block|
+        expect(block.call).to eq("Unclaimed user id: #{user.id} sent message id: #{message.id}")
+      end
+
+      subject
+    end
   end
 end
