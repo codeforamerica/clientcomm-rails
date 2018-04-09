@@ -10,9 +10,6 @@ namespace :reports do
                             .deliver_later
         end
       end
-      Rails.logger.info 'Report task ran and sent reports'
-    else
-      Rails.logger.info 'Report task ran but sent no reports'
     end
   end
 end
