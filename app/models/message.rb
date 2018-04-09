@@ -153,7 +153,7 @@ class Message < ApplicationRecord
     begin
       new_message.save!
     rescue Aws::S3::Errors::AccessDenied => e
-      Rails.logger.fatal e.context
+      Rails.logger.fatal e.context.inspect.to_s
       raise e
     end
 
