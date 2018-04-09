@@ -150,7 +150,12 @@ class Message < ApplicationRecord
       new_message.attachments << attachment
     end
 
-    new_message.save!
+    begin
+      new_message.save!
+    rescue Aws::S3::Errors::AccessDenied => e
+      Rails.logger.fatal e.context
+      raise e
+    end
 
     dept_rrs = ReportingRelationship.where(client: client, user: department.users)
     if user == department.unclaimed_user && Message.where(reporting_relationship: dept_rrs).count <= 1

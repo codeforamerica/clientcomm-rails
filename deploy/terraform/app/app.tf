@@ -128,6 +128,16 @@ resource "aws_iam_user_policy" "paperclip" {
             "Resource": [
                 "${aws_s3_bucket.paperclip.arn}/*"
             ]
+        },
+        {
+            "Action": [
+              "kms:Encrypt",
+              "kms:Decrypt"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "${aws_kms_key.bucket_key.arn}"
+            ]
         }
     ]
 }
