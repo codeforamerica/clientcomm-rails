@@ -83,3 +83,10 @@ production:
   database: clientcomm_production
   username: clientcomm
   password: <%= ENV['CLIENTCOMM_DATABASE_PASSWORD'] %>
+
+node_production:
+  dbname: clientcomm
+  user: clientcomm
+  password: <%= ENV['NODE_CLIENTCOMM_DATABASE_PASSWORD'] %>
+  host: localhost
+  port: 5433
