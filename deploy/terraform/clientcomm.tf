@@ -36,8 +36,6 @@ variable "papertrail_plan" {
   default = "papertrail:choklad"
 }
 
-variable "sentry_deploy_hook" {}
-
 # Email Vars
 variable "mailgun_api_key" {}
 variable "mailgun_domain" {}
@@ -49,6 +47,10 @@ variable "admin_password" {}
 
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
+
+variable "department_name" {
+  default = "Main"
+}
 
 variable "aws_route53_ttl" {
   default = "300"
@@ -87,11 +89,10 @@ module "app" {
 
   unclaimed_email     = "${var.unclaimed_email}"
   unclaimed_password  = "${var.unclaimed_password}"
+  department_name     = "${var.department_name}"
 
   enable_papertrail = "${var.enable_papertrail}"
   papertrail_plan   = "${var.papertrail_plan}"
-
-  sentry_deploy_hook = "${var.sentry_deploy_hook}"
 
   environment = "${var.environment}"
 

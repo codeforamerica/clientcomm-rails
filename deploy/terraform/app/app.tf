@@ -28,13 +28,12 @@ variable "twilio_phone_number" {}
 variable "enable_papertrail" {}
 variable "papertrail_plan" {}
 
-variable "sentry_deploy_hook" {}
-
 variable "admin_email" {}
 variable "admin_password" {}
 variable "report_day" {}
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
+variable "department_name" {}
 
 # Configure the Heroku provider
 provider "heroku" {
@@ -276,6 +275,10 @@ resource "null_resource" "provision_accounts" {
 
   provisioner "local-exec" {
     command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:unclaimed_account[${var.unclaimed_email}, ${var.unclaimed_password}]'"
+  }
+
+  provisioner "local-exec" {
+    command = "heroku run -a ${heroku_app.clientcomm.name} -- rake 'setup:install_department[${var.department_name}]'"
   }
 }
 

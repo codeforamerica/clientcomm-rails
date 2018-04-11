@@ -13,7 +13,7 @@ namespace :setup do
     unclaimed_user = User.find_by(email: ENV['UNCLAIMED_EMAIL'])
 
     department = Department.create(
-      name: args.department_name,
+      name: args.department_name || 'Main',
       phone_number: ENV['TWILIO_PHONE_NUMBER']
     )
 
