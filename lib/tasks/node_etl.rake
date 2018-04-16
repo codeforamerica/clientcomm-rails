@@ -91,8 +91,8 @@ namespace :node_etl do
         comms.each_with_index do |comm, index|
           first_name = "#{node_client['first'].strip} #{node_client['middle'].strip}"
           comm_name = comm['name'].strip
-          comm_name = index.to_s if comm_name.strip.blank?
-          last_name = node_client['last']
+          comm_name = index.to_s if comm_name.blank?
+          last_name = node_client['last'].strip
           last_name = "#{last_name} (#{comm_name})" if multicomms
 
           client = Client.find_or_initialize_by(node_client_id: node_client['clid'], node_comm_id: comm['commid']) do |c|
@@ -108,11 +108,6 @@ namespace :node_etl do
 
           unless client.save
             Rails.logger.error("--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})")
-            Rails.logger.error('>>>>>> ERRORS <<<<<<<')
-            client.errors.full_messages.each do |error_message|
-              Rails.logger.error("!! #{error_message} !!")
-            end
-            Rails.logger.error('>>>>>> ERRORS <<<<<<<')
             errored_clients << {
               clid: client.node_client_id,
               commid: client.node_comm_id,
@@ -124,7 +119,28 @@ namespace :node_etl do
             next
           end
 
-          ReportingRelationship.find_by(user: user, client: client).update!(notes: node_client['otn'])
+          last_contacted_at = node_client['updated']
+          if multicomms
+            last_message = node_production.exec(<<-SQL, [comm['commid']])[0]
+              SELECT m.created
+              FROM comms co
+              LEFT JOIN msgs m ON m.comm = co.commid
+              LEFT JOIN convos cv ON cv.convid = m.convo
+              WHERE co.commid = $1
+              ORDER BY m.created DESC
+              LIMIT 1;
+            SQL
+
+            if last_message.nil? || last_message['created'].blank?
+              last_contacted_at = node_client['created']
+              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} because message.created was missing, for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+            else
+              last_contacted_at = last_message['created']
+              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} instead of #{node_client['updated']} for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+            end
+          end
+
+          ReportingRelationship.find_by(user: user, client: client).update!(notes: node_client['otn'], last_contacted_at: last_contacted_at)
         end
       end
     end
