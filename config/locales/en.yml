@@ -64,6 +64,7 @@ en:
           attributes:
             user:
               blank: You need to pick someone to transfer this client to.
+              existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
         user:
           attributes:
             phone_number:
