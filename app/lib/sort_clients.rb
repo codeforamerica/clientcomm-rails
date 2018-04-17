@@ -1,9 +1,9 @@
 class SortClients
   def self.clients_list(user:)
-    user.clients
-        .select('clients.*, reporting_relationships.has_unread_messages, COALESCE(reporting_relationships.last_contacted_at, reporting_relationships.created_at)')
+    user.reporting_relationships
+        .eager_load(:client)
         .active
-        .order('reporting_relationships.has_unread_messages DESC, COALESCE(reporting_relationships.last_contacted_at, reporting_relationships.created_at) DESC')
+        .order('has_unread_messages DESC, COALESCE(reporting_relationships.last_contacted_at, reporting_relationships.created_at) DESC')
   end
 
   def self.mass_messages_list(user:, selected_clients: [])
