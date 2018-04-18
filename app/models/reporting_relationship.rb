@@ -53,6 +53,10 @@ class ReportingRelationship < ApplicationRecord
     client.full_name
   end
 
+  def timestamp
+    last_contacted_at || created_at
+  end
+
   private
 
   def attachments

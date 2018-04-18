@@ -60,8 +60,9 @@
                   </tr>
                 </thead>
                 <tbody class="list">
-                  <%= f.collection_check_boxes :clients, @clients, :id, :full_name do |b| %>
-                    <% client = b.object %>
+                  <%= f.collection_check_boxes :clients, @reporting_relationships, :id, :display_name do |b| %>
+                    <% rr = b.object %>
+                    <% client = rr.client %>
                     <tr id="<%= dom_id(client) %>" class="<%= 'row--warning' if @mass_message.clients.include? b.value %>">
                       <td>
                         <%= b.label(class: ['cell-content']) do %>
@@ -73,16 +74,16 @@
                           <%= client.full_name %>
                         <% end %>
                       </td>
-                      <td data-timestamp="<%= client.timestamp(user: current_user) %>" class="timestamp">
+                      <td data-timestamp="<%= rr.timestamp %>" class="timestamp">
                         <%= b.label(class: ['cell-content']) do %>
-                          <%= client.last_contacted_at(user: current_user) ? time_ago_in_words(client.last_contacted_at(user: current_user)) : '--' %>
+                          <%= rr.last_contacted_at ? time_ago_in_words(rr.last_contacted_at) : '--' %>
                         <% end %>
                       </td>
                       <% if current_user.department.client_statuses? %>
-                        <td class="hidden-xs client-status" data-client-status="<%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>">
+                        <td class="hidden-xs client-status" data-client-status="<%= rr.client_status ? rr.client_status.name : '--' %>">
                           <%= b.label(class: ['cell-content']) do %>
-                            <i class="hidden-xs status-icon" style="background-color:<%= client.client_status(user: current_user).icon_color if client.client_status(user: current_user) %>"></i>
-                            <%= client.client_status(user: current_user) ? client.client_status(user: current_user).name : '--' %>
+                            <i class="hidden-xs status-icon" style="background-color:<%= rr.client_status.icon_color if rr.client_status %>"></i>
+                            <%= rr.client_status ? rr.client_status.name : '--' %>
                           <% end %>
                         </td>
                       <% end %>

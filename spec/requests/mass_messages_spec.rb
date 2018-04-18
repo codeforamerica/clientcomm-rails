@@ -12,19 +12,22 @@ describe 'Mass messages requests', type: :request, active_job: true do
     let!(:client_1) { create :client, user: user }
     let!(:client_2) { create :client, user: user }
     let!(:client_3) { create :client, user: user }
+    let(:rr_1) { ReportingRelationship.find_by(user: user, client: client_1)  }
+    let(:rr_2) { ReportingRelationship.find_by(user: user, client: client_2)  }
+    let(:rr_3) { ReportingRelationship.find_by(user: user, client: client_3)  }
     let(:message_body) { 'hello this is message one' }
-    let(:clients) { ['', client_1.id, client_3.id] }
+    let(:rrs) { ['', rr_1.id, rr_3.id] }
 
     subject do
       post mass_messages_path, params: {
         mass_message: {
           message: message_body,
-          clients: clients
+          clients: rrs
         }
       }
     end
 
-    it 'sends message to multiple clients' do
+    it 'sends message to multiple rrs' do
       subject
 
       expect(ScheduledMessageJob).to have_been_enqueued.twice
@@ -74,7 +77,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
 
     context 'no message recipients selected' do
       let(:message_body) { '' }
-      let(:clients) { [''] }
+      let(:rrs) { [''] }
 
       it 're-renders the page with errors' do
         subject
@@ -90,7 +93,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
           commit: 'Schedule messages',
           mass_message: {
             message: message_body,
-            clients: clients,
+            clients: rrs,
             send_at: {
               date: send_at.strftime('%m/%d/%Y'),
               time: send_at.strftime('%-l:%M%P')
@@ -99,7 +102,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
         }
       end
 
-      it 'sends message to multiple clients at the right time' do
+      it 'sends message to multiple rrs at the right time' do
         subject
 
         expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
@@ -114,7 +117,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
           post mass_messages_path, params: {
             mass_message: {
               message: message_body,
-              clients: clients,
+              clients: rrs,
               send_at: {
                 date: send_at.strftime('%m/%d/%Y'),
                 time: send_at.strftime('%-l:%M%P')
@@ -123,7 +126,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
           }
         end
 
-        it 'sends message to multiple clients immediately' do
+        it 'sends message to multiple rrs immediately' do
           travel_to now do
             subject
           end
@@ -202,17 +205,17 @@ describe 'Mass messages requests', type: :request, active_job: true do
       end
     end
 
-    context 'using a url to pre-populate clients' do
-      let(:params) { { clients: [user.clients[0].id, user.clients[2].id] } }
+    context 'using a url to pre-populate rrs' do
+      let(:params) { { clients: [user.reporting_relationships[0].id, user.reporting_relationships[2].id] } }
 
       it 'renders checkboxes selected correctly' do
         subject
 
-        clients = user.clients
+        rrs = user.reporting_relationships
 
-        expect(response.body).to include("value=\"#{clients[0].id}\" checked=\"checked\"")
-        expect(response.body).to include("value=\"#{clients[2].id}\" checked=\"checked\"")
-        expect(response.body).to include("value=\"#{clients[1].id}\" name")
+        expect(response.body).to include("value=\"#{rrs[0].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{rrs[2].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{rrs[1].id}\" name")
       end
     end
 

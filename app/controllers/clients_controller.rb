@@ -3,7 +3,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @clients = SortClients.clients_list(user: current_user)
+    @reporting_relationships = current_user.active_reporting_relationships
     @clients_by_status = client_statuses(user: current_user)
 
     analytics_track(

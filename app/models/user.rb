@@ -48,6 +48,22 @@ class User < ApplicationRecord
     'Sorry, this account has been disabled. Please contact an administrator.'
   end
 
+  def active_reporting_relationships
+    reporting_relationships
+      .eager_load(:client)
+      .active
+      .order('has_unread_messages DESC, COALESCE(reporting_relationships.last_contacted_at, reporting_relationships.created_at) DESC')
+  end
+
+  def active_reporting_relationships_with_selection(selected_reporting_relationships: [])
+    reporting_relationships
+      .eager_load(:client)
+      .active
+      .sort_by do |rr|
+        [selected_reporting_relationships.include?(rr.id) ? 1 : 0, rr.timestamp]
+      end.reverse
+  end
+
   private
 
   def no_active_reporting_relationships_if_inactive

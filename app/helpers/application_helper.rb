@@ -11,8 +11,7 @@ module ApplicationHelper
     Message::OUTBOUND
   end
 
-  def client_messages_status(client, user)
-    rr = client.reporting_relationship(user: user)
+  def client_messages_status(rr)
     if rr.has_message_error
       Message::ERROR
     elsif rr.has_unread_messages

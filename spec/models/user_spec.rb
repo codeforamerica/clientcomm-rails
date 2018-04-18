@@ -85,4 +85,80 @@ RSpec.describe User, type: :model do
       end
     end
   end
+  describe '#active_reporting_relationships' do
+    it 'filters inactive clients, sorts by unread messages, then last_contacted_at or created_at' do
+      rr.active = false
+      rr.save!
+      client3 = create :client, first_name: '5'
+      rr3 = ReportingRelationship.create(
+        client: client3,
+        user: user,
+        has_unread_messages: false,
+        created_at: Time.zone.today
+      )
+      client1 = create :client, first_name: '1'
+      rr1 = ReportingRelationship.create(
+        client: client1,
+        user: user,
+        has_unread_messages: true,
+        last_contacted_at: Time.zone.today
+      )
+      client2 = create :client, first_name: '2'
+      rr2 = ReportingRelationship.create(
+        client: client2,
+        user: user,
+        has_unread_messages: true,
+        created_at: Time.zone.today - 5.days
+      )
+      client4 = create :client, first_name: '6'
+      rr4 = ReportingRelationship.create(
+        client: client4,
+        user: user,
+        has_unread_messages: false,
+        last_contacted_at: Time.zone.today - 5.days
+      )
+
+      create :client, user: user, active: false
+
+      sorted_clients = user.active_reporting_relationships
+
+      expect(sorted_clients).to eq [rr1, rr2, rr3, rr4]
+    end
+  end
+  describe '#mass_messages_list' do
+    it 'filters inactive clients, sorts by pre-selected, then last_contacted_at or created_at' do
+      rr.active = false
+      rr.save!
+      client3 = create :client, first_name: '5'
+      rr3 = ReportingRelationship.create(
+        user: user,
+        client: client3,
+        created_at: Time.zone.today
+      )
+      client1 = create :client, first_name: '1'
+      rr1 = ReportingRelationship.create(
+        user: user,
+        client: client1,
+        last_contacted_at: Time.zone.today
+      )
+      client2 = create :client, first_name: '2'
+      rr2 = ReportingRelationship.create(
+        user: user,
+        client: client2,
+        created_at: Time.zone.today - 5.days
+      )
+      client4 = create :client, first_name: '6'
+      rr4 = ReportingRelationship.create(
+        user: user,
+        client: client4,
+        last_contacted_at: Time.zone.today - 5.days
+      )
+
+      create :client, user: user, active: false
+
+      sorted_clients = user.active_reporting_relationships_with_selection(selected_reporting_relationships: [rr1.id, rr2.id])
+
+      expect(sorted_clients).to eq [rr1, rr2, rr3, rr4]
+    end
+  end
 end

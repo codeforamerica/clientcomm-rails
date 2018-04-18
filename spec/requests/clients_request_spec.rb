@@ -593,7 +593,7 @@ describe 'Clients requests', type: :request do
 
           it 'shows active followup banner' do
             client = create :client, first_name: 'Celest', last_name: 'Maldonado'
-            ReportingRelationship.create(
+            rr = ReportingRelationship.create(
               client: client,
               user: user,
               client_status: @client_status,
@@ -605,7 +605,7 @@ describe 'Clients requests', type: :request do
             expect(page.text)
               .to include('You have 1 active client due for follow up')
             expect(response.body)
-              .to include('clients%5B%5D=' + client.id.to_s)
+              .to include('clients%5B%5D=' + rr.id.to_s)
             icon = page.css('i.status-icon').to_s
             expect(icon).to include('style="background-color:#333333"')
           end
