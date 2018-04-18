@@ -54,7 +54,7 @@ class ReportingRelationship < ApplicationRecord
   end
 
   def timestamp
-    last_contacted_at || created_at
+    (last_contacted_at || created_at).to_time.to_i
   end
 
   private
