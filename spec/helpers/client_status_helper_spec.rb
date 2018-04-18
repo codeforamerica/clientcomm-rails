@@ -7,8 +7,8 @@ RSpec.describe ClientStatusHelper, type: :helper do
 
     before do
       create :client_status, name: 'Active', followup_date: 60, department: user.department
-      client = create :client, id: 5
-      ReportingRelationship.create(
+      client = create :client
+      @rr1 = ReportingRelationship.create(
         user: user,
         client: client,
         client_status: ClientStatus.find_by(name: 'Active'),
@@ -17,14 +17,14 @@ RSpec.describe ClientStatusHelper, type: :helper do
     end
 
     it 'returns clients requiring follow-up' do
-      expect(subject).to eq({ 'Active' => [5] })
+      expect(subject).to eq({ 'Active' => [@rr1.id] })
     end
 
     context 'there are inactive clients' do
       before do
         create :client_status, name: 'Active', followup_date: 60, department: user.department
-        client = create :client, id: 6
-        ReportingRelationship.create(
+        client = create :client
+        @rr2 = ReportingRelationship.create(
           user: user,
           client: client,
           client_status: ClientStatus.find_by(name: 'Active'),
@@ -34,15 +34,15 @@ RSpec.describe ClientStatusHelper, type: :helper do
       end
 
       it 'returns only the clients requiring follow-up' do
-        expect(subject).to eq({ 'Active' => [5] })
+        expect(subject).to eq({ 'Active' => [@rr1.id] })
       end
     end
 
     context 'multiple statuses' do
       before do
         create :client_status, name: 'Exited', followup_date: 90, department: user.department
-        client = create :client, id: 6
-        ReportingRelationship.create(
+        client = create :client
+        @rr2 = ReportingRelationship.create(
           user: user,
           client: client,
           client_status: ClientStatus.find_by(name: 'Exited'),
@@ -51,14 +51,14 @@ RSpec.describe ClientStatusHelper, type: :helper do
       end
 
       it 'returns the full set of clients requiring follow-up' do
-        expect(subject).to eq({ 'Active' => [5], 'Exited' => [6] })
+        expect(subject).to eq({ 'Active' => [@rr1.id], 'Exited' => [@rr2.id] })
       end
 
       context 'multiple clients within a status' do
         before do
           create :client_status, name: 'Exited', followup_date: 90, department: user.department
-          client = create :client, id: 7
-          ReportingRelationship.create(
+          client = create :client
+          @rr3 = ReportingRelationship.create(
             user: user,
             client: client,
             client_status: ClientStatus.find_by(name: 'Exited'),
@@ -67,8 +67,8 @@ RSpec.describe ClientStatusHelper, type: :helper do
         end
 
         it 'returns the full set of clients requiring follow-up' do
-          expect(subject['Active']).to eq([5])
-          expect(subject['Exited']).to match_array([6, 7])
+          expect(subject['Active']).to eq([@rr1.id])
+          expect(subject['Exited']).to match_array([@rr2.id, @rr3.id])
         end
       end
     end
@@ -76,8 +76,8 @@ RSpec.describe ClientStatusHelper, type: :helper do
     context 'there are clients that do not require follow-up' do
       before do
         create :client_status, name: 'Exited', followup_date: 90, department: user.department
-        client = create :client, id: 6
-        ReportingRelationship.create(
+        client = create :client
+        @rr2 = ReportingRelationship.create(
           user: user,
           client: client,
           client_status: ClientStatus.find_by(name: 'Exited'),
@@ -86,15 +86,15 @@ RSpec.describe ClientStatusHelper, type: :helper do
       end
 
       it 'does not return clients not requiring follow-up' do
-        expect(subject).to eq({ 'Active' => [5] })
+        expect(subject).to eq({ 'Active' => [@rr1.id] })
       end
     end
 
     context 'there are clients with null follow-up dates' do
       before do
         @status = create :client_status, name: 'Exited', department: user.department
-        client = create :client, id: 6
-        ReportingRelationship.create(
+        client = create :client
+        @rr2 = ReportingRelationship.create(
           user: user,
           client: client,
           client_status: @status,
@@ -104,7 +104,7 @@ RSpec.describe ClientStatusHelper, type: :helper do
 
       it 'does not return clients with statuses with nil followup_date' do
         subject
-        expect(subject).to eq({ 'Active' => [5] })
+        expect(subject).to eq({ 'Active' => [@rr1.id] })
       end
     end
   end
