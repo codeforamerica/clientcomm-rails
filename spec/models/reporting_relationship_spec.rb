@@ -40,7 +40,7 @@ RSpec.describe ReportingRelationship, type: :model do
           )
 
           expect(rr).to_not be_valid
-          expect(rr.errors.added?(:client, :existing_dept_relationship))
+          expect(rr.errors.added?(:client, :existing_dept_relationship, user_full_name: user1.full_name))
             .to eq true
         end
 

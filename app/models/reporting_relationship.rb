@@ -76,6 +76,6 @@ class ReportingRelationship < ApplicationRecord
                        .where.not(user: user)
                        .find_by(client: client)
 
-    errors.add(:client, :existing_dept_relationship) if @matching_record.present? && active
+    errors.add(:client, :existing_dept_relationship, user_full_name: @matching_record.user.full_name) if @matching_record.present? && active
   end
 end

@@ -64,6 +64,7 @@ en:
           attributes:
             user:
               blank: You need to pick someone to transfer this client to.
+            client:
               existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
         user:
           attributes:
@@ -79,7 +80,6 @@ en:
             phone_number:
               invalid: This is not a valid phone number.
               taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
-              existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
               inactive_taken: This client has been deactivated. Please use the Add Client button to recover them.
         message:
           attributes:

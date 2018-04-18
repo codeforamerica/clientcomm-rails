@@ -48,8 +48,10 @@ class ClientsController < ApplicationController
         @client.errors.delete(:phone_number)
         @client.errors.add(
           :phone_number,
-          :existing_dept_relationship,
-          user_full_name: conflicting_user.full_name
+          t(
+            'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+            user_full_name: conflicting_user.full_name
+          )
         )
       elsif current_user.clients.include? @existing_client
         existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
@@ -125,8 +127,10 @@ class ClientsController < ApplicationController
         @client.errors.delete(:phone_number)
         @client.errors.add(
           :phone_number,
-          :existing_dept_relationship,
-          user_full_name: conflicting_user.full_name
+          t(
+            'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+            user_full_name: conflicting_user.full_name
+          )
         )
       end
     end

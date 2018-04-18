@@ -233,9 +233,10 @@ describe 'Clients requests', type: :request do
 
             expect(response.code).to eq '200'
             expect(flash[:alert]).to include 'There was a problem saving this client.'
-            expect(response.body)
-              .to include I18n.t('activerecord.errors.models.client.attributes.phone_number.existing_dept_relationship', user_full_name: other_user.full_name)
-            expect(response.body).to include I18n.t('activerecord.errors.models.client.attributes.phone_number.existing_dept_relationship', user_full_name: other_user.full_name)
+            expect(response.body).to include I18n.t(
+              'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+              user_full_name: other_user.full_name
+            )
             expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
           end
         end
@@ -487,7 +488,7 @@ describe 'Clients requests', type: :request do
                 expect(response.code).to eq '200'
                 expect(flash[:alert]).to include 'There was a problem saving this client.'
                 expect(response.body)
-                  .to include I18n.t('activerecord.errors.models.client.attributes.phone_number.existing_dept_relationship', user_full_name: other_user.full_name)
+                  .to include I18n.t('activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship', user_full_name: other_user.full_name)
                 expect(response.body).to include other_user.full_name
                 expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
               end
