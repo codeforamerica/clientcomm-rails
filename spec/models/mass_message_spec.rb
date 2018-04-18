@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe MassMessage, type: :model do
   it { should validate_presence_of :message }
-  it { should validate_presence_of :clients }
+  it { should validate_presence_of :reporting_relationships }
 
   it 'converts client ids to ints' do
-    message = MassMessage.new(clients: %w(1 2 3))
-    expect(message.clients).to contain_exactly(1, 2, 3)
+    message = MassMessage.new(reporting_relationships: %w(1 2 3))
+    expect(message.reporting_relationships).to contain_exactly(1, 2, 3)
   end
 
-  it 'can be instiantiated with nil clients' do
+  it 'can be instiantiated with nil rrs' do
     expect { MassMessage.new }.to_not raise_error
   end
 

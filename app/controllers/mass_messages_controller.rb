@@ -2,9 +2,9 @@ class MassMessagesController < ApplicationController
   before_action :authenticate_user!
 
   def new
-    @mass_message = MassMessage.new(params.permit(:message, clients: []))
+    @mass_message = MassMessage.new(params.permit(:message, reporting_relationships: []))
     @mass_message.send_at = default_send_at
-    @reporting_relationships = current_user.active_reporting_relationships_with_selection(selected_reporting_relationships: @mass_message.clients)
+    @reporting_relationships = current_user.active_reporting_relationships_with_selection(selected_reporting_relationships: @mass_message.reporting_relationships)
 
     analytics_track(
       label: 'mass_message_compose_view',
@@ -22,13 +22,13 @@ class MassMessagesController < ApplicationController
               end
 
     mass_message = MassMessage.new(
-      clients: mass_message_params[:clients],
+      reporting_relationships: mass_message_params[:reporting_relationships],
       message: mass_message_params[:message],
       user: current_user,
       send_at: send_at
     )
 
-    mass_message.clients = mass_message.clients.reject(&:zero?)
+    mass_message.reporting_relationships = mass_message.reporting_relationships.reject(&:zero?)
 
     if mass_message.invalid? || mass_message.past_message?
       @mass_message = mass_message
@@ -44,7 +44,7 @@ class MassMessagesController < ApplicationController
       analytics_track(
         label: 'mass_message_scheduled',
         data: {
-          recipients_count: mass_message.clients.count
+          recipients_count: mass_message.reporting_relationships.count
         }
       )
     else
@@ -52,7 +52,7 @@ class MassMessagesController < ApplicationController
       analytics_track(
         label: 'mass_message_send',
         data: {
-          recipients_count: mass_message.clients.count
+          recipients_count: mass_message.reporting_relationships.count
         }
       )
     end
@@ -62,7 +62,7 @@ class MassMessagesController < ApplicationController
   private
 
   def send_mass_message(mass_message)
-    mass_message.clients.each do |rr_id|
+    mass_message.reporting_relationships.each do |rr_id|
       rr = ReportingRelationship.find(rr_id)
       send_at = mass_message.send_at || Time.now
       message = Message.create!(
@@ -95,6 +95,6 @@ class MassMessagesController < ApplicationController
   end
 
   def mass_message_params
-    params.require(:mass_message).permit(:message, send_at: %i[date time], clients: [])
+    params.require(:mass_message).permit(:message, send_at: %i[date time], reporting_relationships: [])
   end
 end

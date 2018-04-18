@@ -22,7 +22,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       post mass_messages_path, params: {
         mass_message: {
           message: message_body,
-          clients: rrs
+          reporting_relationships: rrs
         }
       }
     end
@@ -93,7 +93,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
           commit: 'Schedule messages',
           mass_message: {
             message: message_body,
-            clients: rrs,
+            reporting_relationships: rrs,
             send_at: {
               date: send_at.strftime('%m/%d/%Y'),
               time: send_at.strftime('%-l:%M%P')
@@ -117,7 +117,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
           post mass_messages_path, params: {
             mass_message: {
               message: message_body,
-              clients: rrs,
+              reporting_relationships: rrs,
               send_at: {
                 date: send_at.strftime('%m/%d/%Y'),
                 time: send_at.strftime('%-l:%M%P')
@@ -206,7 +206,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     context 'using a url to pre-populate rrs' do
-      let(:params) { { clients: [user.reporting_relationships[0].id, user.reporting_relationships[2].id] } }
+      let(:params) { { reporting_relationships: [user.reporting_relationships[0].id, user.reporting_relationships[2].id] } }
 
       it 'renders checkboxes selected correctly' do
         subject

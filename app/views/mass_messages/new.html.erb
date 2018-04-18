@@ -11,13 +11,13 @@
           <%= form_for @mass_message, builder: GcfFormBuilder do |f| %>
             <%= f.gcf_textarea :message, "Your message" %>
 
-            <div id="client-list" class="form-group <%= 'form-group--error' if @mass_message.errors[:clients].any? %>">
+            <div id="client-list" class="form-group <%= 'form-group--error' if @mass_message.errors[:reporting_relationships].any? %>">
               <p class="form-question">Select recipients</p>
 
-              <% if @mass_message.errors[:clients].any? %>
+              <% if @mass_message.errors[:reporting_relationships].any? %>
                   <div class="text--error">
                     <i class="icon-warning"></i>
-                    <%= @mass_message.errors[:clients].first %>
+                    <%= @mass_message.errors[:reporting_relationships].first %>
                   </div>
               <% end %>
 
@@ -60,10 +60,10 @@
                   </tr>
                 </thead>
                 <tbody class="list">
-                  <%= f.collection_check_boxes :clients, @reporting_relationships, :id, :display_name do |b| %>
+                  <%= f.collection_check_boxes :reporting_relationships, @reporting_relationships, :id, :display_name do |b| %>
                     <% rr = b.object %>
                     <% client = rr.client %>
-                    <tr id="<%= dom_id(client) %>" class="<%= 'row--warning' if @mass_message.clients.include? b.value %>">
+                    <tr id="<%= dom_id(rr) %>" class="<%= 'row--warning' if @mass_message.reporting_relationships.include? b.value %>">
                       <td>
                         <%= b.label(class: ['cell-content']) do %>
                           <%= b.check_box %>

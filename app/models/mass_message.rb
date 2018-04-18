@@ -3,14 +3,14 @@ class MassMessage
   # For validations see:
   # http://railscasts.com/episodes/219-active-model?view=asciicast
 
-  validates_presence_of :message, :clients
+  validates_presence_of :message, :reporting_relationships
 
-  attr_accessor :user, :message, :send_at, :clients
+  attr_accessor :user, :message, :send_at, :reporting_relationships
 
   def initialize(attributes = {})
     super
-    @clients ||= []
-    @clients.map!(&:to_i)
+    @reporting_relationships ||= []
+    @reporting_relationships.map!(&:to_i)
   end
 
   def past_message?

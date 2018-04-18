@@ -111,7 +111,7 @@ en:
           attributes:
             message:
               blank: You need to add a message.
-            clients:
+            reporting_relationships:
               blank: You need to pick at least one recipient.
   datetime:
     distance_in_words:
