@@ -4,12 +4,12 @@ class MassMessagesController < ApplicationController
   def new
     @mass_message = MassMessage.new(params.permit(:message, clients: []))
     @mass_message.send_at = default_send_at
-    @clients = SortClients.mass_messages_list(user: current_user, selected_clients: @mass_message.clients)
+    @reporting_relationships = current_user.active_reporting_relationships_with_selection(selected_reporting_relationships: @mass_message.clients)
 
     analytics_track(
       label: 'mass_message_compose_view',
       data: {
-        clients_count: @clients.count
+        clients_count: @reporting_relationships.count
       }
     )
   end
@@ -32,7 +32,7 @@ class MassMessagesController < ApplicationController
 
     if mass_message.invalid? || mass_message.past_message?
       @mass_message = mass_message
-      @clients = SortClients.mass_messages_list(user: current_user)
+      @reporting_relationships = current_user.active_reporting_relationships
 
       render :new
       return
@@ -62,8 +62,8 @@ class MassMessagesController < ApplicationController
   private
 
   def send_mass_message(mass_message)
-    mass_message.clients.each do |client_id|
-      rr = ReportingRelationship.find_by(client_id: client_id, user: current_user)
+    mass_message.clients.each do |rr_id|
+      rr = ReportingRelationship.find(rr_id)
       send_at = mass_message.send_at || Time.now
       message = Message.create!(
         body: mass_message.message,

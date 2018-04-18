@@ -208,11 +208,11 @@ describe 'Mass messages requests', type: :request, active_job: true do
       it 'renders checkboxes selected correctly' do
         subject
 
-        clients = user.clients
+        rrs = user.reporting_relationships
 
-        expect(response.body).to include("value=\"#{clients[0].id}\" checked=\"checked\"")
-        expect(response.body).to include("value=\"#{clients[2].id}\" checked=\"checked\"")
-        expect(response.body).to include("value=\"#{clients[1].id}\" name")
+        expect(response.body).to include("value=\"#{rrs[0].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{rrs[2].id}\" checked=\"checked\"")
+        expect(response.body).to include("value=\"#{rrs[1].id}\" name")
       end
     end
 
