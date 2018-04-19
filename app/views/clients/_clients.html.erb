@@ -37,6 +37,9 @@
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
         <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(rr) %>">
+          <td class="category" data-category-order="<%= rr.category_info['order'] %>">
+            <i style="color: <%= rr.category_info['color'] %>" class="<%= rr.category_info['icon'] %>" ></i>
+          </td>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
             <a class="cell-content" href="<%= reporting_relationship_path(rr) %>">
               <% if client_messages_status(rr) == 'unread' %>

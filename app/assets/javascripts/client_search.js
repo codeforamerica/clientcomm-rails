@@ -5,6 +5,7 @@ $(document).ready(function(){
 function clientListInit() {
   var clientSearchOptions = {
     valueNames: [
+      { attr: 'data-category-order', name: 'category' }
       { attr: 'data-fullname', name: 'fullname' },
       { attr: 'data-lastname', name: 'lastname' },
       { attr: 'data-timestamp', name: 'timestamp' },
