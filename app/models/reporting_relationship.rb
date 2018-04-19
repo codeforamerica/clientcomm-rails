@@ -13,22 +13,39 @@ class ReportingRelationship < ApplicationRecord
 
   validate :unique_within_department
 
-  CATEGORY = {
+  CATEGORIES = {
+    empty_star: {
+      icon: 'star-empty',
+      color: '#fff',
+      order: 0
+
+    },
     green_star: {
+      icon: 'star-full',
       color: '#093',
       order: 1
     },
     yellow_star: {
+      icon: 'star-full',
       color: '#ffc61e',
       order: 2
     },
     red_star: {
+      icon: 'star-full',
       color: '#d40000',
       order: 3
     }
   }.freeze
 
   attr_reader :matching_record
+
+  def category_info
+    if category.present?
+      CATEGORIES[category]
+    else
+      CATEGORIES['empty_star']
+    end
+  end
 
   def analytics_tracker_data
     {
