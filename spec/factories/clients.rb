@@ -11,6 +11,7 @@ FactoryBot.define do
       notes { Faker::Lorem.sentence }
       has_message_error { false }
       has_unread_messages { false }
+      category { [nil].concat(ReportingRelationship::CATEGORIES.keys.map(&:to_s)[1..ReportingRelationship::CATEGORIES.keys.count - 1]).sample }
     end
 
     after(:create) do |client, evaluator|
@@ -23,7 +24,8 @@ FactoryBot.define do
                 client_status: evaluator.client_status,
                 notes: evaluator.notes,
                 has_message_error: evaluator.has_message_error,
-                has_unread_messages: evaluator.has_unread_messages
+                has_unread_messages: evaluator.has_unread_messages,
+                category: evaluator.category
               )
       end
     end
