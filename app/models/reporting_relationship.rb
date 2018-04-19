@@ -18,7 +18,6 @@ class ReportingRelationship < ApplicationRecord
       icon: 'star-empty',
       color: '#fff',
       order: 0
-
     },
     green_star: {
       icon: 'star-full',
@@ -41,9 +40,9 @@ class ReportingRelationship < ApplicationRecord
 
   def category_info
     if category.present?
-      CATEGORIES[category]
+      CATEGORIES[category.to_sym]
     else
-      CATEGORIES['empty_star']
+      CATEGORIES[:empty_star]
     end
   end
 
