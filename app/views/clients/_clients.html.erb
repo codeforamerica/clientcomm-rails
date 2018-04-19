@@ -9,7 +9,7 @@
   <table class="data-table data-table--selectable">
     <thead>
     <tr>
-      <th class="sort" data-sort="category-order">
+      <th class="sort hidden-xs" data-sort="category-order">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
@@ -42,7 +42,7 @@
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
         <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(rr) %>">
-          <td class="category" data-category-order="<%= rr.category_info[:order] %>">
+          <td class="category-order" data-category-order="<%= rr.category_info[:order] %>">
             <i style="color: <%= rr.category_info[:color] %>" class="icon-<%= rr.category_info[:icon] %>" ></i>
           </td>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
