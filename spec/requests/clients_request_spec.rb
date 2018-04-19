@@ -224,7 +224,7 @@ describe 'Clients requests', type: :request do
           end
         end
 
-        context 'client exists under a different user' do
+        context 'client has a relationship with a different user in the same department' do
           let(:other_user) { create :user, department: user.department }
           let!(:client) { create :client, first_name: 'Archer', last_name: 'Cadena', user: other_user, phone_number: phone_number }
 
