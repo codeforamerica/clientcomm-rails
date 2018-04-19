@@ -13,6 +13,21 @@ class ReportingRelationship < ApplicationRecord
 
   validate :unique_within_department
 
+  CATEGORY = {
+    green_star: {
+      color: '#093',
+      order: 1
+    },
+    yellow_star: {
+      color: '#ffc61e',
+      order: 2
+    },
+    red_star: {
+      color: '#d40000',
+      order: 3
+    }
+  }.freeze
+
   attr_reader :matching_record
 
   def analytics_tracker_data
