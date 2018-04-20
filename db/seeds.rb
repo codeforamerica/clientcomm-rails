@@ -71,6 +71,9 @@ Client.all.sample(15).each do |client|
   client_rr.transfer_to(new_rr)
 end
 
+puts 'Giving Test User Some Extra Clients'
+FactoryBot.create_list :client, 15, user: test_user
+
 puts 'Fuzzing Clients'
 Client.all.sample(15).each do |client|
   existing_users = client.users
