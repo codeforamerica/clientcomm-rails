@@ -339,3 +339,51 @@
 .icon-star-full:before {
   content: "\e9d9";
 }
+.icon-star-empty {
+  font-size: 1.5em;
+}
+.icon-star-empty:before {
+  content: "\e9d9";
+  color: $color-white;
+}
+.icon-star-empty:after {
+  content: "\e9d7";
+  color: $color-white-offset;
+  margin-left: -1em;
+}
+.icon-star-green {
+  font-size: 1.5em;
+}
+.icon-star-green:before {
+  content: "\e9d9";
+  color: $color-green;
+}
+.icon-star-green:after {
+  content: "\e9d7";
+  color: $color-green-offset;
+  margin-left: -1em;
+}
+.icon-star-yellow {
+  font-size: 1.5em;
+}
+.icon-star-yellow:before {
+  content: "\e9d9";
+  color: $color-yellow;
+}
+.icon-star-yellow:after {
+  content: "\e9d7";
+  color: $color-yellow-offset;
+  margin-left: -1em;
+}
+.icon-star-red {
+  font-size: 1.5em;
+}
+.icon-star-red:before {
+  content: "\e9d9";
+  color: $color-red;
+}
+.icon-star-red:after {
+  content: "\e9d7";
+  color: $color-red-offset;
+  margin-left: -1em;
+}

@@ -16,22 +16,18 @@ class ReportingRelationship < ApplicationRecord
   CATEGORIES = {
     empty_star: {
       icon: 'star-empty',
-      color: '#fff',
       order: 99
     },
     green_star: {
-      icon: 'star-full',
-      color: '#093',
+      icon: 'star-green',
       order: 1
     },
     yellow_star: {
-      icon: 'star-full',
-      color: '#ffc61e',
+      icon: 'star-yellow',
       order: 2
     },
     red_star: {
-      icon: 'star-full',
-      color: '#d40000',
+      icon: 'star-red',
       order: 3
     }
   }.freeze
