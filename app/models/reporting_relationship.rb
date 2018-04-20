@@ -17,7 +17,7 @@ class ReportingRelationship < ApplicationRecord
     empty_star: {
       icon: 'star-empty',
       color: '#fff',
-      order: 0
+      order: 99
     },
     green_star: {
       icon: 'star-full',
