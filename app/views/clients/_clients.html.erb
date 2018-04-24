@@ -1,3 +1,7 @@
+<script>
+  var CATEGORIES_LINKED_LIST = <%= ReportingRelationship.categories_linked_list.to_json.html_safe %>
+  var CATEGORIES_OBJECT = <%= ReportingRelationship::CATEGORIES.to_json.html_safe %>
+</script>
 <div id="client-list" class="grid__item">
   <div class="input-group client-search-input">
     <div class="inner-addon left-addon">
@@ -41,9 +45,9 @@
     <tbody class="list">
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
-        <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(rr) %>">
-          <td class="hidden-xs category-order" data-category-order="<%= rr.category_info[:order] %>">
-            <i class="icon-<%= rr.category_info[:icon] %>"></i>
+        <tr id="<%= dom_id(client) %>" data-reporting-relationship-id="<%= rr.id %>" class="<%= client_messages_status(rr) %>">
+          <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
+            <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
           </td>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
             <a class="cell-content" href="<%= reporting_relationship_path(rr) %>">

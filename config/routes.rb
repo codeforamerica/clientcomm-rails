@@ -39,7 +39,7 @@ Rails.application.routes.draw do
   end
 
   resources :mass_messages, only: [:new, :create]
-  resources :reporting_relationships, only: [:create]
+  resources :reporting_relationships, only: [:create, :update]
   resources :reporting_relationships, only: [:show], path: 'conversations' do
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'

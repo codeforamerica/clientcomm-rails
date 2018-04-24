@@ -1,0 +1,35 @@
+production: &default
+  client_categories:
+    no_cat:
+      icon: 'star-empty'
+      order: 99
+    green_star:
+      icon: 'star-green'
+      order: 1
+    yellow_star:
+      icon: 'star-yellow'
+      order: 2
+    red_star:
+      icon: 'star-red'
+      order: 3
+
+development:
+  <<: *default
+
+staging:
+  <<: *default
+
+test:
+  client_categories:
+    no_cat:
+      icon: 'icon1'
+      order: 99
+    cat2:
+      icon: 'icon2'
+      order: 2
+    cat3:
+      icon: 'icon3'
+      order: 3
+    cat4:
+      icon: 'icon4'
+      order: 4
