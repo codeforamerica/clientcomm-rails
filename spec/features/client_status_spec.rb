@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Client status banner' do
+feature 'Client status banner', active_job: true do
   let(:message_body) { 'Close to our bows, strange forms in the water darted hither and thither before us.' }
   let(:department) { create :department }
   let!(:client_status) { create :client_status, name: 'Active', followup_date: 30, department: department }
@@ -34,7 +34,7 @@ feature 'Client status banner' do
     step 'view banner on clients page' do
       visit clients_path
 
-      expect(page).to have_content 'You have 3 active clients due for follow up'
+      expect(page).to have_css '.status-banner-container', text: 'You have 3 active clients due for follow up.'
     end
 
     step 'click on button and go to mass message page' do
@@ -55,10 +55,13 @@ feature 'Client status banner' do
 
     step 'send a message' do
       fill_in 'Your message', with: message_body
-      click_on 'Send'
+      perform_enqueued_jobs do
+        click_on 'Send'
+      end
 
       expect(page).to have_current_path(clients_path)
       expect(page).to have_content I18n.t('flash.notices.mass_message.sent')
+      expect(page).to_not have_css '.status-banner-container', text: /You have \d+ active client[s|] due for follow up./
 
       expect(Message.where(body: message_body).count).to eq older_clients.count
       older_clients.each do |client|
