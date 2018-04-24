@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 20180419203735) do
     t.boolean "has_unread_messages", default: false, null: false
     t.boolean "has_message_error", default: false, null: false
     t.bigint "client_status_id"
-    t.string "category"
+    t.string "category", default: "no_cat"
     t.index ["client_id"], name: "index_reporting_relationships_on_client_id"
     t.index ["client_status_id"], name: "index_reporting_relationships_on_client_status_id"
     t.index ["user_id"], name: "index_reporting_relationships_on_user_id"

@@ -83,10 +83,20 @@ class ReportingRelationshipsController < ApplicationController
     )
   end
 
+  def update
+    @rr = current_user.reporting_relationships.find params[:id]
+
+    @rr.update!(reporting_relationship_update_params)
+  end
+
   private
 
   def transfer_note
     params['transfer_note']
+  end
+
+  def reporting_relationship_update_params
+    params.require(:reporting_relationship).permit(:category)
   end
 
   def reporting_relationship_params

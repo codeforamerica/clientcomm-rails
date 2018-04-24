@@ -46,15 +46,33 @@ feature 'clients have categories' do
 
           expect(page).to have_css('i.icon-star-red')
         end
+
+        within 'tr:nth-child(3)', text: rr4.client.full_name do
+          find('td.category-order').click.click
+
+          expect(page).to have_css('i.icon-star-green')
+        end
       end
 
       step 'user resorts the list' do
-        find('th:first-child').click
+        find('th:first-child').click.click
 
-        expect(page).to have_css('tr:first-child', text: rr1.client.full_name)
-        expect(page).to have_css('tr:nth-child(2)', text: rr4.client.full_name)
+        expect(page).to have_css('tr:first-child', text: rr4.client.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: rr1.client.full_name)
         expect(page).to have_css('tr:nth-child(3)', text: rr2.client.full_name)
         expect(page).to have_css('tr:last-child', text: rr3.client.full_name)
+      end
+
+      step 'when the page is reloaded' do
+        visit clients_path
+
+        within 'tr', text: rr2.client.full_name do
+          expect(page).to have_css('i.icon-star-red')
+        end
+
+        within 'tr', text: rr4.client.full_name do
+          expect(page).to have_css('i.icon-star-green')
+        end
       end
     end
   end
