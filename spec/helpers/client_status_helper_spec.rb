@@ -1,9 +1,9 @@
 require 'rails_helper'
 RSpec.describe ClientStatusHelper, type: :helper do
-  context '#client_statuses' do
+  context '#relationships_with_statuses_due_for_follow_up' do
     let(:user) { create :user }
 
-    subject { helper.client_statuses(user: user) }
+    subject { helper.relationships_with_statuses_due_for_follow_up(user: user) }
 
     before do
       create :client_status, name: 'Active', followup_date: 60, department: user.department

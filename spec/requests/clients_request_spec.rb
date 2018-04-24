@@ -606,7 +606,7 @@ describe 'Clients requests', type: :request do
             expect(page.text)
               .to include('You have 1 active client due for follow up')
             expect(response.body)
-              .to include('clients%5B%5D=' + rr.id.to_s)
+              .to include('reporting_relationships%5B%5D=' + rr.id.to_s)
             icon = page.css('i.status-icon').to_s
             expect(icon).to include('style="background-color:#333333"')
           end
