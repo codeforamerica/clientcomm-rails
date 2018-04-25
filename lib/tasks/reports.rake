@@ -20,7 +20,7 @@ namespace :reports do
     CSV(io) do |csv|
       csv << %w[name email client id length send_at]
       Message.messages.where('length(body) > 1600').find_each do |msg|
-        csv << [msg.user.full_name, msg.user.email, msg.client.full_name, msg.id, msg.body.length, msg.send_at]
+        csv << [msg.user.full_name, msg.user.email, msg.client.full_name, msg.id, msg.body.length, msg.send_at.strftime('%Y-%m-%d %H:%M:%S %Z')]
       end
     end
   end
