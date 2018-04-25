@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, full_name: 'Norris Lesage') }
     let(:client) { create(:client, id: 123456789, user: user) }
     let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
     let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
@@ -139,9 +139,9 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#client_edit_notification' do
-    let(:user1) { create :user, email: 'user1@user1.com' }
-    let(:user2) { create :user, email: 'user2@user2.com' }
-    let(:user3) { create :user, email: 'user3@user3.com' }
+    let(:user1) { create :user, email: 'user1@user1.com', full_name: 'Patience Norbert' }
+    let(:user2) { create :user, email: 'user2@user2.com', full_name: 'Gifford Bergeron' }
+    let(:user3) { create :user, email: 'user3@user3.com', full_name: 'Gabrielle Meunier' }
 
     # for fun, call this number (yes it's real, no it's not a prank)
     let(:client) { create :client, users: [user1, user2, user3], first_name: 'John', last_name: 'Smith', phone_number: '+18443876962' }
