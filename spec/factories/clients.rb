@@ -11,7 +11,7 @@ FactoryBot.define do
       notes { Faker::Lorem.sentence }
       has_message_error { false }
       has_unread_messages { false }
-      category { [nil].concat(ReportingRelationship::CATEGORIES.keys.map(&:to_s)[1..ReportingRelationship::CATEGORIES.keys.count - 1]).sample }
+      category { ReportingRelationship::CATEGORIES.keys.sample }
     end
 
     after(:create) do |client, evaluator|
@@ -19,7 +19,7 @@ FactoryBot.define do
         client.users << evaluator.user
         client.reporting_relationships
               .find_by(user: evaluator.user)
-              .update(
+              .update!(
                 active: evaluator.active,
                 client_status: evaluator.client_status,
                 notes: evaluator.notes,

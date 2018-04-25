@@ -16,7 +16,6 @@ RSpec.describe Client, type: :model do
     let(:user) { create :user }
     let!(:active_clients) { create_list :client, 3, user: user }
     let!(:inactive_clients) { create_list :client, 3, user: user, active: false }
-
     before do
       new_user = create :user
       new_user.clients << active_clients.first
