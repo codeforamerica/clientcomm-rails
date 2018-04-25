@@ -84,8 +84,8 @@ describe 'reports rake tasks' do
     it 'outputs a csv of information about long messages' do
       expected_csv = <<~CSV
         name,email,client,id,length,send_at
-        #{user_name},#{user_email},#{client1.first_name} #{client1.last_name},#{client1.id},#{body_length1},#{send_at1.strftime('%Y-%m-%d %H:%M:%S %Z')}
-        #{user_name},#{user_email},#{client2.first_name} #{client2.last_name},#{client2.id},#{body_length2},#{send_at2.strftime('%Y-%m-%d %H:%M:%S %Z')}
+        #{user_name},#{user_email},#{client1.first_name} #{client1.last_name},#{message1.id},#{body_length1},#{send_at1.strftime('%Y-%m-%d %H:%M:%S %Z')}
+        #{user_name},#{user_email},#{client2.first_name} #{client2.last_name},#{message2.id},#{body_length2},#{send_at2.strftime('%Y-%m-%d %H:%M:%S %Z')}
       CSV
 
       Rake::Task['reports:long_messages'].reenable
