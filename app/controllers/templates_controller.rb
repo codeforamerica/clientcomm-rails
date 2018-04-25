@@ -47,7 +47,7 @@ class TemplatesController < ApplicationController
   def update
     @template = current_user.templates.find(params[:id])
 
-    if @template.update_attributes(template_params)
+    if @template.update(template_params)
       flash[:notice] = 'Template updated'
       redirect_to templates_path
     else
