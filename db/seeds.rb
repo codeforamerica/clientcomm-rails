@@ -33,7 +33,7 @@ Survey.delete_all
 puts 'Creating Departments'
 FactoryBot.create_list :department, 3
 User.all.each do |user|
-  user.update_attributes(department: Department.all.sample)
+  user.update(department: Department.all.sample)
 end
 
 puts 'Create Client Status'

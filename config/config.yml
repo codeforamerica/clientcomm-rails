@@ -22,14 +22,14 @@ staging:
 test:
   client_categories:
     no_cat:
-      icon: 'icon1'
+      icon: 'iconX'
       order: 99
+    cat1:
+      icon: 'icon1'
+      order: 1
     cat2:
       icon: 'icon2'
       order: 2
     cat3:
       icon: 'icon3'
       order: 3
-    cat4:
-      icon: 'icon4'
-      order: 4

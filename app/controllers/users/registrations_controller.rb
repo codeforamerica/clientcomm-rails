@@ -15,7 +15,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     updated = false
 
     if !form_params[:update_settings].nil?
-      updated = @user.update_attributes(user_params)
+      updated = @user.update(user_params)
     elsif !form_params[:change_password].nil?
       updated = update_resource(@user, user_params)
     end

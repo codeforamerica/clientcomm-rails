@@ -17,7 +17,7 @@ describe 'messages rake tasks' do
     let!(:received_message) { create :message, inbound: true, twilio_status: 'received' }
 
     before do
-      load File.expand_path('../../../lib/tasks/messages.rake', __FILE__)
+      load File.expand_path('../../lib/tasks/messages.rake', __dir__)
       Rake::Task.define_task(:environment)
 
       @sid = ENV['TWILIO_ACCOUNT_SID']
