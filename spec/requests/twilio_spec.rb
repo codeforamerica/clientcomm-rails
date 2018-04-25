@@ -412,6 +412,60 @@ describe 'Twilio controller', type: :request, active_job: true do
       end
     end
 
+    context 'client has only an inactive relationship' do
+      let!(:user) { create :user, phone_number: '+19999999999', dept_phone_number: dept_phone_number }
+      let!(:client) { create :client, user: user, phone_number: '+12425551212' }
+
+      before do
+        ReportingRelationship.find_by(user: user, client: client).update!(active: false)
+      end
+
+      it 'responds with text-only message' do
+        twilio_post_voice('To' => dept_phone_number)
+        expect(response.status).to eq 200
+        expect(response.content_type).to eq 'application/xml'
+        expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
+
+        expect_analytics_events(
+          {
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => false,
+              'call_routed' => false,
+              'has_desk_phone' => false
+            }
+          }
+        )
+      end
+
+      context 'a department phone number is set' do
+        let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
+        let!(:unclaimed_user) { create :user, phone_number: unclaimed_number }
+        let!(:department) { Department.find_by(phone_number: dept_phone_number) }
+
+        before do
+          department.update!(user_id: unclaimed_user.id)
+        end
+
+        it 'responds with xml that connects the call to the unclaimed user' do
+          twilio_post_voice('To' => dept_phone_number)
+          expect(response.status).to eq 200
+          expect(response.content_type).to eq 'application/xml'
+          expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
+          expect_analytics_events(
+            {
+              'phonecall_receive' => {
+                'client_id' => client.id,
+                'client_identified' => false,
+                'call_routed' => true,
+                'has_desk_phone' => false
+              }
+            }
+          )
+        end
+      end
+    end
+
     context 'client is in a user case load but user does not have a desk phone' do
       let(:unclaimed_number) { Faker::PhoneNumber.unique.cell_phone }
       let!(:unclaimed_user) { create :user, phone_number: unclaimed_number }
