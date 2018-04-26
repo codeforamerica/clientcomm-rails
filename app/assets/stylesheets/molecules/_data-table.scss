@@ -26,9 +26,6 @@
     }
     &:first-child {
       padding-left: $site-margins/2;
-      @include media($tablet-up) {
-        padding-left: $site-margins;
-      }
     }
     &:last-child {
       padding-right: $site-margins/2;
@@ -185,4 +182,9 @@
       border-right: none;
     }
   }
+}
+
+td.category-order {
+  padding-top: 10px;
+  text-align: center;
 }
