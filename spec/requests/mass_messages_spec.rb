@@ -66,6 +66,17 @@ describe 'Mass messages requests', type: :request, active_job: true do
       )
     end
 
+    context 'has categories set' do
+      before do
+        FeatureFlag.create!(flag: 'categories', enabled: true)
+        rr_1.update!(category: 'cat1')
+      end
+      it 'shows the proper icons' do
+        subject
+        expect(response.body).to include 'icon1'
+      end
+    end
+
     context 'no message body inputted' do
       let(:message_body) { '' }
 

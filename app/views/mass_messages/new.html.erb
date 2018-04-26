@@ -37,6 +37,13 @@
                   <tr>
                     <th class="check-column">
                     </th>
+                    <% if FeatureFlag.enabled?('categories') %>
+                    <th class="sort hidden-xs category-order" data-sort="category-order">
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    </th>
+                    <% end %>
                     <th class="sort" data-sort="lastname">
                       <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                       <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
@@ -69,6 +76,11 @@
                           <%= b.check_box %>
                         <% end %>
                       </td>
+                      <% if FeatureFlag.enabled?('categories') %>
+                      <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
+                        <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
+                      </td>
+                      <% end %>
                       <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
                         <%= b.label(class: ['cell-content']) do %>
                           <%= client.full_name %>

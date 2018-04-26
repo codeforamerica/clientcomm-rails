@@ -13,11 +13,13 @@
   <table class="data-table data-table--selectable">
     <thead>
     <tr>
-      <th class="sort hidden-xs" data-sort="category-order">
+      <% if FeatureFlag.enabled?('categories') %>
+      <th class="sort hidden-xs category-order" data-sort="category-order">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
       </th>
+      <% end %>
       <th class="sort" data-sort="lastname">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
@@ -46,9 +48,11 @@
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
         <tr id="<%= dom_id(client) %>" data-reporting-relationship-id="<%= rr.id %>" class="<%= client_messages_status(rr) %>">
+          <% if FeatureFlag.enabled?('categories') %>
           <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
             <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
           </td>
+          <% end %>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
             <a class="cell-content" href="<%= reporting_relationship_path(rr) %>">
               <% if client_messages_status(rr) == 'unread' %>

@@ -5,6 +5,7 @@ feature 'clients have categories' do
   let(:user) { create :user, department: department }
 
   before do
+    FeatureFlag.create!(flag: 'categories', enabled: true)
     login_as user
   end
 
