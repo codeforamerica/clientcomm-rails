@@ -65,11 +65,6 @@ class NotificationMailer < ApplicationMailer
     end
     @phone_number = previous_changes['phone_number'].try(:[], 0)
 
-    if @phone_number.nil? && @full_name.nil?
-      Rails.logger.info 'Name and phone number did not change.'
-      return
-    end
-
     @notified_user = notified_user
     @editing_user = editing_user
     @client = client

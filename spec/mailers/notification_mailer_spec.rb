@@ -284,21 +284,5 @@ describe NotificationMailer, type: :mailer do
           .to have_link("John Smith's", href: url)
       end
     end
-
-    context 'no phone number or full name are passed in' do
-      subject do
-        NotificationMailer.client_edit_notification(
-          notified_user: user1,
-          editing_user: user2,
-          client: client,
-          previous_changes: {}
-        ).deliver_now
-      end
-
-      it 'logs that name and phone number did not change' do
-        expect(Rails.logger).to receive(:info).with 'Name and phone number did not change.'
-        subject
-      end
-    end
   end
 end

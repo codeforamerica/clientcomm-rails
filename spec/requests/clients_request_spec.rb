@@ -441,6 +441,29 @@ describe 'Clients requests', type: :request do
 
           subject
         end
+
+        context 'neither phone number nor name were changed' do
+          subject do
+            put client_path(existing_client), params: {
+              client: {
+                first_name: existing_client.first_name,
+                last_name: existing_client.last_name,
+                phone_number: existing_client.phone_number,
+                reporting_relationships_attributes: {
+                  '0': {
+                    id: existing_client.reporting_relationships.find_by(user: user).id,
+                    notes: notes
+                  }
+                }
+              }
+            }
+          end
+
+          it 'does not call NotificationMailer#client_edit_notification' do
+            expect(NotificationMailer).to_not receive(:client_edit_notification)
+            subject
+          end
+        end
       end
 
       context 'receives invalid client parameters' do
