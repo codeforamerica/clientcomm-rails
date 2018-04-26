@@ -291,16 +291,13 @@ describe NotificationMailer, type: :mailer do
           notified_user: user1,
           editing_user: user2,
           client: client,
-          previous_changes: client.previous_changes
-        )
+          previous_changes: {}
+        ).deliver_now
       end
 
-      before do
-        allow(client).to receive(:previous_changes).and_return({})
-      end
-
-      it 'throws an error' do
-        expect { subject.message }.to raise_error(ArgumentError, 'Must provide either Phone Number or Full Name')
+      it 'logs that name and phone number did not change' do
+        expect(Rails.logger).to receive(:info).with 'Name and phone number did not change.'
+        subject
       end
     end
   end
