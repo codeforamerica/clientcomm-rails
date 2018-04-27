@@ -292,13 +292,13 @@ describe NotificationMailer, type: :mailer do
           editing_user: user2,
           client: client,
           previous_changes: {}
-        )
+        ).deliver_now
       end
 
-      it 'raises an exception' do
-        # what's the meaningful thing to test here?
-        # can't test for the exception because it's rescued in the NotificationMailer class
-        # expect { subject.message }.to be_an_instance_of(ActionMailer::Base::NullMail)
+      it 'logs that name and phone number did not change' do
+        allow(Rails.logger).to receive(:warn)
+        expect(Rails.logger).to receive(:warn).with('Phone number and name did not change.')
+        subject
       end
     end
   end
