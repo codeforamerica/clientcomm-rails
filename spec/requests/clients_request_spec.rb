@@ -461,9 +461,7 @@ describe 'Clients requests', type: :request do
 
           it 'logs that name and phone number did not change' do
             allow(Rails.logger).to receive(:warn)
-            expect(Rails.logger).to receive(:warn) do |&block|
-              expect(block.call).to eq('Phone number and name did not change.')
-            end
+            expect(Rails.logger).to receive(:warn).with('Phone number and name did not change.')
             perform_enqueued_jobs do
               subject
             end
