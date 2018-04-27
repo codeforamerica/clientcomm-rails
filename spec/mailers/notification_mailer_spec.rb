@@ -284,5 +284,22 @@ describe NotificationMailer, type: :mailer do
           .to have_link("John Smith's", href: url)
       end
     end
+
+    context 'neither phone number nor full name change' do
+      subject do
+        NotificationMailer.client_edit_notification(
+          notified_user: user1,
+          editing_user: user2,
+          client: client,
+          previous_changes: {}
+        )
+      end
+
+      it 'raises an exception' do
+        # what's the meaningful thing to test here?
+        # can't test for the exception because it's rescued in the NotificationMailer class
+        # expect { subject.message }.to be_an_instance_of(ActionMailer::Base::NullMail)
+      end
+    end
   end
 end

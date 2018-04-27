@@ -459,9 +459,14 @@ describe 'Clients requests', type: :request do
             }
           end
 
-          it 'does not call NotificationMailer#client_edit_notification' do
-            expect(NotificationMailer).to_not receive(:client_edit_notification)
-            subject
+          it 'logs that name and phone number did not change' do
+            allow(Rails.logger).to receive(:warn)
+            expect(Rails.logger).to receive(:warn) do |&block|
+              expect(block.call).to eq('Phone number and name did not change.')
+            end
+            perform_enqueued_jobs do
+              subject
+            end
           end
         end
       end

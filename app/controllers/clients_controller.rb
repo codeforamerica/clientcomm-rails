@@ -157,8 +157,6 @@ class ClientsController < ApplicationController
   end
 
   def notify_users_of_changes
-    return unless @client.first_name_previously_changed? || @client.last_name_previously_changed? || @client.phone_number_previously_changed?
-
     if @client.phone_number_previously_changed?
       Message.create_client_edit_markers(
         user: current_user,
