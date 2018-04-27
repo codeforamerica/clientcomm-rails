@@ -72,8 +72,9 @@ describe 'Mass messages requests', type: :request, active_job: true do
         rr_1.update!(category: 'cat1')
       end
       it 'shows the proper icons' do
-        subject
-        expect(response.body).to include 'icon1'
+        get new_mass_message_path
+        expect(response.body).to include 'icon-icon1'
+        expect(response.body).to include 'data-category-order="1"'
       end
     end
 

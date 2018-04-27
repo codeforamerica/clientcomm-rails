@@ -11,7 +11,7 @@ $(document).ready(function(){
     var updateReportingRelationship = _.debounce(function(name) {
       $.ajax({
         type: 'PUT',
-        url: '/reporting_relationships/' + rr_id,
+        url: '/conversations/' + rr_id,
         data: {
           reporting_relationship: {
             category: name
