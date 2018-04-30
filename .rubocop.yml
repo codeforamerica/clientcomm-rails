@@ -48,3 +48,7 @@ Rails/Output:
 Rails/OutputSafety:
   Exclude:
     - 'app/helpers/gcf_form_builder.rb'
+
+# Rubocop likes documentation in weird ways
+Style/Documentation:
+  Enabled: false
