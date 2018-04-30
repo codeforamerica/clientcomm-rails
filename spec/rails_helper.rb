@@ -12,7 +12,7 @@ require 'capybara/poltergeist'
 require 'action_cable/testing/rspec'
 require 'action_cable/testing/rspec/features'
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -40,7 +40,7 @@ end
 WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = ::Rails.root.join('spec', 'fixtures')
   config.infer_spec_type_from_file_location!
   config.include ActiveSupport::Testing::TimeHelpers
   # Filter lines from Rails gems in backtraces.
