@@ -1,13 +1,13 @@
-<% if current_user.department.client_statuses? && @clients_by_status.any? %>
+<% if current_user.department.client_statuses? && @relationships_by_status.any? %>
 <div class="status-banner-container with-padding-large">
-  <% @clients_by_status.each do |status, ids| %>
+  <% @relationships_by_status.each do |status, ids| %>
     <div class="notice">
       <div class="toolbar-responsive">
         <div class="toolbar__left-responsive">
           <span class="text-with-button">You have <%= ids.count %> <strong><%= status.downcase %></strong> <%= 'client'.pluralize(ids.count) %> due for follow up.</span>
         </div>
         <div class="toolbar__right-responsive">
-          <%= link_to "Message them", new_mass_message_path(clients: ids), class: "button button--small with-no-padding" %>
+          <%= link_to "Message them", new_mass_message_path(reporting_relationships: ids), class: "button button--small with-no-padding" %>
         </div>
       </div>
     </div>

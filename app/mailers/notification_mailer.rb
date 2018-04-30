@@ -1,5 +1,10 @@
 class NotificationMailer < ApplicationMailer
   helper ApplicationHelper
+  class NoPhoneNumberOrNameChangeError < ArgumentError; end
+
+  rescue_from NoPhoneNumberOrNameChangeError do |exception|
+    Rails.logger.warn exception.message
+  end
 
   def message_notification(user, message)
     @client = message.client
@@ -65,7 +70,7 @@ class NotificationMailer < ApplicationMailer
     end
     @phone_number = previous_changes['phone_number'].try(:[], 0)
 
-    raise ArgumentError, 'Must provide either Phone Number or Full Name' if @phone_number.nil? && @full_name.nil?
+    raise NoPhoneNumberOrNameChangeError, 'Phone number and name did not change.' if @phone_number.nil? && @full_name.nil?
 
     @notified_user = notified_user
     @editing_user = editing_user

@@ -76,7 +76,7 @@ class TwilioController < ApplicationController
     department = Department.find_by(phone_number: params['To'])
     user = department.users
                      .joins(:reporting_relationships)
-                     .find_by(reporting_relationships: { client: client })
+                     .find_by(reporting_relationships: { client: client, active: true })
 
     if user.try(:phone_number).present?
       render :xml => voice_client.dial_number(phone_number: user.phone_number)

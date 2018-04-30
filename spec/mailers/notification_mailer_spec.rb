@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe NotificationMailer, type: :mailer do
   describe '#message_notification' do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, full_name: 'Norris Lesage') }
     let(:client) { create(:client, id: 123456789, user: user) }
     let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
     let(:media_path) { 'spec/fixtures/fluffy_cat.jpg' }
@@ -139,9 +139,9 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#client_edit_notification' do
-    let(:user1) { create :user, email: 'user1@user1.com' }
-    let(:user2) { create :user, email: 'user2@user2.com' }
-    let(:user3) { create :user, email: 'user3@user3.com' }
+    let(:user1) { create :user, email: 'user1@user1.com', full_name: 'Patience Norbert' }
+    let(:user2) { create :user, email: 'user2@user2.com', full_name: 'Gifford Bergeron' }
+    let(:user3) { create :user, email: 'user3@user3.com', full_name: 'Gabrielle Meunier' }
 
     # for fun, call this number (yes it's real, no it's not a prank)
     let(:client) { create :client, users: [user1, user2, user3], first_name: 'John', last_name: 'Smith', phone_number: '+18443876962' }
@@ -285,22 +285,20 @@ describe NotificationMailer, type: :mailer do
       end
     end
 
-    context 'no phone number or full name are passed in' do
+    context 'neither phone number nor full name change' do
       subject do
         NotificationMailer.client_edit_notification(
           notified_user: user1,
           editing_user: user2,
           client: client,
-          previous_changes: client.previous_changes
-        )
+          previous_changes: {}
+        ).deliver_now
       end
 
-      before do
-        allow(client).to receive(:previous_changes).and_return({})
-      end
-
-      it 'throws an error' do
-        expect { subject.message }.to raise_error(ArgumentError, 'Must provide either Phone Number or Full Name')
+      it 'logs that name and phone number did not change' do
+        allow(Rails.logger).to receive(:warn)
+        expect(Rails.logger).to receive(:warn).with('Phone number and name did not change.')
+        subject
       end
     end
   end

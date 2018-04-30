@@ -441,6 +441,32 @@ describe 'Clients requests', type: :request do
 
           subject
         end
+
+        context 'neither phone number nor name were changed' do
+          subject do
+            put client_path(existing_client), params: {
+              client: {
+                first_name: existing_client.first_name,
+                last_name: existing_client.last_name,
+                phone_number: existing_client.phone_number,
+                reporting_relationships_attributes: {
+                  '0': {
+                    id: existing_client.reporting_relationships.find_by(user: user).id,
+                    notes: notes
+                  }
+                }
+              }
+            }
+          end
+
+          it 'logs that name and phone number did not change' do
+            allow(Rails.logger).to receive(:warn)
+            expect(Rails.logger).to receive(:warn).with('Phone number and name did not change.')
+            perform_enqueued_jobs do
+              subject
+            end
+          end
+        end
       end
 
       context 'receives invalid client parameters' do
@@ -606,7 +632,7 @@ describe 'Clients requests', type: :request do
             expect(page.text)
               .to include('You have 1 active client due for follow up')
             expect(response.body)
-              .to include('clients%5B%5D=' + rr.id.to_s)
+              .to include('reporting_relationships%5B%5D=' + rr.id.to_s)
             icon = page.css('i.status-icon').to_s
             expect(icon).to include('style="background-color:#333333"')
           end

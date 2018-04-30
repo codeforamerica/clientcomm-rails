@@ -4,8 +4,7 @@ class ClientsController < ApplicationController
 
   def index
     @reporting_relationships = current_user.active_reporting_relationships
-    @clients_by_status = client_statuses(user: current_user)
-
+    @relationships_by_status = relationships_with_statuses_due_for_follow_up(user: current_user)
     analytics_track(
       label: 'clients_view',
       data: current_user.analytics_tracker_data
