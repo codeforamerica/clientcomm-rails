@@ -22,7 +22,7 @@
                 <i class="button__icon--left icon-add"></i> New client
               <% end %>
               <% if FeatureFlag.enabled?("mass_messages") %>
-                <%= link_to new_mass_message_path, class: "button button--small button--primary" do %>
+                <%= link_to new_mass_message_path, class: "button button--small button--primary button--mass-message" do %>
                   Mass message
                 <% end %>
               <% end %>

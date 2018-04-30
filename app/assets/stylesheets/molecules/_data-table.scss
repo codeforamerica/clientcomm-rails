@@ -24,12 +24,6 @@
       top: .5em;
       bottom: .5em;
     }
-    &:first-child {
-      padding-left: $site-margins/2;
-      @include media($tablet-up) {
-        padding-left: $site-margins;
-      }
-    }
     &:last-child {
       padding-right: $site-margins/2;
       @include media($tablet-up) {
@@ -56,16 +50,6 @@
     .is-selected {
       color: $color-teal;
       font-weight: 700;
-    }
-    &:first-child {
-      .cell-content {
-        padding-left: $site-margins/2;
-      }
-      @include media($tablet-up) {
-        .cell-content {
-          padding-left: $site-margins;
-        }
-      }
     }
     &:last-child {
       .cell-content {
@@ -187,17 +171,31 @@
   }
 }
 
+th.lastname-order {
+  padding-left: $site-margins/2;
+  @include media($tablet-up) {
+    padding-left: $site-margins;
+  }
+}
+
+td.lastname {
+  .cell-content {
+    padding-left: $site-margins/2;
+  }
+  @include media($tablet-up) {
+    .cell-content {
+      padding-left: $site-margins;
+    }
+  }
+}
+
 td.category-order {
   padding-top: 10px;
-  padding-right: 20px;
   text-align: center;
 }
 
 th.category-order {
   text-align: center;
-  padding-right: 30px;
+  padding-right: 10px;
   padding-left: 10px;
-  &:first-child {
-    padding-left: 10px;
-  }
 }
