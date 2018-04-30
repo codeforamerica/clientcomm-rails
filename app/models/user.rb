@@ -1,8 +1,8 @@
 class User < ApplicationRecord
-  has_many :reporting_relationships
+  has_many :reporting_relationships, dependent: :nullify
   has_many :clients, through: :reporting_relationships
   has_many :messages, through: :reporting_relationships
-  has_many :templates
+  has_many :templates, dependent: :nullify
   belongs_to :department
 
   scope :active, -> { where(active: true) }

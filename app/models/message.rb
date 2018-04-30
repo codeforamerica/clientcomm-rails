@@ -5,7 +5,7 @@ class Message < ApplicationRecord
   belongs_to :original_reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'original_reporting_relationship_id'
   has_one :client, through: :reporting_relationship
   has_one :user, through: :reporting_relationship
-  has_many :attachments
+  has_many :attachments, dependent: :nullify
 
   before_validation :set_original_reporting_relationship, on: :create
 
