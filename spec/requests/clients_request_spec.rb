@@ -379,7 +379,7 @@ describe 'Clients requests', type: :request do
       it 'tracks the updating of a client' do
         rr = ReportingRelationship.find_by(user: user, client: existing_client)
         create :message, reporting_relationship: rr, inbound: false
-        create :message, reporting_relationship: rr, inbound: false, send_at: Time.now.tomorrow
+        create :message, reporting_relationship: rr, inbound: false, send_at: Time.zone.now.tomorrow
         create :message, reporting_relationship: rr, inbound: true
         attachment_message = create :message, reporting_relationship: rr, inbound: true
         create :attachment, message: attachment_message
@@ -616,7 +616,7 @@ describe 'Clients requests', type: :request do
         subject { get clients_path }
 
         context 'clients with active statuses require follow ups' do
-          let(:active_contacted_at) { Time.now - 26.days }
+          let(:active_contacted_at) { Time.zone.now - 26.days }
 
           it 'shows active followup banner' do
             client = create :client, first_name: 'Celest', last_name: 'Maldonado'

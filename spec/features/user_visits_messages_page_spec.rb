@@ -52,7 +52,7 @@ feature 'User clicks on client in list', :js do
         let(:messagetwo) { build :message, reporting_relationship: rr }
 
         before do
-          today = Time.now
+          today = Time.zone.now
 
           travel_to 2.days.ago do
             messageone.send_at = today
@@ -60,7 +60,7 @@ feature 'User clicks on client in list', :js do
           end
 
           travel_to 1.day.ago do
-            messagetwo.send_at = Time.now
+            messagetwo.send_at = Time.zone.now
             messagetwo.save
           end
 

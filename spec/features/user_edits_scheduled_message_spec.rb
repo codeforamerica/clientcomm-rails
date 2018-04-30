@@ -8,7 +8,7 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }
   let(:rrone) { ReportingRelationship.find_by(client: clientone, user: userone) }
-  let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
+  let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
   let(:new_future_date) { future_date.change(min: 0, day: 4) }
 
   scenario 'user schedules and edits message for client', :js do

@@ -10,9 +10,9 @@ RSpec.describe Message, type: :model do
     let(:rr) { message.reporting_relationship }
 
     before do
-      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 2)
-      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 3)
-      create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
+      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
+      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
     end
 
     subject do
@@ -20,7 +20,7 @@ RSpec.describe Message, type: :model do
     end
 
     context 'message is first' do
-      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 1) }
+      let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 1) }
 
       it 'sends analytics tracking data' do
         expect(subject).to eq true
@@ -28,7 +28,7 @@ RSpec.describe Message, type: :model do
     end
 
     context 'message is not first' do
-      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 5) }
+      let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 5) }
 
       it 'sends analytics tracking data' do
         expect(subject).to eq false
@@ -41,8 +41,8 @@ RSpec.describe Message, type: :model do
     let(:user_id) { 10 }
     let(:body_length) { 10 }
     let(:body) { Faker::Lorem.characters(body_length) }
-    let(:send_at) { Time.new(2010, 1, 1, 1, 1, 1) }
-    let(:created_at) { Time.new(2009, 2, 1, 1, 1, 1) }
+    let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 1) }
+    let(:created_at) { Time.zone.local(2009, 2, 1, 1, 1, 1) }
     let(:user) { create :user, id: user_id }
     let(:client) { create :client, id: client_id, user: user }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
@@ -76,12 +76,12 @@ RSpec.describe Message, type: :model do
     end
 
     context 'there are many messages' do
-      let(:send_at) { Time.new(2010, 1, 1, 1, 1, 5) }
+      let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 5) }
 
       before do
-        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 2)
-        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 3)
-        create :message, reporting_relationship: rr, send_at: Time.new(2010, 1, 1, 1, 1, 4)
+        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
+        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
+        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
       end
 
       it 'sends analytics tracking data' do
@@ -331,8 +331,8 @@ RSpec.describe Message, type: :model do
 
             before do
               create :reporting_relationship, user: less_recent_active_user, client: client
-              travel_to Time.now + 1.day
-              rr.update(updated_at: Time.now)
+              travel_to Time.zone.now + 1.day
+              rr.update(updated_at: Time.zone.now)
             end
 
             after do
@@ -355,7 +355,7 @@ RSpec.describe Message, type: :model do
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:message) { instance_double(Message) }
     let(:callback_url) { Rails.application.routes.url_helpers.incoming_sms_status_url }
-    let(:now) { Time.now.change(usec: 0) }
+    let(:now) { Time.zone.now.change(usec: 0) }
 
     subject { Message.send_unclaimed_autoreply(rr: rr) }
 
@@ -394,7 +394,7 @@ RSpec.describe Message, type: :model do
     end
 
     it 'creates two messages with client edit marker properties' do
-      time = Time.now.change(usec: 0)
+      time = Time.zone.now.change(usec: 0)
 
       travel_to time do
         subject
@@ -444,7 +444,7 @@ RSpec.describe Message, type: :model do
     end
 
     it 'creates two message with transfer_marker properties' do
-      time = Time.now.change(usec: 0)
+      time = Time.zone.now.change(usec: 0)
 
       travel_to time do
         subject

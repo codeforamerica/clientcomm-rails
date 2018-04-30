@@ -50,7 +50,7 @@ describe 'Clients sorting order', type: :request do
       ReportingRelationship.create(
         user: user,
         client: clienttwo,
-        last_contacted_at: Time.now
+        last_contacted_at: Time.zone.now
       )
       clientthree = create :client
       ReportingRelationship.create(

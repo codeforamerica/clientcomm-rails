@@ -68,7 +68,7 @@ class User < ApplicationRecord
     output = {}
 
     ClientStatus.where.not(followup_date: nil).map do |status|
-      followup_date = Time.now - status.followup_date.days
+      followup_date = Time.zone.now - status.followup_date.days
       warning_period = 5.days
 
       found_rrs = reporting_relationships

@@ -16,7 +16,7 @@ class ScheduledMessagesController < ApplicationController
 
     # the list of past messages
     @messages = reporting_relationship.messages
-                                      .where('send_at < ? OR send_at IS NULL', Time.now)
+                                      .where('send_at < ? OR send_at IS NULL', Time.zone.now)
                                       .order('created_at ASC')
     @messages.where(read: false).update(read: true)
 

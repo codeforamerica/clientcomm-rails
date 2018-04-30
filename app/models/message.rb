@@ -20,7 +20,7 @@ class Message < ApplicationRecord
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
-  scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
+  scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
   scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
   scope :messages, -> { where(marker_type: nil) }
@@ -65,7 +65,7 @@ class Message < ApplicationRecord
         body: message_body,
         marker_type: MARKER_CLIENT_EDIT,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
@@ -84,7 +84,7 @@ class Message < ApplicationRecord
       ),
       marker_type: MARKER_TRANSFER,
       read: true,
-      send_at: Time.now,
+      send_at: Time.zone.now,
       inbound: true,
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
@@ -98,7 +98,7 @@ class Message < ApplicationRecord
       ),
       marker_type: MARKER_TRANSFER,
       read: true,
-      send_at: Time.now,
+      send_at: Time.zone.now,
       inbound: true,
       number_to: receiving_rr.user.department.phone_number,
       number_from: receiving_rr.client.phone_number
@@ -203,7 +203,7 @@ class Message < ApplicationRecord
   end
 
   def self.send_unclaimed_autoreply(rr:)
-    now = Time.now
+    now = Time.zone.now
     unclaimed_response = rr.department.unclaimed_response
     unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
     message = Message.create!(
@@ -217,7 +217,7 @@ class Message < ApplicationRecord
   end
 
   def send_message
-    sent = Time.now >= send_at
+    sent = Time.zone.now >= send_at
     MessageBroadcastJob.perform_now(message: self) if sent
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
   end

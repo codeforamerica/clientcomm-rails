@@ -34,7 +34,7 @@ feature 'user transfers client', :js, active_job: true do
       select transfer_user.full_name, from: 'reporting_relationship_user_id'
       fill_in 'transfer_note', with: note
 
-      @time_send = Time.now
+      @time_send = Time.zone.now
       travel_to @time_send do
         perform_enqueued_jobs do
           click_on "Transfer #{clientone.full_name}"
@@ -74,7 +74,7 @@ feature 'user transfers client', :js, active_job: true do
 
       select myuser.full_name, from: 'reporting_relationship_user_id'
 
-      @time_return = Time.now
+      @time_return = Time.zone.now
       travel_to @time_return do
         perform_enqueued_jobs do
           click_on "Transfer #{clientone.full_name}"

@@ -75,7 +75,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'there are scheduled messages' do
         it 'does not show scheduled messages in the main timeline' do
-          message = create :message, reporting_relationship: rr, send_at: Time.now.tomorrow
+          message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -84,7 +84,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
         it 'shows messages after their send_at date' do
           travel_to 1.day.ago do
-            create :message, reporting_relationship: rr, body: body, send_at: Time.now
+            create :message, reporting_relationship: rr, body: body, send_at: Time.zone.now
           end
 
           rr = user.reporting_relationships.find_by(client: client)
@@ -99,7 +99,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         it 'shows a link when scheduled messages exist' do
-          create_list :message, 2, reporting_relationship: rr, send_at: Time.now.tomorrow
+          create_list :message, 2, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -171,7 +171,7 @@ describe 'Messages requests', type: :request, active_job: true do
     describe 'DELETE#destroy' do
       context 'there are scheduled messages' do
         it 'deletes a scheduled message' do
-          message = create :message, reporting_relationship: rr, send_at: Time.now.tomorrow
+          message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           delete message_path(message)
 
@@ -260,7 +260,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'past date' do
-        let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
+        let(:time_in_past) { Time.zone.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
             date: time_in_past.strftime('%m/%d/%Y'),
@@ -284,7 +284,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'valid date' do
-        let(:time_to_send) { Time.now.tomorrow.change(sec: 0) }
+        let(:time_to_send) { Time.zone.now.tomorrow.change(sec: 0) }
         let(:message_send_at) {
           {
             date: time_to_send.strftime('%m/%d/%Y'),
@@ -322,7 +322,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'PUT#update' do
       let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-      let!(:message) { create(:message, reporting_relationship: rr, body: body, send_at: Time.now.tomorrow.change(sec: 0)) }
+      let!(:message) { create(:message, reporting_relationship: rr, body: body, send_at: Time.zone.now.tomorrow.change(sec: 0)) }
       let(:post_params) {
         {
           message: { body: new_body, send_at: message_send_at }
@@ -334,7 +334,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:message_send_at) { { date: 'some_date', time: 'some_time' } }
 
         it 'updates the message model' do
-          new_time_to_send = Time.now.change(sec: 0)
+          new_time_to_send = Time.zone.now.change(sec: 0)
           allow(DateParser).to receive(:parse)
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(new_time_to_send)
@@ -352,7 +352,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       context 'invalid update' do
-        let(:time_in_past) { Time.now.yesterday.change(sec: 0) }
+        let(:time_in_past) { Time.zone.now.yesterday.change(sec: 0) }
         let(:message_send_at) {
           {
             date: time_in_past.strftime('%m/%d/%Y'),

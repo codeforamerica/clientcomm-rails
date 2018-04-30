@@ -18,7 +18,7 @@ class MassMessagesController < ApplicationController
     send_at = if params[:commit] == 'Schedule messages'
                 DateParser.parse(mass_message_params[:send_at][:date], mass_message_params[:send_at][:time])
               else
-                Time.now
+                Time.zone.now
               end
 
     mass_message = MassMessage.new(
@@ -39,7 +39,7 @@ class MassMessagesController < ApplicationController
     end
 
     send_mass_message(mass_message)
-    if mass_message.send_at > Time.now
+    if mass_message.send_at > Time.zone.now
       flash[:notice] = I18n.t('flash.notices.mass_message.scheduled')
       analytics_track(
         label: 'mass_message_scheduled',
@@ -64,7 +64,7 @@ class MassMessagesController < ApplicationController
   def send_mass_message(mass_message)
     mass_message.reporting_relationships.each do |rr_id|
       rr = ReportingRelationship.find(rr_id)
-      send_at = mass_message.send_at || Time.now
+      send_at = mass_message.send_at || Time.zone.now
       message = Message.create!(
         body: mass_message.message,
         reporting_relationship: rr,
@@ -76,7 +76,7 @@ class MassMessagesController < ApplicationController
       )
 
       message.send_message
-      if mass_message.send_at > Time.now
+      if mass_message.send_at > Time.zone.now
         analytics_track(
           label: 'message_scheduled',
           data: message.analytics_tracker_data.merge(mass_message: true)

@@ -28,7 +28,7 @@ describe AddReportingRelationshipToMessage do
                                client: client,
                                number_to: '+17605559331',
                                number_from: '+17605556230',
-                               send_at: Time.now)
+                               send_at: Time.zone.now)
 
       rr = ReportingRelationship.find_by(user: user, client: client)
 
@@ -46,7 +46,7 @@ describe AddReportingRelationshipToMessage do
                                  client: client,
                                  number_to: '+17605559331',
                                  number_from: '+17605556230',
-                                 send_at: Time.now)
+                                 send_at: Time.zone.now)
 
         expect(client.users).to_not include(user)
         subject

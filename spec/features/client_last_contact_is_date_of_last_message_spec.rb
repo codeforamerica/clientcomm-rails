@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature 'User schedules a message for later and submits it', :js, active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.You have an appointment tomorrow at 10am.' }
-  let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
+  let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
   let(:user) { create :user }
   let(:client) { build :client }
 

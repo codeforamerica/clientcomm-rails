@@ -126,7 +126,7 @@ class ReportingRelationshipsController < ApplicationController
 
   def past_messages
     @rr.messages
-       .where('send_at < ?', Time.now)
+       .where('send_at < ?', Time.zone.now)
        .order('send_at ASC')
   end
 end
