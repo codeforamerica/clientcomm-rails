@@ -86,13 +86,13 @@ feature 'sending mass messages', active_job: true do
 
       expect(find('#select_all')['checked']).to eq true
 
-      id_1 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_1.phone_number), user: user).id
-      id_2 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_2.phone_number), user: user).id
-      id_3 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_3.phone_number), user: user).id
+      id1 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_1.phone_number), user: user).id
+      id2 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_2.phone_number), user: user).id
+      id3 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_3.phone_number), user: user).id
 
-      expect(find("#mass_message_reporting_relationships_#{id_1}")['checked']).to eq(true)
-      expect(find("#mass_message_reporting_relationships_#{id_2}")['checked']).to eq(true)
-      expect(find("#mass_message_reporting_relationships_#{id_3}")['checked']).to eq(true)
+      expect(find("#mass_message_reporting_relationships_#{id1}")['checked']).to eq(true)
+      expect(find("#mass_message_reporting_relationships_#{id2}")['checked']).to eq(true)
+      expect(find("#mass_message_reporting_relationships_#{id3}")['checked']).to eq(true)
 
       find('tr', text: client_1.full_name).click
       expect(find('#select_all')['checked']).to eq(false)

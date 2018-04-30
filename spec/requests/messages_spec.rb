@@ -50,14 +50,14 @@ describe 'Messages requests', type: :request, active_job: true do
 
       it 'shows all past messages for a given relationship' do
         message = create :message, reporting_relationship: rr
-        message_2 = create :message, reporting_relationship: rr
-        message_3 = create :message
+        message2 = create :message, reporting_relationship: rr
+        message3 = create :message
 
         get reporting_relationship_path(rr)
 
         expect(response.body).to include(message.body)
-        expect(response.body).to include(message_2.body)
-        expect(response.body).to_not include(message_3.body)
+        expect(response.body).to include(message2.body)
+        expect(response.body).to_not include(message3.body)
       end
 
       it 'marks all messages read when index loaded' do
