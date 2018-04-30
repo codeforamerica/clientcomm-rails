@@ -18,7 +18,7 @@ class ScheduledMessagesController < ApplicationController
     @messages = reporting_relationship.messages
                                       .where('send_at < ? OR send_at IS NULL', Time.now)
                                       .order('created_at ASC')
-    @messages.update_all(read: true)
+    @messages.where(read: false).update(read: true)
 
     @messages_scheduled = reporting_relationship.messages.scheduled
   end
