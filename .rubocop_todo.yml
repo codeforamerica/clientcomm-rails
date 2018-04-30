@@ -339,11 +339,7 @@ Style/SymbolArray:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline.
 # SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInArrayLiteral:
-  Exclude:
-    - 'spec/requests/templates_request_spec.rb'
-    - 'spec/requests/twilio_spec.rb'
-Style/TrailingCommaInHashLiteral:
+Style/TrailingCommaInLiteral:
   Exclude:
     - 'spec/requests/templates_request_spec.rb'
     - 'spec/requests/twilio_spec.rb'
