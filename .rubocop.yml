@@ -43,3 +43,8 @@ Style/BlockDelimiters:
 Rails/Output:
   Exclude:
     - 'db/seeds.rb'
+
+# Form builder needs html_safe to work
+Rails/OutputSafety:
+  Exclude:
+    - 'app/helpers/gcf_form_builder.rb'
