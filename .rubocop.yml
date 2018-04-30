@@ -52,3 +52,9 @@ Rails/OutputSafety:
 # Rubocop likes documentation in weird ways
 Style/Documentation:
   Enabled: false
+
+# We're not planning on a ruby 3 migration any time soon
+# more info: https://wyeworks.com/blog/2015/12/1/immutable-strings-in-ruby-2-dot-3
+# more info: https://rubocop.readthedocs.io/en/latest/cops_style/#stylefrozenstringliteralcomment
+Style/FrozenStringLiteralComment:
+  Enabled: false
