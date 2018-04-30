@@ -22,6 +22,8 @@ $line-height-display: 1.3em;
 
 // Colors
 $color-background:    #fff;
+$color-white:         #fff;
+$color-white-offset:  #d8d8d8;
 $color-header:        #fafaf9;
 $color-teal:          #019c86;
 $color-dark-teal:     shade($color-teal, 20%);
@@ -32,10 +34,13 @@ $color-dark-grey:     #666;
 $color-grey:          #aaa;
 $color-light-grey:    #eaeae9;
 $color-green:         #093;
+$color-green-offset:  #007326;
 $color-light-green:   #eaeae2;
 $color-yellow:        #ffc61e;
+$color-yellow-offset: #d9a91a;
 $color-orange:        #d48c00;
 $color-red:           #d40000;
+$color-red-offset:    #ad0000;
 
 
 // Breakpoints

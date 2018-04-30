@@ -31,6 +31,8 @@ gem 'skylight'
 gem 'aws-sdk', '~> 2'
 gem 'paperclip'
 
+gem 'lodash-rails'
+
 group :test do
   gem 'capybara-screenshot'
   gem 'codeclimate-test-reporter', '1.0.8', require: false

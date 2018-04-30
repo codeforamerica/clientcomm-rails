@@ -23,17 +23,13 @@
 
 .toolbar__right-responsive {
   float: left;
-  margin-right: .5em;
   margin-left: 0;
   @include media($mobile-up) {
     float: right;
-    margin-left: .5em;
   }
   .toolbar__item {
-    margin-right: .5em;
     margin-left: 0;
     @include media($mobile-up) {
-      margin-right: 0;
       margin-left: .5em;
       display: inline-block;
       float: left;

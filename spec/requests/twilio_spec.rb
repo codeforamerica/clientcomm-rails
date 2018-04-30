@@ -333,7 +333,7 @@ describe 'Twilio controller', type: :request, active_job: true do
                                     'client_id' => client.id,
                                     'message_id' => msgone.id,
                                     'message_length' => msgone.body.length,
-                                    'attachments_count' => 0,
+                                    'attachments_count' => 0
                                   }
                                 })
 

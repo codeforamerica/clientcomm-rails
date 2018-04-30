@@ -321,4 +321,33 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       end
     end
   end
+
+  describe 'PUT#update' do
+    let(:category) { 'cat2' }
+    subject do
+      put reporting_relationship_path(rr), params: {
+        reporting_relationship: {
+          category: category
+        }
+      }
+    end
+
+    before do
+      rr.category = 'no_cat'
+      rr.save!
+    end
+
+    it 'changes the category' do
+      expect { subject }.to change { rr.reload.category }.from('no_cat').to(category)
+      expect(response.code).to eq('204')
+    end
+
+    context 'the category set is not allowed' do
+      let(:category) { 'not allowed' }
+
+      it 'throws an activerecord error' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
 end

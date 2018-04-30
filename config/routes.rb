@@ -38,9 +38,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # PUT reporting_relationships_path(rr) => /reporting_relationship/:id
+  # GET reporting_relationships_path(rr) => /conversations/:id
+
   resources :mass_messages, only: [:new, :create]
-  resources :reporting_relationships, only: [:create]
-  resources :reporting_relationships, only: [:show], path: 'conversations' do
+  resources :reporting_relationships, only: [:create, :update, :show], path: 'conversations' do
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
   end

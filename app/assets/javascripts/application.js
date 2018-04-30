@@ -13,6 +13,7 @@
 //= require modernizr-custom
 //= require jquery3
 //= require jquery-ui/widgets/datepicker
+//= require lodash
 //= require bootstrap-sprockets
 //= require jquery_ujs
 //= require autosize
@@ -27,4 +28,3 @@
 //= require templates
 //= require twemoji
 //= require twemoji-init
-

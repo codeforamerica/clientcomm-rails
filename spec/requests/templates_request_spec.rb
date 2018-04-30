@@ -47,7 +47,7 @@ describe 'Templates requests', type: :request do
         post templates_path, params: {
           template: {
             title: title,
-            body: body,
+            body: body
           }
         }
       end

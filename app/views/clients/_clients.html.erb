@@ -1,3 +1,7 @@
+<script>
+  var CATEGORIES_LINKED_LIST = <%= ReportingRelationship.categories_linked_list.to_json.html_safe %>
+  var CATEGORIES_OBJECT = <%= ReportingRelationship::CATEGORIES.to_json.html_safe %>
+</script>
 <div id="client-list" class="grid__item">
   <div class="input-group client-search-input">
     <div class="inner-addon left-addon">
@@ -9,7 +13,14 @@
   <table class="data-table data-table--selectable">
     <thead>
     <tr>
-      <th class="sort" data-sort="lastname">
+      <% if FeatureFlag.enabled?('categories') %>
+      <th class="sort hidden-xs category-order" data-sort="category-order">
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+      </th>
+      <% end %>
+      <th class="sort lastname-order" data-sort="lastname">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
@@ -36,7 +47,12 @@
     <tbody class="list">
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
-        <tr id="<%= dom_id(client) %>" class="<%= client_messages_status(rr) %>">
+        <tr id="<%= dom_id(client) %>" data-reporting-relationship-id="<%= rr.id %>" class="<%= client_messages_status(rr) %>">
+          <% if FeatureFlag.enabled?('categories') %>
+          <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
+            <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
+          </td>
+          <% end %>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">
             <a class="cell-content" href="<%= reporting_relationship_path(rr) %>">
               <% if client_messages_status(rr) == 'unread' %>
@@ -54,7 +70,7 @@
             </a>
           </td>
             <% if current_user.department.client_statuses? %>
-              <td class="hidden-xs client-status" data-client-status="<%= rr.client_status ? rr.client_status : '--' %>">
+              <td class="hidden-xs client-status" data-client-status="<%= rr.client_status.present? ? rr.client_status.name : '--' %>">
                 <a class="cell-content"
                    href="<%= edit_client_path(client.id) %>">
                   <i class="hidden-xs status-icon" style="background-color:<%= rr.client_status.icon_color if rr.client_status %>"></i>

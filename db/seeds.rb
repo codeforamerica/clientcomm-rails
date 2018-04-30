@@ -33,7 +33,7 @@ Survey.delete_all
 puts 'Creating Departments'
 FactoryBot.create_list :department, 3
 User.all.each do |user|
-  user.update_attributes(department: Department.all.sample)
+  user.update(department: Department.all.sample)
 end
 
 puts 'Create Client Status'
@@ -70,6 +70,9 @@ Client.all.sample(15).each do |client|
   new_rr = ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id)
   client_rr.transfer_to(new_rr)
 end
+
+puts 'Giving Test User Some Extra Clients'
+FactoryBot.create_list :client, 15, user: test_user
 
 puts 'Fuzzing Clients'
 Client.all.sample(15).each do |client|

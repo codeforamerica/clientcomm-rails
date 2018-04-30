@@ -62,6 +62,10 @@ RSpec.describe ReportingRelationship, type: :model do
         end
       end
     end
+
+    describe 'Category' do
+      it { should validate_inclusion_of(:category).in_array(ReportingRelationship::CATEGORIES.keys) }
+    end
   end
 
   describe '#transter_to' do

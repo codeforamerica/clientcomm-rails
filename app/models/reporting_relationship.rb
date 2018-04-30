@@ -1,4 +1,6 @@
 class ReportingRelationship < ApplicationRecord
+  CATEGORIES = APP_CONFIG['client_categories']
+
   belongs_to :user
   belongs_to :client
   belongs_to :client_status
@@ -11,9 +13,26 @@ class ReportingRelationship < ApplicationRecord
   validates :client, :user, presence: true
   validates :active, inclusion: { in: [true, false] }
 
+  validates :category, inclusion: { in: CATEGORIES.keys }
+
   validate :unique_within_department
 
   attr_reader :matching_record
+
+  def self.categories_linked_list
+    links = {}
+    last_cat, last_info = CATEGORIES.first
+    CATEGORIES.to_a.reverse.each do |name, info|
+      links[name] = last_info.merge(name: last_cat)
+      last_cat = name
+      last_info = info
+    end
+    links
+  end
+
+  def category_info
+    CATEGORIES[category]
+  end
 
   def analytics_tracker_data
     {

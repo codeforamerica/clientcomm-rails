@@ -293,7 +293,7 @@ describe 'Clients requests', type: :request do
       end
     end
 
-    describe 'POST#update' do
+    describe 'PUT#update' do
       let(:first_name) { Faker::Name.first_name }
       let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
