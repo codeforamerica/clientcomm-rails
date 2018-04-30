@@ -337,6 +337,9 @@
 .category-symbol {
   font-size: 1.3em;
 }
+.category-symbol:hover:after {
+  color: #999;
+}
 .category-symbol:after {
   margin-left: -1em;
 }
