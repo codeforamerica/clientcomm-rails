@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validate :no_active_reporting_relationships_if_inactive
   validates_associated :reporting_relationships, on: :update, message: I18n.t('activerecord.errors.models.user.attributes.reporting_relationships.invalid')
 
-  validates_presence_of :full_name
+  validates :full_name, presence: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

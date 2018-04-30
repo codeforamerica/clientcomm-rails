@@ -90,13 +90,11 @@ ActiveAdmin.register Client do
             active_user.try(:id)
           )
 
-          f.input :users, {
-            label: "#{department.name} user:",
-            as: :select,
-            collection: options,
-            include_blank: true,
-            input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
-          }
+          f.input :users, label: "#{department.name} user:",
+                          as: :select,
+                          collection: options,
+                          include_blank: true,
+                          input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
         else # EDIT
           li do
             label "#{department.name} user:"

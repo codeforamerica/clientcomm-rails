@@ -9,10 +9,10 @@ class Message < ApplicationRecord
 
   before_validation :set_original_reporting_relationship, on: :create
 
-  validates_presence_of :send_at, message: "That date didn't look right."
-  validates_presence_of :body, unless: ->(message) { message.attachments.present? || message.inbound }
-  validates_presence_of :reporting_relationship
-  validates_presence_of :original_reporting_relationship
+  validates :send_at, presence: { message: "That date didn't look right." }
+  validates :body, presence: { unless: ->(message) { message.attachments.present? || message.inbound } }
+  validates :reporting_relationship, presence: true
+  validates :original_reporting_relationship, presence: true
   validates_datetime :send_at, :before => :max_future_date
 
   validates :body, length: { maximum: 1600 }

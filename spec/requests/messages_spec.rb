@@ -226,12 +226,10 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(created_message.number_from).to eq department.phone_number
 
           expect_most_recent_analytics_event(
-            {
-              'message_send' => {
-                'client_id' => client.id,
-                'message_id' => message.id,
-                'message_length' => body.length
-              }
+            'message_send' => {
+              'client_id' => client.id,
+              'message_id' => message.id,
+              'message_length' => body.length
             }
           )
         end
@@ -306,15 +304,13 @@ describe 'Messages requests', type: :request, active_job: true do
 
           expect(client.messages.last.id).to eq message.id
           expect_analytics_events_with_keys(
-            {
-              'message_scheduled' => [
-                'client_id',
-                'message_id',
-                'message_length',
-                'message_date_scheduled',
-                'message_date_created'
-              ]
-            }
+            'message_scheduled' => [
+              'client_id',
+              'message_id',
+              'message_length',
+              'message_date_scheduled',
+              'message_date_created'
+            ]
           )
         end
       end

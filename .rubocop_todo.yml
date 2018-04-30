@@ -8,51 +8,6 @@
 
 # Offense count: 8
 # Cop supports --auto-correct.
-# Configuration parameters: Include.
-# Include: app/models/**/*.rb
-Rails/Validation:
-  Exclude:
-    - 'app/models/client.rb'
-    - 'app/models/client_status.rb'
-    - 'app/models/feature_flag.rb'
-    - 'app/models/mass_message.rb'
-    - 'app/models/message.rb'
-    - 'app/models/user.rb'
-
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'spec/models/attachment_spec.rb'
-    - 'spec/requests/messages_spec.rb'
-    - 'spec/requests/twilio_spec.rb'
-
-# Offense count: 33
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'app/admin/client.rb'
-    - 'spec/helpers/client_status_helper_spec.rb'
-    - 'spec/lib/message_alert_builder_spec.rb'
-    - 'spec/lib/sms_service_spec.rb'
-    - 'spec/requests/client_archives_request_spec.rb'
-    - 'spec/requests/clients_request_spec.rb'
-    - 'spec/requests/messages_analytics_spec.rb'
-    - 'spec/requests/messages_spec.rb'
-    - 'spec/requests/scheduled_messages_spec.rb'
-    - 'spec/requests/templates_request_spec.rb'
-    - 'spec/requests/twilio_spec.rb'
-    - 'spec/support/twilio_helper.rb'
-
-# Offense count: 8
-# Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, EnforcedStyle.
 # SupportedStyles: nested, compact
 Style/ClassAndModuleChildren:

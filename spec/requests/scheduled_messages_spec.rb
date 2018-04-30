@@ -34,10 +34,8 @@ describe 'Messages requests', type: :request, active_job: true do
         expect(response.body).to include message_two_body
 
         expect_most_recent_analytics_event(
-          {
-            'client_scheduled_messages_view' => {
-              'messages_scheduled_count' => 2
-            }
+          'client_scheduled_messages_view' => {
+            'messages_scheduled_count' => 2
           }
         )
       end

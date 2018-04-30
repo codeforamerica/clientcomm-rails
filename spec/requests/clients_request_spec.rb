@@ -77,10 +77,8 @@ describe 'Clients requests', type: :request do
         client = Client.first
 
         expect_analytics_events(
-          {
-            'client_create_success' => {
-              'client_id' => client.id
-            }
+          'client_create_success' => {
+            'client_id' => client.id
           }
         )
       end
@@ -97,10 +95,8 @@ describe 'Clients requests', type: :request do
             expect(response.body).to include "can't be blank"
             expect(Client.count).to eq 0
             expect_analytics_events(
-              {
-                'client_create_error' => {
-                  'error_types' => ['last_name_blank']
-                }
+              'client_create_error' => {
+                'error_types' => ['last_name_blank']
               }
             )
           end
@@ -122,10 +118,8 @@ describe 'Clients requests', type: :request do
             expect(response.body).to include 'not a valid phone number'
             expect(Client.count).to eq 0
             expect_analytics_events(
-              {
-                'client_create_error' => {
-                  'error_types' => ['phone_number_invalid']
-                }
+              'client_create_error' => {
+                'error_types' => ['phone_number_invalid']
               }
             )
           end
@@ -366,11 +360,9 @@ describe 'Clients requests', type: :request do
         it 'tracks the deactivation of a client' do
           subject
           expect_analytics_events(
-            {
-              'client_deactivate_success' => {
-                'client_id' => existing_client.id,
-                'client_duration' => 10
-              }
+            'client_deactivate_success' => {
+              'client_id' => existing_client.id,
+              'client_duration' => 10
             }
           )
         end
@@ -391,17 +383,15 @@ describe 'Clients requests', type: :request do
         subject
         expect(response.code).to eq '302'
         expect(latest_analytics_event('client_edit_success')['hours_since_contact']).to be_within(1).of(120)
-        expect_analytics_events({
-                                  'client_edit_success' => {
-                                    'client_id' => existing_client.id,
-                                    'has_unread_messages' => true,
-                                    'messages_all_count' => 4,
-                                    'messages_received_count' => 2,
-                                    'messages_sent_count' => 1,
-                                    'messages_attachments_count' => 1,
-                                    'messages_scheduled_count' => 1,
-                                    'has_client_notes' => true
-                                  }
+        expect_analytics_events('client_edit_success' => {
+                                  'client_id' => existing_client.id,
+                                  'has_unread_messages' => true,
+                                  'messages_all_count' => 4,
+                                  'messages_received_count' => 2,
+                                  'messages_sent_count' => 1,
+                                  'messages_attachments_count' => 1,
+                                  'messages_scheduled_count' => 1,
+                                  'has_client_notes' => true
                                 })
       end
 
@@ -564,12 +554,10 @@ describe 'Clients requests', type: :request do
         subject
 
         expect(response.code).to eq '200'
-        expect_analytics_events({
-                                  'clients_view' => {
-                                    'has_unread_messages' => true,
-                                    'unread_messages_count' => 3,
-                                    'clients_count' => 5
-                                  }
+        expect_analytics_events('clients_view' => {
+                                  'has_unread_messages' => true,
+                                  'unread_messages_count' => 3,
+                                  'clients_count' => 5
                                 })
       end
 

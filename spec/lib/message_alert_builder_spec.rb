@@ -28,10 +28,8 @@ describe MessageAlertBuilder do
 
       it 'reports there is one unread message' do
         expect(subject).to eq(
-          {
-            text: 'You have 1 unread message from Zak Soup',
-            link_to: reporting_relationship_path
-          }
+          text: 'You have 1 unread message from Zak Soup',
+          link_to: reporting_relationship_path
         )
       end
     end
@@ -44,10 +42,8 @@ describe MessageAlertBuilder do
 
       it 'returns the correct count of unread messages' do
         expect(subject).to eq(
-          {
-            text: 'You have 2 unread messages from Zak Soup',
-            link_to: reporting_relationship_path
-          }
+          text: 'You have 2 unread messages from Zak Soup',
+          link_to: reporting_relationship_path
         )
       end
     end
@@ -63,10 +59,8 @@ describe MessageAlertBuilder do
 
       it 'returns the correct count of unread messages without full_name' do
         expect(subject).to eq(
-          {
-            text: 'You have 2 unread messages',
-            link_to: clients_path
-          }
+          text: 'You have 2 unread messages',
+          link_to: clients_path
         )
       end
     end
@@ -80,10 +74,8 @@ describe MessageAlertBuilder do
 
       it 'only reports unread messages' do
         expect(subject).to eq(
-          {
-            text: 'You have 1 unread message from Zak Soup',
-            link_to: reporting_relationship_path
-          }
+          text: 'You have 1 unread message from Zak Soup',
+          link_to: reporting_relationship_path
         )
       end
     end

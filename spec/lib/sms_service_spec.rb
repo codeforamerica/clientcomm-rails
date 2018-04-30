@@ -42,12 +42,10 @@ describe SMSService do
       subject
 
       expect(twilio_client).to have_received(:create).with(
-        {
-          from:           expected_number,
-          to:             factory_message.client.phone_number,
-          body:           factory_message.body,
-          status_callback: callback_url
-        }
+        from:           expected_number,
+        to:             factory_message.client.phone_number,
+        body:           factory_message.body,
+        status_callback: callback_url
       )
 
       factory_message.reload

@@ -46,13 +46,11 @@ describe 'Twilio controller', type: :request, active_job: true do
       subject
 
       expect_analytics_events(
-        {
-          'message_receive' => {
-            'client_id' => client.id,
-            'message_length' => message_text.length,
-            'attachments_count' => 0,
-            'client_active' => true
-          }
+        'message_receive' => {
+          'client_id' => client.id,
+          'message_length' => message_text.length,
+          'attachments_count' => 0,
+          'client_active' => true
         }
       )
     end
@@ -137,13 +135,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         subject
 
         expect_analytics_events(
-          {
-            'message_receive' => {
-              'client_id' => client.id,
-              'message_length' => message_text.length,
-              'attachments_count' => 0,
-              'client_active' => false
-            }
+          'message_receive' => {
+            'client_id' => client.id,
+            'message_length' => message_text.length,
+            'attachments_count' => 0,
+            'client_active' => false
           }
         )
       end
@@ -271,12 +267,10 @@ describe 'Twilio controller', type: :request, active_job: true do
         subject
 
         expect_analytics_events(
-          {
-            'message_receive' => {
-              'client_id' => client.id,
-              'message_length' => message_text.length,
-              'attachments_count' => 1
-            }
+          'message_receive' => {
+            'client_id' => client.id,
+            'message_length' => message_text.length,
+            'attachments_count' => 1
           }
         )
       end
@@ -328,19 +322,17 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(client.messages.last.twilio_status).to eq 'failed'
 
         # failed analytics event
-        expect_analytics_events({
-                                  'message_send_failed' => {
-                                    'client_id' => client.id,
-                                    'message_id' => msgone.id,
-                                    'message_length' => msgone.body.length,
-                                    'attachments_count' => 0
-                                  }
-                                })
+        expect_analytics_events(
+          'message_send_failed' => {
+            'client_id' => client.id,
+            'message_id' => msgone.id,
+            'message_length' => msgone.body.length,
+            'attachments_count' => 0
+          }
+        )
 
         expect_analytics_events_with_keys(
-          {
-            'message_send_failed' => ['message_date_scheduled', 'message_date_created']
-          }
+          'message_send_failed' => ['message_date_scheduled', 'message_date_created']
         )
       end
 
@@ -377,13 +369,11 @@ describe 'Twilio controller', type: :request, active_job: true do
       it 'sends the correct analytics event' do
         twilio_post_voice('To' => dept_phone_number)
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => 'no client',
-              'client_identified' => false,
-              'call_routed' => false,
-              'has_desk_phone' => false
-            }
+          'phonecall_receive' => {
+            'client_id' => 'no client',
+            'client_identified' => false,
+            'call_routed' => false,
+            'has_desk_phone' => false
           }
         )
       end
@@ -400,13 +390,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => 'no client',
-              'client_identified' => false,
-              'call_routed' => true,
-              'has_desk_phone' => false
-            }
+          'phonecall_receive' => {
+            'client_id' => 'no client',
+            'client_identified' => false,
+            'call_routed' => true,
+            'has_desk_phone' => false
           }
         )
       end
@@ -427,13 +415,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.body).to include 'This phone number can only receive text messages. Please hang up and send a text message.'
 
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => client.id,
-              'client_identified' => false,
-              'call_routed' => false,
-              'has_desk_phone' => false
-            }
+          'phonecall_receive' => {
+            'client_id' => client.id,
+            'client_identified' => false,
+            'call_routed' => false,
+            'has_desk_phone' => false
           }
         )
       end
@@ -453,13 +439,11 @@ describe 'Twilio controller', type: :request, active_job: true do
           expect(response.content_type).to eq 'application/xml'
           expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
           expect_analytics_events(
-            {
-              'phonecall_receive' => {
-                'client_id' => client.id,
-                'client_identified' => false,
-                'call_routed' => true,
-                'has_desk_phone' => false
-              }
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => false,
+              'call_routed' => true,
+              'has_desk_phone' => false
             }
           )
         end
@@ -480,13 +464,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.body).to include "<Number>#{unclaimed_number}</Number>"
 
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => client.id,
-              'client_identified' => true,
-              'call_routed' => true,
-              'has_desk_phone' => false
-            }
+          'phonecall_receive' => {
+            'client_id' => client.id,
+            'client_identified' => true,
+            'call_routed' => true,
+            'has_desk_phone' => false
           }
         )
       end
@@ -498,13 +480,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         it 'sends the correct analytics event' do
           twilio_post_voice('To' => dept_phone_number)
           expect_analytics_events(
-            {
-              'phonecall_receive' => {
-                'client_id' => client.id,
-                'client_identified' => true,
-                'call_routed' => false,
-                'has_desk_phone' => false
-              }
+            'phonecall_receive' => {
+              'client_id' => client.id,
+              'client_identified' => true,
+              'call_routed' => false,
+              'has_desk_phone' => false
             }
           )
         end
@@ -521,13 +501,11 @@ describe 'Twilio controller', type: :request, active_job: true do
         expect(response.content_type).to eq 'application/xml'
         expect(response.body).to include '<Number>+19999999999</Number>'
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => client.id,
-              'client_identified' => true,
-              'call_routed' => true,
-              'has_desk_phone' => true
-            }
+          'phonecall_receive' => {
+            'client_id' => client.id,
+            'client_identified' => true,
+            'call_routed' => true,
+            'has_desk_phone' => true
           }
         )
       end
@@ -545,13 +523,11 @@ describe 'Twilio controller', type: :request, active_job: true do
       it 'sends the correct analytics event' do
         twilio_post_voice('To' => dept_phone_number)
         expect_analytics_events(
-          {
-            'phonecall_receive' => {
-              'client_id' => client.id,
-              'client_identified' => false,
-              'call_routed' => true,
-              'has_desk_phone' => true
-            }
+          'phonecall_receive' => {
+            'client_id' => client.id,
+            'client_identified' => false,
+            'call_routed' => true,
+            'has_desk_phone' => true
           }
         )
       end

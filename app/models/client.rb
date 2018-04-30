@@ -19,8 +19,8 @@ class Client < ApplicationRecord
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
-  validates_presence_of :last_name, :phone_number
-  validates_uniqueness_of :phone_number
+  validates :last_name, :phone_number, presence: true
+  validates :phone_number, uniqueness: true
 
   def analytics_tracker_data
     {
