@@ -30,9 +30,6 @@ module Users
       end
     end
 
-    def destroy
-    end
-
     protected
 
     def configure_account_update_params
