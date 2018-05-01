@@ -1,10 +1,9 @@
 class ClientsController < ApplicationController
-  include ClientStatusHelper
   before_action :authenticate_user!
 
   def index
     @reporting_relationships = current_user.active_reporting_relationships
-    @relationships_by_status = relationships_with_statuses_due_for_follow_up(user: current_user)
+    @relationships_by_status = current_user.relationships_with_statuses_due_for_follow_up
     analytics_track(
       label: 'clients_view',
       data: current_user.analytics_tracker_data
