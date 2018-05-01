@@ -343,6 +343,9 @@
 .category-symbol:after {
   margin-left: -1em;
 }
+.category-symbol.cell-content {
+  padding-right: 0 !important;
+}
 
 .icon-star-empty:before {
   content: "\e9d7";
