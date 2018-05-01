@@ -78,6 +78,36 @@ feature 'clients have categories' do
           expect(page).to have_css('i.icon-icon1')
         end
       end
+
+      step 'when a text is received' do
+        find('th:first-child').click
+        expect(page).to have_css('tr:last-child', text: rr3.client.full_name)
+
+        twilio_post_sms(
+          twilio_new_message_params(
+            to_number: department.phone_number,
+            from_number: rr3.client.phone_number,
+            msg_txt: 'irelevant'
+          )
+        )
+
+        expect(page).to have_css('tr:first-child', text: rr3.client.full_name)
+
+        within 'tr:first-child', text: rr3.client.full_name do
+          find('td.category-order').click.click
+
+          expect(page).to have_css('i.icon-icon2')
+        end
+      end
+
+      step 'the reloaded page shows correct categories' do
+        sleep 2
+        visit clients_path
+
+        within 'tr', text: rr3.client.full_name do
+          expect(page).to have_css('i.icon-icon2')
+        end
+      end
     end
   end
 end

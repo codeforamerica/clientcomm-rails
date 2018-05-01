@@ -50,7 +50,7 @@
         <tr id="<%= dom_id(client) %>" data-reporting-relationship-id="<%= rr.id %>" class="<%= client_messages_status(rr) %>">
           <% if FeatureFlag.enabled?('categories') %>
           <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
-            <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
+              <i data-category-name="<%= rr.category %>" class="cell-content category-symbol icon-<%= rr.category_info['icon'] %>"></i>
           </td>
           <% end %>
           <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">

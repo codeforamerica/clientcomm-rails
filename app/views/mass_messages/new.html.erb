@@ -78,7 +78,9 @@
                       </td>
                       <% if FeatureFlag.enabled?('categories') %>
                       <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
-                        <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
+                        <%= b.label(class: ['cell-content']) do %>
+                          <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
+                        <% end %>
                       </td>
                       <% end %>
                       <td class="lastname fullname" data-lastname="<%= client.last_name %>" data-fullname="<%= client.full_name %>">

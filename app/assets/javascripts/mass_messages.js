@@ -5,13 +5,16 @@ $(document).ready(function() {
     $('#send-now-buttons').toggle();
     $('#cancel-mass-message').toggleClass('scheduled');
   }
+
   $('#new_mass_message #send_later').click(function(e) {
     e.preventDefault();
     toggleMassMessage();
   });
+
   if ($('div#schedule-later-form p.text--error').length > 0) {
     toggleMassMessage();
   }
+
   $('.template--mass-messages').find('tbody :checkbox').each(function(index, checkbox) {
     $(checkbox).change(function(event) {
       $(checkbox).closest('tr').toggleClass('row--warning');

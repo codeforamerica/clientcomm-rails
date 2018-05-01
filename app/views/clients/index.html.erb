@@ -2,7 +2,7 @@
 
 <section class="slab slab--padded" id="scroller-target">
   <div class="grid">
-    <div class="grid__item width-three-forth shift-three-fourth">
+    <div class="grid__item <%= FeatureFlag.enabled?('categories') ? 'width-three-forth shift-three-fourth' : 'width-two-thirds shift-one-sixth' %> ">
       <div class="media-box--bleed media-box">
         <div class="media-box__content">
           <%= render "clients/client_status" %>
