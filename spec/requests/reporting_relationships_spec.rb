@@ -342,6 +342,27 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       expect(response.code).to eq('204')
     end
 
+    it 'sends add symbol event to mixpanel' do
+      subject
+      expect_analytics_events(
+        'symbol_add' => {
+          'category' => category
+        }
+      )
+    end
+
+    it 'sends update event to mixpanel' do
+      rr.category = 'cat1'
+      rr.save!
+      subject
+      expect_analytics_events(
+        'symbol_change' => {
+          'previous_category' => 'cat1',
+          'new_category' => 'cat2'
+        }
+      )
+    end
+
     context 'the category set is not allowed' do
       let(:category) { 'not allowed' }
 

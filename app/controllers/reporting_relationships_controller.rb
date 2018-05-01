@@ -85,8 +85,25 @@ class ReportingRelationshipsController < ApplicationController
 
   def update
     @rr = current_user.reporting_relationships.find params[:id]
-
+    previous_category = @rr.category
     @rr.update!(reporting_relationship_update_params)
+
+    if previous_category == ReportingRelationship::CATEGORIES.keys.first
+      analytics_track(
+        label: :symbol_add,
+        data: {
+          'category': @rr.category
+        }
+      )
+    else
+      analytics_track(
+        label: :symbol_change,
+        data: {
+          'previous_category': previous_category,
+          'new_category': @rr.category
+        }
+      )
+    end
   end
 
   private
