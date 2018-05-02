@@ -4,6 +4,6 @@ class AddReadToMessages < ActiveRecord::Migration[5.0]
 
     # read defaults to false, but all messages that exist when the migration
     # happens should have read = true
-    Message.update_all(read: true)
+    Message.update(read: true)
   end
 end

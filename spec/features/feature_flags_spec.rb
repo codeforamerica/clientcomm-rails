@@ -5,7 +5,7 @@ feature 'feature flags' do
     let(:myuser) { create :user }
 
     before do
-      login_as(myuser, :scope => :user)
+      login_as(myuser, scope: :user)
     end
 
     context 'enabled' do
@@ -33,7 +33,7 @@ feature 'feature flags' do
     let(:rr) { ReportingRelationship.find_by(user: myuser, client: client) }
 
     before do
-      login_as(myuser, :scope => :user)
+      login_as(myuser, scope: :user)
     end
 
     context 'enabled' do

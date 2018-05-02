@@ -31,10 +31,8 @@ describe 'Templates requests', type: :request do
           expect(Nokogiri.parse(response.body).to_s).to include("#{template.body}")
         end
 
-        expect_analytics_events({
-                                  'template_page_view' => {
-                                    'templates_count' => 5
-                                  }
+        expect_analytics_events('template_page_view' => {
+                                  'templates_count' => 5
                                 })
       end
     end
@@ -56,10 +54,8 @@ describe 'Templates requests', type: :request do
         expect(response.code).to eq '302'
         expect(response).to redirect_to templates_path
 
-        expect_analytics_events({
-                                  'template_create_success' => {
-                                    'message_length' => 50
-                                  }
+        expect_analytics_events('template_create_success' => {
+                                  'message_length' => 50
                                 })
       end
 
@@ -108,10 +104,8 @@ describe 'Templates requests', type: :request do
         expect(response.code).to eq '302'
         expect(response).to redirect_to templates_path
 
-        expect_analytics_events({
-                                  'template_delete' => {
-                                    'templates_count' => 0
-                                  }
+        expect_analytics_events('template_delete' => {
+                                  'templates_count' => 0
                                 })
       end
     end

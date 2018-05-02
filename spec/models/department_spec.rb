@@ -56,7 +56,7 @@ describe Department, type: :model do
   end
 
   describe '#message_metrics' do
-    let(:now) { Time.now }
+    let(:now) { Time.zone.now }
     let(:department) { create :department }
     let(:emails) { [1, 2, 3].map { |n| "recipient#{n}@example.com" } }
     let(:user1) { create :user, email: 'user1@user1.com', department: department }

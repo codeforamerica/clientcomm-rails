@@ -1,7 +1,7 @@
 require 'csv'
 
 namespace :reports do
-  task :generate_and_send_reports => :environment do
+  task generate_and_send_reports: :environment do
     end_date = Time.zone.now
     if end_date.wday.to_s == ENV['REPORT_DAY']
       Department.all.each do |department|
@@ -15,7 +15,7 @@ namespace :reports do
     end
   end
 
-  task :long_messages => :environment do
+  task long_messages: :environment do
     io = $stdout.dup
     CSV(io) do |csv|
       csv << %w[name email client id length send_at]

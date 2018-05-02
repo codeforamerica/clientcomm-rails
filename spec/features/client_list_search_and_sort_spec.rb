@@ -8,7 +8,7 @@ feature 'search and sort clients' do
     @clienttwo = build :client, user: myuser, first_name: 'Paras', last_name: 'B'
     @clientthree = build :client, user: myuser, first_name: 'Charlie', last_name: 'C'
 
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
     travel_to 7.days.ago do
       add_client(@clientone)
     end

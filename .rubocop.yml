@@ -1,11 +1,14 @@
 inherit_from: .rubocop_todo.yml
 
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+
 Rails:
   Enabled: true
 
 Layout/EmptyLinesAroundBlockBody:
   Exclude:
-    - 'db/schema.rb'
     - 'config/routes.rb'
 
 Metrics/CyclomaticComplexity:
@@ -17,7 +20,8 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 500
   Exclude:
-  - 'spec/**/*.rb'
+  - 'spec/features/**/*.rb'
+  - 'spec/requests/**/*.rb'
 
 Metrics/ClassLength:
   Max: 300
@@ -38,3 +42,23 @@ Metrics/ParameterLists:
 Style/BlockDelimiters:
   Exclude:
   - 'spec/**/*.rb'
+
+# For puts statements in seeds
+Rails/Output:
+  Exclude:
+    - 'db/seeds.rb'
+
+# Form builder needs html_safe to work
+Rails/OutputSafety:
+  Exclude:
+    - 'app/helpers/gcf_form_builder.rb'
+
+# Rubocop likes documentation in weird ways
+Style/Documentation:
+  Enabled: false
+
+# We're not planning on a ruby 3 migration any time soon
+# more info: https://wyeworks.com/blog/2015/12/1/immutable-strings-in-ruby-2-dot-3
+# more info: https://rubocop.readthedocs.io/en/latest/cops_style/#stylefrozenstringliteralcomment
+Style/FrozenStringLiteralComment:
+  Enabled: false

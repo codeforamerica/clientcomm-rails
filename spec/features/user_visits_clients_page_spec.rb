@@ -10,10 +10,10 @@ feature 'clients have categories' do
   end
 
   describe 'setting and sorting categories', js: true do
-    let!(:rr1) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.now - 4.minutes, updated_at: Time.now - 4.minutes }
-    let!(:rr2) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.now - 3.minutes, updated_at: Time.now - 3.minutes }
-    let!(:rr3) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.now - 2.minutes, updated_at: Time.now - 2.minutes }
-    let!(:rr4) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.now - 1.minute, updated_at: Time.now - 1.minute }
+    let!(:rr1) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.zone.now - 4.minutes, updated_at: Time.zone.now - 4.minutes }
+    let!(:rr2) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.zone.now - 3.minutes, updated_at: Time.zone.now - 3.minutes }
+    let!(:rr3) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.zone.now - 2.minutes, updated_at: Time.zone.now - 2.minutes }
+    let!(:rr4) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.zone.now - 1.minute, updated_at: Time.zone.now - 1.minute }
 
     before do
       rr1.update(category: 'cat2')
@@ -124,7 +124,7 @@ feature 'manage action is hidden on mobile', js: true do
   scenario 'user visits client list on mobile' do
     myuser = create :user
     create :client, user: myuser
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
 
     visit clients_path
     resize_window_to_mobile

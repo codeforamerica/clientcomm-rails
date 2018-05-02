@@ -7,7 +7,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
   let(:transfer_note) { Faker::Lorem.characters(10) }
   let!(:client) { create :client, user: user }
   let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-  let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day }
+  let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
 
   before do
     sign_in user
@@ -65,7 +65,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
     context 'there are scheduled messages' do
       it 'does not show scheduled messages in the main timeline' do
-        message = create :message, reporting_relationship: rr, send_at: Time.now.tomorrow
+        message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
         subject
         expect(response.body).to_not include(message.body)
@@ -73,7 +73,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
       it 'shows messages after their send_at date' do
         travel_to 1.day.ago do
-          create :message, reporting_relationship: rr, body: body, send_at: Time.now
+          create :message, reporting_relationship: rr, body: body, send_at: Time.zone.now
         end
 
         subject
@@ -210,7 +210,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
     it 'creates transfer markers' do
       expect(transfer_user.messages.transfer_markers).to be_empty
-      time = Time.now
+      time = Time.zone.now
       travel_to time do
         subject
       end

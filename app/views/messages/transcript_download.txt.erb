@@ -1,5 +1,5 @@
 Viewing messages between client <%= "#{@client.first_name} #{@client.last_name}" %> and <%= current_user.full_name %>
-Retrieved at: <%= Time.now %>
+Retrieved at: <%= Time.zone.now %>
 --------------------------
 <% @messages.each_with_index do |message, i| %>
   <% message_status = message.twilio_status.blank? ? 'failed' : message.twilio_status %>

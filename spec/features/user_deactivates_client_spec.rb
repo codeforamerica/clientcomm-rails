@@ -22,7 +22,7 @@ feature 'user deactivates client', :js do
     # log in with a fake user
     myuser = create :user
     clientone = create :client, user: myuser
-    login_as myuser, :scope => :user
+    login_as myuser, scope: :user
     visit root_path
 
     expect(page).to have_css '#client-list', text: "#{clientone.first_name} #{clientone.last_name}"
@@ -59,7 +59,7 @@ feature 'user deactivates client', :js do
     department = create :department, phone_number: twilio_new_message_params['To']
     myuser = create :user, department: department
     clientone = create :client, user: myuser, active: false, phone_number: twilio_new_message_params['From']
-    login_as myuser, :scope => :user
+    login_as myuser, scope: :user
     visit root_path
     expect(page).to_not have_content "#{clientone.first_name} #{clientone.last_name}"
     twilio_post_sms

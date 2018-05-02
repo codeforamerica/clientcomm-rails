@@ -84,7 +84,7 @@ class ReportingRelationship < ApplicationRecord
   end
 
   def hours_since_contact
-    ((Time.now - (last_contacted_at || created_at)) / 3600).round
+    ((Time.zone.now - (last_contacted_at || created_at)) / 3600).round
   end
 
   def unique_within_department

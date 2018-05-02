@@ -79,7 +79,7 @@ class TwilioController < ApplicationController
                      .find_by(reporting_relationships: { client: client, active: true })
 
     if user.try(:phone_number).present?
-      render :xml => voice_client.dial_number(phone_number: user.phone_number)
+      render xml: voice_client.dial_number(phone_number: user.phone_number)
       analytics_track(
         label: 'phonecall_receive',
         data: {
@@ -90,7 +90,7 @@ class TwilioController < ApplicationController
         }
       )
     elsif (unclaimed_number = department.unclaimed_user.try(:phone_number))
-      render :xml => voice_client.dial_number(phone_number: unclaimed_number)
+      render xml: voice_client.dial_number(phone_number: unclaimed_number)
       analytics_track(
         label: 'phonecall_receive',
         data: {
@@ -101,7 +101,7 @@ class TwilioController < ApplicationController
         }
       )
     else
-      render :xml => voice_client.generate_text_response(message: t('voice_response'))
+      render xml: voice_client.generate_text_response(message: t('voice_response'))
       analytics_track(
         label: 'phonecall_receive',
         data: {

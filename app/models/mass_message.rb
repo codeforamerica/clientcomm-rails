@@ -3,7 +3,7 @@ class MassMessage
   # For validations see:
   # http://railscasts.com/episodes/219-active-model?view=asciicast
 
-  validates_presence_of :message, :reporting_relationships
+  validates :message, :reporting_relationships, presence: true
 
   attr_accessor :user, :message, :send_at, :reporting_relationships
 

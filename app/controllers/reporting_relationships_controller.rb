@@ -22,7 +22,7 @@ class ReportingRelationshipsController < ApplicationController
 
     # the list of past messages
     @messages = past_messages
-    @messages.update_all(read: true)
+    @messages.where(read: false).update(read: true)
     @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
 
     @message = Message.new(send_at: default_send_at)
@@ -126,7 +126,7 @@ class ReportingRelationshipsController < ApplicationController
 
   def past_messages
     @rr.messages
-       .where('send_at < ?', Time.now)
+       .where('send_at < ?', Time.zone.now)
        .order('send_at ASC')
   end
 end

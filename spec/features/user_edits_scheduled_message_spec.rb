@@ -8,7 +8,7 @@ feature 'creating and editing scheduled messages', active_job: true do
   let(:usertwo) { create :user }
   let(:clientone) { create :client, user: userone }
   let(:rrone) { ReportingRelationship.find_by(client: clientone, user: userone) }
-  let(:future_date) { Time.now.change(min: 0, day: 3) + 1.month }
+  let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
   let(:new_future_date) { future_date.change(min: 0, day: 4) }
 
   scenario 'user schedules and edits message for client', :js do
@@ -123,7 +123,6 @@ feature 'creating and editing scheduled messages', active_job: true do
       click_on 'Edit'
       expect(page).to have_current_path(edit_message_path(messageone_id))
       expect(page).to have_content 'Edit your message'
-      # TODO flakes because modal animation doesn't finish
       expect(page).to have_css('.send-later-input', text: new_message_body, visible: :all)
       expect(page).to have_field('Date', with: new_future_date.strftime('%m/%d/%Y'))
       expect(page).to have_select('Time', selected: new_future_date.strftime('%-l:%M%P'))

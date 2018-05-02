@@ -24,7 +24,7 @@ namespace :setup do
     department.update!(unclaimed_user: unclaimed_user)
   end
 
-  task :migrate_metadata_from_client_to_relationship => :environment do
+  task migrate_metadata_from_client_to_relationship: :environment do
     count = Client.all.count - 1
     Client.all.each_with_index do |client, i|
       progress = 50.0 * (i / count.to_f)

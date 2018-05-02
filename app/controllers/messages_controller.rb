@@ -13,7 +13,7 @@ class MessagesController < ApplicationController
 
     # the list of past messages
     @messages = rr.messages
-                  .where('send_at < ?', Time.now)
+                  .where('send_at < ?', Time.zone.now)
                   .order('send_at ASC')
 
     transcript = render_to_string file: 'messages/transcript_download.txt'
@@ -23,7 +23,7 @@ class MessagesController < ApplicationController
   def create
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
-    send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.now
+    send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
     @templates = current_user.templates
 
     message = Message.new(
@@ -142,7 +142,7 @@ class MessagesController < ApplicationController
   def past_messages(client:)
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     rr.messages
-      .where('send_at < ?', Time.now)
+      .where('send_at < ?', Time.zone.now)
       .order(send_at: :asc)
   end
 end

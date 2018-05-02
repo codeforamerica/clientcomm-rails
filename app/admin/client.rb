@@ -38,7 +38,7 @@ ActiveAdmin.register Client do
 
   action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
 
-  actions :all, :except => [:destroy]
+  actions :all, except: [:destroy]
 
   filter :reporting_relationships_user_id,
          as: :select,
@@ -90,13 +90,11 @@ ActiveAdmin.register Client do
             active_user.try(:id)
           )
 
-          f.input :users, {
-            label: "#{department.name} user:",
-            as: :select,
-            collection: options,
-            include_blank: true,
-            input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
-          }
+          f.input :users, label: "#{department.name} user:",
+                          as: :select,
+                          collection: options,
+                          include_blank: true,
+                          input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
         else # EDIT
           li do
             label "#{department.name} user:"

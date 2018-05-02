@@ -10,7 +10,7 @@ feature 'creating and editing departments' do
 
   scenario 'admin user creates and edits a department' do
     step 'when user logs in' do
-      login_as(admin_user, :scope => :admin_user)
+      login_as(admin_user, scope: :admin_user)
     end
 
     step 'when user visits the departments page' do

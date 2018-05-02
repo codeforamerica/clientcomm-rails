@@ -17,7 +17,7 @@ feature 'User creates client' do
   let(:phone_number_display) { '(234) 567-8910' }
 
   before do
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
     visit root_path
     click_on 'New client'
     expect(page).to have_current_path(new_client_path)

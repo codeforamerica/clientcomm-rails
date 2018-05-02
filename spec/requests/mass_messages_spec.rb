@@ -98,7 +98,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     context 'a send_at date is set' do
-      let(:send_at) { Time.now.change(sec: 0, usec: 0) + 2.days }
+      let(:send_at) { Time.zone.now.change(sec: 0, usec: 0) + 2.days }
 
       subject do
         post mass_messages_path, params: {
@@ -123,7 +123,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       end
 
       context 'the scheduled commit is not present' do
-        let(:now) { Time.now.change(usec: 0) }
+        let(:now) { Time.zone.now.change(usec: 0) }
 
         subject do
           post mass_messages_path, params: {
@@ -175,7 +175,7 @@ describe 'Mass messages requests', type: :request, active_job: true do
       end
 
       context 'the date is in the past' do
-        let(:send_at) { Time.now.change(sec: 0, usec: 0) - 2.days }
+        let(:send_at) { Time.zone.now.change(sec: 0, usec: 0) - 2.days }
 
         it 'renders an error' do
           subject

@@ -1,8 +1,8 @@
 class User < ApplicationRecord
-  has_many :reporting_relationships
+  has_many :reporting_relationships, dependent: :nullify
   has_many :clients, through: :reporting_relationships
   has_many :messages, through: :reporting_relationships
-  has_many :templates
+  has_many :templates, dependent: :nullify
   belongs_to :department
 
   scope :active, -> { where(active: true) }
@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validate :no_active_reporting_relationships_if_inactive
   validates_associated :reporting_relationships, on: :update, message: I18n.t('activerecord.errors.models.user.attributes.reporting_relationships.invalid')
 
-  validates_presence_of :full_name
+  validates :full_name, presence: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -69,7 +69,7 @@ class User < ApplicationRecord
     output = {}
 
     ClientStatus.where.not(followup_date: nil).map do |status|
-      followup_date = Time.now - status.followup_date.days
+      followup_date = Time.zone.now - status.followup_date.days
       warning_period = 5.days
 
       found_rrs = reporting_relationships

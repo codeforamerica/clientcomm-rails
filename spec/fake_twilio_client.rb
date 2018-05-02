@@ -5,6 +5,7 @@ class FakeTwilioClient
   FakeResponse = Struct.new(:sid, :status)
 
   def initialize(_account_sid, _auth_token)
+    self
   end
 
   def api

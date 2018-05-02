@@ -14,14 +14,14 @@ feature 'Client status banner', active_job: true do
     create :client_status, name: active, followup_date: 30, department: department
     create :client_status, name: waiting, department: department
     create :client_status, name: moving, department: department
-    login_as(user, :scope => :user)
+    login_as(user, scope: :user)
 
     recent_clients.each do |client|
       ReportingRelationship.create(
         user: user,
         client: client,
         client_status: ClientStatus.find_by(name: active),
-        last_contacted_at: Time.now - 5.days
+        last_contacted_at: Time.zone.now - 5.days
       )
     end
 
@@ -30,7 +30,7 @@ feature 'Client status banner', active_job: true do
         user: user,
         client: client,
         client_status: ClientStatus.find_by(name: active),
-        last_contacted_at: Time.now - 26.days
+        last_contacted_at: Time.zone.now - 26.days
       )
     end
     waiting_clients = create_list :client, 5
@@ -39,7 +39,7 @@ feature 'Client status banner', active_job: true do
         user: user,
         client: client,
         client_status: ClientStatus.find_by(name: waiting),
-        last_contacted_at: Time.now
+        last_contacted_at: Time.zone.now
       )
     end
     moving_clients = create_list :client, 5
@@ -48,7 +48,7 @@ feature 'Client status banner', active_job: true do
         user: user,
         client: client,
         client_status: ClientStatus.find_by(name: moving),
-        last_contacted_at: Time.now
+        last_contacted_at: Time.zone.now
       )
     end
   end

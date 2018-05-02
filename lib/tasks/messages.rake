@@ -1,5 +1,5 @@
 namespace :messages do
-  task :update_twilio_statuses => :environment do
+  task update_twilio_statuses: :environment do
     transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered])
 
     transient_messages.each do |m|

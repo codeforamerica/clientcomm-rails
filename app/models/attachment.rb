@@ -12,6 +12,6 @@ class Attachment < ApplicationRecord
   end
 
   def image?
-    media_content_type =~ /image\/.*/ ? true : false
+    media_content_type.match?(/image\/.*/) ? true : false
   end
 end

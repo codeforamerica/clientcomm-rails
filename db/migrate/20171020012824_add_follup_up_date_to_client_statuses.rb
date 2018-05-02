@@ -4,19 +4,13 @@ class AddFollupUpDateToClientStatuses < ActiveRecord::Migration[5.1]
     ClientStatus.reset_column_information
 
     active_status = ClientStatus.find_by(name: 'Active')
-    if active_status
-      active_status.update!(followup_date: 25)
-    end
+    active_status.update!(followup_date: 25) if active_status
 
     training_status = ClientStatus.find_by(name: 'Training')
-    if training_status
-      training_status.update!(followup_date: 25)
-    end
+    training_status.update!(followup_date: 25) if training_status
 
     exited_status = ClientStatus.find_by(name: 'Exited')
-    if exited_status
-      exited_status.update!(followup_date: 85)
-    end
+    exited_status.update!(followup_date: 85) if exited_status
 
     change_column_null :client_statuses, :followup_date, false
   end

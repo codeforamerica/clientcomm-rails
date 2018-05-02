@@ -4,7 +4,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:count) { 1 }
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
-  let(:send_at_time) { Time.now.tomorrow }
+  let(:send_at_time) { Time.zone.now.tomorrow }
   let(:user) { create :user }
   let(:client) { create :client, users: [user] }
   let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
@@ -45,7 +45,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   end
 
   context 'When rescheduled' do
-    let(:message) { create :message, send_at: Time.now }
+    let(:message) { create :message, send_at: Time.zone.now }
 
     it_behaves_like 'does not send'
   end

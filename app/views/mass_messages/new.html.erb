@@ -134,7 +134,7 @@
                     <div class="select">
                       <select class="select__element" name="mass_message[send_at][time]" id="scheduled_message_send_at_time">
                       <%
-                        start = Time.now.change(min: 0, hour: 0)
+                        start = Time.zone.now.change(min: 0, hour: 0)
                         times = []
                         48.times do
                           times << start

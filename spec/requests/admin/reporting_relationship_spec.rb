@@ -73,7 +73,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         end
 
         before do
-          create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day
+          create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
           ReportingRelationship.find_by(client: client, user: user1).update!(active: false)
         end
 
@@ -180,7 +180,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
   describe 'PUT#update' do
     let(:rr) { ReportingRelationship.find_by(user: user1, client: client) }
-    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.now + 1.day }
+    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
     let!(:messages) { create_list :message, 2, reporting_relationship: rr }
 
     context 'transferring a client' do
@@ -239,7 +239,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
       it 'creates transfer markers' do
         expect(user2.messages.transfer_markers).to be_empty
-        time = Time.now
+        time = Time.zone.now
 
         travel_to time do
           perform_enqueued_jobs do

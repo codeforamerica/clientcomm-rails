@@ -25,7 +25,7 @@ feature 'user edits client', :js do
   let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   before do
     other_user.clients << clientone
-    login_as my_user, :scope => :user
+    login_as my_user, scope: :user
     visit root_path
   end
 
@@ -74,7 +74,7 @@ feature 'user edits client', :js do
 
     step 'logs in as the other user' do
       logout(my_user)
-      login_as other_user, :scope => :user
+      login_as other_user, scope: :user
       visit root_path
     end
 

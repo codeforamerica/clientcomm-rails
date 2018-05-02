@@ -12,7 +12,7 @@ require 'capybara/poltergeist'
 require 'action_cable/testing/rspec'
 require 'action_cable/testing/rspec/features'
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -28,7 +28,7 @@ if headless_capybara
   Capybara.javascript_driver = :poltergeist
 else
   Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+    Capybara::Selenium::Driver.new(app, browser: :chrome)
   end
   Capybara.javascript_driver = :chrome
 end
@@ -40,7 +40,7 @@ end
 WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = ::Rails.root.join('spec', 'fixtures')
   config.infer_spec_type_from_file_location!
   config.include ActiveSupport::Testing::TimeHelpers
   # Filter lines from Rails gems in backtraces.
@@ -62,14 +62,14 @@ RSpec.configure do |config|
   config.include ActionView::RecordIdentifier
   config.include Rails.application.routes.url_helpers
 
-  config.around :each, :type => :feature do |example|
+  config.around :each, type: :feature do |example|
     ActionMailer::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
     example.run
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = false
   end
 
-  config.after :each, :type => :feature, js: true do
+  config.after :each, type: :feature, js: true do
     wait_for_ajax
   end
 end

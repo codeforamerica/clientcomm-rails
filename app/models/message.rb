@@ -5,33 +5,33 @@ class Message < ApplicationRecord
   belongs_to :original_reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'original_reporting_relationship_id'
   has_one :client, through: :reporting_relationship
   has_one :user, through: :reporting_relationship
-  has_many :attachments
+  has_many :attachments, dependent: :nullify
 
   before_validation :set_original_reporting_relationship, on: :create
 
-  validates_presence_of :send_at, message: "That date didn't look right."
-  validates_presence_of :body, unless: ->(message) { message.attachments.present? || message.inbound }
-  validates_presence_of :reporting_relationship
-  validates_presence_of :original_reporting_relationship
-  validates_datetime :send_at, :before => :max_future_date
+  validates :send_at, presence: { message: "That date didn't look right." }
+  validates :body, presence: { unless: ->(message) { message.attachments.present? || message.inbound } }
+  validates :reporting_relationship, presence: true
+  validates :original_reporting_relationship, presence: true
+  validates_datetime :send_at, before: :max_future_date
 
   validates :body, length: { maximum: 1600 }
 
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
-  scope :scheduled, -> { where('send_at >= ?', Time.now).order('send_at ASC') }
+  scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
   scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
   scope :messages, -> { where(marker_type: nil) }
 
   class TransferClientMismatch < StandardError; end
 
-  INBOUND = 'inbound'
-  OUTBOUND = 'outbound'
-  READ = 'read'
-  UNREAD = 'unread'
-  ERROR = 'error'
+  INBOUND = 'inbound'.freeze
+  OUTBOUND = 'outbound'.freeze
+  READ = 'read'.freeze
+  UNREAD = 'unread'.freeze
+  ERROR = 'error'.freeze
 
   MARKER_TRANSFER = 0
   MARKER_CLIENT_EDIT = 1
@@ -65,7 +65,7 @@ class Message < ApplicationRecord
         body: message_body,
         marker_type: MARKER_CLIENT_EDIT,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
@@ -84,7 +84,7 @@ class Message < ApplicationRecord
       ),
       marker_type: MARKER_TRANSFER,
       read: true,
-      send_at: Time.now,
+      send_at: Time.zone.now,
       inbound: true,
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
@@ -98,7 +98,7 @@ class Message < ApplicationRecord
       ),
       marker_type: MARKER_TRANSFER,
       read: true,
-      send_at: Time.now,
+      send_at: Time.zone.now,
       inbound: true,
       number_to: receiving_rr.user.department.phone_number,
       number_from: receiving_rr.client.phone_number
@@ -203,7 +203,7 @@ class Message < ApplicationRecord
   end
 
   def self.send_unclaimed_autoreply(rr:)
-    now = Time.now
+    now = Time.zone.now
     unclaimed_response = rr.department.unclaimed_response
     unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
     message = Message.create!(
@@ -217,7 +217,7 @@ class Message < ApplicationRecord
   end
 
   def send_message
-    sent = Time.now >= send_at
+    sent = Time.zone.now >= send_at
     MessageBroadcastJob.perform_now(message: self) if sent
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
   end

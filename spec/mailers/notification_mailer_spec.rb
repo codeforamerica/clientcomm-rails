@@ -107,7 +107,7 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#report_usage' do
-    let(:end_date) { Time.now }
+    let(:end_date) { Time.zone.now }
     let(:email) { 'test@example.com' }
     let(:metrics) do
       [

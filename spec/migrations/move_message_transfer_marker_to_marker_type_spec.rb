@@ -30,7 +30,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         original_reporting_relationship_id: rr.id,
         transfer_marker: true,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
@@ -41,7 +41,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         original_reporting_relationship_id: rr.id,
         transfer_marker: false,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
@@ -74,7 +74,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         original_reporting_relationship_id: rr.id,
         marker_type: Message::MARKER_TRANSFER,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
@@ -85,7 +85,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         original_reporting_relationship_id: rr.id,
         marker_type: nil,
         read: true,
-        send_at: Time.now,
+        send_at: Time.zone.now,
         inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
