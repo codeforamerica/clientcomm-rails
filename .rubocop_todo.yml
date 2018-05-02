@@ -15,16 +15,6 @@ Style/GuardClause:
     - 'app/lib/sms_service.rb'
     - 'spec/support/twilio_helper.rb'
 
-# Offense count: 8
-# Cop supports --auto-correct.
-Style/IfUnlessModifier:
-  Exclude:
-    - 'config.ru'
-    - 'db/migrate/20170803184914_set_send_at_on_messages.rb'
-    - 'db/migrate/20171020012824_add_follup_up_date_to_client_statuses.rb'
-    - 'spec/spec_helper.rb'
-    - 'spec/support/twilio_helper.rb'
-
 # Offense count: 2
 Style/MixinUsage:
   Exclude:
