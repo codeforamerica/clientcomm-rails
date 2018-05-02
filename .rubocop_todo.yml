@@ -15,13 +15,6 @@ Style/GuardClause:
     - 'app/lib/sms_service.rb'
     - 'spec/support/twilio_helper.rb'
 
-# Offense count: 38
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, UseHashRocketsWithSymbolValues, PreferHashRocketsForNonAlnumEndingSymbols.
-# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
-Style/HashSyntax:
-  Enabled: false
-
 # Offense count: 8
 # Cop supports --auto-correct.
 Style/IfUnlessModifier:

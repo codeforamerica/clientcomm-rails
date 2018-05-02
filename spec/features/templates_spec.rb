@@ -11,7 +11,7 @@ end
 feature 'User creates template' do
   before do
     myuser = create :user
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
     visit templates_path
     click_on 'New template'
     expect(page).to have_current_path(new_template_path)
@@ -40,7 +40,7 @@ end
 feature 'User edits template' do
   before do
     myuser = create :user
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
     visit templates_path
   end
 
@@ -81,7 +81,7 @@ end
 feature 'User deletes template' do
   before do
     myuser = create :user
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
     visit templates_path
   end
 
@@ -109,7 +109,7 @@ feature 'templates' do
   before do
     FeatureFlag.create!(flag: 'templates', enabled: true)
 
-    login_as(user, :scope => :user)
+    login_as(user, scope: :user)
     rr = user.reporting_relationships.find_by(client: client)
     visit reporting_relationship_path(rr)
   end

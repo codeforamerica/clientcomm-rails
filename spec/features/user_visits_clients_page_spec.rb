@@ -124,7 +124,7 @@ feature 'manage action is hidden on mobile', js: true do
   scenario 'user visits client list on mobile' do
     myuser = create :user
     create :client, user: myuser
-    login_as(myuser, :scope => :user)
+    login_as(myuser, scope: :user)
 
     visit clients_path
     resize_window_to_mobile

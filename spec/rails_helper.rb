@@ -28,7 +28,7 @@ if headless_capybara
   Capybara.javascript_driver = :poltergeist
 else
   Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+    Capybara::Selenium::Driver.new(app, browser: :chrome)
   end
   Capybara.javascript_driver = :chrome
 end
@@ -62,14 +62,14 @@ RSpec.configure do |config|
   config.include ActionView::RecordIdentifier
   config.include Rails.application.routes.url_helpers
 
-  config.around :each, :type => :feature do |example|
+  config.around :each, type: :feature do |example|
     ActionMailer::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
     example.run
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = false
   end
 
-  config.after :each, :type => :feature, js: true do
+  config.after :each, type: :feature, js: true do
     wait_for_ajax
   end
 end

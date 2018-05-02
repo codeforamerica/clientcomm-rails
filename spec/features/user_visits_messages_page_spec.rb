@@ -8,7 +8,7 @@ feature 'User clicks on client in list', :js do
 
     context 'on the client list page' do
       before do
-        login_as(myuser, :scope => :user)
+        login_as(myuser, scope: :user)
         visit clients_path
       end
 
@@ -28,7 +28,7 @@ feature 'User clicks on client in list', :js do
 
     context 'on the messages page' do
       before do
-        login_as(myuser, :scope => :user)
+        login_as(myuser, scope: :user)
         visit reporting_relationship_path(rr)
       end
 
@@ -93,7 +93,7 @@ feature 'User sees client notes on messages page', :js do
     end
 
     it 'hides notes on mobile' do
-      login_as(myuser, :scope => :user)
+      login_as(myuser, scope: :user)
       visit reporting_relationship_path(rr)
       expect(page).to_not have_content truncated_notes
     end
@@ -105,7 +105,7 @@ feature 'User sees client notes on messages page', :js do
     end
 
     it 'shows notes on desktop' do
-      login_as(myuser, :scope => :user)
+      login_as(myuser, scope: :user)
       visit reporting_relationship_path(rr)
       expect(page).to have_content truncated_notes
     end
@@ -119,7 +119,7 @@ feature 'User sees client notes on messages page', :js do
     let!(:rr) { ReportingRelationship.create(client: client_with_long_note, user: myuser, notes: notes) }
 
     before do
-      login_as(myuser, :scope => :user)
+      login_as(myuser, scope: :user)
       visit reporting_relationship_path(rr)
     end
 

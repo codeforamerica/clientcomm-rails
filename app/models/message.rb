@@ -13,7 +13,7 @@ class Message < ApplicationRecord
   validates :body, presence: { unless: ->(message) { message.attachments.present? || message.inbound } }
   validates :reporting_relationship, presence: true
   validates :original_reporting_relationship, presence: true
-  validates_datetime :send_at, :before => :max_future_date
+  validates_datetime :send_at, before: :max_future_date
 
   validates :body, length: { maximum: 1600 }
 

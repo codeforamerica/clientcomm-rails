@@ -17,7 +17,7 @@ ActiveAdmin.register User do
     end
   end
 
-  actions :all, :except => [:destroy]
+  actions :all, except: [:destroy]
 
   member_action :disable, method: :get do
     @page_title = "Disable #{resource.full_name}'s account"

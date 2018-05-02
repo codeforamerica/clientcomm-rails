@@ -38,7 +38,7 @@ ActiveAdmin.register Client do
 
   action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
 
-  actions :all, :except => [:destroy]
+  actions :all, except: [:destroy]
 
   filter :reporting_relationships_user_id,
          as: :select,

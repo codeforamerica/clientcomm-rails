@@ -14,7 +14,7 @@ feature 'Client status banner', active_job: true do
     create :client_status, name: active, followup_date: 30, department: department
     create :client_status, name: waiting, department: department
     create :client_status, name: moving, department: department
-    login_as(user, :scope => :user)
+    login_as(user, scope: :user)
 
     recent_clients.each do |client|
       ReportingRelationship.create(

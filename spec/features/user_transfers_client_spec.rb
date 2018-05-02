@@ -12,7 +12,7 @@ feature 'user transfers client', :js, active_job: true do
   before do
     myuser.department.update(user_id: unclaimed_user.id)
     other_user.clients << clientone
-    login_as myuser, :scope => :user
+    login_as myuser, scope: :user
     visit root_path
   end
 
@@ -59,7 +59,7 @@ feature 'user transfers client', :js, active_job: true do
     step 'transfer user has client' do
       logout(:user)
 
-      login_as transfer_user, :scope => :user
+      login_as transfer_user, scope: :user
       visit root_path
       expect(page).to have_content clientone.full_name
 
@@ -86,7 +86,7 @@ feature 'user transfers client', :js, active_job: true do
 
     step 'original user has both transfer markers' do
       logout(:user)
-      login_as myuser, :scope => :user
+      login_as myuser, scope: :user
       visit root_path
       expect(page).to have_content clientone.full_name
 

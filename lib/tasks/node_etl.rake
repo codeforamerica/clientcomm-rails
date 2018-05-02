@@ -1,5 +1,5 @@
 namespace :node_etl do
-  task :etl_users => :environment do
+  task etl_users: :environment do
     num_users = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT count(cm.cmid)
       FROM cms cm
@@ -42,7 +42,7 @@ namespace :node_etl do
     Rails.logger.warn { "--> user load of #{imported_users} users complete" }
   end
 
-  task :etl_clients => :environment do
+  task etl_clients: :environment do
     num_clients = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT COUNT(cl.clid)
       FROM clients cl
