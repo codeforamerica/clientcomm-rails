@@ -31,12 +31,6 @@ Style/MultilineTernaryOperator:
   Exclude:
     - 'app/admin/user.rb'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'app/models/message.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.

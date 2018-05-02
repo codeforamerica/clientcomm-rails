@@ -27,11 +27,11 @@ class Message < ApplicationRecord
 
   class TransferClientMismatch < StandardError; end
 
-  INBOUND = 'inbound'
-  OUTBOUND = 'outbound'
-  READ = 'read'
-  UNREAD = 'unread'
-  ERROR = 'error'
+  INBOUND = 'inbound'.freeze
+  OUTBOUND = 'outbound'.freeze
+  READ = 'read'.freeze
+  UNREAD = 'unread'.freeze
+  ERROR = 'error'.freeze
 
   MARKER_TRANSFER = 0
   MARKER_CLIENT_EDIT = 1
