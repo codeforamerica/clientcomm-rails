@@ -356,7 +356,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       rr.save!
       subject
       expect_analytics_events(
-        'symbol_change' => {
+        'symbol_update' => {
           'previous_category' => 'cat1',
           'new_category' => 'cat2'
         }

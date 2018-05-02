@@ -29,7 +29,8 @@ class User < ApplicationRecord
     {
       clients_count: clients_count,
       has_unread_messages: unread_messages_count > 0,
-      unread_messages_count: unread_messages_count
+      unread_messages_count: unread_messages_count,
+      symbols_count: symbols_count
     }
   end
 
@@ -83,6 +84,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def symbols_count
+    reporting_relationships.where.not(category: ReportingRelationship::CATEGORIES.keys.first).count
+  end
 
   def no_active_reporting_relationships_if_inactive
     errors.add(:active, :active_reporting_relationships) if active == false && reporting_relationships.where(active: true).any?

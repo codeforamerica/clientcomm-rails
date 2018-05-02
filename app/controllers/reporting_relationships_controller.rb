@@ -97,7 +97,7 @@ class ReportingRelationshipsController < ApplicationController
       )
     else
       analytics_track(
-        label: :symbol_change,
+        label: :symbol_update,
         data: {
           'previous_category': previous_category,
           'new_category': @rr.category

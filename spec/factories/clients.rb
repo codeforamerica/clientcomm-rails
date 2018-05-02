@@ -11,7 +11,7 @@ FactoryBot.define do
       notes { Faker::Lorem.sentence }
       has_message_error { false }
       has_unread_messages { false }
-      category { ReportingRelationship::CATEGORIES.keys.sample }
+      category { ReportingRelationship::CATEGORIES.keys.first }
     end
 
     after(:create) do |client, evaluator|

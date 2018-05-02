@@ -556,9 +556,11 @@ describe 'Clients requests', type: :request do
         create :message, reporting_relationship: rr1, inbound: true
 
         rr2 = ReportingRelationship.find_by(user: user, client: user.clients.second)
+        rr2.update(category: 'cat1')
         create :message, reporting_relationship: rr2, inbound: true
 
         rr3 = ReportingRelationship.find_by(user: user, client: user.clients.third)
+        rr3.update(category: 'cat1')
         create :message, reporting_relationship: rr3, inbound: true
 
         subject
@@ -568,7 +570,8 @@ describe 'Clients requests', type: :request do
                                   'clients_view' => {
                                     'has_unread_messages' => true,
                                     'unread_messages_count' => 3,
-                                    'clients_count' => 5
+                                    'clients_count' => 5,
+                                    'symbols_count' => 2
                                   }
                                 })
       end
