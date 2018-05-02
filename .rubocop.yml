@@ -1,11 +1,14 @@
 inherit_from: .rubocop_todo.yml
 
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+
 Rails:
   Enabled: true
 
 Layout/EmptyLinesAroundBlockBody:
   Exclude:
-    - 'db/schema.rb'
     - 'config/routes.rb'
 
 Metrics/CyclomaticComplexity:
@@ -17,7 +20,8 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 500
   Exclude:
-  - 'spec/**/*.rb'
+  - 'spec/features/**/*.rb'
+  - 'spec/requests/**/*.rb'
 
 Metrics/ClassLength:
   Max: 300
