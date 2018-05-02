@@ -81,23 +81,4 @@ feature 'User receives a message from a client' do
       expect(page).to have_css '.flash p', text: flash_text
     end
   end
-
-  context "while on the clients' messages page" do
-    it "doesn't see a notification for a new message", :js do
-      # go to messages page
-      client = Client.find_by(phone_number: clientone.phone_number)
-      rr = myuser.reporting_relationships.find_by(client: client)
-      visit reporting_relationship_path(rr)
-      # post a message to the twilio endpoint from the user
-      twilio_post_sms(twilio_new_message_params(
-                        from_number: clientone.phone_number,
-                        to_number: phone_number
-      ))
-      # there's a message with the correct contents
-      expect(page).to have_css '.message--inbound div', text: twilio_message_text
-      wait_for_ajax
-      # there's no flash notification
-      expect(page).to have_no_css '.flash'
-    end
-  end
 end

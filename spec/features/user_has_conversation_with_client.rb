@@ -3,25 +3,17 @@ feature 'sending messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:too_long_message_body) { 'abcd' * 401 }
-  let(:client_1) { build :client }
-  let(:client_2) { build :client }
+  let(:client_1) { create :client, users: [myuser] }
+  let(:client_2) { create :client, users: [myuser] }
   let(:myuser) { create :user }
 
-  scenario 'user sends message to client', :js do
-    step 'when user logs in' do
-      login_as(myuser, scope: :user)
-    end
+  before do
+    login_as(myuser, scope: :user)
+  end
 
-    step 'when user creates two clients' do
-      travel_to 7.days.ago do
-        add_client(client_1)
-        add_client(client_2)
-      end
-    end
-
+  scenario 'user sends message to client', :js, active_job: true do
     step 'when user goes to messages page' do
-      client = Client.find_by(phone_number: client_1.phone_number).id
-      rr = myuser.reporting_relationships.find_by(client: client)
+      rr = myuser.reporting_relationships.find_by(client: client_1)
       visit reporting_relationship_path(rr)
     end
 
@@ -50,15 +42,20 @@ feature 'sending messages', active_job: true do
       end
     end
 
-    step 'when user visits the clients page' do
-      visit clients_path
-    end
+    step 'when the client responds' do
+      # post a message to the twilio endpoint from the user
+      perform_enqueued_jobs do
+        twilio_post_sms(twilio_new_message_params(
+                          from_number: client_1.phone_number,
+                          to_number: myuser.department.phone_number
+        ))
+      end
 
-    step 'then user sees clients sorted by last contact time' do
-      savedfirstclient = Client.find_by(phone_number: client_1.phone_number)
-      savedsecondclient = Client.find_by(phone_number: client_2.phone_number)
-      expect(page).to have_css "tr##{dom_id(savedfirstclient)} td", text: 'just now'
-      expect(page).to have_css "tr##{dom_id(savedsecondclient)} td", text: '--'
+      # there's a message with the correct contents
+      expect(page).to have_css '.message--inbound div', text: twilio_message_text
+      wait_for_ajax
+      # there's no flash notification
+      expect(page).to have_no_css '.flash'
     end
   end
 
