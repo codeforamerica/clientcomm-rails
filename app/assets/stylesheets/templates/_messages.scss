@@ -134,6 +134,11 @@
         padding: .5em 0;
         top: -.1em;
       }
+
+      div.like-options div:hover {
+        color: red;
+      }
+
     }
 
     .message--event {

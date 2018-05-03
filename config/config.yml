@@ -12,6 +12,11 @@ production: &default
     red_star:
       icon: 'star-red'
       order: 3
+  like_text:
+    - i'm sorry
+    - some other thing
+    - some third thing
+    - the fourth thing
 
 development:
   <<: *default
@@ -33,3 +38,8 @@ test:
     cat3:
       icon: 'icon3'
       order: 3
+  like_text:
+    - option1
+    - option2
+    - option3
+    - option4

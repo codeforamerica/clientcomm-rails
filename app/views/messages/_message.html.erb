@@ -3,6 +3,14 @@
     <div class="message--content <%= message.twilio_status %>"><%= message.body %>
     <%= render message.attachments %>
     </div>
+    <% if message.inbound %>
+      <div class="like">+</div>
+      <div class="like-options hidden">
+        <% APP_CONFIG['like_text'].each do |text| %>
+          <div><%= text %></div>
+        <% end %>
+      </div>
+    <% end %>
     <p class="message--label <%= message.twilio_status %>">
       <% if message.twilio_status == 'undelivered' %>
         <%= t('message.status.undelivered') %>

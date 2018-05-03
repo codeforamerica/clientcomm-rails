@@ -10,6 +10,12 @@ var Messages = {
     // append the message to the bottom of the list
     $('#messages-empty-dialog').hide();
     this.msgs.append(message_html);
+
+    last_msg = this.msgs.children().last();
+    if (last_msg.hasClass('message--inbound')) {
+      generateLikeBindings(null, last_msg);
+    };
+
     this.messagesToBottom();
 
     replaceEmoji(message_html);
@@ -42,10 +48,29 @@ var Messages = {
   }
 };
 
+function generateLikeBindings(i, msg) {
+  msg = $(msg);
+  msg.find('div.like').click(function(e) {
+    elm = $(this);
+    options_div = elm.next('div.like-options');
+    options_div.toggleClass('hidden');
+  });
+
+  msg.find('div.like-options div').click(function(e) {
+    elm  = $(this);
+    text = elm.text();
+    $('form#new_message textarea.main-message-input').val(text);
+    $('form#new_message').submit();
+    elm.parent().toggleClass('hidden');
+  });
+};
+
 $(document).ready(function() {
   Messages.init();
   var clientId = Messages.msgs.data('client-id');
   Messages.messagesToBottom();
+
+  $('.message--inbound').each(generateLikeBindings);
 
   // only subscribe if we're on a message page
   if (!clientId) {

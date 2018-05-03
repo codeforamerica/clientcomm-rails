@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 feature 'sending messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
@@ -56,6 +57,25 @@ feature 'sending messages', active_job: true do
       wait_for_ajax
       # there's no flash notification
       expect(page).to have_no_css '.flash'
+    end
+
+    step 'when the user click like on message' do
+      within '.message--inbound', text: twilio_message_text do
+        find('div.like').click
+        expect(page).to have_css('div.like-options')
+      end
+    end
+
+    step 'when the user clicks message in like options on message' do
+      within '.message--inbound', text: twilio_message_text do
+        perform_enqueued_jobs do
+          find('div.like-options div', text: 'option1').click
+          expect(page).to_not have_css('div.like-options')
+        end
+      end
+
+      wait_for_ajax
+      expect(page).to have_css '.message--outbound div.message--content', text: 'option1'
     end
   end
 
