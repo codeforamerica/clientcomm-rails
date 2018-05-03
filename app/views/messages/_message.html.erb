@@ -5,7 +5,7 @@
       <%= render message.attachments %>
       </div>
       <% if message.inbound && message.user.treatment_group == 'ebp-liking-messages' %>
-        <i class="show-like-options icon-add"></i>
+        <i class="show-like-options icon-add hidden-sm hidden-xs"></i>
         <div class="like-options hidden">
           <% APP_CONFIG['like_text'].each do |text| %>
             <div><%= text %></div>
