@@ -2,9 +2,10 @@ require 'csv'
 require 'open-uri'
 
 namespace :import do
-  task :slco_court_reminders, [:court_dates_file_path] => :environment do |_, args|
+  task :slco_court_reminders, %i[court_dates_file_path dryrun] => :environment do |_, args|
+    args.with_defaults(dryrun: true)
     abort 'Please pass the path for the court dates file' if args.court_dates_file_path.nil?
-    time_zone = 'Mountain Time (US & Canada)'
+    time_zone_offset = '-0600'
 
     court_locations_uri = 'https://raw.githubusercontent.com/slco-2016/cTracksImporter/master/court_locations.csv'
     court_locations_raw = open(court_locations_uri)
@@ -20,7 +21,7 @@ namespace :import do
       rr = ReportingRelationship.find_by(notes: court_date['ofndr_num'], active: true)
       next if rr.nil?
 
-      court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']}", '%m/%d/%Y %H:%M').in_time_zone(time_zone)
+      court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       time_show = court_date_at.strftime('%-l:%M %p')
       body = "Automated alert: Your next court date is at #{court_locations[court_date['(expression)']]} "\
         "on #{court_date['crt_dt']}, #{time_show} in Rm #{court_date['crt_rm']}. Please text with any questions."
@@ -36,6 +37,12 @@ namespace :import do
       end
 
       next if found_dupe
+
+      unless args.dryrun == 'false'
+        feedback = "DRYRUN: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at} body: #{body}"
+        Rails.logger.info { feedback }
+        next
+      end
 
       message = Message.new(
         body: body,
