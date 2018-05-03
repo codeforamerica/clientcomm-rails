@@ -145,7 +145,7 @@ function setCounter(counter, textField, modalVisible) {
   }
 
   if (tooLongToSend) {
-    counter.html("This message is too long to send.");
+    counter.html("This message is more than 1600 characters and is too long to send.");
   } else if (tooLongForSingleText) {
     counter.html("Because of its length, this message may be sent as " + Math.ceil(length/160) + " texts.");
   }

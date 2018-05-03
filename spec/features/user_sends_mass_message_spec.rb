@@ -68,7 +68,7 @@ feature 'sending mass messages', active_job: true do
     step 'when user enters a message that is too long' do
       fill_in 'Your message', with: too_long_message_body
 
-      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_content('This message is more than 1600 characters and is too long to send.')
       expect(page).to have_button('Send', disabled: true)
       expect(page).to have_button('Send later', disabled: true)
     end
@@ -151,7 +151,7 @@ feature 'sending mass messages', active_job: true do
     step 'when user enters a message that is too long' do
       fill_in 'Your message', with: too_long_message_body
 
-      expect(page).to have_content('This message is too long to send.')
+      expect(page).to have_content('This message is more than 1600 characters and is too long to send.')
       expect(page).to have_button('Schedule messages', disabled: true)
     end
 
