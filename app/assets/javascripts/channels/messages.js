@@ -50,8 +50,11 @@ var Messages = {
 
 function generateLikeBindings(i, msg) {
   msg = $(msg);
-  msg.find('div.like').click(function(e) {
+
+  msg.find('.show-like-options').click(function(e) {
     elm = $(this);
+    elm.toggleClass('icon-close');
+    elm.toggleClass('icon-add');
     options_div = elm.next('div.like-options');
     options_div.toggleClass('hidden');
   });
@@ -81,6 +84,7 @@ $(document).ready(function() {
     { channel: 'MessagesChannel', client_id: clientId },
     {
       received: function(data) {
+        console.log('incoming message');
         Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
       }
     }

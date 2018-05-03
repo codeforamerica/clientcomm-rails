@@ -1,16 +1,18 @@
 <% unless message.marker? %>
   <div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
-    <div class="message--content <%= message.twilio_status %>"><%= message.body %>
-    <%= render message.attachments %>
-    </div>
-    <% if message.inbound %>
-      <div class="like">+</div>
-      <div class="like-options hidden">
-        <% APP_CONFIG['like_text'].each do |text| %>
-          <div><%= text %></div>
-        <% end %>
+    <div class="message-row-container">
+      <div class="message--content <%= message.twilio_status %>"><%= message.body %>
+      <%= render message.attachments %>
       </div>
-    <% end %>
+      <% if message.inbound && current_user.treatment_group == 'ebp-liking-messages' %>
+        <i class="show-like-options icon-add"></i>
+        <div class="like-options hidden">
+          <% APP_CONFIG['like_text'].each do |text| %>
+            <div><%= text %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
     <p class="message--label <%= message.twilio_status %>">
       <% if message.twilio_status == 'undelivered' %>
         <%= t('message.status.undelivered') %>
