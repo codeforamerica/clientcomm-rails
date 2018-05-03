@@ -38,11 +38,13 @@ namespace :import do
 
       next if found_dupe
 
-      unless args.dryrun == 'false'
+      if args.dryrun == 'false'
+        feedback = "CREATING: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at} body: #{body}"
+      else
         feedback = "DRYRUN: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at} body: #{body}"
-        Rails.logger.info { feedback }
         next
       end
+      Rails.logger.info { feedback }
 
       message = Message.new(
         body: body,
@@ -54,7 +56,8 @@ namespace :import do
       )
 
       if message.invalid? || message.past_message?
-        Rails.logger.warn { "Invalid message for client #{rr.client_id}" }
+        feedback = "** INVALID: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at}"
+        Rails.logger.warn { feedback }
         next
       end
 
