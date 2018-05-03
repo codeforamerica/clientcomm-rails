@@ -4,7 +4,7 @@
       <div class="message--content <%= message.twilio_status %>"><%= message.body %>
       <%= render message.attachments %>
       </div>
-      <% if message.inbound && current_user.treatment_group == 'ebp-liking-messages' %>
+      <% if message.inbound && message.user.treatment_group == 'ebp-liking-messages' %>
         <i class="show-like-options icon-add"></i>
         <div class="like-options hidden">
           <% APP_CONFIG['like_text'].each do |text| %>

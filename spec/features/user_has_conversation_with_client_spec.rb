@@ -7,6 +7,7 @@ feature 'sending messages', active_job: true do
   let(:client_1) { create :client, users: [myuser] }
   let(:client_2) { create :client, users: [myuser] }
   let(:myuser) { create :user }
+  let(:rr) { myuser.reporting_relationships.find_by(client: client_1) }
 
   before do
     login_as(myuser, scope: :user)
@@ -14,7 +15,6 @@ feature 'sending messages', active_job: true do
 
   scenario 'user sends message to client', :js, active_job: true do
     step 'when user goes to messages page' do
-      rr = myuser.reporting_relationships.find_by(client: client_1)
       visit reporting_relationship_path(rr)
     end
 
@@ -59,14 +59,29 @@ feature 'sending messages', active_job: true do
       expect(page).to have_no_css '.flash'
     end
 
-    step 'when the user click like on message' do
+    step 'when the user is not in the treatment group' do
       within '.message--inbound', text: twilio_message_text do
-        find('div.like').click
+        expect(page).to_not have_css('i.show-like-options')
+      end
+    end
+
+    step 'when the user is added to the treatment group' do
+      myuser.update(treatment_group: 'ebp-liking-messages')
+      visit reporting_relationship_path(rr)
+
+      within '.message--inbound', text: twilio_message_text do
+        expect(page).to have_css('i.show-like-options')
+      end
+    end
+
+    step 'when the user opens the message like options' do
+      within '.message--inbound', text: twilio_message_text do
+        find('i.show-like-options').click
         expect(page).to have_css('div.like-options')
       end
     end
 
-    step 'when the user clicks message in like options on message' do
+    step 'the user selects an option' do
       within '.message--inbound', text: twilio_message_text do
         perform_enqueued_jobs do
           find('div.like-options div', text: 'option1').click

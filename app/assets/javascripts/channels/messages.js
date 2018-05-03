@@ -65,6 +65,9 @@ function generateLikeBindings(i, msg) {
     $('form#new_message textarea.main-message-input').val(text);
     $('form#new_message').submit();
     elm.parent().toggleClass('hidden');
+    button = elm.parent().siblings('.show-like-options');
+    button.toggleClass('icon-close');
+    button.toggleClass('icon-add');
   });
 };
 
@@ -84,7 +87,6 @@ $(document).ready(function() {
     { channel: 'MessagesChannel', client_id: clientId },
     {
       received: function(data) {
-        console.log('incoming message');
         Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
       }
     }
