@@ -18,7 +18,7 @@ namespace :import do
 
     court_dates.each do |court_date|
       Rails.logger.info { "Processing #{court_date['ofndr_num']}" }
-      rr = ReportingRelationship.find_by(notes: court_date['ofndr_num'], active: true)
+      rr = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true).order('last_contacted_at DESC').first
       next if rr.nil?
 
       court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
