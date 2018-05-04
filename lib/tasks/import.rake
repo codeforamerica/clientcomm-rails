@@ -67,59 +67,6 @@ namespace :import do
     end
   end
 
-  task :validate_slco_court_reminders, %i[court_dates_file_path dryrun] => :environment do |_, args|
-    args.with_defaults(dryrun: true)
-    abort 'Please pass the path for the court dates file' if args.court_dates_file_path.nil?
-    puts '!! DRYRUN !!' if args.dryrun != 'false'
-    time_zone_offset = '-0600'
-
-    court_locations_uri = 'https://raw.githubusercontent.com/slco-2016/cTracksImporter/master/court_locations.csv'
-    court_locations_raw = open(court_locations_uri)
-    court_locations = decorate_court_locations(CSV.parse(court_locations_raw, headers: true))
-
-    court_dates_raw = File.read(args.court_dates_file_path)
-    court_dates = CSV.parse(court_dates_raw, headers: true)
-
-    Rails.logger.info { "Starting processing of #{court_dates.count} court dates." }
-
-    court_dates.each do |court_date|
-      Rails.logger.info { "Processing #{court_date['ofndr_num']}" }
-      rr = ReportingRelationship.find_by(notes: court_date['ofndr_num'], active: true)
-      next if rr.nil?
-
-      court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
-      time_show = court_date_at.strftime('%-l:%M %p')
-      body = "Automated alert: Your next court date is at #{court_locations[court_date['(expression)']]} "\
-        "on #{court_date['crt_dt']}, #{time_show} in Rm #{court_date['crt_rm']}. Please text with any questions."
-
-      send_at = court_date_at.utc - 23.hours
-
-      found_match = false
-      rr.messages.scheduled.each do |existing_message|
-        next unless ((send_at - existing_message.send_at) * 24 * 60).to_i.abs < 1
-
-        found_match = true
-        old_body = existing_message.body
-        if body == old_body
-          feedback = "VALIDATED: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at} body: #{body}"
-        else
-          verb = 'WILL UPDATE'
-          if args.dryrun == 'false'
-            verb = 'UPDATED'
-            existing_message.update!(body: body)
-          end
-          feedback = "#{verb}: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at}\n|  old_body: #{old_body}\n|  new_body: #{body}"
-        end
-        Rails.logger.warn { feedback }
-      end
-
-      next if found_match
-
-      feedback = "NO MATCH: ctrack_id: #{court_date['ofndr_num']}, client: #{rr.client.id}, user: #{rr.user.id}, send_at: #{send_at} body: #{body}"
-      Rails.logger.warn { feedback }
-    end
-  end
-
   def decorate_court_locations(locations_csv)
     decorated_locations = {}
     locations_csv.each do |row|
