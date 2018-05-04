@@ -151,16 +151,20 @@
       }
 
       div.like-options {
-        border: 2px #AAAAAA solid;
+        border: 2px #e3e3d9 solid;
         display: inline-block;
         position: absolute;
-        background: #F3F3F3;
+        background: #fafaf9;
         top: 50%;
-        margin-top: -60px;
+        margin-top: -116px;
         margin-left: 40px;
-        width: 385px;
+        width: 220px;
         padding: 5px 5px 10px 5px;
         text-align: center;
+        @include media($site-max-up) {
+          margin-top: -64px;
+          width: 385px;
+        }
 
         &:after, &:before {
           right: 100%;
@@ -175,13 +179,13 @@
 
         &:after {
           border-color: rgba(243, 243, 243, 0);
-          border-right-color: #f3f3f3;
+          border-right-color: #fafaf9;
           border-width: 10px;
           margin-top: -10px;
         }
         &:before {
           border-color: rgba(170, 170, 170, 0);
-          border-right-color: #AAAAAA;
+          border-right-color: #e3e3d9;
           border-width: 13px;
           margin-top: -13px;
         }
@@ -189,12 +193,15 @@
         div {
           cursor: pointer;
           display: inline-block;
-          width: 48%;
           background: white;
-          border: 1px #333333 solid;
+          border: 1px #c1c1c1 solid;
           border-radius: 5px;
-          margin-top: 5px;
-          padding: 5px;
+          margin-top: 7px;
+          padding: 7px;
+          width: 95%;
+          @include media($site-max-up) {
+            width: 48%;
+          }
         }
 
         div:hover {

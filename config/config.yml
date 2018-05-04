@@ -14,9 +14,9 @@ production: &default
       order: 3
   like_text:
     - Congratulations!
-    - You're doing great
-    - Keep it up
-    - I'm proud of you
+    - You're doing great.
+    - Keep it up!
+    - I'm proud of you.
 
 development:
   <<: *default
