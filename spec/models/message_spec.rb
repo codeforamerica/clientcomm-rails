@@ -110,6 +110,22 @@ RSpec.describe Message, type: :model do
         expect(subject).to include(attachments_count: attachments_count)
       end
     end
+
+    context 'message has like_message_id' do
+      let(:likeable_message) { create :message }
+      let(:message) do
+        create(
+          :message,
+          like_message_id: likeable_message.id
+        )
+      end
+
+      it 'reports that a message was a like' do
+        expect(subject).to include(positive_template: true)
+        expect(subject).to include(positive_template_type: message.body)
+        expect(subject).to include(positive_template_message_id: likeable_message.id)
+      end
+    end
   end
 
   describe 'relationships' do

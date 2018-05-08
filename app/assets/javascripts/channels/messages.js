@@ -50,7 +50,7 @@ var Messages = {
 
 function generateLikeBindings(i, msg) {
   msg = $(msg);
-
+  message_id = msg.attr('id').slice(8);
   msg.find('.show-like-options').click(function(e) {
     elm = $(this);
     elm.toggleClass('icon-close');
@@ -63,7 +63,9 @@ function generateLikeBindings(i, msg) {
     elm  = $(this);
     text = elm.text();
     $('form#new_message textarea.main-message-input').val(text);
+    $('form#new_message input.like-message-id').val(message_id);
     $('form#new_message').submit();
+    $('form#new_message input.like-message-id').val('');
     elm.parent().toggleClass('hidden');
     button = elm.parent().siblings('.show-like-options');
     button.toggleClass('icon-close');

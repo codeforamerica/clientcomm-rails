@@ -202,12 +202,12 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'POST#create' do
-      let(:post_params) {
+      let(:post_params) do
         {
           message: { body: body, send_at: message_send_at },
           client_id: client.id
         }
-      }
+      end
 
       context 'no date' do
         let(:message_send_at) { nil }
@@ -229,7 +229,39 @@ describe 'Messages requests', type: :request, active_job: true do
             'message_send' => {
               'client_id' => client.id,
               'message_id' => message.id,
-              'message_length' => body.length
+              'message_length' => body.length,
+              'positive_template' => false,
+              'positive_template_type' => nil,
+              'positive_template_message_id' => nil
+            }
+          )
+        end
+      end
+
+      context 'had like_message_id' do
+        let(:post_params) do
+          {
+            message: { body: body, send_at: message_send_at },
+            client_id: client.id,
+            like_message_id: likeable_message.id
+          }
+        end
+        let(:likeable_message) { create :message }
+        let(:message_send_at) { nil }
+
+        it 'creates a new message on submit' do
+          post messages_path, params: post_params
+
+          message = Message.find_by(body: body)
+
+          expect_most_recent_analytics_event(
+            'message_send' => {
+              'client_id' => client.id,
+              'message_id' => message.id,
+              'message_length' => body.length,
+              'positive_template' => true,
+              'positive_template_type' => message.body,
+              'positive_template_message_id' => likeable_message.id
             }
           )
         end

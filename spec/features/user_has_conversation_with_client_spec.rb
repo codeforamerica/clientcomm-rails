@@ -91,6 +91,13 @@ feature 'sending messages', active_job: true do
 
       wait_for_ajax
       expect(page).to have_css '.message--outbound div.message--content', text: 'option1'
+      expect_most_recent_analytics_event(
+        'message_send' => {
+          'positive_template' => true,
+          'positive_template_type' => 'option1',
+          'positive_template_message_id' => Message.find_by(body: twilio_message_text).id
+        }
+      )
     end
   end
 

@@ -3,6 +3,7 @@ class Message < ApplicationRecord
 
   belongs_to :reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'reporting_relationship_id'
   belongs_to :original_reporting_relationship, class_name: 'ReportingRelationship', foreign_key: 'original_reporting_relationship_id'
+  belongs_to :like_message, class_name: 'Message', foreign_key: 'like_message_id'
   has_one :client, through: :reporting_relationship
   has_one :user, through: :reporting_relationship
   has_many :attachments, dependent: :nullify
@@ -162,15 +163,18 @@ class Message < ApplicationRecord
 
   def analytics_tracker_data
     {
-      client_id: self.client.id,
-      message_id: self.id,
-      message_length: self.body.length,
-      current_user_id: self.user.id,
-      attachments_count: self.attachments.count,
-      message_date_scheduled: self.send_at,
-      message_date_created: self.created_at,
-      client_active: self.client.active(user: self.user),
-      first_message: self.first?
+      client_id: client.id,
+      message_id: id,
+      message_length: body.length,
+      current_user_id: user.id,
+      attachments_count: attachments.count,
+      message_date_scheduled: send_at,
+      message_date_created: created_at,
+      client_active: client.active(user: user),
+      first_message: first?,
+      positive_template: like_message.present?,
+      positive_template_type: positive_template_type,
+      positive_template_message_id: like_message&.id
     }
   end
 
@@ -223,6 +227,10 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def positive_template_type
+    body if like_message.present?
+  end
 
   def set_original_reporting_relationship
     self.original_reporting_relationship = reporting_relationship

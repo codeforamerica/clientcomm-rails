@@ -26,12 +26,12 @@ class MessagesController < ApplicationController
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
     @templates = current_user.templates
 
-    message = Message.new(
+    message = rr.messages.new(
       body: message_params[:body],
-      reporting_relationship: ReportingRelationship.find_by(user: current_user, client: client),
       number_from: current_user.department.phone_number,
       number_to: client.phone_number,
       send_at: send_at,
+      like_message_id: params[:like_message_id],
       read: true
     )
 
