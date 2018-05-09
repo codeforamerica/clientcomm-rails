@@ -3,6 +3,15 @@ require 'rails_helper'
 RSpec.describe Message, type: :model do
   describe 'validations' do
     it { should validate_length_of(:body).is_at_most(1600) }
+    it { should belong_to :like_message }
+
+    context 'like_message has different rr' do
+      let(:like_message) { create :message }
+      it 'is invalid' do
+        message = build :message, like_message: like_message
+        expect(message).to_not be_valid
+      end
+    end
   end
 
   describe '#first?' do
@@ -116,6 +125,7 @@ RSpec.describe Message, type: :model do
       let(:message) do
         create(
           :message,
+          reporting_relationship: likeable_message.reporting_relationship,
           like_message_id: likeable_message.id
         )
       end

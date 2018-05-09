@@ -18,6 +18,8 @@ class Message < ApplicationRecord
 
   validates :body, length: { maximum: 1600 }
 
+  validate :same_reporting_relationship_as_like_message
+
   scope :inbound, -> { where(inbound: true) }
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
@@ -227,6 +229,11 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def same_reporting_relationship_as_like_message
+    return unless like_message
+    errors.add(:like_message, :different_reporting_relationship) if like_message.reporting_relationship != reporting_relationship
+  end
 
   def positive_template_type
     body if like_message.present?

@@ -246,7 +246,8 @@ describe 'Messages requests', type: :request, active_job: true do
             like_message_id: likeable_message.id
           }
         end
-        let(:likeable_message) { create :message }
+        let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+        let(:likeable_message) { create :message, reporting_relationship: rr }
         let(:message_send_at) { nil }
 
         it 'creates a new message on submit' do
