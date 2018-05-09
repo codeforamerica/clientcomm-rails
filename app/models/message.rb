@@ -26,6 +26,7 @@ class Message < ApplicationRecord
   scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
   scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
+  scope :auto_court_reminders, -> { where(marker_type: AUTO_COURT_REMINDER) }
   scope :messages, -> { where(marker_type: nil) }
 
   class TransferClientMismatch < StandardError; end
@@ -38,6 +39,7 @@ class Message < ApplicationRecord
 
   MARKER_TRANSFER = 0
   MARKER_CLIENT_EDIT = 1
+  AUTO_COURT_REMINDER = 2
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = I18n.t('messages.admin_user_description')
@@ -181,7 +183,7 @@ class Message < ApplicationRecord
   end
 
   def marker?
-    !marker_type.nil?
+    marker_type.present? && marker_type != AUTO_COURT_REMINDER
   end
 
   def transfer_marker?

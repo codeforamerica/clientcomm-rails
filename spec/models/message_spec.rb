@@ -45,6 +45,31 @@ RSpec.describe Message, type: :model do
     end
   end
 
+  describe 'marker?' do
+    let(:message) { build :message, marker_type: marker_type }
+    let(:marker_type) { nil }
+
+    it 'is not a marker by default' do
+      expect(message).to_not be_marker
+    end
+
+    context 'the marker is a marker type' do
+      let(:marker_type) { Message::MARKER_TRANSFER }
+
+      it 'is not a marker by default' do
+        expect(message).to be_marker
+      end
+    end
+
+    context 'the marker is present but non-marker' do
+      let(:marker_type) { Message::AUTO_COURT_REMINDER }
+
+      it 'is not a marker by default' do
+        expect(message).to_not be_marker
+      end
+    end
+  end
+
   describe 'analytics_tracker_data' do
     let(:client_id) { 5 }
     let(:user_id) { 10 }
@@ -523,6 +548,19 @@ RSpec.describe Message, type: :model do
       create_list :message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(transfer_marker)
+    end
+  end
+
+  describe 'scope auto court reminder' do
+    let(:rr) { create :reporting_relationship }
+    let(:reminder) { create :message, reporting_relationship: rr, marker_type: Message::AUTO_COURT_REMINDER }
+
+    subject { rr.client.messages.auto_court_reminders }
+
+    it 'finds the transfer markers' do
+      create_list :message, 5, reporting_relationship: rr
+
+      expect(subject).to contain_exactly(reminder)
     end
   end
 

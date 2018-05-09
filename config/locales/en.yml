@@ -43,6 +43,9 @@ en:
     admin_user_description: A ClientComm Admin
   message:
     unclaimed_response: "AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them."
+    auto_court_reminder: |
+      Automated alert: Your next court date is at %{location}
+      on %{day}, %{time} in Rm %{room}. Please text with any questions.
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
     transcript:
