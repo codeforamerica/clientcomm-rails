@@ -48,8 +48,22 @@ var Messages = {
   }
 };
 
+function postLikeExpandEvent(msg_id, client_id) {
+  $.post({
+    url: '/tracking_events',
+    data: {
+      label: 'positive_template_expand',
+      data: {
+        message_id: msg_id,
+        client_id: client_id
+      }
+    }
+  })
+}
+
 function generateLikeBindings(i, msg) {
   msg = $(msg);
+  client_id = $('div#message-list').data('client-id');
   message_id = msg.attr('id').slice(8);
   msg.find('.show-like-options').click(function(e) {
     elm = $(this);
@@ -57,6 +71,7 @@ function generateLikeBindings(i, msg) {
     elm.toggleClass('icon-add');
     options_div = elm.next('div.like-options');
     options_div.toggleClass('hidden');
+    postLikeExpandEvent(message_id, client_id);
   });
 
   msg.find('div.like-options div').click(function(e) {

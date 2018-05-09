@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :tracking_events, only: [:create]
+
   resources :clients, only: [:index, :new, :create, :edit, :update] do
     scope module: :clients do
       resource :archive, only: :create

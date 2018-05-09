@@ -78,6 +78,13 @@ feature 'sending messages', active_job: true do
       within '.message--inbound', text: twilio_message_text do
         find('i.show-like-options').click
         expect(page).to have_css('div.like-options')
+        wait_for_ajax
+        expect_most_recent_analytics_event(
+          'positive_template_expand' => {
+            'message_id' => Message.find_by(body: twilio_message_text).id.to_s,
+            'client_id' => rr.client.id.to_s
+          }
+        )
       end
     end
 
