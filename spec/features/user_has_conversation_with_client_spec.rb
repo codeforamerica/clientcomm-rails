@@ -81,7 +81,7 @@ feature 'sending messages', active_job: true do
         wait_for_ajax
         expect_most_recent_analytics_event(
           'positive_template_expand' => {
-            'message_id' => Message.find_by(body: twilio_message_text).id.to_s,
+            'like_message_id' => Message.find_by(body: twilio_message_text).id.to_s,
             'client_id' => rr.client.id.to_s
           }
         )

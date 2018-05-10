@@ -54,7 +54,7 @@ function postLikeExpandEvent(msg_id, client_id) {
     data: {
       label: 'positive_template_expand',
       data: {
-        message_id: msg_id,
+        like_message_id: msg_id,
         client_id: client_id
       }
     }
