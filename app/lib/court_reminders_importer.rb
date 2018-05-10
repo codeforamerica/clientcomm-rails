@@ -5,10 +5,15 @@ module CourtRemindersImporter
     Message.transaction do
       Message.scheduled.auto_court_reminders.destroy_all
       court_dates.each do |court_date|
-        rr = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true).order('last_contacted_at DESC').first
+        matching_rrs = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true)
+        Rails.logger.info { "[importing court reminders] Found #{matching_rrs.count} RRs with IDs #{matching_rrs.pluck(:id)} with the same ctrack" }
+
+        rr = matching_rrs.left_joins(:messages).order('messages.send_at DESC NULLS LAST').first
         next if rr.nil?
 
         court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
+        next if court_date_at < Time.zone.now
+
         body = I18n.t(
           'message.auto_court_reminder',
           location: court_locations[court_date['(expression)']],

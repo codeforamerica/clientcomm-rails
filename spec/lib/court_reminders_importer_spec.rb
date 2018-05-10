@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CourtRemindersImporter do
-  describe 'self.generate_reminders' do
+  describe 'self.generate_reminders', active_job: true do
     subject { described_class.generate_reminders(court_dates, court_locs) }
 
     let(:court_dates) do
@@ -118,7 +118,79 @@ describe CourtRemindersImporter do
     end
 
     context 'there are court dates in the past' do
-      it 'ignores past court dates'
+      let(:court_dates) do
+        [
+          { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '1/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
+          { 'ofndr_num' => '112', '(expression)' => '8675R', 'lname' => 'SIMON',  'crt_dt' => '5/9/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
+          { 'ofndr_num' => '113', '(expression)' => '1776B', 'lname' => 'BARTH',  'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' },
+          { 'ofndr_num' => 'not found', '(expression)' => '1776B', 'lname' => 'BARTH', 'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' }
+        ]
+      end
+
+      it 'ignores past court dates' do
+        subject
+
+        expect(rr1.messages).to be_empty
+      end
+    end
+
+    context 'there are two RRs with the same ctrack' do
+      let!(:rr4) { create :reporting_relationship, notes: '111' }
+
+      before do
+        create :message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
+      end
+
+      it 'picks the rr that was most recently contacted' do
+        subject
+
+        expect(rr1.messages.scheduled).to be_empty
+
+        expect(rr4.messages.scheduled).to_not be_empty
+        body = I18n.t(
+          'message.auto_court_reminder',
+          location: 'RIVENDALE DISTRICT (444 hobbit lane)',
+          date: '5/8/2018',
+          time: '8:30am',
+          room: '1'
+        )
+        time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+        message = rr4.messages.scheduled.last
+        expect(message.body).to eq body
+        expect(message.send_at).to eq time
+        expect(ScheduledMessageJob).to have_been_enqueued
+          .at(time)
+          .with(message: message, send_at: Integer, callback_url: String)
+      end
+
+      context 'two rrs have both been contacted' do
+        before do
+          create :message, send_at: Time.zone.now - 3.days, reporting_relationship: rr1
+          create :message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
+        end
+
+        it 'picks the rr that was most recently contacted' do
+          subject
+
+          expect(rr1.messages.scheduled).to be_empty
+
+          expect(rr4.messages.scheduled).to_not be_empty
+          body = I18n.t(
+            'message.auto_court_reminder',
+            location: 'RIVENDALE DISTRICT (444 hobbit lane)',
+            date: '5/8/2018',
+            time: '8:30am',
+            room: '1'
+          )
+          time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+          message = rr4.messages.scheduled.last
+          expect(message.body).to eq body
+          expect(message.send_at).to eq time
+          expect(ScheduledMessageJob).to have_been_enqueued
+            .at(time)
+            .with(message: message, send_at: Integer, callback_url: String)
+        end
+      end
     end
   end
 
