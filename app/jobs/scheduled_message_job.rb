@@ -15,7 +15,7 @@ class ScheduledMessageJob < ApplicationJob
       return
     end
 
-    ReportingRelationship.find_by(client: message.client, user: message.user).update!(last_contacted_at: message.send_at)
+    message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
     SMSService.instance.send_message(
       message: message,
@@ -34,7 +34,7 @@ class ScheduledMessageJob < ApplicationJob
 
   def broadcast(message:, count:)
     channel = "scheduled_messages_#{message.user.id}_#{message.client.id}"
-    rr = message.client.reporting_relationship(user: message.user)
+    rr = message.reporting_relationship
     link_content = render_scheduled_message_link(count: count, rr: rr)
     ActionCable.server.broadcast(channel, link_html: link_content, count: count)
   end
