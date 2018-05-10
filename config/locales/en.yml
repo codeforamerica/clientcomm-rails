@@ -35,17 +35,15 @@ en:
         scheduled: Your mass message has been scheduled.
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   messages:
-    empty: "You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself."
-    transferred_from: "%{client_full_name} was transferred to you from %{user_full_name}."
-    transferred_to: "Transferred to %{user_full_name}."
-    phone_number_edited_by_you: "Updated the phone number to %{new_phone_number}"
-    phone_number_edited: "%{user_full_name} updated the phone number to %{new_phone_number}"
+    empty: 'You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself.'
+    transferred_from: '%{client_full_name} was transferred to you from %{user_full_name}.'
+    transferred_to: 'Transferred to %{user_full_name}.'
+    phone_number_edited_by_you: 'Updated the phone number to %{new_phone_number}'
+    phone_number_edited: '%{user_full_name} updated the phone number to %{new_phone_number}'
     admin_user_description: A ClientComm Admin
   message:
-    unclaimed_response: "AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them."
-    auto_court_reminder: |
-      Automated alert: Your next court date is at %{location}
-      on %{day}, %{time} in Rm %{room}. Please text with any questions.
+    unclaimed_response: 'AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them.'
+    auto_court_reminder: 'Automated alert: Your next court date is at %{location} on %{date}, %{time} in Rm %{room}. Please text with any questions.'
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
     transcript:
@@ -59,7 +57,7 @@ en:
         sent: sent
         undelivered: NOT DELIVERED
   report_mailer:
-      subject: "[ClientComm] Usage report for %{start_date} - %{end_date}"
+      subject: '[ClientComm] Usage report for %{start_date} - %{end_date}'
   activerecord:
     errors:
       models:
@@ -126,7 +124,7 @@ en:
     admin:
       reporting_relationships:
         edit:
-          unread_transfer: "This client has unread messages. The messages will not be transferred to the new user."
+          unread_transfer: 'This client has unread messages. The messages will not be transferred to the new user.'
     clients:
       edit:
         manage:
@@ -155,10 +153,10 @@ en:
         form:
           title:
             label: Template name
-            placeholder: "Example: Check-in"
+            placeholder: 'Example: Check-in'
           body:
             label: Template
-            placeholder: "Example: Hi, how are you doing? Is there anything I can do to help?"
+            placeholder: 'Example: Hi, how are you doing? Is there anything I can do to help?'
           submit: Save template
       edit:
         modal:

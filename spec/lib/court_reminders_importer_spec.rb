@@ -39,36 +39,51 @@ describe CourtRemindersImporter do
 
       expect(rr1.messages.scheduled).to_not be_empty
       body1 = I18n.t(
-        'messages.auto_court_reminder',
+        'message.auto_court_reminder',
         location: 'RIVENDALE DISTRICT (444 hobbit lane)',
         date: '5/8/2018',
         time: '8:30am',
         room: '1'
       )
-      expect(rr1.messages.scheduled.last.body).to eq body1
-      expect(rr1.messages.scheduled.last.send_at).to eq Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+      time1 = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+      message1 = rr1.messages.scheduled.last
+      expect(message1.body).to eq body1
+      expect(message1.send_at).to eq time1
+      expect(ScheduledMessageJob).to have_been_enqueued
+        .at(time1)
+        .with(message: message1, send_at: Integer, callback_url: String)
 
       expect(rr2.messages.scheduled).to_not be_empty
       body2 = I18n.t(
-        'messages.auto_court_reminder',
+        'message.auto_court_reminder',
         location: 'ROHAN COURT (123 Horse Lord Blvd)',
         date: '5/9/2018',
         time: '9:40am',
         room: '2'
       )
-      expect(rr2.messages.scheduled.last.body).to eq body2
-      expect(rr2.messages.scheduled.last.send_at).to eq Time.strptime('5/8/2018 9:40 -0600', '%m/%d/%Y %H:%M %z')
+      time2 = Time.strptime('5/8/2018 9:40 -0600', '%m/%d/%Y %H:%M %z')
+      message2 = rr2.messages.scheduled.last
+      expect(message2.body).to eq body2
+      expect(message2.send_at).to eq time2
+      expect(ScheduledMessageJob).to have_been_enqueued
+        .at(time2)
+        .with(message: message2, send_at: Integer, callback_url: String)
 
       expect(rr3.messages.scheduled).to_not be_empty
       body3 = I18n.t(
-        'messages.auto_court_reminder',
+        'message.auto_court_reminder',
         location: 'MORDER COUNTY (666 Doom rd)',
         date: '5/10/2018',
         time: '2:30pm',
         room: '3'
       )
-      expect(rr3.messages.scheduled.last.body).to eq body3
-      expect(rr3.messages.scheduled.last.send_at).to eq Time.strptime('5/9/2018 14:30 -0600', '%m/%d/%Y %H:%M %z')
+      time3 = Time.strptime('5/9/2018 14:30 -0600', '%m/%d/%Y %H:%M %z')
+      message3 = rr3.messages.scheduled.last
+      expect(message3.body).to eq body3
+      expect(message3.send_at).to eq time3
+      expect(ScheduledMessageJob).to have_been_enqueued
+        .at(time3)
+        .with(message: message3, send_at: Integer, callback_url: String)
 
       expect(rr_irrelevant.messages.scheduled).to be_empty
     end
@@ -82,7 +97,7 @@ describe CourtRemindersImporter do
         ]
       end
 
-      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
+      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
 
       it 'does not save any  messages' do
         expect { subject }.to raise_error(ArgumentError, 'invalid strptime format - `%m/%d/%Y %H:%M %z\'')
@@ -94,7 +109,7 @@ describe CourtRemindersImporter do
     end
 
     context 'there are already court date reminders' do
-      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
+      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
 
       it 'deletes all existing reminders' do
         subject

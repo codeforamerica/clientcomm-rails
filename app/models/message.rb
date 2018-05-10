@@ -27,7 +27,7 @@ class Message < ApplicationRecord
   scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
   scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
   scope :auto_court_reminders, -> { where(marker_type: AUTO_COURT_REMINDER) }
-  scope :messages, -> { where(marker_type: nil) }
+  scope :messages, -> { where(marker_type: [nil, AUTO_COURT_REMINDER]) }
 
   class TransferClientMismatch < StandardError; end
 

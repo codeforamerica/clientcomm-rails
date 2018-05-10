@@ -581,13 +581,24 @@ RSpec.describe Message, type: :model do
     let(:rr) { create :reporting_relationship }
     let(:message) { create :message, reporting_relationship: rr }
 
-    subject { rr.client.messages.messages }
+    subject { rr.messages.messages }
 
     it 'finds the message' do
       create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
       create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT
 
       expect(subject).to contain_exactly(message)
+    end
+
+    context 'the message is an auto court reminder' do
+      let(:message) { create :message, reporting_relationship: rr, marker_type: Message::AUTO_COURT_REMINDER }
+
+      it 'finds the message' do
+        create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
+        create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT
+
+        expect(subject).to contain_exactly(message)
+      end
     end
   end
 

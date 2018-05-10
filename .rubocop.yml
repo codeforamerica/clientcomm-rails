@@ -21,8 +21,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 500
   Exclude:
-  - 'spec/features/**/*.rb'
-  - 'spec/requests/**/*.rb'
+  - 'spec/**/*.rb'
 
 Metrics/ClassLength:
   Max: 300

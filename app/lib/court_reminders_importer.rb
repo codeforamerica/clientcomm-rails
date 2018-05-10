@@ -10,11 +10,11 @@ module CourtRemindersImporter
 
         court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
         body = I18n.t(
-          'messages.auto_court_reminder',
+          'message.auto_court_reminder',
           location: court_locations[court_date['(expression)']],
-          date: court_date_at.strftime('%m/%d/%Y'),
-          time: court_date_at.strftime('%l:%M%P'),
-          room: '2'
+          date: court_date_at.strftime('%-m/%-d/%Y'),
+          time: court_date_at.strftime('%-l:%M%P'),
+          room: court_date['crt_rm']
         )
 
         send_at = court_date_at.utc - 1.day
@@ -30,6 +30,7 @@ module CourtRemindersImporter
         )
 
         message.save!
+        message.send_message
       end
     end
   end
