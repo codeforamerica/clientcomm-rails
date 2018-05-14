@@ -105,6 +105,7 @@ class ClientsController < ApplicationController
 
         redirect_to reporting_relationship_path(@reporting_relationship)
       else
+        @reporting_relationship.deactivate
         analytics_track(
           label: 'client_deactivate_success',
           data: {

@@ -182,6 +182,16 @@ describe 'Clients', type: :request, active_job: true do
       expect(flash[:success]).to include "#{client.full_name} has been deactivated for #{user1.full_name} in #{department1.name}."
       expect(response).to redirect_to(admin_client_path(client))
     end
+
+    context 'has scheduled messages' do
+      let(:scheduled) { create_list :messages, 5, reporting_relationship: rr1, send_at: Time.zone.now + 1.day }
+      it 'clears scheduled messages' do
+        post deactivate_admin_client_path(client), params: {
+          reporting_relationship_id: rr1.id
+        }
+        expect(rr1.messages.scheduled.count).to eq(0)
+      end
+    end
   end
 
   describe '#reactivate' do

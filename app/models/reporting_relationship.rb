@@ -76,6 +76,11 @@ class ReportingRelationship < ApplicationRecord
     (last_contacted_at || created_at).to_time.to_i
   end
 
+  def deactivate
+    update!(active: false)
+    messages.scheduled.destroy_all
+  end
+
   private
 
   def attachments

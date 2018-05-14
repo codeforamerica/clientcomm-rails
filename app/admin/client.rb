@@ -50,7 +50,7 @@ ActiveAdmin.register Client do
 
   member_action :deactivate, method: :post do
     rr = resource.reporting_relationships.find(params[:reporting_relationship_id])
-    rr.update(active: false)
+    rr.deactivate
 
     user = rr.user
     dept = user.department

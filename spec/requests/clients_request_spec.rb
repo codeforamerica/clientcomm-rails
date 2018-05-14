@@ -366,6 +366,18 @@ describe 'Clients requests', type: :request do
             }
           )
         end
+
+        context 'has scheduled messages' do
+          let(:rr) { existing_client.reporting_relationships.find_by(user: user) }
+          before do
+            create :message, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+          end
+
+          it 'deletes scheduled messages' do
+            subject
+            expect(rr.messages.scheduled).to be_empty
+          end
+        end
       end
 
       it 'tracks the updating of a client' do

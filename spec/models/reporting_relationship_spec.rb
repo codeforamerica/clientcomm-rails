@@ -68,6 +68,26 @@ RSpec.describe ReportingRelationship, type: :model do
     end
   end
 
+  describe '#deactivate' do
+    let(:rr) { create :reporting_relationship, active: true }
+    subject do
+      rr.deactivate
+    end
+    it 'deactivates rr' do
+      subject
+      expect(rr).to_not be_active
+    end
+    context 'has scheduled messages' do
+      before do
+        create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+      end
+      it 'deletes scheduled messages' do
+        subject
+        expect(rr.messages.scheduled).to be_empty
+      end
+    end
+  end
+
   describe '#transter_to' do
     let(:dept) { create :department }
     let(:old_user) { create :user, department: dept }
