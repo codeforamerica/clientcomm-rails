@@ -42,6 +42,24 @@ namespace :node_etl do
     Rails.logger.warn { "--> user load of #{imported_users} users complete" }
   end
 
+  task etl_active_messages: :environment do
+    num_messages = node_production.exec(<<-SQL)[0]['count'].to_i
+      SELECT COUNT(DISTINCT(m.tw_sid))
+      FROM msgs m
+      INNER JOIN convos co ON co.convid = m.convo
+      INNER JOIN cms cm ON cm.cmid = co.cm
+      INNER JOIN clients cl ON cl.clid = co.client
+      WHERE cm.active = true
+      AND cm.department IN (7, 4, 11, 3, 2)
+      AND cl.active = true;
+    SQL
+
+    groups = (num_messages / 10.to_f).ceil
+
+    Rails.logger.warn "--> beginning active message load of #{num_messages} messages in #{groups} groups."
+    # imported_messages = 0
+  end
+
   task etl_clients: :environment do
     num_clients = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT COUNT(cl.clid)
