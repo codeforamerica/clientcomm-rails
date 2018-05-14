@@ -1,0 +1,226 @@
+crt_loc_cd,crt_loc_desc,vld_flg
+102D,Beaver District,Y
+320J,Herriman Justice,Y
+211D,Brigham City District,Y
+321J,Bluffdale Or Herriman Justice,Y
+318D,Logan District,Y
+427D,Price District,Y
+506D,Manila District,Y
+2560J,Saratoga Springs Justice,Y
+609D,Farmington District,Y
+1412J,East Millard Justice,Y
+709D,Duchesne District,Y
+718D,Roosevelt District,Y
+801D,Castle Dale District,Y
+909D,Panguitch District,Y
+1011D,Moab District,Y
+1103D,Cedar City District,Y
+1117D,Parowan District,Y
+2607J,Heber Justice,Y
+1216D,Nephi District,Y
+1306D,Kanab District,Y
+1411D,Fillmore District,Y
+1508D,Morgan District,Y
+1604D,Junction District,Y
+1705D,Randolph District,Y
+1869D,Salt Lake District-Circuit Bld,N
+8015O,AP&P,Y
+1911D,Monticello District,Y
+2015D,Manti District,Y
+2122D,Richfield District,Y
+2343D,Tooele District,Y
+2416D,Vernal District,Y
+2551J,Utah County Justice,Y
+2550D,Provo District,Y
+2553C,Salem District - Div 2,N
+2606D,Heber District,Y
+2714D,St. George District,Y
+2807D,Loa District,Y
+2921D,Ogden District,Y
+2928J,Roy Justice Court,Y
+1810A,Utah Supreme,Y
+1811A,Utah Court Of Appeals,Y
+211V,Brigham City Juvenile,Y
+318V,Logan Juvenile,Y
+609V,Farmington Juvenile,Y
+2921V,Ogden Juvenile,Y
+2550V,Provo Juvenile,Y
+1868V,Salt Lake Juvenile,Y
+2343V,Tooele Juvenile,Y
+1411V,Fillmore Juvenile,Y
+1103V,Cedar City Juvenile,Y
+2714V,St. George Juvenile,Y
+1306V,Kanab Juvenile,Y
+2015V,Manti Juvenile,Y
+2122V,Richfield Juvenile,Y
+427V,Price Juvenile,Y
+1011V,Moab Juvenile,Y
+2416V,Vernal Juvenile,Y
+225J,Garland Justice,Y
+235J,Mantua Justice,Y
+813J,Castle Dale Justice,Y
+1801J,Alta Justice,Y
+2102J,Aurora Justice,Y
+102J,Beaver Justice,Y
+1310J,Big Water Justice,Y
+1902J,Blanding Justice,Y
+1103J,Cedar City Justice,Y
+605J,Centerville Justice,Y
+305J,Clarkston Justice,Y
+804J,Cleveland Justice,Y
+607J,Clinton Justice,Y
+2204J,Coalville Justice,Y
+1409J,Delta Justice,Y
+709J,Duchesne Justice East,Y
+502J,Dutch John Justice,Y
+2703J,Enterprise Justice,Y
+2005J,Ephraim Justice,Y
+905J,Escalante Justice,Y
+1204J,Eureka Justice,Y
+2006J,Fairview Justice,Y
+609J,Davis County Justice,Y
+2919J,Farr West Justice,Y
+1411J,Fillmore Justice,Y
+2008J,Fountain Green Justice,Y
+610J,Fruit Heights Justice,Y
+2520J,Genola Justice,Y
+2524J,Goshen Justice,Y
+2316J,Grantsville Justice,Y
+811J,Green River Justice,Y
+2010J,Gunnison Justice,Y
+2908J,Harrisville Justice,Y
+2606J,Wasatch Justice,Y
+415J,Helper Justice,Y
+2572J,Highland Justice,Y
+2724J,Hildale Justice,Y
+2912J,Huntsville Justice,Y
+2706J,Hurricane Justice,Y
+313J,Hyde Park Justice,Y
+314J,Hyrum Justice,Y
+2707J,Ivins Justice,Y
+1603J,Piute Junction Justice,Y
+1306J,Kanab Justice,Y
+2533J,Lehi Justice,Y
+1212J,Levan Justice,Y
+307J,Lewiston Justice,Y
+2535J,Lindon Justice,Y
+2807J,Loa Justice,Y
+318J,Logan Justice,Y
+2545J,Payson Justice,Y
+506J,Manila Justice,Y
+2015J,Manti Justice,Y
+2536J,Mapleton Justice,Y
+1851J,Midvale Justice (7505 S Holden St),Y
+105J,Milford Justice,Y
+106J,Minersville Justice,Y
+1015J,Moab Justice,Y
+1911J,Monticello Justice,Y
+1508J,Morgan Justice,Y
+2017J,Moroni Justice,Y
+2018J,Mt Pleasant Justice,Y
+2412J,Naples Justice,Y
+1216J,Nephi City Justice,Y
+322J,Newton Justice,Y
+323J,Nibley Justice,Y
+324J,North Logan Justice,Y
+2920J,North Ogden Justice,Y
+617J,North Salt Lake Justice,Y
+2921J,Ogden Justice,Y
+224J,Perry Justice,Y
+1309J,Orderville Justice,Y
+909J,Panguitch Justice,Y
+325J,Paradise Justice,Y
+1117J,Iron/Parowan Justice,Y
+2923J,Plain City Justice,Y
+2548J,Pleasant Grove Justice,Y
+2924J,Pleasant View Justice,Y
+427J,Price Justice,Y
+327J,Providence Justice,Y
+2550J,Provo Justice,Y
+1708J,Randolph Justice,Y
+2123J,Sevier County Justice,Y
+328J,Richmond Justice,Y
+2927J,Riverdale Justice,Y
+1864J,Riverton Justice,Y
+718J,Roosevelt Justice,Y
+2416J,Vernal Justice,Y
+2720J,Washington City Justice,Y
+2938J,Washington Terrace Justice,Y
+2715J,Santa Clara Justice,Y
+2554J,Santaquin Justice,Y
+331J,Smithfield Justice,Y
+2930J,South Ogden Justice,Y
+622J,South Weber Justice,Y
+2020J,Spring City Justice,Y
+2561J,Springville Justice,Y
+2714J,St George Justice,Y
+2340J,Stockton Justice,Y
+623J,Sunset Justice,Y
+624J,Syracuse Justice,Y
+2343J,Tooele County Justice,Y
+257J,Tremonton Justice,Y
+2932J,Uintah Justice,Y
+439J,Wellington Justice,Y
+335J,Wellsville Justice,Y
+2347J,Wendover Justice,Y
+626J,West Bountiful Justice,Y
+1888J,West Jordan Justice (8040 South Redwood Road),Y
+261J,Willard Justice,Y
+630J,Woods Cross Justice,Y
+2501J,Alpine Justice,Y
+9998O,Compact,Y
+606J,Clearfield Justice,Y
+2J,Honeyville Justice,Y
+211J,Box Elder County Justice,Y
+1873D,West Jordan District,Y
+9999S,Us Supreme Court,Y
+1853J,Murray Justice,Y
+1881J,Taylorsville Justice,Y
+9999D,Unknown District Court,N
+9999C,Unknown Circuit Court,N
+9999J,Unknown Justice Court,N
+9999A,Unknown Appeals Court,N
+9999F,Federal Court,Y
+9999O,BOP,Y
+9999V,Juvenile Court,Y
+2218D,Silver Summit District,Y
+1853D,Murray District,N
+1890D,West Valley District,N
+2542D,Orem District,Y
+2553D,Salem District,Y
+2558D,Spanish Fork District,Y
+615D,Layton District (425 N. Wasatch),Y
+604D,Bountiful District,Y
+9999U,Unknown,Y
+2502D,American Fork District,Y
+1890J,West Valley Justice (3590 S 2700 W),Y
+1867J,Salt Lake City Justice (333 S 200 E),Y
+1868J,Salt Lake County Justice (2100 South State St),Y
+1873J,Sandy Justice,Y
+1878J,South Jordan Justice (1600 West Towne Center Drive),Y
+1879J,South Salt Lake Justice,Y
+1823J,Draper Justice,Y
+1809J,Bluffdale Justice,Y
+1868D,Salt Lake District (Matheson Courthouse 450 South State St),Y
+242J,Holladay Justice,Y
+1311J,Kane County Justice,Y
+5001J,San Juan Justice,Y
+710J,Duchesne Justice West,Y
+2704J,East Carbon City Justice,Y
+1217J,Juab County Justice,Y
+2716J,Salina Justice,Y
+5002J,Sanpete Justice,Y
+5003J,Summit County Justice,Y
+7001J,Tooele Valley Justice,Y
+3976J,Washington County Justice,Y
+6033J,West Millard Justice,Y
+9997O,Us Marshall,Y
+9994O,Immigration,Y
+9993O,Intransit,Y
+9993C,Dixie College,Y
+9995C,Citation System,Y
+8999J,Slc Justice Or Slco Justice,Y
+8888J,Clearfield/Clinton/Riverdale J,Y
+8887J,Juab Cnty/Levan/Nephi Justice,Y
+8886J,Taylorsville Or Riverton Justi,Y
+8885J,Centerville/Fruit Heights Just,Y
