@@ -11,11 +11,9 @@ class ReportingRelationshipsController < ApplicationController
       redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
     end
 
-    reporting_relationship = @client.reporting_relationship(user: current_user)
-
     analytics_track(
       label: 'client_messages_view',
-      data: @client.analytics_tracker_data.merge(reporting_relationship.analytics_tracker_data)
+      data: @client.analytics_tracker_data.merge(@rr.analytics_tracker_data)
     )
 
     @templates = current_user.templates
@@ -23,7 +21,7 @@ class ReportingRelationshipsController < ApplicationController
     # the list of past messages
     @messages = past_messages
     @messages.where(read: false).update(read: true)
-    @client.reporting_relationship(user: current_user).update(has_unread_messages: false)
+    @rr.update(has_unread_messages: false)
 
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
