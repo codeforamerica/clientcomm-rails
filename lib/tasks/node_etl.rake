@@ -54,33 +54,43 @@ namespace :node_etl do
       AND clients.active = true;
     SQL
 
-    groups = (num_messages / 10.to_f).ceil
+    group_size = 1000
+    groups = (num_messages / group_size.to_f).ceil
 
     Rails.logger.warn "--> beginning active message load of #{num_messages} messages in #{groups} groups."
 
     groups.times do |group|
       Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
-      distinct_node_messages = node_production.exec(<<-SQL, [group * 1000])
-        SELECT DISTINCT(msgs.tw_sid), msgs.msgid
+      distinct_node_messages = node_production.exec(<<-SQL, [group_size, group * group_size])
+        SELECT DISTINCT ON (msgs.tw_sid)
+          msgs.tw_sid,
+          msgs.msgid
         FROM msgs
         INNER JOIN comms ON comms.commid = msgs.comm
         INNER JOIN convos ON convos.convid = msgs.convo
         INNER JOIN cms ON cms.cmid = convos.cm
         INNER JOIN clients ON clients.clid = convos.client
         WHERE comms.type = 'cell'
+        AND msgs.tw_sid != ''
         AND cms.active = true
         AND cms.department IN (7, 4, 11, 3, 2)
         AND clients.active = true
-        ORDER BY msgs.msgid
-        LIMIT 1000 OFFSET $1;
+        ORDER BY msgs.tw_sid DESC
+        LIMIT $1 OFFSET $2;
       SQL
 
       distinct_node_messages.each do |dist_msg|
         node_message_segments = node_production.exec(<<-SQL, [dist_msg['tw_sid']])
           SELECT
+            convos.cm,
             msgs.comm,
             msgs.content,
-            convos.cm
+            msgs.created,
+            msgs.inbound,
+            msgs.read,
+            msgs.tw_sid,
+            msgs.tw_status,
+            comms.value
           FROM msgs
           INNER JOIN comms ON comms.commid = msgs.comm
           INNER JOIN convos ON convos.convid = msgs.convo
