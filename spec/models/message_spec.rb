@@ -195,7 +195,7 @@ RSpec.describe Message, type: :model do
 
     context 'validating body of message' do
       it 'does not validate message with empty body with no attachments' do
-        m = Message.create(body: '')
+        m = TextMessage.create(body: '')
         expect(m.errors[:body].present?).to eq true
       end
 

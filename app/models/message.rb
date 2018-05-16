@@ -37,10 +37,10 @@ class Message < ApplicationRecord
   UNREAD = 'unread'.freeze
   ERROR = 'error'.freeze
 
-  MARKER_TRANSFER = 'TransferMarker'
-  MARKER_CLIENT_EDIT = 'ClientEditMarker'
-  AUTO_COURT_REMINDER = 'CourtReminder'
-  TEXT_MESSAGE = 'TextMessage'
+  MARKER_TRANSFER = 'TransferMarker'.freeze
+  MARKER_CLIENT_EDIT = 'ClientEditMarker'.freeze
+  AUTO_COURT_REMINDER = 'CourtReminder'.freeze
+  TEXT_MESSAGE = 'TextMessage'.freeze
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = I18n.t('messages.admin_user_description')
@@ -66,7 +66,7 @@ class Message < ApplicationRecord
                        )
                      end
 
-      Message.create!(
+      TextMessage.create!(
         reporting_relationship: rr,
         body: message_body,
         type: MARKER_CLIENT_EDIT,
@@ -82,7 +82,7 @@ class Message < ApplicationRecord
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
 
-    Message.create!(
+    TextMessage.create!(
       reporting_relationship: sending_rr,
       body: I18n.t(
         'messages.transferred_to',
@@ -95,7 +95,7 @@ class Message < ApplicationRecord
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
     )
-    Message.create!(
+    TextMessage.create!(
       reporting_relationship: receiving_rr,
       body: I18n.t(
         'messages.transferred_from',
@@ -215,7 +215,7 @@ class Message < ApplicationRecord
     now = Time.zone.now
     unclaimed_response = rr.department.unclaimed_response
     unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
-    message = Message.create!(
+    message = TextMessage.create!(
       reporting_relationship: rr,
       body: unclaimed_response,
       number_from: rr.department.phone_number,

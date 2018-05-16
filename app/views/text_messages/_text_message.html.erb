@@ -1,4 +1,4 @@
-<div class="message--<%= text_message_inbound_or_outbound(text_message) %>" id="<%= dom_id(text_message) %>">
+<div class="message--<%= message_inbound_or_outbound(text_message) %>" id="<%= dom_id(text_message) %>">
   <div class="message-row-container">
     <div class="message--content <%= text_message.twilio_status %>"><%= text_message.body %>
     <%= render text_message.attachments %>

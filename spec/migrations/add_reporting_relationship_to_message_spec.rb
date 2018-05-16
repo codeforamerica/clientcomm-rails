@@ -24,11 +24,11 @@ describe AddReportingRelationshipToMessage do
 
     it 'message is linked to the proper reporting relationship' do
       # Inline so that the `before` migration runs first
-      message = Message.create(user: user,
-                               client: client,
-                               number_to: '+17605559331',
-                               number_from: '+17605556230',
-                               send_at: Time.zone.now)
+      message = TextMessage.create(user: user,
+                                   client: client,
+                                   number_to: '+17605559331',
+                                   number_from: '+17605556230',
+                                   send_at: Time.zone.now)
 
       rr = ReportingRelationship.find_by(user: user, client: client)
 
@@ -42,11 +42,11 @@ describe AddReportingRelationshipToMessage do
 
       it 'message is linked to the proper reporting relationship' do
         # Inline so that the `before` migration runs first
-        message = Message.create(user: user,
-                                 client: client,
-                                 number_to: '+17605559331',
-                                 number_from: '+17605556230',
-                                 send_at: Time.zone.now)
+        message = TextMessage.create(user: user,
+                                     client: client,
+                                     number_to: '+17605559331',
+                                     number_from: '+17605556230',
+                                     send_at: Time.zone.now)
 
         expect(client.users).to_not include(user)
         subject

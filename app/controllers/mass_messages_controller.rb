@@ -65,7 +65,7 @@ class MassMessagesController < ApplicationController
     mass_message.reporting_relationships.each do |rr_id|
       rr = ReportingRelationship.find(rr_id)
       send_at = mass_message.send_at || Time.zone.now
-      message = Message.create!(
+      message = TextMessage.create!(
         body: mass_message.message,
         reporting_relationship: rr,
         number_from: current_user.department.phone_number,

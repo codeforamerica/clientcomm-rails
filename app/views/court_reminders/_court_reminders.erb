@@ -1,0 +1,22 @@
+<div class="message--<%= message_inbound_or_outbound(court_reminder) %>" id="<%= dom_id(court_reminder) %>">
+  <div class="message-row-container">
+    <div class="message--content <%= court_reminder.twilio_status %>"><%= court_reminder.body %>
+    <%= render court_reminder.attachments %>
+    </div>
+    <% if court_reminder.inbound && court_reminder.user.treatment_group == 'ebp-liking-court_reminders' %>
+      <i class="show-like-options icon-add hidden-xs"></i>
+      <div class="like-options hidden">
+        <% APP_CONFIG['like_text'].each do |text| %>
+          <div><%= text %></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <p class="message--label <%= court_reminder.twilio_status %>">
+  <% if court_reminder.twilio_status == 'undelivered' %>
+    <%= t('court_reminder.status.undelivered') %>
+  <% else %>
+    <%= court_reminder.twilio_status %> <%= court_reminder.send_at.to_s(:message_timestamp) %>
+  <% end %>
+  </p>
+</div>

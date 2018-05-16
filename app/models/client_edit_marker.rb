@@ -1,3 +1,2 @@
 class ClientEditMarker < Message
 end
-
