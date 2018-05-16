@@ -21,6 +21,7 @@ class Client < ApplicationRecord
 
   validates :last_name, :phone_number, presence: true
   validates :phone_number, uniqueness: true
+  validates :id_number, format: { with: /\A\d*\z/ }
 
   def analytics_tracker_data
     {

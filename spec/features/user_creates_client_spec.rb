@@ -12,11 +12,13 @@ feature 'User creates client' do
   let(:myuser) { create :user }
   let(:first_name) { 'Waffles' }
   let(:last_name) { 'McGee' }
+  let(:id_number) { '1234' }
   let(:notes) { 'some notes' }
   let(:phone_number) { '+12345678910' }
   let(:phone_number_display) { '(234) 567-8910' }
 
   before do
+    FeatureFlag.create!(flag: 'client_id_number', enabled: true)
     login_as(myuser, scope: :user)
     visit root_path
     click_on 'New client'
@@ -27,6 +29,7 @@ feature 'User creates client' do
     fill_in 'First name', with: first_name
     fill_in 'Last name', with: last_name
     fill_in 'Phone number', with: phone_number
+    fill_in 'ID number', with: id_number
     fill_in 'Notes', with: notes
     click_on 'Save new client'
 
@@ -35,6 +38,7 @@ feature 'User creates client' do
     click_on 'Manage client'
 
     expect(find_field('Notes').value).to eq notes
+    expect(find_field('ID number').value).to eq id_number
   end
 
   scenario 'unsuccessfully' do

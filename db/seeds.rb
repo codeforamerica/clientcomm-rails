@@ -14,6 +14,7 @@ admin_password = ENV['apw'] || ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_passw
 puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'client_id_number').update!(enabled: true)
 
 puts "Creating Admin User with password #{admin_password}"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
