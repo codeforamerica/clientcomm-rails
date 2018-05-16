@@ -11,9 +11,12 @@ class Message < ApplicationRecord
   before_validation :set_original_reporting_relationship, on: :create
 
   validates :send_at, presence: { message: "That date didn't look right." }
+  validates :body, presence: { unless: ->(message) { message.attachments.present? || message.inbound } }
   validates :reporting_relationship, presence: true
   validates :original_reporting_relationship, presence: true
   validates_datetime :send_at, before: :max_future_date
+
+  validates :body, length: { maximum: 1600 }
 
   validate :same_reporting_relationship_as_like_message
 
@@ -21,10 +24,10 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
-  scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
-  scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
-  scope :auto_court_reminders, -> { where(marker_type: AUTO_COURT_REMINDER) }
-  scope :messages, -> { where(marker_type: [nil, AUTO_COURT_REMINDER]) }
+  scope :transfer_markers, -> { where(type: MARKER_TRANSFER) }
+  scope :client_edit_markers, -> { where(type: MARKER_CLIENT_EDIT) }
+  scope :auto_court_reminders, -> { where(type: AUTO_COURT_REMINDER) }
+  scope :messages, -> { where(type: [TEXT_MESSAGE, AUTO_COURT_REMINDER]) }
 
   class TransferClientMismatch < StandardError; end
 
@@ -34,9 +37,10 @@ class Message < ApplicationRecord
   UNREAD = 'unread'.freeze
   ERROR = 'error'.freeze
 
-  MARKER_TRANSFER = 0
-  MARKER_CLIENT_EDIT = 1
-  AUTO_COURT_REMINDER = 2
+  MARKER_TRANSFER = 'TransferMarker'
+  MARKER_CLIENT_EDIT = 'ClientEditMarker'
+  AUTO_COURT_REMINDER = 'CourtReminder'
+  TEXT_MESSAGE = 'TextMessage'
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = I18n.t('messages.admin_user_description')
@@ -65,7 +69,7 @@ class Message < ApplicationRecord
       Message.create!(
         reporting_relationship: rr,
         body: message_body,
-        marker_type: MARKER_CLIENT_EDIT,
+        type: MARKER_CLIENT_EDIT,
         read: true,
         send_at: Time.zone.now,
         inbound: true,
@@ -84,7 +88,7 @@ class Message < ApplicationRecord
         'messages.transferred_to',
         user_full_name: receiving_rr.user.full_name
       ),
-      marker_type: MARKER_TRANSFER,
+      type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,
@@ -98,7 +102,7 @@ class Message < ApplicationRecord
         user_full_name: sending_rr.user.full_name,
         client_full_name: sending_rr.client.full_name
       ),
-      marker_type: MARKER_TRANSFER,
+      type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,
@@ -180,15 +184,15 @@ class Message < ApplicationRecord
   end
 
   def marker?
-    marker_type.present? && marker_type != AUTO_COURT_REMINDER
+    type.present? && type != AUTO_COURT_REMINDER
   end
 
   def transfer_marker?
-    marker_type == MARKER_TRANSFER
+    type == MARKER_TRANSFER
   end
 
   def client_edit_marker?
-    marker_type == MARKER_CLIENT_EDIT
+    type == MARKER_CLIENT_EDIT
   end
 
   def past_message?

@@ -1,0 +1,10 @@
+<div class="message--event" id="<%= dom_id(transfer_marker) %>">
+  <div class="event--line">
+    <p class="message--label">
+    <%= transfer_marker.body %>
+    </p>
+  </div>
+  <p class="message--label">
+  <%= transfer_marker.send_at.strftime('%-m/%-d/%y, %-l:%M%P') %>
+  </p>
+</div>

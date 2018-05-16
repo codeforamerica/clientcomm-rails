@@ -46,15 +46,15 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'marker?' do
-    let(:message) { build :message, marker_type: marker_type }
-    let(:marker_type) { nil }
+    let(:message) { build :message, type: type }
+    let(:type) { nil }
 
     it 'is not a marker by default' do
       expect(message).to_not be_marker
     end
 
     context 'the marker is a marker type' do
-      let(:marker_type) { Message::MARKER_TRANSFER }
+      let(:type) { Message::MARKER_TRANSFER }
 
       it 'is not a marker by default' do
         expect(message).to be_marker
@@ -62,7 +62,7 @@ RSpec.describe Message, type: :model do
     end
 
     context 'the marker is present but non-marker' do
-      let(:marker_type) { Message::AUTO_COURT_REMINDER }
+      let(:type) { Message::AUTO_COURT_REMINDER }
 
       it 'is not a marker by default' do
         expect(message).to_not be_marker
@@ -540,7 +540,7 @@ RSpec.describe Message, type: :model do
 
   describe 'scope transfer_markers' do
     let(:rr) { create :reporting_relationship }
-    let(:transfer_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER }
+    let(:transfer_marker) { create :transfer_marker, reporting_relationship: rr }
 
     subject { rr.client.messages.transfer_markers }
 
@@ -553,7 +553,7 @@ RSpec.describe Message, type: :model do
 
   describe 'scope auto court reminder' do
     let(:rr) { create :reporting_relationship }
-    let(:reminder) { create :message, reporting_relationship: rr, marker_type: Message::AUTO_COURT_REMINDER }
+    let(:reminder) { create :court_reminder, reporting_relationship: rr }
 
     subject { rr.client.messages.auto_court_reminders }
 
@@ -566,7 +566,7 @@ RSpec.describe Message, type: :model do
 
   describe 'scope client_edit_markers' do
     let(:rr) { create :reporting_relationship }
-    let(:client_edit_marker) { create :message, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT }
+    let(:client_edit_marker) { create :client_edit_marker, reporting_relationship: rr }
 
     subject { rr.client.messages.client_edit_markers }
 
@@ -584,18 +584,18 @@ RSpec.describe Message, type: :model do
     subject { rr.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
-      create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT
+      create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
+      create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
 
       expect(subject).to contain_exactly(message)
     end
 
     context 'the message is an auto court reminder' do
-      let(:message) { create :message, reporting_relationship: rr, marker_type: Message::AUTO_COURT_REMINDER }
+      let(:message) { create :court_reminder, reporting_relationship: rr }
 
       it 'finds the message' do
-        create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER
-        create_list :message, 3, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT
+        create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
+        create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
 
         expect(subject).to contain_exactly(message)
       end

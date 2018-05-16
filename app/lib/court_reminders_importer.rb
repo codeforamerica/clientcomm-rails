@@ -36,7 +36,7 @@ module CourtRemindersImporter
               number_to: rr.client.phone_number,
               send_at: send_at,
               read: true,
-              marker_type: Message::AUTO_COURT_REMINDER
+              type: Message::AUTO_COURT_REMINDER
             )
 
             unless options[:dry_run]
