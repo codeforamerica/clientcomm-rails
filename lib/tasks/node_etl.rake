@@ -44,20 +44,54 @@ namespace :node_etl do
 
   task etl_active_messages: :environment do
     num_messages = node_production.exec(<<-SQL)[0]['count'].to_i
-      SELECT COUNT(DISTINCT(m.tw_sid))
-      FROM msgs m
-      INNER JOIN convos co ON co.convid = m.convo
-      INNER JOIN cms cm ON cm.cmid = co.cm
-      INNER JOIN clients cl ON cl.clid = co.client
-      WHERE cm.active = true
-      AND cm.department IN (7, 4, 11, 3, 2)
-      AND cl.active = true;
+      SELECT COUNT(DISTINCT(msgs.tw_sid))
+      FROM msgs
+      INNER JOIN convos ON convos.convid = msgs.convo
+      INNER JOIN cms ON cms.cmid = convos.cm
+      INNER JOIN clients ON clients.clid = convos.client
+      WHERE cms.active = true
+      AND cms.department IN (7, 4, 11, 3, 2)
+      AND clients.active = true;
     SQL
 
     groups = (num_messages / 10.to_f).ceil
 
     Rails.logger.warn "--> beginning active message load of #{num_messages} messages in #{groups} groups."
-    # imported_messages = 0
+
+    groups.times do |group|
+      Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
+      distinct_node_messages = node_production.exec(<<-SQL, [group * 1000])
+        SELECT DISTINCT(msgs.tw_sid), msgs.msgid
+        FROM msgs
+        INNER JOIN comms ON comms.commid = msgs.comm
+        INNER JOIN convos ON convos.convid = msgs.convo
+        INNER JOIN cms ON cms.cmid = convos.cm
+        INNER JOIN clients ON clients.clid = convos.client
+        WHERE comms.type = 'cell'
+        AND cms.active = true
+        AND cms.department IN (7, 4, 11, 3, 2)
+        AND clients.active = true
+        ORDER BY msgs.msgid
+        LIMIT 1000 OFFSET $1;
+      SQL
+
+      distinct_node_messages.each do |dist_msg|
+        node_message_segments = node_production.exec(<<-SQL, [dist_msg['tw_sid']])
+          SELECT
+            msgs.comm,
+            msgs.content,
+            convos.cm
+          FROM msgs
+          INNER JOIN comms ON comms.commid = msgs.comm
+          INNER JOIN convos ON convos.convid = msgs.convo
+          LEFT JOIN recordings ON recordings.id = msgs.recording_id
+          WHERE msgs.tw_sid = $1
+          ORDER BY msgs.msgid;
+        SQL
+
+        NodeMessagesImporter.import_message(node_message_segments)
+      end
+    end
   end
 
   task etl_clients: :environment do
