@@ -1,4 +1,4 @@
-<div class="message--<%= message_inbound_or_outbound(court_reminder) %>" id="<%= dom_id(court_reminder) %>">
+<div class="message--<%= message_inbound_or_outbound(court_reminder) %>" id="message_<%= court_reminder %>">
   <div class="message-row-container">
     <div class="message--content <%= court_reminder.twilio_status %>"><%= court_reminder.body %>
     <%= render court_reminder.attachments %>

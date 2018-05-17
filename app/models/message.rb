@@ -66,10 +66,9 @@ class Message < ApplicationRecord
                        )
                      end
 
-      TextMessage.create!(
+      ClientEditMarker.create!(
         reporting_relationship: rr,
         body: message_body,
-        type: MARKER_CLIENT_EDIT,
         read: true,
         send_at: Time.zone.now,
         inbound: true,
@@ -82,27 +81,25 @@ class Message < ApplicationRecord
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
 
-    TextMessage.create!(
+    TransferMarker.create!(
       reporting_relationship: sending_rr,
       body: I18n.t(
         'messages.transferred_to',
         user_full_name: receiving_rr.user.full_name
       ),
-      type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
     )
-    TextMessage.create!(
+    TransferMarker.create!(
       reporting_relationship: receiving_rr,
       body: I18n.t(
         'messages.transferred_from',
         user_full_name: sending_rr.user.full_name,
         client_full_name: sending_rr.client.full_name
       ),
-      type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,

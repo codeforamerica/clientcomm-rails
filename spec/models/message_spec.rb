@@ -579,7 +579,7 @@ RSpec.describe Message, type: :model do
 
   describe 'scope messages' do
     let(:rr) { create :reporting_relationship }
-    let(:message) { create :message, reporting_relationship: rr }
+    let(:message) { create :text_message, reporting_relationship: rr }
 
     subject { rr.messages.messages }
 

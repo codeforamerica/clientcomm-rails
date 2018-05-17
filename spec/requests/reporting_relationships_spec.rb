@@ -7,7 +7,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
   let(:transfer_note) { Faker::Lorem.characters(10) }
   let!(:client) { create :client, user: user }
   let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-  let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
+  let!(:scheduled_messages) { create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
 
   before do
     sign_in user
@@ -33,16 +33,16 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
     end
 
     it 'does not show message dialog if messages exist' do
-      create :message, reporting_relationship: rr
+      create :text_message, reporting_relationship: rr
       subject
       message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
       expect(response.body).to_not include(message)
     end
 
     it 'shows all past messages for a given relationship' do
-      message = create :message, reporting_relationship: rr
-      message2 = create :message, reporting_relationship: rr
-      message3 = create :message
+      message = create :text_message, reporting_relationship: rr
+      message2 = create :text_message, reporting_relationship: rr
+      message3 = create :text_message
 
       subject
 
@@ -52,7 +52,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
     end
 
     it 'marks all messages read when index loaded' do
-      message = create :message, reporting_relationship: rr, inbound: true
+      message = create :text_message, reporting_relationship: rr, inbound: true
       client.reporting_relationship(user: user).update!(has_unread_messages: true)
 
       # when we visit the messages path, it should mark the message read
@@ -65,7 +65,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
     context 'there are scheduled messages' do
       it 'does not show scheduled messages in the main timeline' do
-        message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
+        message = create :text_message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
         subject
         expect(response.body).to_not include(message.body)
@@ -73,7 +73,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
 
       it 'shows messages after their send_at date' do
         travel_to 1.day.ago do
-          create :message, reporting_relationship: rr, body: body, send_at: Time.zone.now
+          create :text_message, reporting_relationship: rr, body: body, send_at: Time.zone.now
         end
 
         subject
@@ -99,7 +99,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       let(:attachment) { build :attachment, media: File.new(media_path) }
 
       before do
-        create :message, reporting_relationship: rr, attachments: [attachment], inbound: true
+        create :text_message, reporting_relationship: rr, attachments: [attachment], inbound: true
         subject
       end
 
@@ -244,7 +244,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       end
 
       it 'marks all messages as read' do
-        msg = create :message, reporting_relationship: rr, read: false
+        msg = create :text_message, reporting_relationship: rr, read: false
 
         subject
 
@@ -300,7 +300,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
     end
 
     context 'user is the unclaimed user' do
-      let!(:unclaimed_messages) { create_list :message, 3, reporting_relationship: rr }
+      let!(:unclaimed_messages) { create_list :text_message, 3, reporting_relationship: rr }
 
       before do
         department.update!(unclaimed_user: user)
