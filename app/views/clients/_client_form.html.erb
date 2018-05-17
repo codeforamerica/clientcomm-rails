@@ -29,7 +29,7 @@
 
       <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => phone_number_display(@client.phone_number) } %>
       <% if FeatureFlag.enabled?('client_id_number') %>
-        <%= f.gcf_input_field :id_number, "ID number", classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
+        <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
       <% end %>
 
       <%= f.fields_for :reporting_relationships, @reporting_relationship, builder: GcfFormBuilder do |rr| %>
