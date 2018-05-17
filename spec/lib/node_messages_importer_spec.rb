@@ -38,8 +38,6 @@ describe NodeMessagesImporter do
   context 'parsing an incoming message' do
     it 'creates a message that matches the passed data' do
       subject
-      expect(rr.user).to eq(user)
-      expect(rr.client).to eq(client)
       message = rr.messages.find_by(twilio_sid: twilio_sid)
       expect(message).to_not be_nil
       expect(message.body).to eq(message_body)
@@ -48,6 +46,49 @@ describe NodeMessagesImporter do
       expect(message.read).to eq(read_boolean)
       expect(message.twilio_status).to eq(twilio_status)
       expect(message.number_from).to eq(client_number_normalized)
+    end
+
+    context 'the message has multiple segments' do
+      let(:message_body_segment_1) { 'This is segment 1 of my anonymous message body' }
+      let(:message_body_segment_2) { 'This is segment 2 of my anonymous message body' }
+      let(:message_segments) do
+        [
+          {
+            'cm' => cm_id,
+            'comm' => comm_id,
+            'content' => message_body_segment_1,
+            'created' => message_created,
+            'inbound' => inbound,
+            'read' => read,
+            'tw_sid' => twilio_sid,
+            'tw_status' => twilio_status,
+            'value' => client_number
+          },
+          {
+            'cm' => cm_id,
+            'comm' => comm_id,
+            'content' => message_body_segment_2,
+            'created' => message_created,
+            'inbound' => inbound,
+            'read' => read,
+            'tw_sid' => twilio_sid,
+            'tw_status' => twilio_status,
+            'value' => client_number
+          }
+        ]
+      end
+    end
+  end
+
+  context 'parsing an outgoing message' do
+    let(:inbound) { 'f' }
+    let(:inbound_boolean) { false }
+
+    it 'creates a message that matches the passed data' do
+      subject
+      message = rr.messages.find_by(twilio_sid: twilio_sid)
+      expect(message.number_from).to eq(user.department.phone_number)
+      expect(message.number_to).to eq(client_number_normalized)
     end
   end
 end

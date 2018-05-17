@@ -46,10 +46,13 @@ namespace :node_etl do
     num_messages = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT COUNT(DISTINCT(msgs.tw_sid))
       FROM msgs
+      INNER JOIN comms ON comms.commid = msgs.comm
       INNER JOIN convos ON convos.convid = msgs.convo
       INNER JOIN cms ON cms.cmid = convos.cm
       INNER JOIN clients ON clients.clid = convos.client
-      WHERE cms.active = true
+      WHERE comms.type = 'cell'
+      AND msgs.tw_sid != ''
+      AND cms.active = true
       AND cms.department IN (7, 4, 11, 3, 2)
       AND clients.active = true;
     SQL
@@ -82,6 +85,7 @@ namespace :node_etl do
       distinct_node_messages.each do |dist_msg|
         node_message_segments = node_production.exec(<<-SQL, [dist_msg['tw_sid']])
           SELECT
+            convos.convid,
             convos.cm,
             msgs.comm,
             msgs.content,
