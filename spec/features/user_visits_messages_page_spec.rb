@@ -48,8 +48,8 @@ feature 'User clicks on client in list', :js do
 
       context 'sorting' do
         let(:rr) { ReportingRelationship.find_by(user: myuser, client: myclient) }
-        let(:messageone) { build :message, reporting_relationship: rr }
-        let(:messagetwo) { build :message, reporting_relationship: rr }
+        let(:messageone) { build :text_message, reporting_relationship: rr }
+        let(:messagetwo) { build :text_message, reporting_relationship: rr }
 
         before do
           today = Time.zone.now

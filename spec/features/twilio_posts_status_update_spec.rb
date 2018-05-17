@@ -8,7 +8,7 @@ feature 'Twilio' do
     userone = create :user
     clientone = create :client, user: userone, phone_number: message_params['From']
     rr = ReportingRelationship.find_by(user: userone, client: clientone)
-    create :message, reporting_relationship: rr, twilio_sid: message_params['SmsSid'], twilio_status: 'queued'
+    create :text_message, reporting_relationship: rr, twilio_sid: message_params['SmsSid'], twilio_status: 'queued'
   end
 
   after do
@@ -41,7 +41,7 @@ feature 'Twilio' do
       end
 
       it 'handles it' do
-        message = create :message, reporting_relationship: rr, inbound: false, twilio_status: 'queued'
+        message = create :text_message, reporting_relationship: rr, inbound: false, twilio_status: 'queued'
 
         threads = %w[first second third fourth].each_with_index.map do |status, i|
           Thread.new do

@@ -5,7 +5,7 @@ class MessageBroadcastJob < ApplicationJob
   def perform(message:)
     channel = "messages_#{message.user.id}_#{message.client.id}"
     content = render_message_partial(message)
-    message_dom_id = dom_id(message)
+    message_dom_id = "message_#{message.id}"
     ActionCable.server.broadcast(
       channel,
       message_html: content,

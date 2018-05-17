@@ -9,7 +9,7 @@ feature 'sending mass messages', active_job: true do
   let!(:client_1) { build :client, first_name: 'a', last_name: 'a' }
   let!(:client_2) { build :client, first_name: 'b', last_name: 'b' }
   let!(:client_3) { build :client, first_name: 'c', last_name: 'c' }
-  let!(:message) { build :message }
+  let!(:message) { build :text_message }
 
   before do
     FeatureFlag.create!(flag: 'mass_messages', enabled: true)

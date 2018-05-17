@@ -26,7 +26,8 @@ class MessagesController < ApplicationController
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
     @templates = current_user.templates
 
-    message = rr.messages.new(
+    message = TextMessage.new(
+      reporting_relationship: rr,
       body: message_params[:body],
       number_from: current_user.department.phone_number,
       number_to: client.phone_number,

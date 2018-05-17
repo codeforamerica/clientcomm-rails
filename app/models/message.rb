@@ -136,7 +136,7 @@ class Message < ApplicationRecord
 
     rr = ReportingRelationship.find_or_create_by(user: user, client: client)
 
-    new_message = Message.new(
+    new_message = TextMessage.new(
       reporting_relationship: rr,
       number_to: to_phone_number,
       number_from: from_phone_number,

@@ -350,7 +350,7 @@ feature 'Admin Panel' do
         end
 
         step 'a new message has come in and an error is shown' do
-          msg = create :message, reporting_relationship: rr, read: false
+          msg = create :text_message, reporting_relationship: rr, read: false
           rr.update!(has_unread_messages: true)
 
           select user2.full_name, from: 'Transfer to'
