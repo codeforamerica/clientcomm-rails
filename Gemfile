@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).strip
 
 gem 'activeadmin'
+gem 'bootsnap'
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'
 gem 'device_detector'
