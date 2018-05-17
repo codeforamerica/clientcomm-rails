@@ -6,22 +6,22 @@ RSpec.describe Message, type: :model do
     it { should belong_to :like_message }
 
     context 'like_message has different rr' do
-      let(:like_message) { create :message }
+      let(:like_message) { create :text_message }
       it 'is invalid' do
-        message = build :message, like_message: like_message
+        message = build :text_message, like_message: like_message
         expect(message).to_not be_valid
       end
     end
   end
 
   describe '#first?' do
-    let(:message) { create :message, send_at: send_at }
+    let(:message) { create :text_message, send_at: send_at }
     let(:rr) { message.reporting_relationship }
 
     before do
-      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
-      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
-      create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
+      create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
+      create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
+      create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
     end
 
     subject do
@@ -46,7 +46,7 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'marker?' do
-    let(:message) { build :message, type: type }
+    let(:message) { build :text_message, type: type }
     let(:type) { nil }
 
     it 'is not a marker by default' do
@@ -82,7 +82,7 @@ RSpec.describe Message, type: :model do
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:message) do
       create(
-        :message,
+        :text_message,
         reporting_relationship: rr,
         send_at: send_at,
         created_at: created_at,
@@ -113,9 +113,9 @@ RSpec.describe Message, type: :model do
       let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 5) }
 
       before do
-        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
-        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
-        create :message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
+        create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 2)
+        create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 3)
+        create :text_message, reporting_relationship: rr, send_at: Time.zone.local(2010, 1, 1, 1, 1, 4)
       end
 
       it 'sends analytics tracking data' do
@@ -146,10 +146,10 @@ RSpec.describe Message, type: :model do
     end
 
     context 'message has like_message_id' do
-      let(:likeable_message) { create :message }
+      let(:likeable_message) { create :text_message }
       let(:message) do
         create(
-          :message,
+          :text_message,
           reporting_relationship: likeable_message.reporting_relationship,
           like_message_id: likeable_message.id
         )
@@ -176,7 +176,7 @@ RSpec.describe Message, type: :model do
 
     it 'sets the original_reporting_relationship before create validations' do
       rr = create :reporting_relationship
-      message = build :message, reporting_relationship: rr
+      message = build :text_message, reporting_relationship: rr
       expect(message.original_reporting_relationship).to be_nil
       message.save!
       expect(message.original_reporting_relationship).to eq(rr)
@@ -184,7 +184,7 @@ RSpec.describe Message, type: :model do
 
     it 'does not change original_reporting_relationship on update' do
       rr = create :reporting_relationship
-      message = create :message, reporting_relationship: rr
+      message = create :text_message, reporting_relationship: rr
       expect(message.original_reporting_relationship).to eq(rr)
       new_rr = create :reporting_relationship
       message.reporting_relationship = new_rr
@@ -200,14 +200,14 @@ RSpec.describe Message, type: :model do
       end
 
       it 'validates empty body with attachment' do
-        m = build :message, body: ''
+        m = build :text_message, body: ''
         m.attachments << build(:attachment)
 
         expect(m).to be_valid
       end
 
       it 'validates empty body for incoming messages' do
-        m = build :message, body: '', inbound: true
+        m = build :text_message, body: '', inbound: true
 
         expect(m).to be_valid
       end
@@ -545,7 +545,7 @@ RSpec.describe Message, type: :model do
     subject { rr.client.messages.transfer_markers }
 
     it 'finds the transfer markers' do
-      create_list :message, 5, reporting_relationship: rr
+      create_list :text_message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(transfer_marker)
     end
@@ -558,7 +558,7 @@ RSpec.describe Message, type: :model do
     subject { rr.client.messages.auto_court_reminders }
 
     it 'finds the transfer markers' do
-      create_list :message, 5, reporting_relationship: rr
+      create_list :text_message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(reminder)
     end
@@ -571,7 +571,7 @@ RSpec.describe Message, type: :model do
     subject { rr.client.messages.client_edit_markers }
 
     it 'finds the client edit markers' do
-      create_list :message, 5, reporting_relationship: rr
+      create_list :text_message, 5, reporting_relationship: rr
 
       expect(subject).to contain_exactly(client_edit_marker)
     end
@@ -584,8 +584,8 @@ RSpec.describe Message, type: :model do
     subject { rr.messages.messages }
 
     it 'finds the message' do
-      create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
-      create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
+      create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
+      create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
 
       expect(subject).to contain_exactly(message)
     end
@@ -594,8 +594,8 @@ RSpec.describe Message, type: :model do
       let(:message) { create :court_reminder, reporting_relationship: rr }
 
       it 'finds the message' do
-        create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
-        create_list :message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
+        create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
+        create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
 
         expect(subject).to contain_exactly(message)
       end
@@ -604,7 +604,7 @@ RSpec.describe Message, type: :model do
 
   describe '#send_message', active_job: true do
     let(:rr) { create :reporting_relationship }
-    let!(:message) { create :message, reporting_relationship: rr }
+    let!(:message) { create :text_message, reporting_relationship: rr }
 
     subject { message.send_message }
 

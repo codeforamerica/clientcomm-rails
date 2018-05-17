@@ -79,7 +79,7 @@ RSpec.describe ReportingRelationship, type: :model do
     end
     context 'has scheduled messages' do
       before do
-        create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+        create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
       end
       it 'deletes scheduled messages' do
         subject

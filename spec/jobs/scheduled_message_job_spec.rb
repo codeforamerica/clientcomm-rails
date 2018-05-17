@@ -8,7 +8,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:user) { create :user }
   let(:client) { create :client, users: [user] }
   let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
-  let(:message) { create :message, reporting_relationship: rr, send_at: send_at_time }
+  let(:message) { create :text_message, reporting_relationship: rr, send_at: send_at_time }
 
   subject do
     perform_enqueued_jobs { ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
@@ -45,13 +45,13 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   end
 
   context 'When rescheduled' do
-    let(:message) { create :message, send_at: Time.zone.now }
+    let(:message) { create :text_message, send_at: Time.zone.now }
 
     it_behaves_like 'does not send'
   end
 
   context 'When already sent' do
-    let(:message) { create :message, sent: true }
+    let(:message) { create :text_message, sent: true }
 
     it_behaves_like 'does not send'
   end

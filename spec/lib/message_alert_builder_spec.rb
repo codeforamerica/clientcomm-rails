@@ -23,7 +23,7 @@ describe MessageAlertBuilder do
 
     context 'there is one unread message' do
       before do
-        create :message, reporting_relationship: rr, inbound: true, read: false
+        create :text_message, reporting_relationship: rr, inbound: true, read: false
       end
 
       it 'reports there is one unread message' do
@@ -36,8 +36,8 @@ describe MessageAlertBuilder do
 
     context 'there is more than one unread message from the same client' do
       before do
-        create :message, reporting_relationship: rr, inbound: true, read: false
-        create :message, reporting_relationship: rr, inbound: true, read: false
+        create :text_message, reporting_relationship: rr, inbound: true, read: false
+        create :text_message, reporting_relationship: rr, inbound: true, read: false
       end
 
       it 'returns the correct count of unread messages' do
@@ -53,8 +53,8 @@ describe MessageAlertBuilder do
       let(:rr2) { create :reporting_relationship, client: client2, user: rr.user }
 
       before do
-        create :message, reporting_relationship: rr, inbound: true, read: false
-        create :message, reporting_relationship: rr2, inbound: true, read: false
+        create :text_message, reporting_relationship: rr, inbound: true, read: false
+        create :text_message, reporting_relationship: rr2, inbound: true, read: false
       end
 
       it 'returns the correct count of unread messages without full_name' do
@@ -67,9 +67,9 @@ describe MessageAlertBuilder do
 
     context 'there are a mixture of read and unread messages from a client' do
       before do
-        create :message, reporting_relationship: rr, inbound: true, read: true
-        create :message, reporting_relationship: rr, inbound: true, read: true
-        create :message, reporting_relationship: rr, inbound: true, read: false
+        create :text_message, reporting_relationship: rr, inbound: true, read: true
+        create :text_message, reporting_relationship: rr, inbound: true, read: true
+        create :text_message, reporting_relationship: rr, inbound: true, read: false
       end
 
       it 'only reports unread messages' do

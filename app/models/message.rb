@@ -16,6 +16,8 @@ class Message < ApplicationRecord
   validates :original_reporting_relationship, presence: true
   validates_datetime :send_at, before: :max_future_date
 
+  validates :type, exclusion: { in: %w[Message] }
+
   validates :body, length: { maximum: 1600 }
 
   validate :same_reporting_relationship_as_like_message

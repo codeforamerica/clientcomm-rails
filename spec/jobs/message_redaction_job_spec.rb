@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe MessageRedactionJob, active_job: true, type: :job do
-  let(:message) { create :message }
+  let(:message) { create :text_message }
 
   subject do
     perform_enqueued_jobs { MessageRedactionJob.perform_later(message: message) }

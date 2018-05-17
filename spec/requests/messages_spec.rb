@@ -456,8 +456,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has transfer markers' do
         it 'displays the transfer marker' do
-          marker = create :message, reporting_relationship: rr, type: Message::MARKER_TRANSFER, body: 'transferred!'
-
+          marker = create :transfer_marker, reporting_relationship: rr
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
@@ -467,7 +466,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has client edit markers' do
         it 'displays the client edit marker' do
-          marker = create :message, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT, body: 'client edited!'
+          marker = create :client_edit_marker, reporting_relationship: rr
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 

@@ -73,7 +73,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         end
 
         before do
-          create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+          create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
           ReportingRelationship.find_by(client: client, user: user1).update!(active: false)
         end
 
@@ -180,8 +180,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
   describe 'PUT#update' do
     let(:rr) { ReportingRelationship.find_by(user: user1, client: client) }
-    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
-    let!(:messages) { create_list :message, 2, reporting_relationship: rr }
+    let!(:scheduled_messages) { create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
+    let!(:messages) { create_list :text_message, 2, reporting_relationship: rr }
 
     context 'transferring a client' do
       let(:client) { create :client, users: [user1, user4] }
@@ -300,7 +300,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
         let(:unclaimed_user) { create :user, department: department }
         let(:unclaimed_client) { create :client, users: [unclaimed_user] }
         let(:rr) { ReportingRelationship.find_by(user: unclaimed_user, client: unclaimed_client) }
-        let!(:unclaimed_messages) { create_list :message, 3, reporting_relationship: rr }
+        let!(:unclaimed_messages) { create_list :text_message, 3, reporting_relationship: rr }
         let(:unclaimed_rr) do
           ReportingRelationship.find_by(
             user: unclaimed_user, client: unclaimed_client

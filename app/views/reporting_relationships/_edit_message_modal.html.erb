@@ -20,7 +20,7 @@
       </div>
 
       <div class="modal-body">
-        <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled' do |f| %>
+        <%= form_for message, builder: GcfFormBuilder, namespace: 'scheduled', url: messages_path do |f| %>
         <input name="client_id" type="hidden" value="<%= @client.id %>">
         <div class="<%= 'form-group--error-modal' if message.errors[:body].any? %>">
           <%= f.gcf_textarea(:body, 'Your message', classes: ['send-later-input'], placeholder: 'Your message text', autofocus: @sendfocus.nil?) %>
