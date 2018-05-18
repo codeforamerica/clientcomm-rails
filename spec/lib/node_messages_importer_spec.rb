@@ -101,7 +101,7 @@ describe NodeMessagesImporter do
         expect(message.number_from).to eq client_number_normalized
       end
 
-      context 'there are duplicate messages attached to different conversations' do
+      context 'there are duplicate messages attached to different conversations with different users, only one is active' do
         let(:convo_id_2) { '222' }
         let(:cm_id_2) { '19' }
         let(:message_body_segment_1) { 'This is a single, self-contained message' }
@@ -109,22 +109,37 @@ describe NodeMessagesImporter do
         let(:message_body_full) { message_body_segment_1 }
         let(:user_2) { create :user, node_id: cm_id_2 }
 
-        context 'only one of the duplicates can be matched to an active relationship' do
-          it 'creates a single message object' do
-            subject
-            messages = rr.messages.where(twilio_sid: twilio_sid)
-            expect(messages.count).to eq 1
-            message = messages.first
-            expect(message.body).to eq message_body_full
-            expect(message.send_at).to eq Time.parse(message_created).utc
-            expect(message.inbound).to eq inbound_boolean
-            expect(message.read).to eq read_boolean
-            expect(message.twilio_status).to eq twilio_status
-            expect(message.number_from).to eq client_number_normalized
-          end
+        it 'creates a single message object' do
+          subject
+          messages = rr.messages.where(twilio_sid: twilio_sid)
+          expect(messages.count).to eq 1
+          message = messages.first
+          expect(message.body).to eq message_body_full
+          expect(message.send_at).to eq Time.parse(message_created).utc
+          expect(message.inbound).to eq inbound_boolean
+          expect(message.read).to eq read_boolean
+          expect(message.twilio_status).to eq twilio_status
+          expect(message.number_from).to eq client_number_normalized
         end
+      end
 
-        context 'multiple duplicates belong to the same active relationship' do
+      context 'there are duplicate messages attached to different conversations with the same user' do
+        let(:convo_id_2) { '222' }
+        let(:message_body_segment_1) { 'This is a single, self-contained message' }
+        let(:message_body_segment_2) { message_body_segment_1 }
+        let(:message_body_full) { message_body_segment_1 }
+
+        it 'creates a single message object' do
+          subject
+          messages = rr.messages.where(twilio_sid: twilio_sid)
+          expect(messages.count).to eq 1
+          message = messages.first
+          expect(message.body).to eq message_body_full
+          expect(message.send_at).to eq Time.parse(message_created).utc
+          expect(message.inbound).to eq inbound_boolean
+          expect(message.read).to eq read_boolean
+          expect(message.twilio_status).to eq twilio_status
+          expect(message.number_from).to eq client_number_normalized
         end
       end
     end
