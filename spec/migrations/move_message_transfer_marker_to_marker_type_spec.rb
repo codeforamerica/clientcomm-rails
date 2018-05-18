@@ -1,5 +1,5 @@
 require 'rails_helper.rb'
-require_relative '../../db/migrate/20180326220423_move_message_transfer_marker_to_marker_type.rb'
+require_relative '../../db/migrate/20180326220423_move_message_transfer_marker_to_marker_type'
 
 describe MoveMessageTransferMarkerToMarkerType do
   let(:user) { create :user }
@@ -22,7 +22,7 @@ describe MoveMessageTransferMarkerToMarkerType do
       Message.reset_column_information
     end
 
-    it 'messages have proper values on type' do
+    it 'messages have proper values on marker_type' do
       rr = ReportingRelationship.find_by(user: user, client: client)
 
       message_marker = Message.create!(
@@ -49,8 +49,8 @@ describe MoveMessageTransferMarkerToMarkerType do
 
       subject
 
-      expect(message_message.reload.type).to eq(nil)
-      expect(message_marker.reload.type).to eq(Message::MARKER_TRANSFER)
+      expect(message_message.reload.marker_type).to eq(nil)
+      expect(message_marker.reload.marker_type).to eq(Message::MARKER_TRANSFER)
     end
   end
 
@@ -72,7 +72,7 @@ describe MoveMessageTransferMarkerToMarkerType do
       message_marker = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
-        type: Message::MARKER_TRANSFER,
+        marker_type: Message::MARKER_TRANSFER,
         read: true,
         send_at: Time.zone.now,
         inbound: true,
@@ -83,7 +83,7 @@ describe MoveMessageTransferMarkerToMarkerType do
       message_message = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
-        type: nil,
+        marker_type: nil,
         read: true,
         send_at: Time.zone.now,
         inbound: true,
