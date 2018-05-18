@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180516183029) do
+ActiveRecord::Schema.define(version: 20180518203229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,13 @@ ActiveRecord::Schema.define(version: 20180516183029) do
     t.string "id_number"
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
+  end
+
+  create_table "court_date_csvs", force: :cascade do |t|
+    t.string "file_file_name"
+    t.string "file_content_type"
+    t.integer "file_file_size"
+    t.datetime "file_updated_at"
   end
 
   create_table "delayed_jobs", id: :serial, force: :cascade do |t|
