@@ -70,8 +70,8 @@ describe 'reports rake tasks' do
     let(:long_body2) { (0...body_length2).map { ('a'..'z').to_a[rand(26)] }.join }
     let(:send_at1) { Time.zone.local(2018, 4, 25, 11, 40) }
     let(:send_at2) { Time.zone.local(2018, 4, 25, 11, 35) }
-    let(:message1) { build :message, reporting_relationship: rr1, original_reporting_relationship: rr1, body: long_body1, send_at: send_at1 }
-    let(:message2) { build :message, reporting_relationship: rr2, original_reporting_relationship: rr2, body: long_body2, send_at: send_at2 }
+    let(:message1) { build :text_message, reporting_relationship: rr1, original_reporting_relationship: rr1, body: long_body1, send_at: send_at1 }
+    let(:message2) { build :text_message, reporting_relationship: rr2, original_reporting_relationship: rr2, body: long_body2, send_at: send_at2 }
 
     before do
       Rake.application.rake_require 'tasks/reports'

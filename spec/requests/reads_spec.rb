@@ -5,7 +5,7 @@ describe 'reads', type: :request do
     let(:rr) { create :reporting_relationship, has_unread_messages: true }
     let(:user) { rr.user }
     let(:client) { rr.client }
-    let(:message) { create :message, reporting_relationship: rr, read: false }
+    let(:message) { create :text_message, reporting_relationship: rr, read: false }
 
     before do
       sign_in user

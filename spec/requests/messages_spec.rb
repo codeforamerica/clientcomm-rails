@@ -41,7 +41,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'does not show message dialog if messages exist' do
-        create :message, reporting_relationship: rr
+        create :text_message, reporting_relationship: rr
         rr = user.reporting_relationships.find_by(client: client)
         get reporting_relationship_path(rr)
         message = "You haven’t sent #{client.first_name} any messages yet. Start by introducing yourself."
@@ -49,9 +49,9 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'shows all past messages for a given relationship' do
-        message = create :message, reporting_relationship: rr
-        message2 = create :message, reporting_relationship: rr
-        message3 = create :message
+        message = create :text_message, reporting_relationship: rr
+        message2 = create :text_message, reporting_relationship: rr
+        message3 = create :text_message
 
         get reporting_relationship_path(rr)
 
@@ -61,7 +61,7 @@ describe 'Messages requests', type: :request, active_job: true do
       end
 
       it 'marks all messages read when index loaded' do
-        message = create :message, reporting_relationship: rr, inbound: true
+        message = create :text_message, reporting_relationship: rr, inbound: true
         client.reporting_relationship(user: user).update!(has_unread_messages: true)
 
         # when we visit the messages path, it should mark the message read
@@ -75,7 +75,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'there are scheduled messages' do
         it 'does not show scheduled messages in the main timeline' do
-          message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
+          message = create :text_message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -84,7 +84,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
         it 'shows messages after their send_at date' do
           travel_to 1.day.ago do
-            create :message, reporting_relationship: rr, body: body, send_at: Time.zone.now
+            create :text_message, reporting_relationship: rr, body: body, send_at: Time.zone.now
           end
 
           rr = user.reporting_relationships.find_by(client: client)
@@ -99,7 +99,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
 
         it 'shows a link when scheduled messages exist' do
-          create_list :message, 2, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
+          create_list :text_message, 2, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
@@ -111,7 +111,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:attachment) { build :attachment, media: File.new(media_path) }
 
         before do
-          create :message, reporting_relationship: rr, attachments: [attachment], inbound: true
+          create :text_message, reporting_relationship: rr, attachments: [attachment], inbound: true
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
         end
@@ -171,7 +171,7 @@ describe 'Messages requests', type: :request, active_job: true do
     describe 'DELETE#destroy' do
       context 'there are scheduled messages' do
         it 'deletes a scheduled message' do
-          message = create :message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
+          message = create :text_message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow
 
           delete message_path(message)
 
@@ -190,7 +190,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#edit' do
       it 'renders the requested message template' do
-        message = create :message, reporting_relationship: rr, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)
+        message = create :text_message, reporting_relationship: rr, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)
 
         get edit_message_path(message)
 
@@ -247,7 +247,7 @@ describe 'Messages requests', type: :request, active_job: true do
           }
         end
         let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-        let(:likeable_message) { create :message, reporting_relationship: rr }
+        let(:likeable_message) { create :text_message, reporting_relationship: rr }
         let(:message_send_at) { nil }
 
         it 'creates a new message on submit' do
@@ -351,7 +351,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'PUT#update' do
       let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-      let!(:message) { create(:message, reporting_relationship: rr, body: body, send_at: Time.zone.now.tomorrow.change(sec: 0)) }
+      let!(:message) { create(:text_message, reporting_relationship: rr, body: body, send_at: Time.zone.now.tomorrow.change(sec: 0)) }
       let(:post_params) {
         {
           message: { body: new_body, send_at: message_send_at }
@@ -418,7 +418,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
     describe 'GET#download' do
       it 'downloads messages as a text file' do
-        messages = create_list :message, 10, reporting_relationship: rr
+        messages = create_list :text_message, 10, reporting_relationship: rr
 
         rr = user.reporting_relationships.find_by(client: client)
         get reporting_relationship_messages_download_path(rr)
@@ -438,7 +438,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       it 'orders downloaded messages by send_at' do
         msgs_count = 10
-        messages = create_list :message, msgs_count, reporting_relationship: rr
+        messages = create_list :text_message, msgs_count, reporting_relationship: rr
         messages.each_with_index do |message, i|
           message.update(
             created_at: message.created_at - (msgs_count - i).hours,
@@ -456,8 +456,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has transfer markers' do
         it 'displays the transfer marker' do
-          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_TRANSFER, body: 'transferred!'
-
+          marker = create :transfer_marker, reporting_relationship: rr
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
@@ -467,7 +466,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
       context 'the user has client edit markers' do
         it 'displays the client edit marker' do
-          marker = create :message, reporting_relationship: rr, marker_type: Message::MARKER_CLIENT_EDIT, body: 'client edited!'
+          marker = create :client_edit_marker, reporting_relationship: rr
           rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_messages_download_path(rr)
 
@@ -479,7 +478,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:rr) { user.reporting_relationships.find_by(client: client) }
 
         before do
-          create :message, inbound: false, reporting_relationship: rr, twilio_status: 'undelivered'
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'undelivered'
         end
 
         it 'displays the issue prominently' do
@@ -495,7 +494,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:rr) { user.reporting_relationships.find_by(client: client) }
 
         before do
-          create :message, inbound: false, reporting_relationship: rr, twilio_status: nil
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: nil
         end
 
         it 'displays the issue prominently' do

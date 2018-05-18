@@ -5,7 +5,7 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
     let!(:user) { create :user }
     let!(:client) { create :client, user: user }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
-    let!(:message) { create :message, reporting_relationship: rr }
+    let!(:message) { create :text_message, reporting_relationship: rr }
 
     it 'queues a job' do
       described_class.perform_later(message: message)
@@ -35,7 +35,7 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
       expect(mock_server).to have_received(:broadcast).once.with(
         "messages_#{user.id}_#{message.client.id}",
         message_html: message_partial,
-        message_dom_id: dom_id(message),
+        message_dom_id: "message_#{message.id}",
         message_id: message.id
       )
       expect(mock_server).to have_received(:broadcast).once.with("clients_#{user.id}", {})

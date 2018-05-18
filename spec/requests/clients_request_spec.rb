@@ -372,7 +372,7 @@ describe 'Clients requests', type: :request do
         context 'has scheduled messages' do
           let(:rr) { existing_client.reporting_relationships.find_by(user: user) }
           before do
-            create :message, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+            create :text_message, reporting_relationship: rr, send_at: Time.zone.now + 1.day
           end
 
           it 'deletes scheduled messages' do
@@ -384,10 +384,10 @@ describe 'Clients requests', type: :request do
 
       it 'tracks the updating of a client' do
         rr = ReportingRelationship.find_by(user: user, client: existing_client)
-        create :message, reporting_relationship: rr, inbound: false
-        create :message, reporting_relationship: rr, inbound: false, send_at: Time.zone.now.tomorrow
-        create :message, reporting_relationship: rr, inbound: true
-        attachment_message = create :message, reporting_relationship: rr, inbound: true
+        create :text_message, reporting_relationship: rr, inbound: false
+        create :text_message, reporting_relationship: rr, inbound: false, send_at: Time.zone.now.tomorrow
+        create :text_message, reporting_relationship: rr, inbound: true
+        attachment_message = create :text_message, reporting_relationship: rr, inbound: true
         create :attachment, message: attachment_message
         existing_client.reporting_relationships.where(user: user).update(
           last_contacted_at: 5.days.ago,
@@ -558,15 +558,15 @@ describe 'Clients requests', type: :request do
 
       it 'tracks a visit to the client index with clients and messages' do
         rr1 = ReportingRelationship.find_by(user: user, client: user.clients.first)
-        create :message, reporting_relationship: rr1, inbound: true
+        create :text_message, reporting_relationship: rr1, inbound: true
 
         rr2 = ReportingRelationship.find_by(user: user, client: user.clients.second)
         rr2.update(category: 'cat1')
-        create :message, reporting_relationship: rr2, inbound: true
+        create :text_message, reporting_relationship: rr2, inbound: true
 
         rr3 = ReportingRelationship.find_by(user: user, client: user.clients.third)
         rr3.update(category: 'cat1')
-        create :message, reporting_relationship: rr3, inbound: true
+        create :text_message, reporting_relationship: rr3, inbound: true
 
         subject
 

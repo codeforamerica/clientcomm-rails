@@ -29,14 +29,13 @@ module CourtRemindersImporter
             Rails.logger.info { "Body: \"#{body}\"" }
             Rails.logger.info { "Send At: \"#{send_at}\"" }
 
-            message = Message.new(
+            message = CourtReminder.new(
               body: body,
               reporting_relationship: rr,
               number_from: rr.user.department.phone_number,
               number_to: rr.client.phone_number,
               send_at: send_at,
-              read: true,
-              marker_type: Message::AUTO_COURT_REMINDER
+              read: true
             )
 
             unless options[:dry_run]

@@ -123,13 +123,13 @@ ActiveRecord::Schema.define(version: 20180516183029) do
     t.string "last_twilio_update"
     t.bigint "reporting_relationship_id"
     t.bigint "original_reporting_relationship_id", null: false
-    t.integer "marker_type"
+    t.string "type", null: false
     t.bigint "like_message_id"
     t.index ["like_message_id"], name: "index_messages_on_like_message_id"
-    t.index ["marker_type"], name: "index_messages_on_marker_type"
     t.index ["original_reporting_relationship_id"], name: "index_messages_on_original_reporting_relationship_id"
     t.index ["reporting_relationship_id"], name: "index_messages_on_reporting_relationship_id"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
+    t.index ["type"], name: "index_messages_on_type"
   end
 
   create_table "reporting_relationships", force: :cascade do |t|

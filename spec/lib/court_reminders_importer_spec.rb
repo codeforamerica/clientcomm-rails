@@ -97,7 +97,7 @@ describe CourtRemindersImporter do
         ]
       end
 
-      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
+      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days }
 
       it 'does not save any  messages' do
         expect { subject }.to raise_error(ArgumentError, 'invalid strptime format - `%m/%d/%Y %H:%M %z\'')
@@ -109,7 +109,7 @@ describe CourtRemindersImporter do
     end
 
     context 'there are already court date reminders' do
-      let!(:existing_reminder) { create :message, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, marker_type: Message::AUTO_COURT_REMINDER }
+      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days }
 
       it 'deletes all existing reminders' do
         subject
@@ -138,7 +138,7 @@ describe CourtRemindersImporter do
       let!(:rr4) { create :reporting_relationship, notes: '111' }
 
       before do
-        create :message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
+        create :text_message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
       end
 
       it 'picks the rr that was most recently contacted' do
@@ -165,8 +165,8 @@ describe CourtRemindersImporter do
 
       context 'two rrs have both been contacted' do
         before do
-          create :message, send_at: Time.zone.now - 3.days, reporting_relationship: rr1
-          create :message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
+          create :text_message, send_at: Time.zone.now - 3.days, reporting_relationship: rr1
+          create :text_message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
         end
 
         it 'picks the rr that was most recently contacted' do

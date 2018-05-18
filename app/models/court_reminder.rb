@@ -1,0 +1,2 @@
+class CourtReminder < TextMessage
+end

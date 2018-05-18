@@ -16,6 +16,8 @@ class Message < ApplicationRecord
   validates :original_reporting_relationship, presence: true
   validates_datetime :send_at, before: :max_future_date
 
+  validates :type, exclusion: { in: %w[Message] }
+
   validates :body, length: { maximum: 1600 }
 
   validate :same_reporting_relationship_as_like_message
@@ -24,10 +26,10 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
-  scope :transfer_markers, -> { where(marker_type: MARKER_TRANSFER) }
-  scope :client_edit_markers, -> { where(marker_type: MARKER_CLIENT_EDIT) }
-  scope :auto_court_reminders, -> { where(marker_type: AUTO_COURT_REMINDER) }
-  scope :messages, -> { where(marker_type: [nil, AUTO_COURT_REMINDER]) }
+  scope :transfer_markers, -> { where(type: MARKER_TRANSFER) }
+  scope :client_edit_markers, -> { where(type: MARKER_CLIENT_EDIT) }
+  scope :auto_court_reminders, -> { where(type: AUTO_COURT_REMINDER) }
+  scope :messages, -> { where(type: [TEXT_MESSAGE, AUTO_COURT_REMINDER]) }
 
   class TransferClientMismatch < StandardError; end
 
@@ -37,9 +39,10 @@ class Message < ApplicationRecord
   UNREAD = 'unread'.freeze
   ERROR = 'error'.freeze
 
-  MARKER_TRANSFER = 0
-  MARKER_CLIENT_EDIT = 1
-  AUTO_COURT_REMINDER = 2
+  MARKER_TRANSFER = 'TransferMarker'.freeze
+  MARKER_CLIENT_EDIT = 'ClientEditMarker'.freeze
+  AUTO_COURT_REMINDER = 'CourtReminder'.freeze
+  TEXT_MESSAGE = 'TextMessage'.freeze
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = I18n.t('messages.admin_user_description')
@@ -65,10 +68,9 @@ class Message < ApplicationRecord
                        )
                      end
 
-      Message.create!(
+      ClientEditMarker.create!(
         reporting_relationship: rr,
         body: message_body,
-        marker_type: MARKER_CLIENT_EDIT,
         read: true,
         send_at: Time.zone.now,
         inbound: true,
@@ -81,27 +83,25 @@ class Message < ApplicationRecord
   def self.create_transfer_markers(sending_rr:, receiving_rr:)
     raise TransferClientMismatch unless sending_rr.client == receiving_rr.client
 
-    Message.create!(
+    TransferMarker.create!(
       reporting_relationship: sending_rr,
       body: I18n.t(
         'messages.transferred_to',
         user_full_name: receiving_rr.user.full_name
       ),
-      marker_type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
     )
-    Message.create!(
+    TransferMarker.create!(
       reporting_relationship: receiving_rr,
       body: I18n.t(
         'messages.transferred_from',
         user_full_name: sending_rr.user.full_name,
         client_full_name: sending_rr.client.full_name
       ),
-      marker_type: MARKER_TRANSFER,
       read: true,
       send_at: Time.zone.now,
       inbound: true,
@@ -138,7 +138,7 @@ class Message < ApplicationRecord
 
     rr = ReportingRelationship.find_or_create_by(user: user, client: client)
 
-    new_message = Message.new(
+    new_message = TextMessage.new(
       reporting_relationship: rr,
       number_to: to_phone_number,
       number_from: from_phone_number,
@@ -183,15 +183,15 @@ class Message < ApplicationRecord
   end
 
   def marker?
-    marker_type.present? && marker_type != AUTO_COURT_REMINDER
+    [AUTO_COURT_REMINDER, TEXT_MESSAGE].exclude? type
   end
 
   def transfer_marker?
-    marker_type == MARKER_TRANSFER
+    type == MARKER_TRANSFER
   end
 
   def client_edit_marker?
-    marker_type == MARKER_CLIENT_EDIT
+    type == MARKER_CLIENT_EDIT
   end
 
   def past_message?
@@ -214,7 +214,7 @@ class Message < ApplicationRecord
     now = Time.zone.now
     unclaimed_response = rr.department.unclaimed_response
     unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
-    message = Message.create!(
+    message = TextMessage.create!(
       reporting_relationship: rr,
       body: unclaimed_response,
       number_from: rr.department.phone_number,

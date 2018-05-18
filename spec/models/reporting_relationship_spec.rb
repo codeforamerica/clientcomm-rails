@@ -79,7 +79,7 @@ RSpec.describe ReportingRelationship, type: :model do
     end
     context 'has scheduled messages' do
       before do
-        create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
+        create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
       end
       it 'deletes scheduled messages' do
         subject
@@ -94,7 +94,7 @@ RSpec.describe ReportingRelationship, type: :model do
     let(:new_user) { create :user, department: dept }
     let(:client) { create :client, user: old_user }
     let(:rr) { ReportingRelationship.find_by(user: old_user, client: client) }
-    let!(:scheduled_messages) { create_list :message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
+    let!(:scheduled_messages) { create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
     let(:old_reporting_relationship) { ReportingRelationship.find_by(user: old_user, client: client) }
     let(:new_reporting_relationship) { ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id) }
 
@@ -121,7 +121,7 @@ RSpec.describe ReportingRelationship, type: :model do
     end
 
     context 'the sending user is the unclaimed user' do
-      let!(:messages) { create_list :message, 5, reporting_relationship: rr }
+      let!(:messages) { create_list :text_message, 5, reporting_relationship: rr }
 
       before do
         dept.update(unclaimed_user: old_user)

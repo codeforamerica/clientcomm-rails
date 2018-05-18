@@ -1,0 +1,2 @@
+class TransferMarker < Message
+end

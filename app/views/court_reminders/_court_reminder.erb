@@ -1,0 +1,14 @@
+<div class="message--<%= message_inbound_or_outbound(court_reminder) %>" id="message_<%= court_reminder %>">
+  <div class="message-row-container">
+    <div class="message--content <%= court_reminder.twilio_status %>">
+      <%= court_reminder.body %>
+    </div>
+  </div>
+  <p class="message--label <%= court_reminder.twilio_status %>">
+  <% if court_reminder.twilio_status == 'undelivered' %>
+    <%= t('message.status.undelivered') %>
+  <% else %>
+    <%= court_reminder.twilio_status %> <%= court_reminder.send_at.to_s(:message_timestamp) %>
+  <% end %>
+  </p>
+</div>

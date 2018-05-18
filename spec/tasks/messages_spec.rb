@@ -9,12 +9,12 @@ describe 'messages rake tasks' do
 
     let(:twilio_message) { double('twilio_message', status: 'delivered') }
 
-    let!(:accepted_message) { create :message, inbound: false, twilio_status: 'accepted' }
-    let!(:queued_message) { create :message, inbound: false, twilio_status: 'queued' }
-    let!(:sending_message) { create :message, inbound: false, twilio_status: 'sending' }
-    let!(:delivered_message) { create :message, inbound: false, twilio_status: 'delivered' }
-    let!(:undelivered_message) { create :message, inbound: false, twilio_status: 'undelivered' }
-    let!(:received_message) { create :message, inbound: true, twilio_status: 'received' }
+    let!(:accepted_message) { create :text_message, inbound: false, twilio_status: 'accepted' }
+    let!(:queued_message) { create :text_message, inbound: false, twilio_status: 'queued' }
+    let!(:sending_message) { create :text_message, inbound: false, twilio_status: 'sending' }
+    let!(:delivered_message) { create :text_message, inbound: false, twilio_status: 'delivered' }
+    let!(:undelivered_message) { create :text_message, inbound: false, twilio_status: 'undelivered' }
+    let!(:received_message) { create :text_message, inbound: true, twilio_status: 'received' }
 
     before do
       load File.expand_path('../../lib/tasks/messages.rake', __dir__)

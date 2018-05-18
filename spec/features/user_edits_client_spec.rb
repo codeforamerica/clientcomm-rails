@@ -95,7 +95,7 @@ feature 'user edits client', :js do
     let(:rr) { ReportingRelationship.find_by(user: my_user, client: clientone) }
 
     before do
-      create :message, reporting_relationship: rr, read: false, inbound: true
+      create :text_message, reporting_relationship: rr, read: false, inbound: true
     end
 
     scenario 'it shows a warning about the unread messages' do
