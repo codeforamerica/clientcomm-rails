@@ -67,10 +67,10 @@ describe Department, type: :model do
     let(:outbound1_count) { 55 }
     let(:inbound2_count) { 34 }
     let(:outbound2_count) { 89 }
-    let!(:transfers1) { create_list :text_message, 2, send_at: now - 1.day, type: Message::MARKER_TRANSFER, reporting_relationship: user1.reporting_relationships.active.sample }
+    let!(:transfers1) { create_list :transfer_marker, 2, send_at: now - 1.day, reporting_relationship: user1.reporting_relationships.active.sample }
     let!(:messages_inbound1) { create_list :text_message, inbound1_count, send_at: now - 1.day, inbound: true, reporting_relationship: user1.reporting_relationships.active.sample }
     let!(:messages_outbound1) { create_list :text_message, outbound1_count, send_at: now - 2.days, inbound: false, reporting_relationship: user1.reporting_relationships.active.sample }
-    let!(:transfers2) { create_list :text_message, 2, send_at: now - 1.day, type: Message::MARKER_TRANSFER, reporting_relationship: user2.reporting_relationships.active.sample }
+    let!(:transfers2) { create_list :transfer_marker, 2, send_at: now - 1.day, reporting_relationship: user2.reporting_relationships.active.sample }
     let!(:messages_inbound2) { create_list :text_message, inbound2_count, send_at: now - 3.days, inbound: true, reporting_relationship: user2.reporting_relationships.active.sample }
     let!(:messages_outbound2) { create_list :text_message, outbound2_count, send_at: now - 4.days, inbound: false, reporting_relationship: user2.reporting_relationships.active.sample }
 

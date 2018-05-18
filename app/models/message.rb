@@ -183,7 +183,7 @@ class Message < ApplicationRecord
   end
 
   def marker?
-    ![AUTO_COURT_REMINDER, TEXT_MESSAGE].include? type
+    [AUTO_COURT_REMINDER, TEXT_MESSAGE].exclude? type
   end
 
   def transfer_marker?
