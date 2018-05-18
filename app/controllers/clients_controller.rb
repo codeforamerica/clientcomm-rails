@@ -182,6 +182,7 @@ class ClientsController < ApplicationController
           .permit(:first_name,
                   :last_name,
                   :client_status_id,
+                  :id_number,
                   :phone_number,
                   :notes,
                   reporting_relationships_attributes: %i[

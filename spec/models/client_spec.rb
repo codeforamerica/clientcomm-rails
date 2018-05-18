@@ -166,6 +166,15 @@ RSpec.describe Client, type: :model do
     it { should validate_presence_of(:phone_number) }
     it { should validate_uniqueness_of(:phone_number) }
 
+    it 'validates that id_number is always a number' do
+      client = build :client, id_number: nil
+      expect(client).to be_valid
+      client.id_number = 'abc4'
+      expect(client).to_not be_valid
+      client.id_number = '123'
+      expect(client).to be_valid
+    end
+
     it 'validates correctness of phone_number' do
       bad_number = '(212) 55-5236'
       allow(SMSService.instance).to receive(:number_lookup)

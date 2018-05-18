@@ -290,6 +290,7 @@ describe 'Clients requests', type: :request do
     describe 'PUT#update' do
       let(:first_name) { Faker::Name.first_name }
       let(:phone_number) { '+14663364863' }
+      let(:id_number) { '1234' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
       let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
@@ -300,6 +301,7 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
+            id_number: id_number,
             reporting_relationships_attributes: {
               '0': {
                 id: existing_client.reporting_relationships.find_by(user: user).id,
@@ -419,6 +421,7 @@ describe 'Clients requests', type: :request do
         expect(client.last_name).to eq last_name
         expect(client.phone_number).to eq phone_number
         expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
+        expect(client.id_number).to eq id_number
       end
 
       context 'a client has active users in multiple departments' do
