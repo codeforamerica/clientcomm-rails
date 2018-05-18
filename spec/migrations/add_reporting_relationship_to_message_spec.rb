@@ -24,7 +24,7 @@ describe AddReportingRelationshipToMessage do
 
     it 'message is linked to the proper reporting relationship' do
       # Inline so that the `before` migration runs first
-      message = TextMessage.create(user: user,
+      message = Message.create(user: user,
                                    client: client,
                                    number_to: '+17605559331',
                                    number_from: '+17605556230',
@@ -42,7 +42,7 @@ describe AddReportingRelationshipToMessage do
 
       it 'message is linked to the proper reporting relationship' do
         # Inline so that the `before` migration runs first
-        message = TextMessage.create(user: user,
+        message = Message.create(user: user,
                                      client: client,
                                      number_to: '+17605559331',
                                      number_from: '+17605556230',

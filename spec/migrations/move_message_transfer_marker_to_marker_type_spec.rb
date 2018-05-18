@@ -1,5 +1,5 @@
 require 'rails_helper.rb'
-require_relative '../../db/migrate/20180326220423_move_message_transfer_marker_to_type'
+require_relative '../../db/migrate/20180326220423_move_message_transfer_marker_to_marker_type.rb'
 
 describe MoveMessageTransferMarkerToMarkerType do
   let(:user) { create :user }
@@ -25,7 +25,7 @@ describe MoveMessageTransferMarkerToMarkerType do
     it 'messages have proper values on type' do
       rr = ReportingRelationship.find_by(user: user, client: client)
 
-      message_marker = TextMessage.create!(
+      message_marker = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
         transfer_marker: true,
@@ -36,7 +36,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         number_from: rr.client.phone_number
       )
 
-      message_message = TextMessage.create!(
+      message_message = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
         transfer_marker: false,
@@ -69,7 +69,7 @@ describe MoveMessageTransferMarkerToMarkerType do
     it 'messages have proper values on transfer_marker' do
       rr = ReportingRelationship.find_by(user: user, client: client)
 
-      message_marker = TextMessage.create!(
+      message_marker = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
         type: Message::MARKER_TRANSFER,
@@ -80,7 +80,7 @@ describe MoveMessageTransferMarkerToMarkerType do
         number_from: rr.client.phone_number
       )
 
-      message_message = TextMessage.create!(
+      message_message = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
         type: nil,
