@@ -85,13 +85,14 @@ namespace :node_etl do
       distinct_node_messages.each do |dist_msg|
         node_message_segments = node_production.exec(<<-SQL, [dist_msg['tw_sid']])
           SELECT
-            convos.convid,
             convos.cm,
             msgs.comm,
             msgs.content,
+            convos.convid,
             msgs.created,
             msgs.inbound,
             msgs.read,
+            recordings.recording_key,
             msgs.tw_sid,
             msgs.tw_status,
             comms.value

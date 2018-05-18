@@ -14,16 +14,18 @@ describe NodeMessagesImporter do
   let(:inbound_boolean) { ActiveModel::Type::Boolean.new.cast(inbound) }
   let(:client_number) { '14155554321' }
   let(:client_number_normalized) { "+#{client_number}" }
+  let(:recording_key) { nil }
   let(:message_segments) do
     [
       {
-        'convid' => convo_id_1,
         'cm' => cm_id_1,
         'comm' => comm_id,
         'content' => message_body,
+        'convid' => convo_id_1,
         'created' => message_created,
         'inbound' => inbound,
         'read' => read,
+        'recording_key' => recording_key,
         'tw_sid' => twilio_sid,
         'tw_status' => twilio_status,
         'value' => client_number
@@ -50,7 +52,22 @@ describe NodeMessagesImporter do
       expect(message.number_from).to eq client_number_normalized
     end
 
+    context 'a message with the same sid already exists' do
+      let!(:already_existing_message) { create :message, twilio_sid: twilio_sid }
+
+      it 'does not create a new message' do
+        subject
+        messages = Message.where(twilio_sid: twilio_sid)
+        expect(messages.count).to eq 1
+      end
+    end
+
     context 'the message has an attached recording' do
+      let(:recording_key) { '81iebqo6vjeg11f8eiwh-RE73917v2w74927ob7492g8r3m47l37491' }
+
+      it 'copies the sound file as an attachment' do
+        # TODO: finish
+      end
     end
 
     context 'the message has multiple segments' do
@@ -62,25 +79,27 @@ describe NodeMessagesImporter do
       let(:message_segments) do
         [
           {
-            'convid' => convo_id_1,
             'cm' => cm_id_1,
             'comm' => comm_id,
             'content' => message_body_segment_1,
+            'convid' => convo_id_1,
             'created' => message_created,
             'inbound' => inbound,
             'read' => read,
+            'recording_key' => recording_key,
             'tw_sid' => twilio_sid,
             'tw_status' => twilio_status,
             'value' => client_number
           },
           {
-            'convid' => convo_id_2,
             'cm' => cm_id_2,
             'comm' => comm_id,
             'content' => message_body_segment_2,
+            'convid' => convo_id_2,
             'created' => message_created,
             'inbound' => inbound,
             'read' => read,
+            'recording_key' => recording_key,
             'tw_sid' => twilio_sid,
             'tw_status' => twilio_status,
             'value' => client_number
