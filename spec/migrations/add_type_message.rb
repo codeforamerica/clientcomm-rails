@@ -75,12 +75,12 @@ describe AddTypeToMessages do
   describe '#down' do
     before do
       @current_migration = ActiveRecord::Migrator.current_version
-      ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180507185215
+      ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180515185335
       Message.reset_column_information
     end
 
     subject do
-      ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180314000756
+      ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180507185215
       Message.reset_column_information
     end
 
@@ -128,10 +128,10 @@ describe AddTypeToMessages do
 
       subject
 
-      expect(text_message.reload.type).to eq(nil)
-      expect(transfer_marker.reload.type).to eq(0)
-      expect(client_edit_marker.reload.type).to eq(1)
-      expect(court_reminder.reload.type).to eq(2)
+      expect(text_message.reload.marker_type).to eq(nil)
+      expect(transfer_marker.reload.marker_type).to eq(0)
+      expect(client_edit_marker.reload.marker_type).to eq(1)
+      expect(court_reminder.reload.marker_type).to eq(2)
     end
   end
 end

@@ -14,6 +14,7 @@ class AddTypeToMessages < ActiveRecord::Migration[5.1]
 
   def down
     rename_column :messages, :type, :marker_type
+    change_column :messages, :marker_type, :string, null: true
     Message.where(marker_type: 'TransferMarker').update(marker_type: '0')
     Message.where(marker_type: 'ClientEditMarker').update(marker_type: '1')
     Message.where(marker_type: 'CourtReminder').update(marker_type: '2')
