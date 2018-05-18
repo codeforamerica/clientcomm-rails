@@ -47,7 +47,7 @@ RSpec.describe Message, type: :model do
 
   describe 'marker?' do
     let(:message) { build :text_message, type: type }
-    let(:type) { nil }
+    let(:type) { Message::TEXT_MESSAGE }
 
     it 'is not a marker by default' do
       expect(message).to_not be_marker
