@@ -1,5 +1,7 @@
 module NodeMessagesImporter
   def self.import_message(message_segments)
+    return if Message.find_by(twilio_sid: message_segments.first['tw_sid']).present?
+
     body, segment, user, client, rr = nil
     message_groups = message_segments.group_by { |s| s['convid'] }
     message_groups.each_key do |convid|
