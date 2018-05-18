@@ -22,4 +22,3 @@ ActiveAdmin.register CourtDateCSV do
     end
   end
 end
-

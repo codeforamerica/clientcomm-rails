@@ -2,6 +2,5 @@ class CreateCourtRemindersJob < ApplicationJob
   include ActionView::RecordIdentifier
   queue_as :default
 
-  def perform()
-  end
+  def perform; end
 end
