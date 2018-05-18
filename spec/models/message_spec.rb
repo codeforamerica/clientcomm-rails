@@ -4,6 +4,7 @@ RSpec.describe Message, type: :model do
   describe 'validations' do
     it { should validate_length_of(:body).is_at_most(1600) }
     it { should belong_to :like_message }
+    it { should validate_exclusion_of(:type).in_array(['Message']) }
 
     context 'like_message has different rr' do
       let(:like_message) { create :text_message }
