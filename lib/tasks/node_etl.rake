@@ -92,14 +92,12 @@ namespace :node_etl do
             msgs.created,
             msgs.inbound,
             msgs.read,
-            recordings.recording_key,
             msgs.tw_sid,
             msgs.tw_status,
             comms.value
           FROM msgs
           INNER JOIN comms ON comms.commid = msgs.comm
           INNER JOIN convos ON convos.convid = msgs.convo
-          LEFT JOIN recordings ON recordings.id = msgs.recording_id
           WHERE msgs.tw_sid = $1
           ORDER BY msgs.msgid;
         SQL
