@@ -30,6 +30,13 @@ module NodeMessagesImporter
       twilio_status: segment['tw_status']
     )
 
+    if segment['tw_sid'].starts_with?('RE')
+      attachment = Attachment.new
+
+      attachment.media_remote_url = "https://api.twilio.com/2010-04-01/Accounts/#{ENV['TWILIO_ACCOUNT_SID']}/Recordings/#{segment['tw_sid']}"
+      message.attachments << attachment
+    end
+
     message.save!
   end
 end

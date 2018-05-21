@@ -14,7 +14,6 @@ describe NodeMessagesImporter do
   let(:inbound_boolean) { ActiveModel::Type::Boolean.new.cast(inbound) }
   let(:client_number) { '14155554321' }
   let(:client_number_normalized) { "+#{client_number}" }
-  let(:recording_key) { nil }
   let(:message_segments) do
     [
       {
@@ -25,7 +24,6 @@ describe NodeMessagesImporter do
         'created' => message_created,
         'inbound' => inbound,
         'read' => read,
-        'recording_key' => recording_key,
         'tw_sid' => twilio_sid,
         'tw_status' => twilio_status,
         'value' => client_number
@@ -63,10 +61,36 @@ describe NodeMessagesImporter do
     end
 
     context 'the message has an attached recording' do
-      let(:recording_key) { '81iebqo6vjeg11f8eiwh-RE73917v2w74927ob7492g8r3m47l37491' }
+      let(:twilio_sid) { 'RE73917v2w74927ob7492g8r3m47l37491' }
+      let(:account_sid) { 'AC82k8ej5w9m4e629vw6g6f83n36128934' }
+      let(:media_url) { "https://api.twilio.com/2010-04-01/Accounts/#{account_sid}/Recordings/#{twilio_sid}" }
 
-      it 'copies the sound file as an attachment' do
-        # TODO: finish
+      before do
+        @account_sid = ENV['TWILIO_ACCOUNT_SID']
+        ENV['TWILIO_ACCOUNT_SID'] = account_sid
+      end
+
+      after do
+        ENV['TWILIO_ACCOUNT_SID'] = @account_sid
+      end
+
+      before do
+        stub_request(:get, media_url)
+          .to_return(status: 200,
+                     body: File.read('spec/fixtures/fluffy_cat.jpg'),
+                     headers: {
+                       'Accept-Ranges' => 'bytes',
+                       'Content-Length' => '4379330',
+                       'Content-Type' => 'image/jpeg'
+                     })
+      end
+
+      it 'attaches the sound file to the message' do
+        subject
+        message = Message.last
+
+        expect(message.attachments.length).to eq(1)
+        expect(message.attachments.first.media.exists?).to eq(true)
       end
     end
 
@@ -86,7 +110,6 @@ describe NodeMessagesImporter do
             'created' => message_created,
             'inbound' => inbound,
             'read' => read,
-            'recording_key' => recording_key,
             'tw_sid' => twilio_sid,
             'tw_status' => twilio_status,
             'value' => client_number
@@ -99,7 +122,6 @@ describe NodeMessagesImporter do
             'created' => message_created,
             'inbound' => inbound,
             'read' => read,
-            'recording_key' => recording_key,
             'tw_sid' => twilio_sid,
             'tw_status' => twilio_status,
             'value' => client_number
