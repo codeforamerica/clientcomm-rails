@@ -25,7 +25,7 @@ describe 'upload court date csv', type: :request do
   describe 'POST#create' do
     let(:department) { create :department }
     let!(:user) { create :user, department: department, email: 'test@example.com' }
-
+    let(:court_date_csv) { CourtDateCSV.all.first }
     subject do
       file = fixture_file_upload('court_dates.csv', 'text/csv')
       post admin_court_date_csvs_path, params: {
@@ -38,7 +38,7 @@ describe 'upload court date csv', type: :request do
     it 'calls delayed job to create reminders' do
       expect {
         subject
-      }.to have_enqueued_job(CreateCourtRemindersJob)
+      }.to have_enqueued_job(CreateCourtRemindersJob).with(court_date_csv)
     end
   end
 end
