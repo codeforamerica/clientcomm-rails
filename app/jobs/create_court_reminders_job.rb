@@ -8,6 +8,12 @@ class CreateCourtRemindersJob < ApplicationJob
     locs_content = File.read(Rails.root.join('app', 'assets', 'config', 'court_locations.csv'))
     court_locs = CSV.parse(locs_content, headers: true)
     court_locs_hash = CourtRemindersImporter.generate_locations_hash(court_locs)
-    CourtRemindersImporter.generate_reminders(court_dates, court_locs_hash)
+    begin
+      CourtRemindersImporter.generate_reminders(court_dates, court_locs_hash)
+    rescue StandardError
+      CourtReminderMailer.failure(user).deliver_later
+    else
+      CourtReminderMailer.success(user).deliver_later
+    end
   end
 end
