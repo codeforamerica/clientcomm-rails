@@ -2,7 +2,7 @@ class CreateCourtRemindersJob < ApplicationJob
   include ActionView::RecordIdentifier
   queue_as :default
 
-  def perform(csv_file)
+  def perform(csv_file, _user)
     dates_content = Paperclip.io_adapters.for(csv_file.file).read
     court_dates = CSV.parse(dates_content, headers: true)
     locs_content = File.read(Rails.root.join('app', 'assets', 'config', 'court_locations.csv'))
