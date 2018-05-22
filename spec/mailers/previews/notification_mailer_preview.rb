@@ -4,6 +4,10 @@ class NotificationMailerPreview < ActionMailer::Preview
     NotificationMailer.court_reminders_success(User.first)
   end
 
+  def court_upload_failure
+    NotificationMailer.court_reminders_failure(User.first)
+  end
+
   def report_usage
     end_date = Time.zone.now
     NotificationMailer.report_usage('test@example.com', Department.first.message_metrics(end_date), end_date.to_s)
