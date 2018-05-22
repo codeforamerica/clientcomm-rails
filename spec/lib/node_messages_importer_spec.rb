@@ -44,6 +44,7 @@ describe NodeMessagesImporter do
       expect(message).to_not be_nil
       expect(message.body).to eq message_body
       expect(message.send_at).to eq Time.parse(message_created).utc
+      expect(message.sent). to eq false
       expect(message.inbound).to eq inbound_boolean
       expect(message.read).to eq read_boolean
       expect(message.twilio_status).to eq twilio_status
@@ -146,6 +147,7 @@ describe NodeMessagesImporter do
         message = messages.first
         expect(message.body).to eq message_body_full
         expect(message.send_at).to eq Time.parse(message_created).utc
+        expect(message.sent). to eq false
         expect(message.inbound).to eq inbound_boolean
         expect(message.read).to eq read_boolean
         expect(message.twilio_status).to eq twilio_status
@@ -169,6 +171,7 @@ describe NodeMessagesImporter do
           expect(message.send_at).to eq Time.parse(message_created).utc
           expect(message.inbound).to eq inbound_boolean
           expect(message.read).to eq read_boolean
+          expect(message.sent). to eq false
           expect(message.twilio_status).to eq twilio_status
           expect(message.number_from).to eq client_number_normalized
         end
@@ -187,6 +190,7 @@ describe NodeMessagesImporter do
           message = messages.first
           expect(message.body).to eq message_body_full
           expect(message.send_at).to eq Time.parse(message_created).utc
+          expect(message.sent). to eq false
           expect(message.inbound).to eq inbound_boolean
           expect(message.read).to eq read_boolean
           expect(message.twilio_status).to eq twilio_status
@@ -207,6 +211,7 @@ describe NodeMessagesImporter do
       expect(message.number_from).to eq user_1.department.phone_number
       expect(message.number_to).to eq client_number_normalized
       expect(message.read).to eq true
+      expect(message.sent). to eq true
     end
   end
 end

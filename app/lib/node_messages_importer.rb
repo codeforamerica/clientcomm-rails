@@ -17,6 +17,7 @@ module NodeMessagesImporter
 
     normalized_phone_number = "+#{segment['value']}"
     inbound = segment['inbound'] == 't'
+    sent = !inbound
 
     message = Message.new(
       body: body,
@@ -26,6 +27,7 @@ module NodeMessagesImporter
       read: inbound ? segment['read'] : true,
       reporting_relationship: rr,
       send_at: segment['created'],
+      sent: sent,
       twilio_sid: segment['tw_sid'],
       twilio_status: segment['tw_status']
     )
