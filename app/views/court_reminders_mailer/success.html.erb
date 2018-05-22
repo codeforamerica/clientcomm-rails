@@ -1,0 +1,46 @@
+<table border="0" cellpadding="0" cellspacing="0" class="body">
+  <tr>
+    <td>&nbsp;</td>
+    <td class="container">
+      <div class="content">
+        <!-- START CENTERED WHITE CONTAINER -->
+        <span class="preheader">You've received a new message on ClientComm.</span>
+        <table class="main">
+          <!-- START MAIN CONTENT AREA -->
+          <tr>
+            <td class="wrapper">
+              <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <!-- START CSV STUFF -->
+                    <p class="header-appname">ClientComm</p>
+                    <p>Usage statistics for the week of <%= @start_date.strftime('%-m/%-d/%y') %> to <%= @end_date.strftime('%-m/%-d/%y') %></p>
+                    <table class="csv">
+                      <tr><th>User</th><th>Outbound</th><th>Inbound</th><th>Total</th></tr>
+                      <% @metrics.each do |row| %>
+                        <tr>
+                          <% row.each do |column| %>
+                            <td><%= column %></td>
+                          <% end %>
+                        </tr>
+                      <% end %>
+                      <tr>
+                        <td>Total</td>
+                        <td><%= @total_outbound %></td><td><%= @total_inbound %></td><td><%= @total_total %></td>
+                      </tr>
+                    </table>
+                    <!-- END CSV STUFF -->
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- END MAIN CONTENT AREA -->
+        </table>
+
+        <!-- END CENTERED WHITE CONTAINER -->
+      </div>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+</table>

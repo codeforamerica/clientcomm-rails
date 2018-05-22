@@ -26,5 +26,14 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
       expect(mail.to).to eq([user.email])
       expect(mail.html_part.to_s).to include '5  messages were scheduled'
     end
+
+    context 'import fails' do
+      let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/bad_court_dates.csv')) }
+      it 'sends failure email' do
+        subject
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.to).to eq([user.email])
+      end
+    end
   end
 end
