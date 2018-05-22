@@ -1,4 +1,5 @@
 module NodeMessagesImporter
+  # rubocop:disable Metrics/PerceivedComplexity
   def self.import_message(message_segments)
     return if Message.find_by(twilio_sid: message_segments.first['tw_sid']).present?
 
@@ -41,4 +42,5 @@ module NodeMessagesImporter
 
     message.save!
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 end
