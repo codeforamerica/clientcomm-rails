@@ -60,6 +60,16 @@ describe NodeMessagesImporter do
       end
     end
 
+    context 'the message body is blank' do
+      let(:message_body) { '  ' }
+
+      it 'does not create a message' do
+        subject
+        messages = Message.where(twilio_sid: twilio_sid)
+        expect(messages.count).to eq 0
+      end
+    end
+
     context 'the message has an attached recording' do
       let(:twilio_sid) { 'RE73917v2w74927ob7492g8r3m47l37491' }
       let(:account_sid) { 'AC82k8ej5w9m4e629vw6g6f83n36128934' }
