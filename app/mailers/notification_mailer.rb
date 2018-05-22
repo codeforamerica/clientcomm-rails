@@ -6,6 +6,21 @@ class NotificationMailer < ApplicationMailer
     Rails.logger.warn exception.message
   end
 
+  def court_reminders_success(user)
+    @reminders_scheduled = CourtReminder.all.count
+    mail(
+      to: user.email,
+      subject: "#{@reminders_scheduled} court reminders were scheduled on ClientComm"
+    )
+  end
+
+  def court_reminders_failure(user)
+    mail(
+      to: user.email,
+      subject: 'Error uploading Court Reminders  on ClientComm'
+    )
+  end
+
   def message_notification(user, message)
     @client = message.client
     @message = message

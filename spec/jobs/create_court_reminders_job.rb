@@ -21,18 +21,20 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     end
 
     it 'sends email on success' do
-      subject
+      perform_enqueued_jobs { subject }
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([user.email])
-      expect(mail.html_part.to_s).to include '5  messages were scheduled'
+      expect(mail.html_part.to_s).to include '0 court reminders were scheduled'
     end
 
     context 'import fails' do
       let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/bad_court_dates.csv')) }
+      let!(:rr) { create :reporting_relationship, notes: '111', active: true }
       it 'sends failure email' do
-        subject
+        perform_enqueued_jobs { subject }
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([user.email])
+        expect(mail.html_part.to_s).to include 'Error uploading Court Reminders'
       end
     end
   end

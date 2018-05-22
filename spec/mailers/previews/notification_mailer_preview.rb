@@ -1,5 +1,9 @@
 # Preview all emails at http://localhost:3000/rails/mailers/notification_mailer
 class NotificationMailerPreview < ActionMailer::Preview
+  def court_upload_success
+    NotificationMailer.court_reminders_success(User.first)
+  end
+
   def report_usage
     end_date = Time.zone.now
     NotificationMailer.report_usage('test@example.com', Department.first.message_metrics(end_date), end_date.to_s)
