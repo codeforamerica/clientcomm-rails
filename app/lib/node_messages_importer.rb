@@ -13,7 +13,7 @@ module NodeMessagesImporter
       break if rr.present?
     end
 
-    return if rr.nil?
+    return if rr.nil? || body.blank?
 
     normalized_phone_number = "+#{segment['value']}"
     inbound = segment['inbound'] == 't'
