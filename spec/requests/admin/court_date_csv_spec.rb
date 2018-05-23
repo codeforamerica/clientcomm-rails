@@ -9,12 +9,6 @@ describe 'upload court date csv', type: :request do
     login_as admin_user, scope: :admin_user
   end
 
-  describe 'GET#index' do
-    before { get admin_court_date_csvs_path }
-
-    it { should redirect_to(new_admin_court_date_csv_path) }
-  end
-
   describe 'GET#new' do
     before { get new_admin_court_date_csv_path }
 
@@ -38,6 +32,10 @@ describe 'upload court date csv', type: :request do
       expect {
         subject
       }.to have_enqueued_job(CreateCourtRemindersJob).with(CourtDateCSV, admin_user)
+    end
+    it 'calls delayed job to create reminders' do
+      subject
+      expect(response).to redirect_to(admin_court_date_csvs_path)
     end
   end
 end
