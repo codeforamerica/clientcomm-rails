@@ -1,5 +1,5 @@
 <% unless message.marker? %>
-  <div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
+  <div class="message--<%= message_inbound_or_outbound(message) %>" id="message_<%= message.id %>">
     <div class="message-row-container">
       <div class="message--content <%= message.twilio_status %>"><%= message.body %>
       <%= render message.attachments %>
@@ -22,7 +22,7 @@
     </p>
   </div>
 <% else %>
-  <div class="message--event" id="<%= dom_id(message) %>">
+  <div class="message--event" id="message_<%= message.id %>">
     <div class="event--line">
       <p class="message--label">
         <%= message.body %>
