@@ -10,14 +10,14 @@ class NotificationMailer < ApplicationMailer
     @reminders_scheduled = CourtReminder.all.count
     mail(
       to: user.email,
-      subject: "#{@reminders_scheduled} court reminders were scheduled on ClientComm"
+      subject: 'Your recent ClientComm upload - success!'
     )
   end
 
   def court_reminders_failure(user)
     mail(
       to: user.email,
-      subject: 'Error uploading Court Reminders  on ClientComm'
+      subject: 'Error with your recent ClientComm upload'
     )
   end
 

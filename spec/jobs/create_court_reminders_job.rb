@@ -24,7 +24,8 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
       perform_enqueued_jobs { subject }
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([user.email])
-      expect(mail.html_part.to_s).to include '0 court reminders were scheduled'
+      expect(mail.subject).to include 'Your recent ClientComm upload - success!'
+      expect(mail.html_part.to_s).to include '0 court reminders were successfully scheduled'
     end
 
     context 'import fails' do
@@ -34,7 +35,8 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
         perform_enqueued_jobs { subject }
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([user.email])
-        expect(mail.html_part.to_s).to include 'Error uploading Court Reminders'
+        expect(mail.subject).to include 'Error with your recent ClientComm upload'
+        expect(mail.html_part.to_s).to include 'not able to process your recent CSV'
       end
     end
   end
