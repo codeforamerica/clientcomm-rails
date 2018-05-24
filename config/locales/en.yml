@@ -59,6 +59,10 @@ en:
   report_mailer:
       subject: '[ClientComm] Usage report for %{start_date} - %{end_date}'
   activerecord:
+    models:
+      court_date_csv:
+        one: Court Reminder CSV
+        other: Court Reminder CSVs
     errors:
       models:
         reporting_relationship:
