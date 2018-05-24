@@ -26,7 +26,7 @@ class ReportingRelationshipsController < ApplicationController
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
 
-    @messages_scheduled = @rr.messages.scheduled
+    @messages_scheduled = @rr.messages.messages.scheduled
   rescue ActiveRecord::RecordNotFound
     redirect_to(clients_path, notice: t('flash.notices.client.unauthorized'))
   end
