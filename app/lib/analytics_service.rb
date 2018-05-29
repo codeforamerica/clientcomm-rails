@@ -3,7 +3,7 @@ require 'mixpanel-ruby'
 
 class AnalyticsService
   def self.track(distinct_id:, label:, user_agent: nil, data: {})
-    if MIXPANEL_TRACKER
+    if MIXPANEL_TRACKER.present?
       if user_agent
         client = DeviceDetector.new(user_agent)
         data[:client_bot_name] = client.bot_name
