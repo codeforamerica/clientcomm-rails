@@ -9,6 +9,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     let(:court_locs) { CSV.parse(File.read(court_locs_path), headers: true) }
     let(:court_locs_hash) { CourtRemindersImporter.generate_locations_hash(court_locs) }
     let(:user) { create :admin_user }
+    let!(:rr) { create :reporting_relationship, notes: '111', active: true }
 
     subject do
       described_class.perform_now(csv, user)
@@ -25,6 +26,13 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
       expect(mail.to).to eq([user.email])
       expect(mail.subject).to include 'Your recent ClientComm upload - success!'
       expect(mail.html_part.to_s).to include '0 court reminders were successfully scheduled'
+      expect_analytics_events(
+        'court_reminder_upload_success' => {
+          'admin_id' => user.id,
+          'messages_scheduled' => 1,
+          'clients_matched' => 1
+        }
+      )
     end
 
     context 'import fails' do
@@ -36,6 +44,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
         expect(mail.to).to eq([user.email])
         expect(mail.subject).to include 'Error with your recent ClientComm upload'
         expect(mail.html_part.to_s).to include 'not able to process your recent CSV'
+        expect_analytics_events('court_reminder_upload_failure' => {})
       end
     end
   end

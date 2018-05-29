@@ -15,6 +15,10 @@ ActiveAdmin.register CourtDateCSV do
     def create
       @court_date_csv = CourtDateCSV.create(file: permitted_params[:court_date_csv][:file])
       CreateCourtRemindersJob.perform_later(@court_date_csv, current_admin_user)
+      analytics_track(
+        label: 'court_reminder_upload',
+        data: { admin_id: current_admin_user.id }
+      )
       redirect_to :admin_court_date_csvs, notice: 'Uploading in process. You will receive an email shortly.'
     end
   end

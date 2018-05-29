@@ -35,7 +35,7 @@ describe CourtRemindersImporter do
     end
 
     it 'schedules messages for relevant reporting relationships' do
-      subject
+      expect(subject).to eq(3)
 
       expect(rr1.messages.scheduled).to_not be_empty
       body1 = I18n.t(
