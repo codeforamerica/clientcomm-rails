@@ -56,8 +56,13 @@ module AnalyticsHelper
   end
 
   def distinct_id(user_id = nil)
-    user_id ||= !current_user.nil? ? current_user.id : session[:visitor_id]
-    "#{deploy_prefix}-#{user_id}"
+    if user_id
+      "#{deploy_prefix}-#{user_id}"
+    elsif current_user
+      "#{deploy_prefix}-#{current_user}"
+    elsif current_admin_user
+      "#{deploy_prefix}-admin_#{current_admin_user}"
+    end
   end
 
   def deploy_prefix
