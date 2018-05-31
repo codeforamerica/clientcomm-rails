@@ -20,7 +20,7 @@ module NodeMessagesImporter
     inbound = segment['inbound'] == 't'
     sent = !inbound
 
-    message = Message.new(
+    message = TextMessage.new(
       body: body,
       inbound: segment['inbound'],
       number_from: inbound ? normalized_phone_number : rr.department.phone_number,
