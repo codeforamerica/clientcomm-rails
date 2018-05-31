@@ -52,7 +52,7 @@ describe NodeMessagesImporter do
     end
 
     context 'a message with the same sid already exists' do
-      let!(:already_existing_message) { create :message, twilio_sid: twilio_sid }
+      let!(:already_existing_message) { create :text_message, twilio_sid: twilio_sid }
 
       it 'does not create a new message' do
         subject
