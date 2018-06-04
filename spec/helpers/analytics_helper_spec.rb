@@ -60,7 +60,7 @@ RSpec.describe AnalyticsHelper, type: :helper do
       let(:admin_user) { create :admin_user }
 
       it 'sets distinct id to admin id' do
-        helper_class.new(request, user).analytics_track(
+        helper_class.new(request, user, admin_user).analytics_track(
           label: 'test_label', data: {}
         )
         expect_analytics_events('test_label' => { 'distinct_id' => "test-admin_#{admin_user}" })
