@@ -3,8 +3,10 @@ module CourtRemindersImporter
     time_zone_offset = '-0600' # Make sure this is by instance eventually
     total_rrs = 0
     Message.transaction do
-      CourtReminder.scheduled.destroy_all unless options[:dry_run]
       Rails.logger.tagged('court reminders') do
+        Rails.logger.info { 'Begin court reminders import' }
+        Rails.logger.info { "Deleting #{Message.scheduled.auto_court_reminders.count} existing court reminders" }
+        Message.scheduled.auto_court_reminders.destroy_all unless options[:dry_run]
         court_dates.each do |court_date|
           Rails.logger.info { "Creating reminder for ctrack #{court_date['ofndr_num']}" }
           matching_rrs = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true)
