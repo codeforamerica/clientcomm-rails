@@ -4,11 +4,11 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
   describe '#perform' do
     let(:court_dates_path) { Rails.root.join('spec', 'fixtures', 'court_dates.csv') }
     let(:court_locs_path) { Rails.root.join('app', 'assets', 'config', 'court_locations.csv') }
-    let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv')) }
+    let(:user) { create :admin_user }
+    let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), admin_user: user) }
     let(:court_dates) { CSV.parse(File.read(court_dates_path), headers: true) }
     let(:court_locs) { CSV.parse(File.read(court_locs_path), headers: true) }
     let(:court_locs_hash) { CourtRemindersImporter.generate_locations_hash(court_locs) }
-    let(:user) { create :admin_user }
     let!(:rr) { create :reporting_relationship, notes: '111', active: true }
     let(:deploy_id) {
       URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')
@@ -46,7 +46,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     end
 
     context 'import fails' do
-      let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/bad_court_dates.csv')) }
+      let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/bad_court_dates.csv'), admin_user: user) }
       let!(:rr) { create :reporting_relationship, notes: '111', active: true }
       it 'sends failure email' do
         expect(AnalyticsService).to receive(:track).with(

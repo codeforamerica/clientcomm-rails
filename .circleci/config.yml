@@ -14,6 +14,7 @@ jobs:
           UNCLAIMED_EMAIL: unclaimed@example.com
           TYPEFORM_LINK: example.com
           MASS_MESSAGES: 'true'
+          DEPLOY_BASE_URL: 'https://test.example.org'
       - image: circleci/postgres:9.6.5-alpine
         environment:
           POSTGRES_USER: clientcomm
