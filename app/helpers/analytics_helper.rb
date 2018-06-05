@@ -59,9 +59,9 @@ module AnalyticsHelper
     if user_id
       "#{deploy_prefix}-#{user_id}"
     elsif current_user
-      "#{deploy_prefix}-#{current_user}"
+      "#{deploy_prefix}-#{current_user.id}"
     elsif current_admin_user
-      "#{deploy_prefix}-admin_#{current_admin_user}"
+      "#{deploy_prefix}-admin_#{current_admin_user.id}"
     end
   end
 

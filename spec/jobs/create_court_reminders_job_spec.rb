@@ -10,7 +10,9 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     let(:court_locs_hash) { CourtRemindersImporter.generate_locations_hash(court_locs) }
     let(:user) { create :admin_user }
     let!(:rr) { create :reporting_relationship, notes: '111', active: true }
-
+    let(:distinct_id) {
+      "#{URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')}-admin_#{user.id}"
+    }
     subject do
       described_class.perform_now(csv, user)
     end
@@ -21,30 +23,40 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     end
 
     it 'sends email on success' do
-      perform_enqueued_jobs { subject }
+      expect(AnalyticsService).to receive(:track).with(
+        label: 'court_reminder_upload_success',
+        distinct_id: distinct_id,
+        data: {
+          admin_id: user.id,
+          messages_scheduled: 1,
+          clients_matched: 1
+        }
+      )
+      travel_to(Time.zone.parse('2018-05-01')) do
+        perform_enqueued_jobs { subject }
+      end
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([user.email])
       expect(mail.subject).to include 'Your recent ClientComm upload - success!'
-      expect(mail.html_part.to_s).to include '0 court reminders were successfully scheduled'
-      expect_analytics_events(
-        'court_reminder_upload_success' => {
-          'admin_id' => user.id,
-          'messages_scheduled' => 1,
-          'clients_matched' => 1
-        }
-      )
+      expect(mail.html_part.to_s).to include '1 court reminders were successfully scheduled'
     end
 
     context 'import fails' do
       let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/bad_court_dates.csv')) }
       let!(:rr) { create :reporting_relationship, notes: '111', active: true }
       it 'sends failure email' do
+        expect(AnalyticsService).to receive(:track).with(
+          distinct_id: distinct_id,
+          label: 'court_reminder_upload_failure',
+          data: {
+            admin_id: user.id
+          }
+        )
         perform_enqueued_jobs { subject }
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([user.email])
         expect(mail.subject).to include 'Error with your recent ClientComm upload'
         expect(mail.html_part.to_s).to include 'not able to process your recent CSV'
-        expect_analytics_events('court_reminder_upload_failure' => {})
       end
     end
   end

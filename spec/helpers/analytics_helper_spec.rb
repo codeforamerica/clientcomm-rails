@@ -40,6 +40,15 @@ RSpec.describe AnalyticsHelper, type: :helper do
       )
     end
 
+    before do
+      @deploy_base_url = ENV['DEPLOY_BASE_URL']
+      ENV['DEPLOY_BASE_URL'] = 'https://test.clientcomm.com'
+    end
+
+    after do
+      ENV['DEPLOY_BASE_URL'] = @deploy_base_url
+    end
+
     it 'includes treamentgroup' do
       subject
       expect_analytics_events('test_label' => { 'treatment_group' => treatment_group })
@@ -63,7 +72,7 @@ RSpec.describe AnalyticsHelper, type: :helper do
         helper_class.new(request, user, admin_user).analytics_track(
           label: 'test_label', data: {}
         )
-        expect_analytics_events('test_label' => { 'distinct_id' => "test-admin_#{admin_user}" })
+        expect_analytics_events('test_label' => { 'distinct_id' => "test_clientcomm-admin_#{admin_user.id}" })
       end
     end
   end
