@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180518203229) do
+ActiveRecord::Schema.define(version: 20180605211155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 20180518203229) do
     t.string "file_content_type"
     t.integer "file_file_size"
     t.datetime "file_updated_at"
+    t.bigint "admin_user_id", null: false
+    t.index ["admin_user_id"], name: "index_court_date_csvs_on_admin_user_id"
   end
 
   create_table "delayed_jobs", id: :serial, force: :cascade do |t|
@@ -230,6 +232,7 @@ ActiveRecord::Schema.define(version: 20180518203229) do
 
   add_foreign_key "attachments", "messages"
   add_foreign_key "clients", "users"
+  add_foreign_key "court_date_csvs", "admin_users"
   add_foreign_key "departments", "users"
   add_foreign_key "messages", "messages", column: "like_message_id"
   add_foreign_key "messages", "reporting_relationships"
