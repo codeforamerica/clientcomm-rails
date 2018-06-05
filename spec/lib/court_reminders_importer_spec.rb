@@ -91,20 +91,34 @@ describe CourtRemindersImporter do
     context 'there is a bad date' do
       let(:court_dates) do
         [
-          { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
-          { 'ofndr_num' => '112', '(expression)' => '8675R', 'lname' => 'SIMON',  'crt_dt' => '5/42/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
-          { 'ofndr_num' => '113', '(expression)' => '1776B', 'lname' => 'BARTH',  'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' }
+          { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES', 'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
+          { 'ofndr_num' => '112', '(expression)' => '8675R', 'lname' => 'SIMON', 'crt_dt' => '5/42/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
+          { 'ofndr_num' => '113', '(expression)' => '1776B', 'lname' => 'BARTH', 'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' }
         ]
       end
 
       let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days }
 
-      it 'does not save any  messages' do
+      it 'does not save any messages' do
         expect { subject }.to raise_error(ArgumentError, 'invalid strptime format - `%m/%d/%Y %H:%M %z\'')
 
         expect(rr1.messages.scheduled).to contain_exactly(existing_reminder)
         expect(rr2.messages.scheduled).to be_empty
         expect(rr3.messages.scheduled).to be_empty
+      end
+    end
+
+    context 'there is a nil ofndr_num' do
+      let!(:rr_nil_notes) { create :reporting_relationship, notes: nil }
+      let(:court_dates) do
+        [
+          { 'ofndr_num' => nil, '(expression)' => '1337D', 'lname' => 'HANES', 'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' }
+        ]
+      end
+
+      it 'does not save any messages' do
+        subject
+        expect(CourtReminder.all).to be_empty
       end
     end
 

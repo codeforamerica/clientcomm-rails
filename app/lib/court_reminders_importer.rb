@@ -9,6 +9,7 @@ module CourtRemindersImporter
         Message.scheduled.auto_court_reminders.destroy_all unless options[:dry_run]
         court_dates.each do |court_date|
           Rails.logger.info { "Creating reminder for ctrack #{court_date['ofndr_num']}" }
+          next if court_date['ofndr_num'].nil?
           matching_rrs = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true)
           Rails.logger.info { "Found #{matching_rrs.count} RRs with IDs #{matching_rrs.pluck(:id)} with the same ctrack" }
 

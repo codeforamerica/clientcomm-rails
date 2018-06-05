@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 20180605211155) do
     t.string "file_content_type"
     t.integer "file_file_size"
     t.datetime "file_updated_at"
-    t.bigint "admin_user_id", null: false
+    t.bigint "admin_user_id", default: 1, null: false
     t.index ["admin_user_id"], name: "index_court_date_csvs_on_admin_user_id"
   end
 
