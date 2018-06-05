@@ -1,6 +1,6 @@
 ActiveAdmin.register CourtDateCSV do
   permit_params :file
-  actions :all, :except => [:destroy, :edit]
+  actions :all, except: %i[destroy edit]
   form do |f|
     f.inputs 'Upload CSV' do
       f.input :file, as: :file
