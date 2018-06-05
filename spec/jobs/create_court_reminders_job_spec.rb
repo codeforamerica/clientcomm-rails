@@ -10,8 +10,11 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     let(:court_locs_hash) { CourtRemindersImporter.generate_locations_hash(court_locs) }
     let(:user) { create :admin_user }
     let!(:rr) { create :reporting_relationship, notes: '111', active: true }
+    let(:deploy_id) {
+      URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')
+    }
     let(:distinct_id) {
-      "#{URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')}-admin_#{user.id}"
+      "#{deploy_id}-admin_#{user.id}"
     }
     subject do
       described_class.perform_now(csv, user)
@@ -28,6 +31,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
         distinct_id: distinct_id,
         data: {
           admin_id: user.id,
+          deploy: deploy_id,
           messages_scheduled: 1,
           clients_matched: 1
         }
@@ -49,7 +53,8 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
           distinct_id: distinct_id,
           label: 'court_reminder_upload_failure',
           data: {
-            admin_id: user.id
+            admin_id: user.id,
+            deploy: deploy_id
           }
         )
         perform_enqueued_jobs { subject }
