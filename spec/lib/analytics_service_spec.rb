@@ -2,8 +2,19 @@ require 'rails_helper'
 
 describe AnalyticsService do
   describe '#track' do
-    let(:distinct_id) { 'user-1' }
+    let(:actor) { create :user }
+    let(:distinct_id) { 'zak_clientcomm-10' }
     let(:label) { 'clicked_thing' }
+    let(:base_url) { 'https://zak.clientcomm.com' }
+
+    before do
+      @deploy_base_url = ENV['DEPLOY_BASE_URL']
+      ENV['DEPLOY_BASE_URL'] = base_url
+    end
+
+    after do
+      ENV['DEPLOY_BASE_URL'] = @deploy_base_url
+    end
 
     subject { described_class.track(distinct_id: distinct_id, label: label) }
 
@@ -11,6 +22,28 @@ describe AnalyticsService do
       expect(MIXPANEL_TRACKER).to receive(:track)
         .with(distinct_id, label, locale: :en)
       subject
+    end
+
+    context 'the actor is an admin user' do
+      let(:actor) { create :admin_user }
+      let(:distinct_id) { "zak_clientcomm-admin-#{actor.id}" }
+
+      it 'sends an event to mixpanel with a local' do
+        expect(MIXPANEL_TRACKER).to receive(:track)
+          .with(distinct_id, label, locale: :en)
+        subject
+      end
+    end
+
+    context 'the actor is an unauthenticated visitor' do
+      let(:actor) { 'session-id' }
+      let(:distinct_id) { 'zak_clientcomm-session-id' }
+
+      it 'assumes the actor is a session id' do
+        expect(MIXPANEL_TRACKER).to receive(:track)
+          .with(distinct_id, label, locale: :en)
+        subject
+      end
     end
 
     context 'MIXPANEL_TRACKER is not present' do

@@ -87,7 +87,8 @@ RSpec.describe Message, type: :model do
         reporting_relationship: rr,
         send_at: send_at,
         created_at: created_at,
-        body: body
+        body: body,
+        inbound: false
       )
     end
     let(:message_id) { message.id }
@@ -106,8 +107,31 @@ RSpec.describe Message, type: :model do
         current_user_id: user_id,
         attachments_count: 0,
         client_active: true, # Default
-        first_message: true
+        first_message: true,
+        created_by: 'user'
       )
+    end
+
+    context 'message is a CourtReminder' do
+      let(:message) do
+        create(
+          :court_reminder,
+          reporting_relationship: rr,
+          send_at: send_at,
+          created_at: created_at,
+          body: body
+        )
+      end
+
+      subject do
+        message.analytics_tracker_data
+      end
+
+      it 'sets created by to auto-uploader' do
+        expect(subject).to include(
+          created_by: 'auto-uploader'
+        )
+      end
     end
 
     context 'there are many messages' do

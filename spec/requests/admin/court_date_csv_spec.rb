@@ -32,8 +32,14 @@ describe 'upload court date csv', type: :request do
       expect {
         subject
       }.to have_enqueued_job(CreateCourtRemindersJob).with(CourtDateCSV, admin_user)
+      expect(CourtDateCSV.all.first.admin_user).to eq(admin_user)
+      expect_analytics_events(
+        'court_reminder_upload' => {
+          'admin_id' => admin_user.id
+        }
+      )
     end
-    it 'calls delayed job to create reminders' do
+    it 'redirects to the listing page' do
       subject
       expect(response).to redirect_to(admin_court_date_csvs_path)
     end

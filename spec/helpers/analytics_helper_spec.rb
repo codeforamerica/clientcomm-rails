@@ -7,17 +7,23 @@ RSpec.describe AnalyticsHelper, type: :helper do
 
         include AnalyticsHelper
 
-        def initialize(request, user)
+        def initialize(request, user, admin_user)
           @request = request
           @user = user
+          @admin_user = admin_user
         end
 
         def current_user
           @user
         end
+
+        def current_admin_user
+          @admin_user
+        end
       end
     end
     let(:treatment_group) { 'la lal la' }
+    let(:admin_user) { nil }
     let(:user) { create :user, treatment_group: treatment_group }
     let(:request) {
       double(
@@ -29,7 +35,7 @@ RSpec.describe AnalyticsHelper, type: :helper do
       )
     }
     subject do
-      helper_class.new(request, user).analytics_track(
+      helper_class.new(request, user, admin_user).analytics_track(
         label: 'test_label', data: {}
       )
     end
@@ -47,6 +53,27 @@ RSpec.describe AnalyticsHelper, type: :helper do
     it 'does not includes non utm from the request' do
       subject
       expect_not_in_analytics_events('test_label' => { 'token' => 'not token' })
+    end
+
+    context 'in admin' do
+      let(:user) { nil }
+      let(:admin_user) { create :admin_user }
+
+      before do
+        @deploy_base_url = ENV['DEPLOY_BASE_URL']
+        ENV['DEPLOY_BASE_URL'] = 'https://test.example.com'
+      end
+
+      after do
+        ENV['DEPLOY_BASE_URL'] = @deploy_base_url
+      end
+
+      it 'sets distinct id to admin id' do
+        helper_class.new(request, user, admin_user).analytics_track(
+          label: 'test_label', data: {}
+        )
+        expect_analytics_events('test_label' => { 'distinct_id' => "test_example-admin_#{admin_user.id}" })
+      end
     end
   end
 end

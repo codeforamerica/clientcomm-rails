@@ -7,7 +7,7 @@ class ReportingRelationshipsController < ApplicationController
 
     @client = @rr.client
 
-    unless @client.active(user: current_user)
+    unless @rr.active
       redirect_to(clients_path, notice: t('flash.notices.client.unauthorized')) && return
     end
 

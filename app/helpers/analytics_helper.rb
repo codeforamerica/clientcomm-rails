@@ -10,9 +10,7 @@ module AnalyticsHelper
       visitor_id: visitor_id,
       treatment_group: treatment_group
     ).merge(utm)
-    # prefer current_user_id if it was included in the data
-    tracking_id = distinct_id tracking_data.slice(:current_user_id).values.first
-    # but don't leave it in
+    tracking_id = distinct_id
     tracking_data = tracking_data.except(:current_user_id)
 
     AnalyticsService.track(
@@ -55,19 +53,17 @@ module AnalyticsHelper
     nil
   end
 
-  def distinct_id(user_id = nil)
-    user_id ||= !current_user.nil? ? current_user.id : session[:visitor_id]
-    "#{deploy_prefix}-#{user_id}"
+  def distinct_id
+    if current_user
+      "#{deploy_prefix}-#{current_user.id}"
+    elsif current_admin_user
+      "#{deploy_prefix}-admin_#{current_admin_user.id}"
+    else
+      "#{deploy_prefix}-#{visitor_id}"
+    end
   end
 
   def deploy_prefix
-    URI.parse(id_base).hostname.split('.')[0..1].join('_')
-  end
-
-  def id_base
-    # NOTE: DEPLOY_BASE_URL is set by heroku
-    request.base_url || ENV['DEPLOY_BASE_URL']
-  rescue NameError
-    ENV['DEPLOY_BASE_URL']
+    URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')
   end
 end

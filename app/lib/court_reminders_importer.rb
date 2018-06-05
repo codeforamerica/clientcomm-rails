@@ -1,7 +1,7 @@
 module CourtRemindersImporter
   def self.generate_reminders(court_dates, court_locations, options = {})
     time_zone_offset = '-0600' # Make sure this is by instance eventually
-
+    total_rrs = 0
     Message.transaction do
       Rails.logger.tagged('court reminders') do
         Rails.logger.info { 'Begin court reminders import' }
@@ -14,7 +14,8 @@ module CourtRemindersImporter
 
           rr = matching_rrs.left_joins(:messages).order('messages.send_at DESC NULLS LAST').first
           next if rr.nil?
-
+          matching_rrs_count = matching_rrs.count
+          total_rrs += matching_rrs_count
           Rails.logger.tagged("client: #{rr.client.id}") do
             court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
             next if court_date_at < Time.zone.now
@@ -48,6 +49,7 @@ module CourtRemindersImporter
         end
       end
     end
+    total_rrs
   end
 
   def self.generate_locations_hash(court_locations)
