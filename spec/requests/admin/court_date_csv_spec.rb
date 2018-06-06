@@ -44,4 +44,17 @@ describe 'upload court date csv', type: :request do
       expect(response).to redirect_to(admin_court_date_csvs_path)
     end
   end
+
+  describe 'GET#show' do
+    let(:filename) { 'court_dates.csv' }
+    let(:court_date_csv) { CourtDateCSV.create!(file: File.new("./spec/fixtures/#{filename}"), admin_user: admin_user) }
+    before { get admin_court_date_csv_path court_date_csv }
+
+    it 'renders the show page with a download link' do
+      page = Nokogiri.parse(response.body)
+
+      expect(page.css('div.panel h3').text).to eq 'Court Reminder CSV Details'
+      expect(page.css('tr.row-file_file_name a').attr('href').text).to eq download_admin_court_date_csv_path(court_date_csv)
+    end
+  end
 end

@@ -387,4 +387,28 @@ feature 'Admin Panel' do
       end
     end
   end
+
+  describe 'Court Reminder CSV Download' do
+    let(:filename) { 'court_dates.csv' }
+    let(:court_dates_path) { Rails.root.join('spec', 'fixtures', filename) }
+    let!(:court_date_csv) { CourtDateCSV.create(file: File.new(court_dates_path), admin_user: admin_user) }
+
+    scenario 'Admin wants to download a court reminder CSV file' do
+      step 'visits court reminder csv index' do
+        visit admin_court_date_csvs_path
+        expect(page).to have_css('td.col-file_file_name'), text: filename
+      end
+
+      step 'visits show page' do
+        click_on 'View'
+        expect(page).to have_current_path admin_court_date_csv_path(court_date_csv)
+      end
+
+      step 'downloads csv file' do
+        click_on filename
+        expect(page).to have_current_path download_admin_court_date_csv_path(court_date_csv)
+        expect(page.response_headers['Content-Type']).to eq 'text/csv'
+      end
+    end
+  end
 end
