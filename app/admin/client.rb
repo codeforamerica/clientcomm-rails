@@ -73,6 +73,7 @@ ActiveAdmin.register Client do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
+      f.input :id_number
 
       Department.all.each do |department|
         department_users = department.users.active.order(full_name: :asc)
