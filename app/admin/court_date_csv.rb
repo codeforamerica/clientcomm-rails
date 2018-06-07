@@ -11,6 +11,24 @@ ActiveAdmin.register CourtDateCSV do
     end
   end
 
+  show do
+    panel 'Court Reminder CSV Details' do
+      attributes_table_for court_date_csv do
+        row 'File file name' do
+          link_to court_date_csv.file_file_name, download_admin_court_date_csv_path(court_date_csv)
+        end
+        row :file_content_type
+        row :file_file_size
+        row :file_updated_at
+        row :admin_user
+      end
+    end
+  end
+
+  member_action :download, method: :get do
+    send_data(Paperclip.io_adapters.for(resource.file).read, type: 'text/csv', filename: resource.file_file_name)
+  end
+
   controller do
     def create
       @court_date_csv = CourtDateCSV.create(file: permitted_params[:court_date_csv][:file], admin_user: current_admin_user)

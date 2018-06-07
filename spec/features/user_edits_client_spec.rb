@@ -139,6 +139,35 @@ feature 'user edits client', :js do
     end
   end
 
+  context 'the notes field is hidden by feature flag' do
+    before do
+      FeatureFlag.create!(flag: 'hide_notes', enabled: true)
+    end
+
+    scenario 'successfully submits form' do
+      step 'navigates to edit client form' do
+        within "#client_#{clientone.id}" do
+          find('td', text: 'Manage').click
+        end
+
+        expect(page).to have_current_path(edit_client_path(clientone))
+        expect(page).to_not have_css 'input#client_reporting_relationships_attributes_0_notes'
+      end
+
+      step 'fills and submits edit client form' do
+        fill_in 'First name', with: new_first_name
+        fill_in 'Last name', with: new_last_name
+        fill_in 'Phone number', with: new_phone_number
+
+        click_on 'Save changes'
+
+        rr = my_user.reporting_relationships.find_by(client: clientone)
+        expect(page).to have_current_path(reporting_relationship_path(rr))
+        expect(page).to_not have_content rr.notes.truncate(40, separator: ' ', omission: '...')
+      end
+    end
+  end
+
   scenario 'and fails validation' do
     within("#client_#{clientone.id}") do
       find('td', text: 'Manage').click

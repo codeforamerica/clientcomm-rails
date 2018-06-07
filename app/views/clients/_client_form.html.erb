@@ -39,6 +39,8 @@
 
         <% unless FeatureFlag.enabled?('hide_notes') %>
           <%= rr.gcf_input_field :notes, 'Notes', notes: "Add a private note that will appear in this client's profile", classes: ['form-width--long'] %>
+        <% else %>
+          <%= rr.hidden_field :notes %>
         <% end %>
       <% end %>
 
