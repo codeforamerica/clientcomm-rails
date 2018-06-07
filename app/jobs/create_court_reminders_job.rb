@@ -9,7 +9,7 @@ class CreateCourtRemindersJob < ApplicationJob
     court_locs_hash = CourtRemindersImporter.generate_locations_hash(court_locs)
     begin
       court_dates = CSV.parse(dates_content, headers: true)
-      total_rrs = CourtRemindersImporter.generate_reminders(court_dates, court_locs_hash)
+      total_rrs = CourtRemindersImporter.generate_reminders(court_dates, court_locs_hash, csv_file)
     rescue StandardError
       NotificationMailer.court_reminders_failure(user).deliver_later
       track(

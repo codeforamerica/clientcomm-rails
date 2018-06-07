@@ -8,5 +8,6 @@ FactoryBot.define do
     sequence(:twilio_sid) { |n| (n.to_s + SecureRandom.hex(17))[0..33] }
     twilio_status { %w[accepted queued sending sent receiving received delivered undelivered failed].sample }
     send_at { Time.current }
+    court_date_csv { create :court_date_csv }
   end
 end

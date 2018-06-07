@@ -21,7 +21,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     end
 
     it 'running the job sends calls CourtRemindersImporter' do
-      expect(CourtRemindersImporter).to receive(:generate_reminders).with(court_dates, court_locs_hash)
+      expect(CourtRemindersImporter).to receive(:generate_reminders).with(court_dates, court_locs_hash, csv)
       subject
     end
 

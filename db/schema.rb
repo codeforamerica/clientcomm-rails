@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180605211155) do
+ActiveRecord::Schema.define(version: 20180606182912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,6 +134,8 @@ ActiveRecord::Schema.define(version: 20180605211155) do
     t.bigint "original_reporting_relationship_id", null: false
     t.string "type", null: false
     t.bigint "like_message_id"
+    t.bigint "court_date_csv_id"
+    t.index ["court_date_csv_id"], name: "index_messages_on_court_date_csv_id"
     t.index ["like_message_id"], name: "index_messages_on_like_message_id"
     t.index ["original_reporting_relationship_id"], name: "index_messages_on_original_reporting_relationship_id"
     t.index ["reporting_relationship_id"], name: "index_messages_on_reporting_relationship_id"
@@ -234,6 +236,7 @@ ActiveRecord::Schema.define(version: 20180605211155) do
   add_foreign_key "clients", "users"
   add_foreign_key "court_date_csvs", "admin_users"
   add_foreign_key "departments", "users"
+  add_foreign_key "messages", "court_date_csvs"
   add_foreign_key "messages", "messages", column: "like_message_id"
   add_foreign_key "messages", "reporting_relationships"
   add_foreign_key "messages", "reporting_relationships", column: "original_reporting_relationship_id"
