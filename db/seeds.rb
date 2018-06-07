@@ -86,3 +86,13 @@ ReportingRelationship.all.each do |rr|
   rr.update!(client_status_id: ClientStatus.all.sample.id)
   FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true
 end
+
+puts 'Create Court Reminders'
+ReportingRelationship.all.each do |rr|
+  FactoryBot.create :court_reminder, reporting_relationship: rr
+end
+
+puts 'Create Markers'
+ReportingRelationship.all.each do |rr|
+  FactoryBot.create :client_edit_marker, reporting_relationship: rr
+end

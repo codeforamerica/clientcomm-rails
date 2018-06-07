@@ -71,9 +71,6 @@ class Message < ApplicationRecord
       ClientEditMarker.create!(
         reporting_relationship: rr,
         body: message_body,
-        read: true,
-        send_at: Time.zone.now,
-        inbound: true,
         number_to: rr.user.department.phone_number,
         number_from: rr.client.phone_number
       )
@@ -89,9 +86,6 @@ class Message < ApplicationRecord
         'messages.transferred_to',
         user_full_name: receiving_rr.user.full_name
       ),
-      read: true,
-      send_at: Time.zone.now,
-      inbound: true,
       number_to: sending_rr.user.department.phone_number,
       number_from: sending_rr.client.phone_number
     )
@@ -102,9 +96,6 @@ class Message < ApplicationRecord
         user_full_name: sending_rr.user.full_name,
         client_full_name: sending_rr.client.full_name
       ),
-      read: true,
-      send_at: Time.zone.now,
-      inbound: true,
       number_to: receiving_rr.user.department.phone_number,
       number_from: receiving_rr.client.phone_number
     )

@@ -1,2 +1,2 @@
-class TransferMarker < Message
+class TransferMarker < Marker
 end

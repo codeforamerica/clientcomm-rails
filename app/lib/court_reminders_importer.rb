@@ -38,9 +38,8 @@ module CourtRemindersImporter
               reporting_relationship: rr,
               number_from: rr.user.department.phone_number,
               number_to: rr.client.phone_number,
-              send_at: send_at,
-              read: true,
-              court_date_csv: court_date_csv
+              court_date_csv: court_date_csv,
+              send_at: send_at
             )
 
             unless options[:dry_run]
