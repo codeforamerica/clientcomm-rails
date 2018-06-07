@@ -1,5 +1,5 @@
 module CourtRemindersImporter
-  def self.generate_reminders(court_dates, court_locations, options = {})
+  def self.generate_reminders(court_dates, court_locations, court_date_csv, options = {})
     time_zone_offset = '-0600' # Make sure this is by instance eventually
     total_rrs = 0
     Message.transaction do
@@ -39,7 +39,8 @@ module CourtRemindersImporter
               number_from: rr.user.department.phone_number,
               number_to: rr.client.phone_number,
               send_at: send_at,
-              read: true
+              read: true,
+              court_date_csv: court_date_csv
             )
 
             unless options[:dry_run]
