@@ -220,12 +220,14 @@ describe 'Clients', type: :request, active_job: true do
     let(:first_name) { 'Joanne' }
     let(:last_name) { 'Smith' }
     let(:phone_number) { 'Some phone number' }
+    let(:id_number) { '1234567' }
     let(:params) do
       {
         client: {
           first_name: first_name,
           last_name: last_name,
-          phone_number: phone_number
+          phone_number: phone_number,
+          id_number: id_number
         }
       }
     end
@@ -237,6 +239,7 @@ describe 'Clients', type: :request, active_job: true do
       expect(client_reloaded.first_name).to eq first_name
       expect(client_reloaded.last_name).to eq last_name
       expect(client_reloaded.phone_number).to eq phone_number
+      expect(client_reloaded.id_number).to eq id_number
     end
   end
 end
