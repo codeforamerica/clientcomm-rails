@@ -1,2 +1,2 @@
-class ClientEditMarker < Message
+class ClientEditMarker < Marker
 end
