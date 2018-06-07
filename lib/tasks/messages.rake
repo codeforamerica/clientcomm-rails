@@ -4,7 +4,12 @@ namespace :messages do
 
     transient_messages.each do |m|
       twilio_status = SMSService.instance.status_lookup(message: m)
-      m.update(twilio_status: twilio_status)
+      begin
+        m.update(twilio_status: twilio_status)
+      rescue ActiveRecord::StaleObjectError
+        logger.warn('Twilio status update conflict')
+        next
+      end
       MessageRedactionJob.perform_later(message: m)
     end
   end
