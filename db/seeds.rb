@@ -94,6 +94,5 @@ end
 
 puts 'Create Markers'
 ReportingRelationship.all.each do |rr|
-  FactoryBot.create :transfer_marker, reporting_relationship: rr
   FactoryBot.create :client_edit_marker, reporting_relationship: rr
 end
