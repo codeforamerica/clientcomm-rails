@@ -4,5 +4,6 @@ FactoryBot.define do
     body { "i am a message #{SecureRandom.hex(17)}" }
     sequence(:number_from) { Faker::PhoneNumber.cell_phone }
     sequence(:number_to) { Faker::PhoneNumber.cell_phone }
+    court_date_csv { create :court_date_csv }
   end
 end

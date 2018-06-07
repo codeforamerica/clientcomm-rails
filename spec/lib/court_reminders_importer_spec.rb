@@ -2,8 +2,9 @@ require 'rails_helper'
 
 describe CourtRemindersImporter do
   describe 'self.generate_reminders', active_job: true do
-    subject { described_class.generate_reminders(court_dates, court_locs) }
-
+    subject { described_class.generate_reminders(court_dates, court_locs, csv) }
+    let(:admin_user) { create :admin_user  }
+    let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), admin_user: admin_user) }
     let(:court_dates) do
       [
         { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
@@ -49,6 +50,7 @@ describe CourtRemindersImporter do
       message1 = rr1.messages.scheduled.last
       expect(message1.body).to eq body1
       expect(message1.send_at).to eq time1
+      expect(message1.court_date_csv).to eq(csv)
       expect(ScheduledMessageJob).to have_been_enqueued
         .at(time1)
         .with(message: message1, send_at: Integer, callback_url: String)
@@ -97,7 +99,7 @@ describe CourtRemindersImporter do
         ]
       end
 
-      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days }
+      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, court_date_csv: csv }
 
       it 'does not save any messages' do
         expect { subject }.to raise_error(ArgumentError, 'invalid strptime format - `%m/%d/%Y %H:%M %z\'')
@@ -123,7 +125,7 @@ describe CourtRemindersImporter do
     end
 
     context 'there are already court date reminders' do
-      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days }
+      let!(:existing_reminder) { create :court_reminder, reporting_relationship: rr1, send_at: Time.zone.now + 2.days, court_date_csv: csv }
 
       it 'deletes all existing reminders' do
         subject
