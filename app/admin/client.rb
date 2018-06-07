@@ -3,7 +3,7 @@ ActiveAdmin.register Client do
 
   config.sort_order = 'last_name_asc'
 
-  permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
+  permit_params :first_name, :last_name, :phone_number, :id_number, :notes, :active, :client_status_id, user_ids: []
 
   show do
     panel 'Client Details' do
@@ -11,6 +11,7 @@ ActiveAdmin.register Client do
         row :first_name
         row :last_name
         row :phone_number
+        row :id_number
       end
     end
 
