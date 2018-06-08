@@ -26,8 +26,6 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
-  scope :transfer_markers, -> { where(type: MARKER_TRANSFER) }
-  scope :client_edit_markers, -> { where(type: MARKER_CLIENT_EDIT) }
   scope :messages, -> { where(type: [TEXT_MESSAGE, AUTO_COURT_REMINDER]) }
 
   class TransferClientMismatch < StandardError; end

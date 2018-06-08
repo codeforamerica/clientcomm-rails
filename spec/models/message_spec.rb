@@ -474,7 +474,7 @@ RSpec.describe Message, type: :model do
         subject
       end
 
-      marker_editing = editing_user.messages.client_edit_markers.first
+      marker_editing = editing_user.messages.where(type: 'ClientEditMarker').first
       expect(marker_editing.user).to eq(editing_user)
       expect(marker_editing.client).to eq(client)
       expect(marker_editing.send_at).to eq(time)
@@ -487,7 +487,7 @@ RSpec.describe Message, type: :model do
       expect(marker_editing).to be_persisted
       expect(marker_editing).to be_read
 
-      marker_other = other_user.messages.client_edit_markers.first
+      marker_other = other_user.messages.where(type: 'ClientEditMarker').first
       expect(marker_other.user).to eq(other_user)
       expect(marker_other.client).to eq(client)
       expect(marker_other.send_at).to eq(time)
@@ -523,7 +523,7 @@ RSpec.describe Message, type: :model do
       travel_to time do
         subject
       end
-      transfer_marker_from = receiving_user.messages.transfer_markers.first
+      transfer_marker_from = receiving_user.messages.where(type: 'TransferMarker').first
       expect(transfer_marker_from.user).to eq(receiving_user)
       expect(transfer_marker_from.client).to eq(client)
       expect(transfer_marker_from.send_at).to eq(time)
@@ -537,7 +537,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_from).to be_persisted
       expect(transfer_marker_from).to be_read
 
-      transfer_marker_to = sending_user.messages.transfer_markers.first
+      transfer_marker_to = sending_user.messages.where(type: 'TransferMarker').first
       expect(transfer_marker_to.user).to eq(sending_user)
       expect(transfer_marker_to.client).to eq(client)
       expect(transfer_marker_to.send_at).to eq(time)
@@ -558,32 +558,6 @@ RSpec.describe Message, type: :model do
       it 'raises an exception' do
         expect { subject }.to raise_error(Message::TransferClientMismatch)
       end
-    end
-  end
-
-  describe 'scope transfer_markers' do
-    let(:rr) { create :reporting_relationship }
-    let(:transfer_marker) { create :transfer_marker, reporting_relationship: rr }
-
-    subject { rr.client.messages.transfer_markers }
-
-    it 'finds the transfer markers' do
-      create_list :text_message, 5, reporting_relationship: rr
-
-      expect(subject).to contain_exactly(transfer_marker)
-    end
-  end
-
-  describe 'scope client_edit_markers' do
-    let(:rr) { create :reporting_relationship }
-    let(:client_edit_marker) { create :client_edit_marker, reporting_relationship: rr }
-
-    subject { rr.client.messages.client_edit_markers }
-
-    it 'finds the client edit markers' do
-      create_list :text_message, 5, reporting_relationship: rr
-
-      expect(subject).to contain_exactly(client_edit_marker)
     end
   end
 
