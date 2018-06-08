@@ -7,7 +7,7 @@ class TextMessage < Message
   private
 
   def set_text_message
-    return nil unless reporting_relationship
+    return unless reporting_relationship
 
     if inbound
       self.number_from = reporting_relationship.client.phone_number

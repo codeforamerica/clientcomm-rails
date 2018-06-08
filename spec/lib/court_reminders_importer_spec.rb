@@ -48,8 +48,12 @@ describe CourtRemindersImporter do
       )
       time1 = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
       message1 = rr1.messages.scheduled.last
+      number_from1 = rr1.user.department.phone_number
+      number_to1 = rr1.client.phone_number
       expect(message1.body).to eq body1
       expect(message1.send_at).to eq time1
+      expect(message1.number_from).to eq number_from1
+      expect(message1.number_to).to eq number_to1
       expect(message1.court_date_csv).to eq(csv)
       expect(ScheduledMessageJob).to have_been_enqueued
         .at(time1)
@@ -65,8 +69,12 @@ describe CourtRemindersImporter do
       )
       time2 = Time.strptime('5/8/2018 9:40 -0600', '%m/%d/%Y %H:%M %z')
       message2 = rr2.messages.scheduled.last
+      number_from2 = rr2.user.department.phone_number
+      number_to2 = rr2.client.phone_number
       expect(message2.body).to eq body2
       expect(message2.send_at).to eq time2
+      expect(message2.number_from).to eq number_from2
+      expect(message2.number_to).to eq number_to2
       expect(ScheduledMessageJob).to have_been_enqueued
         .at(time2)
         .with(message: message2, send_at: Integer, callback_url: String)
@@ -81,8 +89,12 @@ describe CourtRemindersImporter do
       )
       time3 = Time.strptime('5/9/2018 14:30 -0600', '%m/%d/%Y %H:%M %z')
       message3 = rr3.messages.scheduled.last
+      number_from3 = rr3.user.department.phone_number
+      number_to3 = rr3.client.phone_number
       expect(message3.body).to eq body3
       expect(message3.send_at).to eq time3
+      expect(message3.number_from).to eq number_from3
+      expect(message3.number_to).to eq number_to3
       expect(ScheduledMessageJob).to have_been_enqueued
         .at(time3)
         .with(message: message3, send_at: Integer, callback_url: String)
@@ -172,8 +184,12 @@ describe CourtRemindersImporter do
         )
         time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
         message = rr4.messages.scheduled.last
+        number_from = rr4.user.department.phone_number
+        number_to = rr4.client.phone_number
         expect(message.body).to eq body
         expect(message.send_at).to eq time
+        expect(message.number_from).to eq number_from
+        expect(message.number_to).to eq number_to
         expect(ScheduledMessageJob).to have_been_enqueued
           .at(time)
           .with(message: message, send_at: Integer, callback_url: String)
@@ -200,8 +216,12 @@ describe CourtRemindersImporter do
           )
           time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
           message = rr4.messages.scheduled.last
+          number_from = rr4.user.department.phone_number
+          number_to = rr4.client.phone_number
           expect(message.body).to eq body
           expect(message.send_at).to eq time
+          expect(message.number_from).to eq number_from
+          expect(message.number_to).to eq number_to
           expect(ScheduledMessageJob).to have_been_enqueued
             .at(time)
             .with(message: message, send_at: Integer, callback_url: String)

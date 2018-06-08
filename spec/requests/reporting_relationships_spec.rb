@@ -209,13 +209,13 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
     end
 
     it 'creates transfer markers' do
-      expect(transfer_user.messages.where(type: 'TransferMarker')).to be_empty
+      expect(transfer_user.messages.where(type: Message::MARKER_TRANSFER)).to be_empty
       time = Time.zone.now
       travel_to time do
         subject
       end
-      expect(transfer_user.messages.where(type: 'TransferMarker').count).to eq(1)
-      marker_from = transfer_user.messages.where(type: 'TransferMarker').first
+      expect(transfer_user.messages.where(type: Message::MARKER_TRANSFER).count).to eq(1)
+      marker_from = transfer_user.messages.where(type: Message::MARKER_TRANSFER).first
       expect(marker_from.client).to eq(client)
 
       transfer_message_from_body = I18n.t(
@@ -225,8 +225,8 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       )
       expect(marker_from.body).to eq(transfer_message_from_body)
 
-      expect(user.messages.where(type: 'TransferMarker').count).to eq(1)
-      marker_to = user.messages.where(type: 'TransferMarker').first
+      expect(user.messages.where(type: Message::MARKER_TRANSFER).count).to eq(1)
+      marker_to = user.messages.where(type: Message::MARKER_TRANSFER).first
       expect(marker_to.client).to eq(client)
 
       transfer_message_to_body = I18n.t(
