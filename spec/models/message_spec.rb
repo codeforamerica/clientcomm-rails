@@ -574,19 +574,6 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'scope auto court reminder' do
-    let(:rr) { create :reporting_relationship }
-    let(:reminder) { create :court_reminder, reporting_relationship: rr }
-
-    subject { rr.client.messages.auto_court_reminders }
-
-    it 'finds the transfer markers' do
-      create_list :text_message, 5, reporting_relationship: rr
-
-      expect(subject).to contain_exactly(reminder)
-    end
-  end
-
   describe 'scope client_edit_markers' do
     let(:rr) { create :reporting_relationship }
     let(:client_edit_marker) { create :client_edit_marker, reporting_relationship: rr }
