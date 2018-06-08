@@ -16,7 +16,7 @@ class MoveMessageTransferMarkerToMarkerType < ActiveRecord::Migration[5.1]
           Rails.logger.info "Migrating batch #{i} of #{msg_count / 1000}"
           batch.each do |msg|
             if msg.transfer_marker
-              msg.marker_type = Message::MARKER_TRANSFER
+              msg.marker_type = TransferMarker.to_s
               msg.save validate: false
             end
           end
@@ -30,7 +30,7 @@ class MoveMessageTransferMarkerToMarkerType < ActiveRecord::Migration[5.1]
         Message.find_in_batches.with_index do |batch, i|
           Rails.logger.info "Migrating batch #{i} of #{msg_count / 1000}"
           batch.each do |msg|
-            if msg.marker_type == Message::MARKER_TRANSFER
+            if msg.marker_type == TransferMarker.to_s
               msg.transfer_marker = true
               msg.save validate: false
             end

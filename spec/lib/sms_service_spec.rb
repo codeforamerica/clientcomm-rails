@@ -28,8 +28,7 @@ describe SMSService do
     subject { sms_service.send_message(message: factory_message, callback_url: callback_url) }
 
     let(:callback_url) { 'whocares.com' }
-    let(:expected_number) { '+11234567890' }
-    let(:factory_message) { create :text_message, twilio_sid: nil, twilio_status: nil, number_from: expected_number }
+    let(:factory_message) { create :text_message, twilio_sid: nil, twilio_status: nil, inbound: false }
     let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
 
@@ -42,7 +41,7 @@ describe SMSService do
       subject
 
       expect(twilio_client).to have_received(:create).with(
-        from:           expected_number,
+        from:           factory_message.reporting_relationship.user.department.phone_number,
         to:             factory_message.client.phone_number,
         body:           factory_message.body,
         status_callback: callback_url
