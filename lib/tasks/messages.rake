@@ -7,7 +7,7 @@ namespace :messages do
       begin
         m.update(twilio_status: twilio_status)
       rescue ActiveRecord::StaleObjectError
-        logger.warn('Twilio status update conflict')
+        logger.warn('StaleObjectError on update_twilio_statuses task')
         next
       end
       MessageRedactionJob.perform_later(message: m)

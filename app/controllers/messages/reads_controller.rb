@@ -7,7 +7,7 @@ module Messages
       begin
         message = current_user.messages.update(params[:message_id], read: message_params[:read])
       rescue ActiveRecord::StaleObjectError
-        logger.warn('Conflict whew setting read on Message in reads controller')
+        logger.warn('StaleObjectError on ReadsController create')
       else
         message.reporting_relationship.update!(has_unread_messages: false)
       end
