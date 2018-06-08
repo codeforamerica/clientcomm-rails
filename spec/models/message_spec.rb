@@ -53,7 +53,7 @@ RSpec.describe Message, type: :model do
     end
 
     context 'the marker is a marker type' do
-      let(:message) { build :transfer_marker}
+      let(:message) { build :transfer_marker }
       it 'is not a marker by default' do
         expect(message).to be_marker
       end
