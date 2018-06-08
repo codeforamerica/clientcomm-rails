@@ -12,8 +12,8 @@ describe NodeMessagesImporter do
   let(:read_boolean) { ActiveModel::Type::Boolean.new.cast(read) }
   let(:inbound) { 't' }
   let(:inbound_boolean) { ActiveModel::Type::Boolean.new.cast(inbound) }
-  let(:client_number) { '14155554321' }
-  let(:client_number_normalized) { "+#{client_number}" }
+  let(:client_number) { client.phone_number }
+  let(:client_number_normalized) { client_number }
   let(:message_segments) do
     [
       {

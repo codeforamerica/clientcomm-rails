@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180606182912) do
+ActiveRecord::Schema.define(version: 20180608172907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,8 +118,8 @@ ActiveRecord::Schema.define(version: 20180606182912) do
 
   create_table "messages", id: :serial, force: :cascade do |t|
     t.string "body", default: ""
-    t.string "number_from", null: false
-    t.string "number_to", null: false
+    t.string "number_from", default: "+15555555555"
+    t.string "number_to"
     t.boolean "inbound", default: false, null: false
     t.string "twilio_sid"
     t.string "twilio_status"

@@ -36,8 +36,6 @@ module CourtRemindersImporter
             message = CourtReminder.new(
               body: body,
               reporting_relationship: rr,
-              number_from: rr.user.department.phone_number,
-              number_to: rr.client.phone_number,
               court_date_csv: court_date_csv,
               send_at: send_at
             )

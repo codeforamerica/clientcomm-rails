@@ -70,9 +70,7 @@ class Message < ApplicationRecord
 
       ClientEditMarker.create!(
         reporting_relationship: rr,
-        body: message_body,
-        number_to: rr.user.department.phone_number,
-        number_from: rr.client.phone_number
+        body: message_body
       )
     end
   end
@@ -85,9 +83,7 @@ class Message < ApplicationRecord
       body: I18n.t(
         'messages.transferred_to',
         user_full_name: receiving_rr.user.full_name
-      ),
-      number_to: sending_rr.user.department.phone_number,
-      number_from: sending_rr.client.phone_number
+      )
     )
     TransferMarker.create!(
       reporting_relationship: receiving_rr,
@@ -95,9 +91,7 @@ class Message < ApplicationRecord
         'messages.transferred_from',
         user_full_name: sending_rr.user.full_name,
         client_full_name: sending_rr.client.full_name
-      ),
-      number_to: receiving_rr.user.department.phone_number,
-      number_from: receiving_rr.client.phone_number
+      )
     )
     true
   end
@@ -131,8 +125,6 @@ class Message < ApplicationRecord
 
     new_message = TextMessage.new(
       reporting_relationship: rr,
-      number_to: to_phone_number,
-      number_from: from_phone_number,
       inbound: true,
       twilio_sid: twilio_params[:SmsSid],
       twilio_status: twilio_params[:SmsStatus],
@@ -209,8 +201,6 @@ class Message < ApplicationRecord
     message = TextMessage.create!(
       reporting_relationship: rr,
       body: unclaimed_response,
-      number_from: rr.department.phone_number,
-      number_to: rr.client.phone_number,
       send_at: now
     )
     ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
