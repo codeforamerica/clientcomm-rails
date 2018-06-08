@@ -12,8 +12,6 @@ describe NodeMessagesImporter do
   let(:read_boolean) { ActiveModel::Type::Boolean.new.cast(read) }
   let(:inbound) { 't' }
   let(:inbound_boolean) { ActiveModel::Type::Boolean.new.cast(inbound) }
-  let(:client_number) { '14155554321' }
-  let(:client_number_normalized) { "+#{client_number}" }
   let(:message_segments) do
     [
       {
@@ -33,6 +31,8 @@ describe NodeMessagesImporter do
 
   let(:user_1) { create :user, node_id: cm_id_1 }
   let(:client) { create :client, node_comm_id: comm_id }
+  let(:client_number) { client.phone_number.gsub(/\D/, '') }
+  let(:client_number_normalized) { client.phone_number }
   let!(:rr) { create :reporting_relationship, user: user_1, client: client }
 
   subject { described_class.import_message(message_segments) }

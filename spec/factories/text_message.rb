@@ -2,8 +2,6 @@ FactoryBot.define do
   factory :text_message do
     reporting_relationship { create :reporting_relationship }
     body { "i am a message #{SecureRandom.hex(17)}" }
-    sequence(:number_from) { Faker::PhoneNumber.cell_phone }
-    sequence(:number_to) { Faker::PhoneNumber.cell_phone }
     inbound { [true, false].sample }
     sequence(:twilio_sid) { |n| (n.to_s + SecureRandom.hex(17))[0..33] }
     twilio_status { %w[accepted queued sending sent receiving received delivered undelivered failed].sample }
