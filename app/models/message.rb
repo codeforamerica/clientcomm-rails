@@ -26,10 +26,10 @@ class Message < ApplicationRecord
   scope :outbound, -> { where(inbound: false) }
   scope :unread, -> { where(read: false) }
   scope :scheduled, -> { where('send_at >= ?', Time.zone.now).order('send_at ASC') }
-  scope :transfer_markers, -> { where(type: MARKER_TRANSFER) }
-  scope :client_edit_markers, -> { where(type: MARKER_CLIENT_EDIT) }
-  scope :auto_court_reminders, -> { where(type: AUTO_COURT_REMINDER) }
-  scope :messages, -> { where(type: [TEXT_MESSAGE, AUTO_COURT_REMINDER]) }
+  scope :transfer_markers, -> { where(type: TransferMarker.to_s) }
+  scope :client_edit_markers, -> { where(type: ClientEditMarker.to_s) }
+  scope :auto_court_reminders, -> { where(type: CourtReminder.to_s) }
+  scope :messages, -> { where(type: [TextMessage.to_s, CourtReminder.to_s]) }
 
   class TransferClientMismatch < StandardError; end
 
@@ -38,11 +38,6 @@ class Message < ApplicationRecord
   READ = 'read'.freeze
   UNREAD = 'unread'.freeze
   ERROR = 'error'.freeze
-
-  MARKER_TRANSFER = 'TransferMarker'.freeze
-  MARKER_CLIENT_EDIT = 'ClientEditMarker'.freeze
-  AUTO_COURT_REMINDER = 'CourtReminder'.freeze
-  TEXT_MESSAGE = 'TextMessage'.freeze
 
   def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
     user_full_name = I18n.t('messages.admin_user_description')
@@ -175,15 +170,15 @@ class Message < ApplicationRecord
   end
 
   def marker?
-    [AUTO_COURT_REMINDER, TEXT_MESSAGE].exclude? type
+    [CourtReminder.to_s, TextMessage.to_s].exclude? type
   end
 
   def transfer_marker?
-    type == MARKER_TRANSFER
+    type == TransferMarker.to_s
   end
 
   def client_edit_marker?
-    type == MARKER_CLIENT_EDIT
+    type == ClientEditMarker.to_s
   end
 
   def past_message?
@@ -246,9 +241,9 @@ class Message < ApplicationRecord
   end
 
   def created_by_type
-    if type == AUTO_COURT_REMINDER
+    if type == CourtReminder.to_s
       'auto-uploader'
-    elsif type == TEXT_MESSAGE
+    elsif type == TextMessage.to_s
       if inbound
         'client'
       else
