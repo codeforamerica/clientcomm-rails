@@ -50,7 +50,7 @@ describe MoveMessageTransferMarkerToMarkerType do
       subject
 
       expect(message_message.reload.marker_type).to eq(nil)
-      expect(message_marker.reload.marker_type).to eq(Message::MARKER_TRANSFER)
+      expect(message_marker.reload.marker_type).to eq(TransferMarker.to_s)
     end
   end
 
@@ -72,7 +72,7 @@ describe MoveMessageTransferMarkerToMarkerType do
       message_marker = Message.create!(
         reporting_relationship_id: rr.id,
         original_reporting_relationship_id: rr.id,
-        marker_type: Message::MARKER_TRANSFER,
+        marker_type: TransferMarker.to_s,
         read: true,
         send_at: Time.zone.now,
         inbound: true,

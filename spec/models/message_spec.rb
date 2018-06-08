@@ -47,24 +47,20 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'marker?' do
-    let(:message) { build :text_message, type: type }
-    let(:type) { Message::TEXT_MESSAGE }
-
+    let(:message) { build :text_message }
     it 'is not a marker by default' do
       expect(message).to_not be_marker
     end
 
     context 'the marker is a marker type' do
-      let(:type) { Message::MARKER_TRANSFER }
-
+      let(:message) { build :transfer_marker }
       it 'is not a marker by default' do
         expect(message).to be_marker
       end
     end
 
-    context 'the marker is present but non-marker' do
-      let(:type) { Message::AUTO_COURT_REMINDER }
-
+    context 'court reminder is non-marker' do
+      let(:message) { build :court_reminder }
       it 'is not a marker by default' do
         expect(message).to_not be_marker
       end
@@ -474,7 +470,7 @@ RSpec.describe Message, type: :model do
         subject
       end
 
-      marker_editing = editing_user.messages.where(type: Message::MARKER_CLIENT_EDIT).first
+      marker_editing = editing_user.messages.where(type: ClientEditMarker.to_s).first
       expect(marker_editing.user).to eq(editing_user)
       expect(marker_editing.client).to eq(client)
       expect(marker_editing.send_at).to eq(time)
@@ -487,7 +483,7 @@ RSpec.describe Message, type: :model do
       expect(marker_editing).to be_persisted
       expect(marker_editing).to be_read
 
-      marker_other = other_user.messages.where(type: Message::MARKER_CLIENT_EDIT).first
+      marker_other = other_user.messages.where(type: ClientEditMarker.to_s).first
       expect(marker_other.user).to eq(other_user)
       expect(marker_other.client).to eq(client)
       expect(marker_other.send_at).to eq(time)
@@ -523,7 +519,7 @@ RSpec.describe Message, type: :model do
       travel_to time do
         subject
       end
-      transfer_marker_from = receiving_user.messages.where(type: Message::MARKER_TRANSFER).first
+      transfer_marker_from = receiving_user.messages.where(type: TransferMarker.to_s).first
       expect(transfer_marker_from.user).to eq(receiving_user)
       expect(transfer_marker_from.client).to eq(client)
       expect(transfer_marker_from.send_at).to eq(time)
@@ -537,7 +533,7 @@ RSpec.describe Message, type: :model do
       expect(transfer_marker_from).to be_persisted
       expect(transfer_marker_from).to be_read
 
-      transfer_marker_to = sending_user.messages.where(type: Message::MARKER_TRANSFER).first
+      transfer_marker_to = sending_user.messages.where(type: TransferMarker.to_s).first
       expect(transfer_marker_to.user).to eq(sending_user)
       expect(transfer_marker_to.client).to eq(client)
       expect(transfer_marker_to.send_at).to eq(time)
@@ -568,8 +564,8 @@ RSpec.describe Message, type: :model do
     subject { rr.messages.messages }
 
     it 'finds the message' do
-      create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
-      create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
+      create_list :text_message, 3, reporting_relationship: rr, type: TransferMarker.to_s
+      create_list :text_message, 3, reporting_relationship: rr, type: ClientEditMarker.to_s
 
       expect(subject).to contain_exactly(message)
     end
@@ -578,8 +574,8 @@ RSpec.describe Message, type: :model do
       let(:message) { create :court_reminder, reporting_relationship: rr }
 
       it 'finds the message' do
-        create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_TRANSFER
-        create_list :text_message, 3, reporting_relationship: rr, type: Message::MARKER_CLIENT_EDIT
+        create_list :text_message, 3, reporting_relationship: rr, type: TransferMarker.to_s
+        create_list :text_message, 3, reporting_relationship: rr, type: ClientEditMarker.to_s
 
         expect(subject).to contain_exactly(message)
       end
