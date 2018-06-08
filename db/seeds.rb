@@ -87,12 +87,13 @@ ReportingRelationship.all.each do |rr|
   FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true
 end
 
-puts 'Create Court Reminders'
-ReportingRelationship.all.each do |rr|
+puts 'Creating Court Reminders'
+third = (ReportingRelationship.all.count * 0.33).to_i
+ReportingRelationship.all.sample(third).each do |rr|
   FactoryBot.create :court_reminder, reporting_relationship: rr
 end
 
-puts 'Create Markers'
-ReportingRelationship.all.each do |rr|
+puts 'Creating Client Edit Markers'
+ReportingRelationship.all.sample(third).each do |rr|
   FactoryBot.create :client_edit_marker, reporting_relationship: rr
 end
