@@ -71,6 +71,7 @@ en:
               blank: You need to pick someone to transfer this client to.
             client:
               existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
+              existing_user_relationship: "Your client <a href='%{href}'>%{client_full_name}</a> is already using this number."
         user:
           attributes:
             phone_number:

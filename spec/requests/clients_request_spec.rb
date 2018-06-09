@@ -513,15 +513,47 @@ describe 'Clients requests', type: :request do
               let(:other_client) { create :client, first_name: 'Raquildis', last_name: 'Cordero', user: other_user }
               let(:phone_number) { other_client.phone_number }
 
-              it 'shows an error flash' do
+              it 'shows an error flash and validation note on the form' do
                 subject
 
+                validation_error = I18n.t(
+                  'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+                  user_full_name: other_user.full_name
+                )
                 expect(response.code).to eq '200'
                 expect(flash[:alert]).to include 'There was a problem saving this client.'
-                expect(response.body)
-                  .to include I18n.t('activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship', user_full_name: other_user.full_name)
+                expect(response.body).to include validation_error
                 expect(response.body).to include other_user.full_name
                 expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
+              end
+
+              context 'the user has an existing client with the same phone number and an inactive same-department relationship with another user' do
+                before do
+                  ReportingRelationship.find_by(user: other_user, client: other_client).update!(active: false)
+                  other_client.users << user
+                end
+
+                it 'shows an error flash and validation note on the form' do
+                  subject
+
+                  expect(response.code).to eq '200'
+                  expect(flash[:alert]).to include 'There was a problem saving this client.'
+
+                  dept_validation_error = I18n.t(
+                    'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+                    user_full_name: other_user.full_name
+                  )
+                  expect(response.body).to_not include I18n.t 'activerecord.errors.models.client.attributes.phone_number.taken'
+                  expect(response.body).to_not include dept_validation_error
+
+                  other_rr = other_client.reporting_relationships.find_by(user: user)
+                  user_validation_error = I18n.t(
+                    'activerecord.errors.models.reporting_relationship.attributes.client.existing_user_relationship',
+                    client_full_name: "#{other_client.first_name} #{other_client.last_name}",
+                    href: reporting_relationship_url(other_rr)
+                  )
+                  expect(response.body).to include user_validation_error
+                end
               end
 
               context 'multiple reporting relationships' do

@@ -119,18 +119,11 @@ class ClientsController < ApplicationController
       return
     elsif @client.errors.added?(:phone_number, :taken)
       @existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = @existing_client.users
-                                         .where.not(id: current_user.id)
-                                         .find_by(department: current_user.department)
-      if conflicting_user
+      error_text = phone_number_conflict_error_text
+
+      if error_text
         @client.errors.delete(:phone_number)
-        @client.errors.add(
-          :phone_number,
-          t(
-            'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
-            user_full_name: conflicting_user.full_name
-          )
-        )
+        @client.errors.add(:phone_number, error_text)
       end
     end
 
@@ -175,6 +168,27 @@ class ClientsController < ApplicationController
         previous_changes: @client.previous_changes.except(:updated_at)
       ).deliver_later
     end
+  end
+
+  def phone_number_conflict_error_text
+    active_current_rr = ReportingRelationship.find_by(user: current_user, client: @existing_client, active: true)
+    conflicting_user = @existing_client.users.where.not(id: current_user.id).find_by(department: current_user.department)
+    error_text = nil
+
+    if active_current_rr
+      error_text = t(
+        'activerecord.errors.models.reporting_relationship.attributes.client.existing_user_relationship',
+        client_full_name: "#{@existing_client.first_name} #{@existing_client.last_name}",
+        href: reporting_relationship_url(active_current_rr)
+      )
+    elsif conflicting_user
+      error_text = t(
+        'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+        user_full_name: conflicting_user.full_name
+      )
+    end
+
+    error_text
   end
 
   def client_params
