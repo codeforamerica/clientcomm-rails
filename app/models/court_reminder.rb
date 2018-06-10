@@ -2,7 +2,7 @@ class CourtReminder < TextMessage
   belongs_to :court_date_csv
 
   before_validation :set_court_reminder, on: :create
-  validates :court_date_csv, presence: true
+  # validates :court_date_csv, presence: true
 
   private
 
