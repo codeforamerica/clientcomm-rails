@@ -28,8 +28,8 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
 
       # validate the data that was sent to our mock server
       message_partial = MessagesController.render(
-        partial: 'messages/message',
-        locals: { message: message }
+        partial: 'text_messages/text_message',
+        locals: { 'text_message': message }
       )
 
       expect(mock_server).to have_received(:broadcast).once.with(

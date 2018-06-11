@@ -17,8 +17,8 @@ class MessageBroadcastJob < ApplicationJob
 
   def render_message_partial(message)
     MessagesController.render(
-      partial: 'messages/message',
-      locals: { message: message }
+      partial: "#{message.class.to_s.tableize}/#{message.class.to_s.tableize.singularize}",
+      locals: { "#{message.class.to_s.tableize.singularize}": message }
     )
   end
 end
