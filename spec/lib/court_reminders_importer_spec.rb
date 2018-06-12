@@ -3,13 +3,14 @@ require 'rails_helper'
 describe CourtRemindersImporter do
   describe 'self.generate_reminders', active_job: true do
     subject { described_class.generate_reminders(court_dates, court_locs, csv) }
-    let(:admin_user) { create :admin_user  }
+    let(:admin_user) { create :admin_user }
+    let(:ctracks) { %w[111 112 113] }
     let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), admin_user: admin_user) }
     let(:court_dates) do
       [
-        { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
-        { 'ofndr_num' => '112', '(expression)' => '8675R', 'lname' => 'SIMON',  'crt_dt' => '5/9/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
-        { 'ofndr_num' => '113', '(expression)' => '1776B', 'lname' => 'BARTH',  'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' },
+        { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
+        { 'ofndr_num' => ctracks[1], '(expression)' => '8675R', 'lname' => 'SIMON',  'crt_dt' => '5/9/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
+        { 'ofndr_num' => ctracks[2], '(expression)' => '1776B', 'lname' => 'BARTH',  'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' },
         { 'ofndr_num' => 'not found', '(expression)' => '1776B', 'lname' => 'BARTH', 'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' }
       ]
     end
@@ -22,12 +23,16 @@ describe CourtRemindersImporter do
       }
     end
 
-    let!(:rr1) { create :reporting_relationship, notes: '111' }
-    let!(:rr2) { create :reporting_relationship, notes: '112' }
-    let!(:rr3) { create :reporting_relationship, notes: '113' }
+    let!(:rr1) { create :reporting_relationship }
+    let!(:rr2) { create :reporting_relationship }
+    let!(:rr3) { create :reporting_relationship }
     let!(:rr_irrelevant) { create :reporting_relationship, notes: 'not a ctrack number' }
 
     before do
+      rr1.client.update!(id_number: ctracks[0])
+      rr2.client.update!(id_number: ctracks[1])
+      rr3.client.update!(id_number: ctracks[2])
+      rr_irrelevant.client.update!(id_number: 91111111111)
       travel_to Time.strptime('5/1/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
     end
 
@@ -151,9 +156,10 @@ describe CourtRemindersImporter do
     end
 
     context 'there are two RRs with the same ctrack' do
-      let!(:rr4) { create :reporting_relationship, notes: '111' }
+      let!(:rr4) { create :reporting_relationship }
 
       before do
+        rr4.client.update!(id_number: ctracks[0])
         create :text_message, send_at: Time.zone.now - 1.day, reporting_relationship: rr4
       end
 

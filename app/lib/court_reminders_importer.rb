@@ -10,7 +10,7 @@ module CourtRemindersImporter
         court_dates.each do |court_date|
           Rails.logger.info { "Creating reminder for ctrack #{court_date['ofndr_num']}" }
           next if court_date['ofndr_num'].nil?
-          matching_rrs = ReportingRelationship.where(notes: court_date['ofndr_num'], active: true)
+          matching_rrs = ReportingRelationship.joins(:client).where(clients: { id_number: court_date['ofndr_num'] }, active: true)
           Rails.logger.info { "Found #{matching_rrs.count} RRs with IDs #{matching_rrs.pluck(:id)} with the same ctrack" }
 
           rr = matching_rrs.left_joins(:messages).order('messages.send_at DESC NULLS LAST').first
