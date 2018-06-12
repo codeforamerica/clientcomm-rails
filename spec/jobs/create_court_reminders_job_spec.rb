@@ -9,7 +9,7 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     let(:court_dates) { CSV.parse(File.read(court_dates_path), headers: true) }
     let(:court_locs) { CSV.parse(File.read(court_locs_path), headers: true) }
     let(:court_locs_hash) { CourtRemindersImporter.generate_locations_hash(court_locs) }
-    let!(:rr) { create :reporting_relationship, notes: '111', active: true }
+    let!(:rr) { create :reporting_relationship, active: true }
     let(:deploy_id) {
       URI.parse(ENV['DEPLOY_BASE_URL']).hostname.split('.')[0..1].join('_')
     }
@@ -19,7 +19,9 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     subject do
       described_class.perform_now(csv, user)
     end
-
+    before do
+      rr.client.update!(id_number: '111')
+    end
     it 'running the job sends calls CourtRemindersImporter' do
       expect(CourtRemindersImporter).to receive(:generate_reminders).with(court_dates, court_locs_hash, csv)
       subject
