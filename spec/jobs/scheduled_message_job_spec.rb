@@ -11,7 +11,9 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:message) { create :text_message, reporting_relationship: rr, send_at: send_at_time }
 
   subject do
-    perform_enqueued_jobs { ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com') }
+    perform_enqueued_jobs do
+      ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com')
+    end
   end
 
   it 'calls SMSService when performed' do
@@ -56,16 +58,24 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     it_behaves_like 'does not send'
   end
 
-  context 'the message has an invalid state' do
+  context 'retry on Twilio::REST::RequestError' do
+    let(:error) { Twilio::REST::RestError.new('Not Found', 20404, 404) }
+
+    it 'retries' do
+      expect(SMSService.instance).to receive(:send_message).exactly(4).times.and_raise(error)
+      expect(SMSService.instance).to receive(:send_message).and_return(nil)
+
+      subject
+    end
+  end
+
+  context 'any other error occurs' do
     before do
-      # rubocop:disable Rails/SkipsModelValidations
-      message.update_attribute(:number_to, nil)
-      # rubocop:enable Rails/SkipsModelValidations
+      allow(SMSService.instance).to receive(:send_message).and_raise('Any Other Error')
     end
 
-    it 'does not do a thing' do
-      expect(SMSService.instance).to_not receive(:send_message)
-      expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'bubbles the error up' do
+      expect { subject }.to raise_error('Any Other Error')
     end
   end
 

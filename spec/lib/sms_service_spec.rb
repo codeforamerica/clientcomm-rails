@@ -50,6 +50,7 @@ describe SMSService do
       factory_message.reload
       expect(factory_message.twilio_sid).to eq(message_sid)
       expect(factory_message.twilio_status).to eq(message_status)
+      expect(factory_message).to be_sent
     end
 
     it 'creates a MessageBroadcastJob' do

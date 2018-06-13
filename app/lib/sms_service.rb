@@ -28,6 +28,7 @@ class SMSService
     )
 
     message.update!(
+      sent: true,
       twilio_sid: response.sid,
       twilio_status: response.status
     )

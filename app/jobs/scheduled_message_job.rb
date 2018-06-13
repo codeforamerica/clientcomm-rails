@@ -1,6 +1,8 @@
 class ScheduledMessageJob < ApplicationJob
   include ActionView::RecordIdentifier
 
+  retry_on Twilio::REST::TwilioError, attempts: 5
+
   queue_as :default
 
   def perform(message:, send_at:, callback_url:)
@@ -8,13 +10,6 @@ class ScheduledMessageJob < ApplicationJob
     return unless message.send_at.to_i == send_at
 
     # Locking to prevent race conditions between jobs
-    begin
-      message.update!(sent: true)
-    rescue ActiveRecord::StaleObjectError
-      logger.warn('StaleObjectError on ScheduledMessageJob perform')
-      return
-    end
-
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
     SMSService.instance.send_message(
