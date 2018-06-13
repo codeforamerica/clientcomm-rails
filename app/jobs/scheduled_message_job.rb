@@ -9,7 +9,7 @@ class ScheduledMessageJob < ApplicationJob
 
     # Locking to prevent race conditions between jobs
     begin
-      message.update(sent: true)
+      message.update!(sent: true)
     rescue ActiveRecord::StaleObjectError
       logger.warn('StaleObjectError on ScheduledMessageJob perform')
       return

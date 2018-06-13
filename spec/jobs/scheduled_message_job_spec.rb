@@ -56,6 +56,19 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     it_behaves_like 'does not send'
   end
 
+  context 'the message has an invalid state' do
+    before do
+      # rubocop:disable Rails/SkipsModelValidations
+      message.update_attribute(:number_to, nil)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    it 'does not do a thing' do
+      expect(SMSService.instance).to_not receive(:send_message)
+      expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
   context 'When the user is the unclaimed user' do
     before do
       user.department.update(unclaimed_user: user)
