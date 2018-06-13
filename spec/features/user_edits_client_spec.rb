@@ -21,6 +21,7 @@ feature 'user edits client', :js do
   let(:new_note) { 'Here is a note.' }
   let(:new_phone_number) { '2024042234' }
   let(:new_phone_number_display) { '(202) 404-2234' }
+  let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
 
   let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   before do
@@ -46,12 +47,30 @@ feature 'user edits client', :js do
       fill_in 'Notes', with: new_note
       fill_in 'Phone number', with: new_phone_number
 
+      # if we don't interact with the datepicker, it persists and
+      # covers other ui elements
+      fill_in 'Court date (optional)', with: ''
+      find('.ui-datepicker-next').click
+      click_on future_date.strftime('%-d')
+
       old_name = clientone.full_name
       click_on 'Save changes'
 
       emails = ActionMailer::Base.deliveries
       expect(emails.count).to eq 1
       expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
+    end
+
+    step 'navigates to the edit client form' do
+      click_on 'Manage client'
+
+      expect(page).to have_current_path(edit_client_path(clientone))
+      expect(page).to have_field('First name', with: new_first_name)
+      expect(page).to have_field('Last name', with: new_last_name)
+      expect(page).to have_field('Phone number', with: new_phone_number_display)
+      expect(page).to have_field('Court date (optional)', with: future_date.strftime('%m/%d/%Y'))
+
+      click_on 'Cancel'
     end
 
     step 'loads the conversation page' do

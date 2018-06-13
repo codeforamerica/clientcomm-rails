@@ -32,6 +32,23 @@
         <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
       <% end %>
 
+      <div class="grid">
+        <div class="grid__item width-one-half">
+          <% date_picker_id = 'next_court_date_at' %>
+          <label for="<%= date_picker_id %>" class="form-question">Court date (optional)</label>
+          <%
+              next_court_date_at = ''
+              if @client.next_court_date_at.present?
+                next_court_date_at = @client.next_court_date_at.strftime('%m/%d/%Y')
+              end
+          %>
+          <input type="text" class="form-width--date text-input" name="client[next_court_date_at]" id="<%= date_picker_id %>" value="<%= next_court_date_at %>" />
+          <% if @client.errors[:next_court_date_at].any? %>
+            <p class="text--error"><%= @client.errors[:next_court_date_at].first %></p>
+          <% end %>
+        </div>
+      </div>
+
       <%= f.fields_for :reporting_relationships, @reporting_relationship, builder: GcfFormBuilder do |rr| %>
         <% if current_user.department.client_statuses? %>
           <%= rr.gcf_radio_set :client_status_id, "Client status", current_user.department.client_statuses.map {|status| {value: status.id, label: status.name, notes: status.followup_date}} %>

@@ -96,13 +96,11 @@ class ClientsController < ApplicationController
     if @client.update(client_params)
       if @reporting_relationship.reload.active
         notify_users_of_changes
-
         analytics_track(
           label: 'client_edit_success',
           data: @client.analytics_tracker_data
                   .merge(@reporting_relationship.analytics_tracker_data)
         )
-
         redirect_to reporting_relationship_path(@reporting_relationship)
       else
         @reporting_relationship.deactivate
@@ -159,13 +157,12 @@ class ClientsController < ApplicationController
 
     other_active_relationships = @client.reporting_relationships
                                         .active.where.not(user: current_user)
-
     other_active_relationships.each do |rr|
       NotificationMailer.client_edit_notification(
         notified_user: rr.user,
         editing_user: current_user,
         client: @client,
-        previous_changes: @client.previous_changes.except(:updated_at)
+        previous_changes: @client.previous_changes.except(:updated_at, :next_court_date_at)
       ).deliver_later
     end
   end
@@ -198,6 +195,7 @@ class ClientsController < ApplicationController
                   :client_status_id,
                   :id_number,
                   :phone_number,
+                  :next_court_date_at,
                   :notes,
                   reporting_relationships_attributes: %i[
                     id notes client_status_id active
