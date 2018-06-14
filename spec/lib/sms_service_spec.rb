@@ -25,12 +25,12 @@ describe SMSService do
   end
 
   describe '#send_message' do
-    subject { sms_service.send_message(message: factory_message, callback_url: callback_url) }
-
     let(:callback_url) { 'whocares.com' }
-    let(:factory_message) { create :text_message, twilio_sid: nil, twilio_status: nil, inbound: false }
+    let(:message) { create :text_message, twilio_sid: nil, twilio_status: nil, inbound: false }
     let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
+
+    subject { sms_service.send_message(to: message.client.phone_number, from: message.number_from, body: message.body, callback_url: callback_url) }
 
     before do
       allow(MessageBroadcastJob).to receive(:perform_now)
