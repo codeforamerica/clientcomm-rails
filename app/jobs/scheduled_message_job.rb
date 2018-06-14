@@ -21,8 +21,8 @@ class ScheduledMessageJob < ApplicationJob
 
     message.update!(
       sent: true,
-      twilio_sid: message_info[:twilio_sid],
-      twilio_status: message_info[:twilio_status]
+      twilio_sid: message_info.sid,
+      twilio_status: message_info.status
     )
 
     MessageBroadcastJob.perform_now(message: message)
