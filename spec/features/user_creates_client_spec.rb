@@ -16,7 +16,7 @@ feature 'User creates client' do
   let(:notes) { 'some notes' }
   let(:phone_number) { '+12345678910' }
   let(:phone_number_display) { '(234) 567-8910' }
-
+  let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
   before do
     FeatureFlag.create!(flag: 'client_id_number', enabled: true)
     login_as(myuser, scope: :user)
@@ -31,14 +31,18 @@ feature 'User creates client' do
     fill_in 'Phone number', with: phone_number
     fill_in 'ID number', with: id_number
     fill_in 'Notes', with: notes
+    fill_in 'Court date (optional)', with: ''
+    find('.ui-datepicker-next').click
+    click_on future_date.strftime('%-d')
     click_on 'Save new client'
-
     expect(page).to have_content first_name
     expect(page).to have_content last_name
+
     click_on 'Manage client'
 
     expect(find_field('Notes').value).to eq notes
     expect(find_field('ID number').value).to eq id_number
+    expect(find_field('Court date (optional)').value).to eq future_date.strftime('%m/%d/%Y')
   end
 
   scenario 'unsuccessfully' do

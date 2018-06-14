@@ -205,6 +205,7 @@ class ClientsController < ApplicationController
                   ]).tap do |p|
       p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
       p[:surveys_attributes]['0'][:user_id] = current_user.id if p.dig(:surveys_attributes, '0')
+      p[:next_court_date_at] = Date.strptime(p[:next_court_date_at], '%m/%d/%Y').strftime('%d/%m/%Y') if p[:next_court_date_at].present?
     end
   end
 end

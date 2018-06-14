@@ -34,6 +34,7 @@ describe 'Clients requests', type: :request do
       let(:phone_number) { '+14663364863' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
+      let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
       let!(:client_status) { create :client_status }
 
       subject do
@@ -42,6 +43,7 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
+            next_court_date_at: future_date.strftime('%m/%d/%Y'),
             reporting_relationships_attributes: {
               '0': {
                 user_id: user.id,
@@ -69,6 +71,7 @@ describe 'Clients requests', type: :request do
         expect(client.phone_number).to eq phone_number
         expect(rr.notes).to eq notes
         expect(rr.client_status).to eq client_status
+        expect(client.next_court_date_at).to eq future_date.to_date
       end
 
       it 'tracks the creation of a new client' do
@@ -293,6 +296,7 @@ describe 'Clients requests', type: :request do
       let(:id_number) { '1234' }
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
+      let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
       let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
 
       subject do
@@ -302,6 +306,7 @@ describe 'Clients requests', type: :request do
             last_name: last_name,
             phone_number: phone_number,
             id_number: id_number,
+            next_court_date_at: future_date.strftime('%m/%d/%Y'),
             reporting_relationships_attributes: {
               '0': {
                 id: existing_client.reporting_relationships.find_by(user: user).id,
@@ -422,6 +427,7 @@ describe 'Clients requests', type: :request do
         expect(client.phone_number).to eq phone_number
         expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
         expect(client.id_number).to eq id_number
+        expect(client.next_court_date_at).to eq future_date.to_date
       end
 
       context 'a client has active users in multiple departments' do

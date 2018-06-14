@@ -22,7 +22,7 @@ describe 'User requests', type: :request do
       end
     end
 
-    describe 'PUT#udpate' do
+    describe 'PUT#update' do
       context 'update account information' do
         let(:new_name) { Faker::Name.name }
         let(:new_email) { Faker::Internet.unique.email }

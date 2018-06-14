@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 20180613212947) do
 
   create_table "messages", id: :serial, force: :cascade do |t|
     t.string "body", default: ""
-    t.string "number_from"
+    t.string "number_from", default: "+15555555555"
     t.string "number_to"
     t.boolean "inbound", default: false, null: false
     t.string "twilio_sid"

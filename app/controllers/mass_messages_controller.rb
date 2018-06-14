@@ -68,8 +68,6 @@ class MassMessagesController < ApplicationController
       message = TextMessage.create!(
         body: mass_message.message,
         reporting_relationship: rr,
-        number_from: current_user.department.phone_number,
-        number_to: rr.client.phone_number,
         read: true,
         inbound: false,
         send_at: send_at

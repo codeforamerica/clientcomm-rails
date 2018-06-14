@@ -61,18 +61,6 @@ feature 'user edits client', :js do
       expect(emails.first.html_part.to_s).to include "#{old_name}'s name is now"
     end
 
-    step 'navigates to the edit client form' do
-      click_on 'Manage client'
-
-      expect(page).to have_current_path(edit_client_path(clientone))
-      expect(page).to have_field('First name', with: new_first_name)
-      expect(page).to have_field('Last name', with: new_last_name)
-      expect(page).to have_field('Phone number', with: new_phone_number_display)
-      expect(page).to have_field('Court date (optional)', with: future_date.strftime('%m/%d/%Y'))
-
-      click_on 'Cancel'
-    end
-
     step 'loads the conversation page' do
       clientone.reload
       rr = my_user.reporting_relationships.find_by(client: clientone)
@@ -89,6 +77,10 @@ feature 'user edits client', :js do
     step 'navigates to edit client form' do
       click_on 'Manage client'
       expect(find_field('Notes').value).to eq new_note
+      expect(page).to have_field('First name', with: new_first_name)
+      expect(page).to have_field('Last name', with: new_last_name)
+      expect(page).to have_field('Phone number', with: new_phone_number_display)
+      expect(page).to have_field('Court date (optional)', with: future_date.strftime('%m/%d/%Y'))
     end
 
     step 'logs in as the other user' do
