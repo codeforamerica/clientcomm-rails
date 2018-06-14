@@ -33,9 +33,11 @@ namespace :messages do
       message = message.to_h.with_indifferent_access
       client = Client.find_by(phone_number: message[:number_to])
 
-      rrs = client.reporting_relationships.active
-      next if rrs.empty?
-      raise 'Uh Oh' if rrs.count > 1
+      rrs = client.reporting_relationships.order(last_contacted_at: :desc)
+      if rrs.empty?
+        print '?'
+        next
+      end
 
       rr = rrs.first
 
@@ -53,6 +55,9 @@ namespace :messages do
 
       if tm.persisted?
         print '!'
+      elsif !rr.active
+        tm.save!
+        print '-'
       else
         tm.save!
         print '#'
