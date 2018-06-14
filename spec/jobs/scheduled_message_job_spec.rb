@@ -11,7 +11,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:message) { create :text_message, reporting_relationship: rr, send_at: send_at_time }
   let(:message_sid) { 'some sid' }
   let(:message_status) { 'some status' }
-  let(:message_info) { { twilio_sid: message_sid, twilio_status: message_status } }
+  let(:message_info) { MessageInfo.new(message_sid, message_status) }
 
   subject do
     perform_enqueued_jobs do

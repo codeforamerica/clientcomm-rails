@@ -38,7 +38,7 @@ describe SMSService do
     end
 
     it 'returns the twilio sid and status' do
-      expect(subject).to eq(twilio_sid: message_sid, twilio_status: message_status)
+      expect(subject).to eq(MessageInfo.new(message_sid, message_status))
     end
   end
 

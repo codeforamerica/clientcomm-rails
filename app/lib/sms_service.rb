@@ -1,6 +1,8 @@
 require 'singleton'
 require 'erb'
 
+MessageInfo = Struct.new(:sid, :status)
+
 class SMSService
   include AnalyticsHelper
   include Singleton
@@ -27,7 +29,7 @@ class SMSService
       callback_url: callback_url
     )
 
-    { twilio_sid: response.sid, twilio_status: response.status }
+    MessageInfo.new(response.sid, response.status)
   end
 
   def redact_message(message:)
