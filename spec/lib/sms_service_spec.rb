@@ -37,36 +37,8 @@ describe SMSService do
       allow(twilio_client).to receive(:create).and_return(response)
     end
 
-    it 'updates the message with twilio info' do
-      subject
-
-      expect(twilio_client).to have_received(:create).with(
-        from:           factory_message.reporting_relationship.user.department.phone_number,
-        to:             factory_message.client.phone_number,
-        body:           factory_message.body,
-        status_callback: callback_url
-      )
-
-      factory_message.reload
-      expect(factory_message.twilio_sid).to eq(message_sid)
-      expect(factory_message.twilio_status).to eq(message_status)
-      expect(factory_message).to be_sent
-    end
-
-    it 'creates a MessageBroadcastJob' do
-      expect(MessageBroadcastJob).to receive(:perform_now).with(
-        message: factory_message
-      )
-
-      subject
-    end
-
-    it 'creates a delayed MessageRedactionJob' do
-      expect(MessageRedactionJob).to receive(:perform_later).with(
-        message: factory_message
-      )
-
-      subject
+    it 'returns the twilio sid and status' do
+      expect(subject).to eq(twilio_sid: message_sid, twilio_status: message_status)
     end
   end
 

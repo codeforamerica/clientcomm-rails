@@ -12,10 +12,19 @@ class ScheduledMessageJob < ApplicationJob
     # Locking to prevent race conditions between jobs
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
-    SMSService.instance.send_message(
+    message_info = SMSService.instance.send_message(
       message: message,
       callback_url: callback_url
     )
+
+    message.update!(
+      sent: true,
+      twilio_sid: message_info[:twilio_sid],
+      twilio_status: message_info[:twilio_status]
+    )
+
+    MessageBroadcastJob.perform_now(message: message)
+    MessageRedactionJob.perform_later(message: message)
 
     if message.user == message.user.department.unclaimed_user && ((message.send_at - message.created_at) > 30.minutes)
       Rails.logger.warn { "Unclaimed user id: #{message.user.id} sent message id: #{message.id}" }
