@@ -27,14 +27,7 @@ class SMSService
       callback_url: callback_url
     )
 
-    message.update!(
-      sent: true,
-      twilio_sid: response.sid,
-      twilio_status: response.status
-    )
-
-    MessageBroadcastJob.perform_now(message: message)
-    MessageRedactionJob.perform_later(message: message)
+    { twilio_sid: response.sid, twilio_status: response.status }
   end
 
   def redact_message(message:)
