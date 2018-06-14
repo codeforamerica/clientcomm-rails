@@ -18,12 +18,12 @@ class SMSService
     twilio_message.status
   end
 
-  def send_message(message:, callback_url:)
+  def send_message(to:, from:, body:, callback_url:)
     # send the message via Twilio
     response = send_twilio_message(
-      to: message.client.phone_number,
-      from: message.number_from,
-      body: message.body,
+      to: to,
+      from: from,
+      body: body,
       callback_url: callback_url
     )
 

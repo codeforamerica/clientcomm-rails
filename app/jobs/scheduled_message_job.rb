@@ -13,7 +13,9 @@ class ScheduledMessageJob < ApplicationJob
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
     message_info = SMSService.instance.send_message(
-      message: message,
+      to: message.client.phone_number,
+      from: message.number_from,
+      body: message.body,
       callback_url: callback_url
     )
 

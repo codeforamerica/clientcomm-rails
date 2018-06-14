@@ -21,8 +21,12 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
   before do
     allow(SMSService.instance).to receive(:send_message)
-      .with(message: message, callback_url: 'whocares.com')
-      .and_return(message_info)
+      .with(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        callback_url: 'whocares.com'
+      ).and_return(message_info)
 
     allow(MessageBroadcastJob).to receive(:perform_now).and_return(nil)
     allow(MessageRedactionJob).to receive(:perform_now).and_return(nil)
