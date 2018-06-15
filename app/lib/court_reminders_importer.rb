@@ -19,7 +19,7 @@ module CourtRemindersImporter
           total_rrs += matching_rrs_count
           Rails.logger.tagged("client: #{rr.client.id}") do
             court_date_at = Time.strptime("#{court_date['crt_dt']} #{court_date['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
-            next if court_date_at < Time.zone.now
+            next if court_date_at < Time.zone.now + 1.day
 
             body = I18n.t(
               'message.auto_court_reminder',
