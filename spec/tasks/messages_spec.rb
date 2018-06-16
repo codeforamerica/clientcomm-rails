@@ -24,6 +24,8 @@ describe 'messages rake tasks' do
       @token = ENV['TWILIO_AUTH_TOKEN']
       ENV['TWILIO_ACCOUNT_SID'] = sid
       ENV['TWILIO_AUTH_TOKEN'] = token
+
+      allow(Rails.logger).to receive :info
     end
 
     after do
@@ -35,6 +37,11 @@ describe 'messages rake tasks' do
       transient_messages = Message.where.not(inbound: true, twilio_status: %w[delivered undelivered])
       undelivered_messages = Message.where(twilio_status: 'undelivered')
       received_messages = Message.where(twilio_status: 'received')
+
+      expect(Rails.logger).to receive(:info).with("updating #{transient_messages.count} transient messages")
+      expect(Rails.logger).to receive(:info).with("updating transient message #{accepted_message.id}")
+      expect(Rails.logger).to receive(:info).with("updating transient message #{queued_message.id}")
+      expect(Rails.logger).to receive(:info).with("updating transient message #{sending_message.id}")
 
       expect(SMSService.instance).to receive(:status_lookup)
         .with(message: accepted_message)

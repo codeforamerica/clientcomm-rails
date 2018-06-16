@@ -33,9 +33,11 @@ class SMSService
   end
 
   def redact_message(message:)
+    Rails.logger.tagged('redact message') { Rails.logger.info "redacting #{message.id}" }
     twilio_message = @client.api.account.messages(message.twilio_sid).fetch
     twilio_message.update(body: '')
 
+    Rails.logger.tagged('redact message') { Rails.logger.info "deleting #{twilio_message.num_media} media items from message #{message.id}" }
     twilio_message.media.list.each(&:delete) if twilio_message.num_media != '0'
 
     true

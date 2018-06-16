@@ -60,7 +60,7 @@ describe SMSService do
   end
 
   describe '#redact_message' do
-    let(:message) { double('twilio_message', twilio_sid: message_sid) }
+    let(:message) { double('twilio_message', twilio_sid: message_sid, id: 22) }
     let(:media_one) { double('media') }
     let(:media_two) { double('media') }
     let(:media_list) { [media_one, media_two] }
@@ -68,6 +68,7 @@ describe SMSService do
     subject { sms_service.redact_message(message: message) }
 
     before do
+      allow(Rails.logger).to receive :info
       allow(twilio_client).to receive(:messages).with(message_sid).and_return(twilio_client)
       allow(twilio_client).to receive(:fetch).and_return(message)
       allow(message).to receive(:update)
@@ -77,6 +78,8 @@ describe SMSService do
     end
 
     it 'calls redact on the message' do
+      expect(Rails.logger).to receive(:info).with("redacting #{message.id}")
+      expect(Rails.logger).to receive(:info).with("deleting 0 media items from message #{message.id}")
       expect(message).to receive(:update).with(body: '')
 
       expect(subject).to eq true
@@ -88,6 +91,7 @@ describe SMSService do
       end
 
       it 'deletes any associated media' do
+        expect(Rails.logger).to receive(:info).with("deleting 2 media items from message #{message.id}")
         expect(message).to receive(:media).and_return(double('list', list: media_list))
 
         media_list.each do |media|
