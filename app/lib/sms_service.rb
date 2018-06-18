@@ -1,6 +1,8 @@
 require 'singleton'
 require 'erb'
 
+MessageInfo = Struct.new(:sid, :status)
+
 class SMSService
   include AnalyticsHelper
   include Singleton
@@ -18,29 +20,24 @@ class SMSService
     twilio_message.status
   end
 
-  def send_message(message:, callback_url:)
+  def send_message(to:, from:, body:, callback_url:)
     # send the message via Twilio
     response = send_twilio_message(
-      to: message.client.phone_number,
-      from: message.number_from,
-      body: message.body,
+      to: to,
+      from: from,
+      body: body,
       callback_url: callback_url
     )
 
-    message.update!(
-      sent: true,
-      twilio_sid: response.sid,
-      twilio_status: response.status
-    )
-
-    MessageBroadcastJob.perform_now(message: message)
-    MessageRedactionJob.perform_later(message: message)
+    MessageInfo.new(response.sid, response.status)
   end
 
   def redact_message(message:)
+    Rails.logger.tagged('redact message') { Rails.logger.info "redacting #{message.id}" }
     twilio_message = @client.api.account.messages(message.twilio_sid).fetch
     twilio_message.update(body: '')
 
+    Rails.logger.tagged('redact message') { Rails.logger.info "deleting #{twilio_message.num_media} media items from message #{message.id}" }
     twilio_message.media.list.each(&:delete) if twilio_message.num_media != '0'
 
     true

@@ -5,6 +5,7 @@ describe CourtRemindersImporter do
     subject { described_class.generate_reminders(court_dates, court_locs, csv) }
     let(:admin_user) { create :admin_user }
     let(:ctracks) { %w[111 112 113] }
+    let(:time_zone_offset) { '-0600' }
     let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), admin_user: admin_user) }
     let(:court_dates) do
       [
@@ -33,7 +34,7 @@ describe CourtRemindersImporter do
       rr2.client.update!(id_number: ctracks[1])
       rr3.client.update!(id_number: ctracks[2])
       rr_irrelevant.client.update!(id_number: 91111111111)
-      travel_to Time.strptime('5/1/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+      travel_to Time.strptime("5/1/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
     end
 
     after do
@@ -51,7 +52,7 @@ describe CourtRemindersImporter do
         time: '8:30am',
         room: '1'
       )
-      time1 = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+      time1 = Time.strptime("5/7/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message1 = rr1.messages.scheduled.last
       expect(message1.body).to eq body1
       expect(message1.send_at).to eq time1
@@ -68,7 +69,7 @@ describe CourtRemindersImporter do
         time: '9:40am',
         room: '2'
       )
-      time2 = Time.strptime('5/8/2018 9:40 -0600', '%m/%d/%Y %H:%M %z')
+      time2 = Time.strptime("5/8/2018 9:40 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message2 = rr2.messages.scheduled.last
       expect(message2.body).to eq body2
       expect(message2.send_at).to eq time2
@@ -84,7 +85,7 @@ describe CourtRemindersImporter do
         time: '2:30pm',
         room: '3'
       )
-      time3 = Time.strptime('5/9/2018 14:30 -0600', '%m/%d/%Y %H:%M %z')
+      time3 = Time.strptime("5/9/2018 14:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message3 = rr3.messages.scheduled.last
       expect(message3.body).to eq body3
       expect(message3.send_at).to eq time3
@@ -141,17 +142,43 @@ describe CourtRemindersImporter do
     context 'there are court dates in the past' do
       let(:court_dates) do
         [
-          { 'ofndr_num' => '111', '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '1/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
-          { 'ofndr_num' => '112', '(expression)' => '8675R', 'lname' => 'SIMON',  'crt_dt' => '5/9/2018', 'crt_tm' => '9:40', 'crt_rm' => '2' },
-          { 'ofndr_num' => '113', '(expression)' => '1776B', 'lname' => 'BARTH',  'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' },
-          { 'ofndr_num' => 'not found', '(expression)' => '1776B', 'lname' => 'BARTH', 'crt_dt' => '5/10/2018', 'crt_tm' => '14:30', 'crt_rm' => '3' }
+          { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '1/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },
+          { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' }
         ]
       end
 
       it 'ignores past court dates' do
         subject
 
-        expect(rr1.messages).to be_empty
+        first_date = Time.strptime("#{court_dates[0]['crt_dt']} #{court_dates[0]['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
+        expect(first_date).to be < Time.zone.now
+
+        second_date = Time.strptime("#{court_dates[1]['crt_dt']} #{court_dates[1]['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
+        expect(second_date).to be > Time.zone.now + 1.day
+
+        expect(rr1.messages.count).to eq 1
+      end
+    end
+
+    context 'there are court dates less than 24 hours in the future' do
+      let(:court_dates) do
+        [
+          { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/1/2018', 'crt_tm' => '9:00', 'crt_rm' => '1' },
+          { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' }
+        ]
+      end
+
+      it 'ignores near-future court dates' do
+        subject
+
+        first_date = Time.strptime("#{court_dates[0]['crt_dt']} #{court_dates[0]['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
+        expect(first_date).to be > Time.zone.now
+        expect(first_date).to be < Time.zone.now + 1.day
+
+        second_date = Time.strptime("#{court_dates[1]['crt_dt']} #{court_dates[1]['crt_tm']} #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
+        expect(second_date).to be > Time.zone.now + 1.day
+
+        expect(rr1.messages.count).to eq 1
       end
     end
 
@@ -176,7 +203,7 @@ describe CourtRemindersImporter do
           time: '8:30am',
           room: '1'
         )
-        time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+        time = Time.strptime("5/7/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
         message = rr4.messages.scheduled.last
         expect(message.body).to eq body
         expect(message.send_at).to eq time
@@ -204,7 +231,7 @@ describe CourtRemindersImporter do
             time: '8:30am',
             room: '1'
           )
-          time = Time.strptime('5/7/2018 8:30 -0600', '%m/%d/%Y %H:%M %z')
+          time = Time.strptime("5/7/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
           message = rr4.messages.scheduled.last
           expect(message.body).to eq body
           expect(message.send_at).to eq time

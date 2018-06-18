@@ -9,6 +9,9 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:client) { create :client, users: [user] }
   let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
   let(:message) { create :text_message, reporting_relationship: rr, send_at: send_at_time }
+  let(:message_sid) { 'some sid' }
+  let(:message_status) { 'some status' }
+  let(:message_info) { MessageInfo.new(message_sid, message_status) }
 
   subject do
     perform_enqueued_jobs do
@@ -16,9 +19,20 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     end
   end
 
-  it 'calls SMSService when performed' do
-    expect(SMSService.instance).to receive(:send_message).with(message: message, callback_url: 'whocares.com')
+  before do
+    allow(SMSService.instance).to receive(:send_message)
+      .with(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        callback_url: 'whocares.com'
+      ).and_return(message_info)
 
+    allow(MessageBroadcastJob).to receive(:perform_now).and_return(nil)
+    allow(MessageRedactionJob).to receive(:perform_now).and_return(nil)
+  end
+
+  it 'calls SMSService when performed' do
     rr = message.client.reporting_relationship(user: message.user)
     expect(MessagesController).to receive(:render)
       .with(partial: 'reporting_relationships/scheduled_messages_link', locals: { count: count, rr: rr })
@@ -32,6 +46,31 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     message.reload
 
     expect(message.client.last_contacted_at(user: message.user)).to be_within(0.1.seconds).of send_at_time
+  end
+
+  it 'updates the message with twilio info' do
+    subject
+
+    message.reload
+    expect(message.twilio_sid).to eq(message_sid)
+    expect(message.twilio_status).to eq(message_status)
+    expect(message).to be_sent
+  end
+
+  it 'creates a MessageBroadcastJob' do
+    expect(MessageBroadcastJob).to receive(:perform_now).with(
+      message: message
+    )
+
+    subject
+  end
+
+  it 'creates a delayed MessageRedactionJob' do
+    expect(MessageRedactionJob).to receive(:perform_later).with(
+      message: message
+    )
+
+    subject
   end
 
   shared_examples 'does not send' do
@@ -63,7 +102,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
     it 'retries' do
       expect(SMSService.instance).to receive(:send_message).exactly(4).times.and_raise(error)
-      expect(SMSService.instance).to receive(:send_message).and_return(nil)
+      expect(SMSService.instance).to receive(:send_message).and_return(message_info)
 
       subject
     end
