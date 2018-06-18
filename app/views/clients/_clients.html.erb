@@ -32,22 +32,23 @@
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
         Last contact
       </th>
+      <% if current_user.department.client_statuses? %>
       <th class="sort hidden-xs" data-sort="client-status">
-        <% if current_user.department.client_statuses? %>
-            <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-            Status
-        <% else %>
-            Action
-        <% end %>
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        Status
       </th>
-      <% if FeatureFlag.enabled?('court_dates') %>
+      <% elsif FeatureFlag.enabled?('court_dates') %>
       <th class="sort hidden-xs" data-sort="next-court-date-at">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
         Court date
+      </th>
+      <% else %>
+      <th class="sort hidden-xs">
+        Action
       </th>
       <% end %>
     </tr>
