@@ -30,13 +30,15 @@ describe Department, type: :model do
     let(:normalized_phone_number) { '+17605557890' }
     before do
       allow(SMSService.instance).to receive(:number_lookup)
-        .with(phone_number: input_phone_number)
-        .and_return(normalized_phone_number)
     end
 
     subject { create :department, phone_number: input_phone_number }
 
     it 'formats the phone number' do
+      expect(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: input_phone_number)
+        .and_return(normalized_phone_number)
+
       expect(subject.reload.phone_number).to eq(normalized_phone_number)
     end
   end
@@ -76,7 +78,7 @@ describe Department, type: :model do
 
     it 'returns accurate metrics' do
       metrics = department.message_metrics now
-      expect(metrics.count).to eq 2
+      expect(metrics.count).to eq 3
       expect(metrics).to include([user1.full_name, outbound1_count, inbound1_count, outbound1_count + inbound1_count])
       expect(metrics).to include([user2.full_name, outbound2_count, inbound2_count, outbound2_count + inbound2_count])
     end
@@ -88,7 +90,7 @@ describe Department, type: :model do
 
       it 'scopes metrics by the date passed in' do
         metrics = department.message_metrics now
-        expect(metrics.count).to eq 2
+        expect(metrics.count).to eq 3
         expect(metrics).to include([user1.full_name, outbound1_count, inbound1_count, outbound1_count + inbound1_count])
         expect(metrics).to include([user2.full_name, outbound2_count, inbound2_count, outbound2_count + inbound2_count])
       end

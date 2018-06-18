@@ -137,24 +137,27 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'normalizing' do
-    let(:dept) { create :department, phone_number: department_number }
-    let(:user) { create :user, department: dept, phone_number: user_number }
-    let(:client) { create :client, user: user, phone_number: client_number }
     let(:normalized_client_number) { 'fake_client_number_normal' }
 
     before do
       allow(SMSService.instance).to receive(:number_lookup)
-        .with(phone_number: department_number)
-        .and_return('fake_normal_number')
-      allow(SMSService.instance).to receive(:number_lookup)
-        .with(phone_number: user_number)
-        .and_return('fake_normal_number')
-      allow(SMSService.instance).to receive(:number_lookup)
-        .with(phone_number: client_number)
-        .and_return(normalized_client_number)
     end
 
     it 'formats the phone number' do
+      expect(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: department_number)
+        .and_return('fake_normal_number')
+      expect(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: user_number)
+        .and_return('fake_normal_number')
+      expect(SMSService.instance).to receive(:number_lookup)
+        .with(phone_number: client_number)
+        .and_return(normalized_client_number)
+
+      dept = create :department, phone_number: department_number
+      user = create :user, department: dept, phone_number: user_number
+      client = create :client, user: user, phone_number: client_number
+
       expect(client.reload.phone_number).to eq(normalized_client_number)
     end
   end

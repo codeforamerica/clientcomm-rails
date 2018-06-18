@@ -184,7 +184,7 @@ feature 'Admin Panel' do
 
         expect(page).to have_content('Transfer Client')
         expect(page).to have_content('Change user')
-        expect(page).to have_select("user_in_dept_#{department2.id}", options: ['', user3.full_name])
+        expect(page).to have_select("user_in_dept_#{department2.id}", options: ['', user3.full_name, department2.unclaimed_user.full_name])
         expect(page).to have_content('Include a message for the new user')
       end
 
@@ -304,7 +304,7 @@ feature 'Admin Panel' do
 
         expect(page).to have_content('Transfer Client')
         expect(page).to have_content('Change user')
-        expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+        expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name, department2.unclaimed_user.full_name])
         expect(page).to have_content('Include a message for the new user')
       end
 
@@ -345,7 +345,7 @@ feature 'Admin Panel' do
 
           expect(page).to have_content('Transfer Client')
           expect(page).to have_content('Change user')
-          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name, department1.unclaimed_user.full_name])
           expect(page).to have_content('Include a message for the new user')
         end
 
@@ -360,7 +360,7 @@ feature 'Admin Panel' do
 
           expect(page).to have_content('Transfer Client and Mark Messages As Read')
           expect(page).to have_content('Change user')
-          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name])
+          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name, department1.unclaimed_user.full_name])
           expect(page).to have_content('Include a message for the new user')
 
           expect(page).to have_content('This client has unread messages. The messages will not be transferred to the new user.')

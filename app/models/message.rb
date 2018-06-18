@@ -92,29 +92,28 @@ class Message < ApplicationRecord
     from_phone_number = twilio_params[:From]
     to_phone_number = twilio_params[:To]
 
-    client = Client.find_by(phone_number: from_phone_number)
     department = Department.find_by(phone_number: to_phone_number)
 
-    if client.nil?
-      user = department.unclaimed_user
+    begin
       client = Client.create!(
         phone_number: from_phone_number,
         last_name: from_phone_number,
         users: [department.unclaimed_user]
       )
-    else
+    rescue ActiveRecord::RecordInvalid
+      client = Client.find_by(phone_number: from_phone_number)
       user = department.users
                        .active
                        .joins(:reporting_relationships)
                        .order('reporting_relationships.active DESC')
                        .order('reporting_relationships.updated_at DESC')
                        .find_by(reporting_relationships: { client: client })
-
       user ||= department.unclaimed_user
+    else
+      user = department.unclaimed_user
     end
 
     rr = ReportingRelationship.find_or_create_by(user: user, client: client)
-
     new_message = TextMessage.new(
       reporting_relationship: rr,
       inbound: true,
