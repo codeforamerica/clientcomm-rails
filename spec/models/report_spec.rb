@@ -14,6 +14,7 @@ RSpec.describe Report, type: :model do
     let(:report) { create :report, department: department }
 
     it 'returns active users' do
+      active_users << department.unclaimed_user
       expect(report.users).to match_array(active_users)
     end
   end
