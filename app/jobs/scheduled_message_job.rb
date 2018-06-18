@@ -1,7 +1,7 @@
 class ScheduledMessageJob < ApplicationJob
   include ActionView::RecordIdentifier
 
-  retry_on Twilio::REST::TwilioError, attempts: 5
+  retry_on Twilio::REST::TwilioError
 
   queue_as :default
 

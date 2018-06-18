@@ -6,6 +6,7 @@ class MessageRedactionJob < ApplicationJob
 
   retry_on TwilioNotFound, wait: :exponentially_longer
   retry_on TwilioNotComplete, wait: :exponentially_longer
+  retry_on Faraday::ConnectionFailed, wait: :exponentially_longer
 
   def perform(message:)
     SMSService.instance.redact_message(message: message)
