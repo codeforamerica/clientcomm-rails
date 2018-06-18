@@ -42,6 +42,14 @@
             Action
         <% end %>
       </th>
+      <% if FeatureFlag.enabled?('court_dates') %>
+      <th class="sort hidden-xs" data-sort="next-court-date-at">
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        Court date
+      </th>
+      <% end %>
     </tr>
     </thead>
     <tbody class="list">
@@ -74,7 +82,7 @@
                 <a class="cell-content"
                    href="<%= edit_client_path(client.id) %>">
                   <i class="hidden-xs status-icon" style="background-color:<%= rr.client_status.icon_color if rr.client_status %>"></i>
-                  <%= rr.client_status ? rr.client_status.name : '--' %>
+                  <%= rr.client_status&.name || '--' %>
                 </a>
               </td>
             <% else %>
@@ -84,6 +92,13 @@
                 </a>
               </td>
             <% end %>
+          <% if FeatureFlag.enabled?('court_dates') %>
+          <td class="hidden-xs next-court-date-at" data-next-court-date-at="<%= client.next_court_date_at&.to_time&.to_i || 99999999999 %>">
+            <a class="cell-content" href="<%= edit_client_path(client.id) %>">
+              <%= client.next_court_date_at&.strftime('%m/%d/%Y') || '--' %>
+            </a>
+          </td>
+          <% end %>
         </tr>
     <% end %>
     </tbody>

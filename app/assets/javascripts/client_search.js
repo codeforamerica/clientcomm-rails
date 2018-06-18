@@ -11,7 +11,8 @@ function clientListInit() {
       { attr: 'data-fullname', name: 'fullname' },
       { attr: 'data-lastname', name: 'lastname' },
       { attr: 'data-timestamp', name: 'timestamp' },
-      { attr: 'data-client-status', name: 'client-status' }
+      { attr: 'data-client-status', name: 'client-status' },
+      { attr: 'data-next-court-date-at', name: 'next-court-date-at' }
     ]
   };
 

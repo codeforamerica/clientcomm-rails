@@ -19,6 +19,7 @@ feature 'User creates client' do
   let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
   before do
     FeatureFlag.create!(flag: 'client_id_number', enabled: true)
+    FeatureFlag.create!(flag: 'court_dates', enabled: true)
     login_as(myuser, scope: :user)
     visit root_path
     click_on 'New client'

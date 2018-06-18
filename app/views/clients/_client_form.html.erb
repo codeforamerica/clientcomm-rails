@@ -32,6 +32,7 @@
         <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
       <% end %>
 
+      <% if FeatureFlag.enabled?('court_dates') %>
       <div class="grid">
         <div class="grid__item width-one-half">
           <% date_picker_id = 'next_court_date_at' %>
@@ -48,6 +49,7 @@
           <% end %>
         </div>
       </div>
+      <% end %>
 
       <%= f.fields_for :reporting_relationships, @reporting_relationship, builder: GcfFormBuilder do |rr| %>
         <% if current_user.department.client_statuses? %>

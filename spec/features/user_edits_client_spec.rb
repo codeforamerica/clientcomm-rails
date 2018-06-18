@@ -25,6 +25,7 @@ feature 'user edits client', :js do
 
   let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   before do
+    FeatureFlag.create!(flag: 'court_dates', enabled: true)
     other_user.clients << clientone
     login_as my_user, scope: :user
     visit root_path
@@ -83,8 +84,15 @@ feature 'user edits client', :js do
       expect(page).to have_field('Court date (optional)', with: future_date.strftime('%m/%d/%Y'))
     end
 
+    step 'visits client list and clicks on court date to edit client' do
+      visit root_path
+      click_on future_date.strftime('%m/%d/%Y')
+      expect(page).to have_current_path(edit_client_path(clientone))
+    end
+
     step 'logs in as the other user' do
       logout(my_user)
+      page.reset!
       login_as other_user, scope: :user
       visit root_path
     end

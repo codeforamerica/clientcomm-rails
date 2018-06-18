@@ -220,6 +220,9 @@ describe 'Clients', type: :request, active_job: true do
     let(:first_name) { 'Joanne' }
     let(:last_name) { 'Smith' }
     let(:phone_number) { 'Some phone number' }
+    let(:year) { 2018 }
+    let(:month) { 7 }
+    let(:day) { 21 }
     let(:id_number) { '1234567' }
     let(:params) do
       {
@@ -227,7 +230,10 @@ describe 'Clients', type: :request, active_job: true do
           first_name: first_name,
           last_name: last_name,
           phone_number: phone_number,
-          id_number: id_number
+          id_number: id_number,
+          'next_court_date_at(1i)': year,
+          'next_court_date_at(2i)': month,
+          'next_court_date_at(3i)': day
         }
       }
     end
@@ -239,6 +245,7 @@ describe 'Clients', type: :request, active_job: true do
       expect(client_reloaded.first_name).to eq first_name
       expect(client_reloaded.last_name).to eq last_name
       expect(client_reloaded.phone_number).to eq phone_number
+      expect(client_reloaded.next_court_date_at).to eq Date.new(year, month, day)
       expect(client_reloaded.id_number).to eq id_number
     end
   end

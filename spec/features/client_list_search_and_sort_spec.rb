@@ -18,12 +18,17 @@ feature 'search and sort clients' do
     end
 
     add_client(@clientthree)
-
-    visit clients_path
   end
+
+  subject { visit clients_path }
+
+  let(:clientone) { Client.find_by(phone_number: @clientone.phone_number) }
+  let(:clienttwo) { Client.find_by(phone_number: @clienttwo.phone_number) }
+  let(:clientthree) { Client.find_by(phone_number: @clientthree.phone_number) }
 
   describe 'user searches by name' do
     it 'filters client list to match input', js: true do
+      subject
       expect(page).to have_css '.data-table td', text: @clientone.full_name
       expect(page).to have_css '.data-table td', text: @clienttwo.full_name
       expect(page).to have_css '.data-table td', text: @clientthree.full_name
@@ -37,6 +42,7 @@ feature 'search and sort clients' do
     end
 
     it 'shows all results when clear search button is clicked', js: true do
+      subject
       expect(page).to have_css '#clear_search'
 
       fill_in 'Search clients by name', with: @clientone.full_name
@@ -54,6 +60,7 @@ feature 'search and sort clients' do
     end
 
     it 'shows a warning when there are no search results', js: true do
+      subject
       expect(page).to_not have_css '#no-search-results'
 
       fill_in 'Search clients by name', with: 'text-that-definitely-wont-return-results'
@@ -68,18 +75,21 @@ feature 'search and sort clients' do
 
   describe 'user sorts clients' do
     it 'sorts by most recent contact by default', js: true do
+      subject
       expect(page).to have_css('.glyphicon-arrow-down')
       expect(page).to have_css('tr:first-child', text: @clientthree.full_name)
       expect(page).to have_css('tr:last-child', text: @clientone.full_name)
     end
 
     it 'reverses list when Last contact is clicked', js: true do
+      subject
       find('th', text: 'Last contact').click
       expect(page).to have_css('tr:first-child', text: @clientone.full_name)
       expect(page).to have_css('tr:last-child', text: @clientthree.full_name)
     end
 
     it 'sorts by last name', js: true do
+      subject
       find('th', text: 'Name').click
       expect(page).to have_css('tr:first-child', text: @clientone.full_name)
       expect(page).to have_css('tr:last-child', text: @clientthree.full_name)
@@ -87,6 +97,25 @@ feature 'search and sort clients' do
       find('th', text: 'Name').click
       expect(page).to have_css('tr:first-child', text: @clientthree.full_name)
       expect(page).to have_css('tr:last-child', text: @clientone.full_name)
+    end
+
+    context 'court dates flag is enabled' do
+      before do
+        FeatureFlag.create!(flag: 'court_dates', enabled: true)
+        clientone.update!(next_court_date_at: Date.new(2018, 7, 21))
+        clientthree.update!(next_court_date_at: Date.new(2018, 8, 17))
+      end
+
+      it 'sorts by court date', js: true do
+        subject
+        find('th', text: 'Court date').click
+        expect(page).to have_css('tr:first-child', text: @clientone.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
+
+        find('th', text: 'Court date').click
+        expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
+        expect(page).to have_css('tr:last-child', text: @clientone.full_name)
+      end
     end
   end
 end
