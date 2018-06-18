@@ -33,8 +33,8 @@ feature 'user edits client', :js do
 
   scenario 'successfully' do
     step 'navigates to edit client form' do
-      within "#client_#{clientone.id}" do
-        find('td', text: 'Manage').click
+      within "tr#client_#{clientone.id}" do
+        find('td.next-court-date-at', text: '--').click
       end
 
       expect(page).to have_current_path(edit_client_path(clientone))
@@ -118,8 +118,8 @@ feature 'user edits client', :js do
     end
 
     scenario 'it shows a warning about the unread messages' do
-      within "#client_#{clientone.id}" do
-        find('td', text: 'Manage').click
+      within "tr#client_#{clientone.id}" do
+        find('td.next-court-date-at', text: '--').click
       end
 
       expect(page).to have_current_path(edit_client_path(clientone))
@@ -135,8 +135,8 @@ feature 'user edits client', :js do
     end
 
     scenario 'the page displays the warning when the message is received' do
-      within "#client_#{clientone.id}" do
-        find('td', text: 'Manage').click
+      within "tr#client_#{clientone.id}" do
+        find('td.next-court-date-at', text: '--').click
       end
 
       expect(page).to have_current_path(edit_client_path(clientone))
@@ -165,8 +165,8 @@ feature 'user edits client', :js do
 
     scenario 'successfully submits form' do
       step 'navigates to edit client form' do
-        within "#client_#{clientone.id}" do
-          find('td', text: 'Manage').click
+        within "tr#client_#{clientone.id}" do
+          find('td.next-court-date-at', text: '--').click
         end
 
         expect(page).to have_current_path(edit_client_path(clientone))
@@ -188,8 +188,8 @@ feature 'user edits client', :js do
   end
 
   scenario 'and fails validation' do
-    within("#client_#{clientone.id}") do
-      find('td', text: 'Manage').click
+    within "tr#client_#{clientone.id}" do
+      find('td.next-court-date-at', text: '--').click
     end
     expect(page).to have_current_path(edit_client_path(clientone))
     fill_in 'Last name', with: ''
