@@ -121,21 +121,34 @@ feature 'search and sort clients' do
       before do
         FeatureFlag.create!(flag: 'scheduled_message_count', enabled: true)
 
-        create_list :text_message, 1, reporting_relationship: clienttwo.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
-        create_list :text_message, 2, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 2, reporting_relationship: clienttwo.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 1, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
       end
 
       it 'sorts by court date', js: true do
         subject
         find('th', text: 'Scheduled messages').click
-        expect(page).to have_css('tr:first-child', text: clientthree.full_name)
-        expect(page).to have_css('tr:nth-child(2)', text: clienttwo.full_name)
-        expect(page).to have_css('tr:nth-child(3)', text: clientone.full_name)
+        expect(page).to have_css('tr:first-child', text: clientone.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: clientthree.full_name)
+        expect(page).to have_css('tr:nth-child(3)', text: clienttwo.full_name)
 
+        find('th', text: 'Scheduled messages').click
+        expect(page).to have_css('tr:first-child', text: clienttwo.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: clientthree.full_name)
+        expect(page).to have_css('tr:nth-child(3)', text: clientone.full_name)
+      end
+
+      it 'sorts by court date and timestamp', js: true do
+        create_list :text_message, 1, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        subject
         find('th', text: 'Scheduled messages').click
         expect(page).to have_css('tr:first-child', text: clientone.full_name)
         expect(page).to have_css('tr:nth-child(2)', text: clienttwo.full_name)
         expect(page).to have_css('tr:nth-child(3)', text: clientthree.full_name)
+        find('th', text: 'Scheduled messages').click
+        expect(page).to have_css('tr:first-child', text: clientthree.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: clienttwo.full_name)
+        expect(page).to have_css('tr:nth-child(3)', text: clientone.full_name)
       end
     end
   end
