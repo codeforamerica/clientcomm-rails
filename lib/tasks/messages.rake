@@ -9,7 +9,7 @@ namespace :messages do
       begin
         m.update(twilio_status: twilio_status)
       rescue ActiveRecord::StaleObjectError
-        Rails.logger.warn('StaleObjectError on update_twilio_statuses task')
+        Rails.logger.tagged('update twilio statuses') { Rails.logger.warn('StaleObjectError on update_twilio_statuses task') }
         next
       end
       MessageRedactionJob.perform_later(message: m)

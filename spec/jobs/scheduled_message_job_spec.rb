@@ -121,12 +121,11 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   context 'When the user is the unclaimed user' do
     before do
       user.department.update(unclaimed_user: user)
+      allow(Rails.logger).to receive :warn
     end
 
     it 'logs that scheduled messages were sent' do
-      expect(Rails.logger).to receive(:warn) do |&block|
-        expect(block.call).to eq("Unclaimed user id: #{user.id} sent message id: #{message.id}")
-      end
+      expect(Rails.logger).to receive(:warn).with("Unclaimed user id: #{user.id} sent message id: #{message.id}")
 
       subject
     end
