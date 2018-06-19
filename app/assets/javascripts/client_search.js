@@ -18,6 +18,21 @@ function clientListInit() {
 
   var list = new List('client-list', clientSearchOptions);
 
+  $('.sort').click(function(e) {
+    order = $(this).hasClass('asc') ? 'ascending' : 'descending'
+
+    $.post({
+      url: '/tracking_events',
+      data: {
+        label: 'clients_sort',
+        data: {
+          sort_by: $(this).data('sort'),
+          order: order
+        }
+      }
+    })
+  });
+
   list.on('updated', function(list){
     if(list.matchingItems.length === 0){
       $('#no-search-results').show();

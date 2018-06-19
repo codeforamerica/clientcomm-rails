@@ -25,7 +25,8 @@ class Client < ApplicationRecord
 
   def analytics_tracker_data
     {
-      client_id: self.id
+      client_id: self.id,
+      has_court_date: next_court_date_at.present?
     }
   end
 
