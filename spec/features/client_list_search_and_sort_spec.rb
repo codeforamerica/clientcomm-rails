@@ -117,5 +117,26 @@ feature 'search and sort clients' do
         expect(page).to have_css('tr:last-child', text: @clientone.full_name)
       end
     end
+    context 'has scheduled messages' do
+      before do
+        FeatureFlag.create!(flag: 'scheduled_message_count', enabled: true)
+
+        create_list :text_message, 1, reporting_relationship: clienttwo.reporting_relationships.find_by(user: myuser)
+        create_list :text_message, 2, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser)
+      end
+
+      it 'sorts by court date', js: true do
+        subject
+        find('th', text: 'Scheduled messages').click
+        expect(page).to have_css('tr:first-child', text: @clientone.full_name)
+        expect(page).to have_css('tr:first-child', text: @clienttwo.full_name)
+        expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
+
+        find('th', text: 'Scheduled messages').click
+        expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
+        expect(page).to have_css('tr:first-child', text: @clienttwo.full_name)
+        expect(page).to have_css('tr:first-child', text: @clientone.full_name)
+      end
+    end
   end
 end

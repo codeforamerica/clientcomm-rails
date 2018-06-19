@@ -99,6 +99,11 @@
             </a>
           </td>
           <% end %>
+          <% if FeatureFlag.enabled?('scheduled_message_count') %>
+          <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= rr.messages.scheduled.count %>">
+            <%= rr.messages.scheduled.count %>
+          </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
