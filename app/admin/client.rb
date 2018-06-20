@@ -11,8 +11,8 @@ ActiveAdmin.register Client do
         row :first_name
         row :last_name
         row :phone_number
-        row :next_court_date_at
-        row :id_number
+        row :next_court_date_at if FeatureFlag.enabled?('court_dates')
+        row :id_number if FeatureFlag.enabled?('client_id_number')
       end
     end
 
@@ -75,8 +75,8 @@ ActiveAdmin.register Client do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
-      f.input :next_court_date_at
-      f.input :id_number
+      f.input :next_court_date_at if FeatureFlag.enabled?('court_dates')
+      f.input :id_number if FeatureFlag.enabled?('client_id_number')
 
       Department.all.each do |department|
         department_users = department.users.active.order(full_name: :asc)
