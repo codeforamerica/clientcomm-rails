@@ -35,6 +35,7 @@ describe 'Clients requests', type: :request do
       let(:notes) { Faker::Lorem.sentence }
       let(:last_name) { Faker::Name.last_name }
       let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
+      let(:future_date_formatted) { future_date.strftime('%m/%d/%Y') }
       let!(:client_status) { create :client_status }
 
       subject do
@@ -43,7 +44,7 @@ describe 'Clients requests', type: :request do
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
-            next_court_date_at: future_date.strftime('%m/%d/%Y'),
+            next_court_date_at: future_date_formatted,
             reporting_relationships_attributes: {
               '0': {
                 user_id: user.id,
@@ -292,12 +293,13 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'PUT#update' do
-      let(:first_name) { Faker::Name.first_name }
+      let(:first_name) { 'Szepesi' }
+      let(:last_name) { 'Erzebet' }
       let(:phone_number) { '+14663364863' }
       let(:id_number) { '1234' }
       let(:notes) { Faker::Lorem.sentence }
-      let(:last_name) { Faker::Name.last_name }
       let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
+      let(:future_date_formatted) { future_date.strftime('%m/%d/%Y') }
       let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
 
       subject do
@@ -307,7 +309,7 @@ describe 'Clients requests', type: :request do
             last_name: last_name,
             phone_number: phone_number,
             id_number: id_number,
-            next_court_date_at: future_date.strftime('%m/%d/%Y'),
+            next_court_date_at: future_date_formatted,
             reporting_relationships_attributes: {
               '0': {
                 id: existing_client.reporting_relationships.find_by(user: user).id,
@@ -430,6 +432,32 @@ describe 'Clients requests', type: :request do
         expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
         expect(client.id_number).to eq id_number
         expect(client.next_court_date_at).to eq future_date.to_date
+      end
+
+      context 'user sets next court date' do
+        before do
+          existing_client.update!(next_court_date_set_by_user: false)
+        end
+
+        it 'marks court date set by client to true' do
+          subject
+
+          expect(existing_client.reload.next_court_date_set_by_user).to be true
+        end
+      end
+
+      context 'user clears next court date' do
+        let(:future_date_formatted) { '' }
+
+        before do
+          existing_client.update!(next_court_date_set_by_user: true)
+        end
+
+        it 'marks court date set by client to false' do
+          subject
+
+          expect(existing_client.reload.next_court_date_set_by_user).to be false
+        end
       end
 
       context 'a client has active users in multiple departments' do
