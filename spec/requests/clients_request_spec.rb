@@ -446,6 +446,18 @@ describe 'Clients requests', type: :request do
         end
       end
 
+      context 'a court date was already set' do
+        before do
+          existing_client.update(next_court_date_at: future_date)
+        end
+
+        it 'does not set the flag' do
+          subject
+
+          expect(existing_client.reload.next_court_date_set_by_user).to be false
+        end
+      end
+
       context 'user clears next court date' do
         let(:future_date_formatted) { '' }
 

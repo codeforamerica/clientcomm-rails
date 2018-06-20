@@ -93,7 +93,12 @@ class ClientsController < ApplicationController
     @reporting_relationship = @client.reporting_relationship(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
+
     if @client.update(client_params)
+      unless @client.next_court_date_at_previously_changed? && client_params[:next_court_date_at].present?
+        @client.update(next_court_date_set_by_user: client_params[:next_court_date_at].present?)
+      end
+
       if @reporting_relationship.reload.active
         notify_users_of_changes
         analytics_track(
