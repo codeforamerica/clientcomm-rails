@@ -169,7 +169,7 @@ feature 'Admin Panel' do
         FeatureFlag.create!(flag: 'court_dates', enabled: true)
       end
 
-      it 'does not show fields for disabled feature flags' do
+      it 'shows fields for enabled feature flags' do
         visit admin_client_path(client1)
         expect(page).to have_css '.row-next_court_date_at', text: 'Next Court Date At'
         expect(page).to have_css '.row-id_number', text: 'Id Number'
@@ -417,19 +417,6 @@ feature 'Admin Panel' do
             }
           )
         end
-      end
-    end
-
-    context 'client id number and court date feature flags are disabled' do
-      before do
-        FeatureFlag.create!(flag: 'client_id_number', enabled: false)
-        FeatureFlag.create!(flag: 'court_dates', enabled: false)
-      end
-
-      it 'does not show fields for disabled feature flags' do
-        visit edit_admin_client_path(client1)
-        expect(page).to_not have_css '#client_next_court_date_at_input', text: 'Next court date at'
-        expect(page).to_not have_css '#client_id_number_input', text: 'Id number'
       end
     end
 
