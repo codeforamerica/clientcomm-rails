@@ -16,12 +16,15 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
     let(:distinct_id) {
       "#{deploy_id}-admin_#{user.id}"
     }
+
     subject do
       described_class.perform_now(csv, user)
     end
+
     before do
       rr.client.update!(id_number: '111')
     end
+
     it 'running the job sends calls CourtRemindersImporter' do
       expect(CourtRemindersImporter).to receive(:generate_reminders).with(court_dates, court_locs_hash, csv)
       subject
@@ -41,6 +44,9 @@ RSpec.describe CreateCourtRemindersJob, active_job: true, type: :job do
       travel_to(Time.zone.parse('2018-05-01')) do
         perform_enqueued_jobs { subject }
       end
+
+      expect(rr.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 8))
+
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([user.email])
       expect(mail.subject).to include 'Your recent ClientComm upload - success!'

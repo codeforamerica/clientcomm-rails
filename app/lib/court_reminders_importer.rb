@@ -33,6 +33,8 @@ module CourtRemindersImporter
             Rails.logger.info { "Body: \"#{body}\"" }
             Rails.logger.info { "Send At: \"#{send_at}\"" }
 
+            rr.client.update!(next_court_date_at: court_date_at) unless rr.client.next_court_date_set_by_user
+
             message = CourtReminder.new(
               body: body,
               reporting_relationship: rr,
