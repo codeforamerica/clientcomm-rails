@@ -30,7 +30,8 @@ class User < ApplicationRecord
       clients_count: clients_count,
       has_unread_messages: unread_messages_count > 0,
       unread_messages_count: unread_messages_count,
-      symbols_count: symbols_count
+      symbols_count: symbols_count,
+      court_dates_count: clients.where.not(next_court_date_at: nil).count
     }
   end
 

@@ -29,7 +29,7 @@ class ScheduledMessageJob < ApplicationJob
     MessageRedactionJob.perform_later(message: message)
 
     if message.user == message.user.department.unclaimed_user && ((message.send_at - message.created_at) > 30.minutes)
-      Rails.logger.warn { "Unclaimed user id: #{message.user.id} sent message id: #{message.id}" }
+      Rails.logger.warn "Unclaimed user id: #{message.user.id} sent message id: #{message.id}"
     end
 
     broadcast(

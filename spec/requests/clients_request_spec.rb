@@ -81,7 +81,8 @@ describe 'Clients requests', type: :request do
 
         expect_analytics_events(
           'client_create_success' => {
-            'client_id' => client.id
+            'client_id' => client.id,
+            'has_court_date' => true
           }
         )
       end
@@ -410,7 +411,8 @@ describe 'Clients requests', type: :request do
                                   'messages_sent_count' => 1,
                                   'messages_attachments_count' => 1,
                                   'messages_scheduled_count' => 1,
-                                  'has_client_notes' => true
+                                  'has_client_notes' => true,
+                                  'has_court_date' => true
                                 })
       end
 
@@ -587,9 +589,9 @@ describe 'Clients requests', type: :request do
       before do
         create :client, first_name: 'Vespasiano', last_name: 'Laureano', user: user
         create :client, first_name: 'Mirta', last_name: 'Prieto', user: user
-        create :client, first_name: 'Liberto', last_name: 'Jiminez', user: user
-        create :client, first_name: 'Peregrino', last_name: 'Pena', user: user
-        create :client, first_name: 'Baldo', last_name: 'Godoy', user: user
+        create :client, first_name: 'Liberto', last_name: 'Jiminez', user: user, next_court_date_at: Time.current + 1.day
+        create :client, first_name: 'Peregrino', last_name: 'Pena', user: user, next_court_date_at: Time.current + 1.day
+        create :client, first_name: 'Baldo', last_name: 'Godoy', user: user, next_court_date_at: Time.current + 1.day
       end
 
       subject { get clients_path }
@@ -613,7 +615,8 @@ describe 'Clients requests', type: :request do
                                   'has_unread_messages' => true,
                                   'unread_messages_count' => 3,
                                   'clients_count' => 5,
-                                  'symbols_count' => 2
+                                  'symbols_count' => 2,
+                                  'court_dates_count' => 3
                                 })
       end
 
@@ -733,7 +736,26 @@ describe 'Clients requests', type: :request do
       it 'tracks a visit to the edit client form' do
         subject
         expect(response.code).to eq '200'
-        expect_analytics_events_happened('client_edit_view')
+        expect_analytics_events(
+          'client_edit_view' => {
+            'client_id' => client.id
+          }
+        )
+      end
+
+      context 'the client has a court date' do
+        let(:client) { create :client, user: user, first_name: 'Fred', last_name: 'Flintstone', next_court_date_at: Time.current + 1.day }
+
+        it 'tracks a visit to the edit client form' do
+          subject
+          expect(response.code).to eq '200'
+          expect_analytics_events(
+            'client_edit_view' => {
+              'client_id' => client.id,
+              'has_court_date' => true
+            }
+          )
+        end
       end
 
       it 'renders a closeout survey' do

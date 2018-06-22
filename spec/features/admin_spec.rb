@@ -157,6 +157,39 @@ feature 'Admin Panel' do
     end
   end
 
+  describe 'Client View' do
+    let!(:department1) { create :department, name: 'Department One' }
+    let!(:user1) { create :user, department: department1 }
+    let(:phone_number) { '+14155551212' }
+    let!(:client1) { create :client, users: [user1], phone_number: phone_number }
+
+    context 'client id number and court date feature flags are enabled' do
+      before do
+        FeatureFlag.create!(flag: 'client_id_number', enabled: true)
+        FeatureFlag.create!(flag: 'court_dates', enabled: true)
+      end
+
+      it 'shows fields for enabled feature flags' do
+        visit admin_client_path(client1)
+        expect(page).to have_css '.row-next_court_date_at', text: 'Next Court Date At'
+        expect(page).to have_css '.row-id_number', text: 'Id Number'
+      end
+    end
+
+    context 'client id number and court date feature flags are disabled' do
+      before do
+        FeatureFlag.create!(flag: 'client_id_number', enabled: false)
+        FeatureFlag.create!(flag: 'court_dates', enabled: false)
+      end
+
+      it 'does not show fields for disabled feature flags' do
+        visit admin_client_path(client1)
+        expect(page).to_not have_css '.row-next_court_date_at', text: 'Next Court Date At'
+        expect(page).to_not have_css '.row-id_number', text: 'Id Number'
+      end
+    end
+  end
+
   describe 'Client Edit' do
     let(:transfer_note) { 'Welcome your new client.' }
     let!(:department1) { create :department, name: 'Department One' }
@@ -384,6 +417,51 @@ feature 'Admin Panel' do
             }
           )
         end
+      end
+    end
+
+    context 'client id number feature flag is enabled' do
+      let(:id_number) { '1234567' }
+
+      before do
+        FeatureFlag.create!(flag: 'client_id_number', enabled: true)
+      end
+
+      it 'allows client id number field to be filled out and submitted' do
+        visit edit_admin_client_path(client1)
+
+        expect(page).to have_css '#client_id_number_input', text: 'Id number'
+        fill_in 'Id number', with: id_number
+        click_on 'Update Client'
+        expect(page).to have_content('Client was successfully updated.')
+        expect(page).to have_css '.row-id_number', text: id_number
+      end
+    end
+
+    context 'court date feature flag is enabled' do
+      let(:year) { 2018 }
+      let(:month) { 'July' }
+      let(:day) { 21 }
+
+      before do
+        FeatureFlag.create!(flag: 'court_dates', enabled: true)
+      end
+
+      it 'allows court date field to be filled out and submitted' do
+        visit edit_admin_client_path(client1)
+
+        expect(page).to have_select('client[next_court_date_at(1i)]')
+        expect(page).to have_select('client[next_court_date_at(2i)]')
+        expect(page).to have_select('client[next_court_date_at(3i)]')
+
+        select year, from: 'client[next_court_date_at(1i)]'
+        select month, from: 'client[next_court_date_at(2i)]'
+        select day, from: 'client[next_court_date_at(3i)]'
+
+        click_on 'Update Client'
+
+        expect(page).to have_content('Client was successfully updated.')
+        expect(page).to have_css '.row-next_court_date_at', text: "#{month} #{day}, #{year}"
       end
     end
   end

@@ -94,9 +94,25 @@ feature 'search and sort clients' do
       expect(page).to have_css('tr:first-child', text: @clientone.full_name)
       expect(page).to have_css('tr:last-child', text: @clientthree.full_name)
 
+      wait_for_ajax
+      expect_most_recent_analytics_event(
+        'clients_sort' => {
+          'sort_by' => 'lastname',
+          'order' => 'ascending'
+        }
+      )
+
       find('th', text: 'Name').click
       expect(page).to have_css('tr:first-child', text: @clientthree.full_name)
       expect(page).to have_css('tr:last-child', text: @clientone.full_name)
+
+      wait_for_ajax
+      expect_most_recent_analytics_event(
+        'clients_sort' => {
+          'sort_by' => 'lastname',
+          'order' => 'descending'
+        }
+      )
     end
 
     context 'court dates flag is enabled' do
@@ -112,9 +128,25 @@ feature 'search and sort clients' do
         expect(page).to have_css('tr:first-child', text: @clientone.full_name)
         expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
 
+        wait_for_ajax
+        expect_most_recent_analytics_event(
+          'clients_sort' => {
+            'sort_by' => 'next-court-date-at',
+            'order' => 'ascending'
+          }
+        )
+
         find('th', text: 'Court date').click
         expect(page).to have_css('tr:nth-child(2)', text: @clientthree.full_name)
         expect(page).to have_css('tr:last-child', text: @clientone.full_name)
+
+        wait_for_ajax
+        expect_most_recent_analytics_event(
+          'clients_sort' => {
+            'sort_by' => 'next-court-date-at',
+            'order' => 'descending'
+          }
+        )
       end
     end
     context 'has scheduled messages' do
