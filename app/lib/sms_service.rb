@@ -22,11 +22,11 @@ class SMSService
 
   def send_message(to:, from:, body:, callback_url:)
     # send the message via Twilio
-    response = send_twilio_message(
-      to: to,
+    response = @client.api.account.messages.create(
       from: from,
+      to: to,
       body: body,
-      callback_url: callback_url
+      status_callback: callback_url
     )
 
     MessageInfo.new(response.sid, response.status)
@@ -54,16 +54,5 @@ class SMSService
     else
       raise e
     end
-  end
-
-  private
-
-  def send_twilio_message(to:, from:, body:, callback_url:)
-    @client.api.account.messages.create(
-      from: from,
-      to: to,
-      body: body,
-      status_callback: callback_url
-    )
   end
 end

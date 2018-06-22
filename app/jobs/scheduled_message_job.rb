@@ -12,12 +12,17 @@ class ScheduledMessageJob < ApplicationJob
     # Locking to prevent race conditions between jobs
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
-    message_info = SMSService.instance.send_message(
-      to: message.client.phone_number,
-      from: message.number_from,
-      body: message.body,
-      callback_url: callback_url
-    )
+    begin
+      message_info = SMSService.instance.send_message(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        callback_url: callback_url
+      )
+    rescue Twilio::REST::RestError => e
+      raise e unless e.code == 21610
+      message_info = MessageInfo.new(nil, 'blacklisted')
+    end
 
     message.update!(
       sent: true,
