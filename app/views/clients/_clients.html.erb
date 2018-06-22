@@ -49,11 +49,11 @@
       </th>
       <% end %>
       <% if FeatureFlag.enabled?('scheduled_message_count') %>
-      <th class="sort hidden-xs" data-sort="scheduled-message-count">
+      <th class="sort hidden-xs scheduled-messages" data-sort="scheduled-message-count">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-        Scheduled messages
+        <div>Scheduled messages</div>
       </th>
       <% end %>
       <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>
@@ -105,8 +105,12 @@
           </td>
           <% end %>
           <% if FeatureFlag.enabled?('scheduled_message_count') %>
-            <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= rr.messages.scheduled.count %>.<%= rr.timestamp %>">
-            <%= rr.messages.scheduled.count %>
+          <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= rr.messages.scheduled.count %>.<%= rr.timestamp %>">
+            <% if rr.messages.scheduled.count >= 9 %>
+            <div class='purple-circle'>...</div>
+            <% elsif rr.messages.scheduled.count > 0 %>
+            <div class='purple-circle'><%= rr.messages.scheduled.count %></div>
+            <% end %>
           </td>
           <% end %>
           <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>

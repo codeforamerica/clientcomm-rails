@@ -126,3 +126,30 @@ label[for=reporting_relationship_user_id] p, label[for=transfer_note] p  {
 div.form-card__content div h4 {
   margin-top: 3em;
 }
+
+.purple-circle {
+	border-radius: 50%;
+	behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+	width: 1.4em;
+	height: 1.4em;
+	padding: 0em;
+	margin: auto;
+	background: $color-magenta;
+	border: 2px solid $color-magenta;
+	color: white;
+	text-align: center;
+  font: 1.4rem Arial, sans-serif;
+}
+
+th.scheduled-messages {
+  width: 140px;
+  div {
+    float: right;
+    width: 80px;
+  }
+}
+
+td.scheduled-message-count {
+  padding: 12px 30px 0px 0px;
+}
