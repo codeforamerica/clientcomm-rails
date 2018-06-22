@@ -88,12 +88,17 @@ class ClientsController < ApplicationController
     )
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def update
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationship(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
-    if @client.update(client_params)
+
+    @client.assign_attributes(client_params)
+    @client.next_court_date_set_by_user = client_params[:next_court_date_at].present? if @client.next_court_date_at_changed? || client_params[:next_court_date_at].blank?
+
+    if @client.save
       if @reporting_relationship.reload.active
         notify_users_of_changes
         analytics_track(
@@ -129,6 +134,7 @@ class ClientsController < ApplicationController
     flash.now[:alert] = t('flash.errors.client.invalid')
     render :edit
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   private
 

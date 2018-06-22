@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180618234037) do
+ActiveRecord::Schema.define(version: 20180620203710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 20180618234037) do
     t.bigint "node_comm_id"
     t.string "id_number"
     t.date "next_court_date_at"
+    t.boolean "next_court_date_set_by_user", default: false
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
   end

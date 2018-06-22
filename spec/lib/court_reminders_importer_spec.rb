@@ -31,8 +31,8 @@ describe CourtRemindersImporter do
 
     before do
       rr1.client.update!(id_number: ctracks[0])
-      rr2.client.update!(id_number: ctracks[1])
-      rr3.client.update!(id_number: ctracks[2])
+      rr2.client.update!(id_number: ctracks[1], next_court_date_at: Date.new(2018, 5, 12), next_court_date_set_by_user: true)
+      rr3.client.update!(id_number: ctracks[2], next_court_date_at: Date.new(2018, 5, 13))
       rr_irrelevant.client.update!(id_number: 91111111111)
       travel_to Time.strptime("5/1/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
     end
@@ -54,6 +54,7 @@ describe CourtRemindersImporter do
       )
       time1 = Time.strptime("5/7/2018 8:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message1 = rr1.messages.scheduled.last
+      expect(rr1.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 8))
       expect(message1.body).to eq body1
       expect(message1.send_at).to eq time1
       expect(message1.court_date_csv).to eq(csv)
@@ -71,6 +72,7 @@ describe CourtRemindersImporter do
       )
       time2 = Time.strptime("5/8/2018 9:40 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message2 = rr2.messages.scheduled.last
+      expect(rr2.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 12))
       expect(message2.body).to eq body2
       expect(message2.send_at).to eq time2
       expect(ScheduledMessageJob).to have_been_enqueued
@@ -87,6 +89,7 @@ describe CourtRemindersImporter do
       )
       time3 = Time.strptime("5/9/2018 14:30 #{time_zone_offset}", '%m/%d/%Y %H:%M %z')
       message3 = rr3.messages.scheduled.last
+      expect(rr3.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 10))
       expect(message3.body).to eq body3
       expect(message3.send_at).to eq time3
       expect(ScheduledMessageJob).to have_been_enqueued
