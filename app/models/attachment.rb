@@ -3,7 +3,7 @@ class Attachment < ApplicationRecord
 
   attr_reader :media_remote_url
   has_attached_file :media
-  validates_attachment_content_type :media, content_type: /video\/.*|audio\/.*|image\/.*|text\/.*|application\/pdf.*/
+  do_not_validate_attachment_file_type :media
 
   # Save attachment content with Paperclip
   def media_remote_url=(url_value)
