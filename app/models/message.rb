@@ -124,8 +124,7 @@ class Message < ApplicationRecord
     )
     twilio_params[:NumMedia].to_i.times.each do |i|
       attachment = Attachment.new
-      attachment.media = open(twilio_params["MediaUrl#{i}"],
-                              http_basic_authentication: [ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']])
+      attachment.media_file(twilio_params["MediaUrl#{i}"])
       new_message.attachments << attachment
     end
 
