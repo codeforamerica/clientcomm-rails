@@ -164,7 +164,9 @@ feature 'search and sort clients' do
         subject
         find('th', text: 'Scheduled messages').click
         expect(page).to have_css('tr:first-child td.scheduled-message-count', text: '')
+        expect(page).to_not have_css('tr:first-child td.scheduled-message-count div.purple-circle')
         expect(page).to have_css('tr:nth-child(2) td.scheduled-message-count div.purple-circle', text: '')
+        expect(page).to_not have_css('tr:nth-child(2) td.scheduled-message-count div.purple-circle', text: '1')
         expect(page).to have_css('tr:nth-child(3) td.scheduled-message-count div.purple-circle', text: '2')
         expect(page).to have_css('tr:nth-child(4) td.scheduled-message-count div.purple-circle', text: '...')
 
