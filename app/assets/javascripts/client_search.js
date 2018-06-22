@@ -12,7 +12,8 @@ function clientListInit() {
       { attr: 'data-lastname', name: 'lastname' },
       { attr: 'data-timestamp', name: 'timestamp' },
       { attr: 'data-client-status', name: 'client-status' },
-      { attr: 'data-next-court-date-at', name: 'next-court-date-at' }
+      { attr: 'data-next-court-date-at', name: 'next-court-date-at' },
+      { attr: 'data-scheduled-message-count', name: 'scheduled-message-count' }
     ]
   };
 

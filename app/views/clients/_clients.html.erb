@@ -39,14 +39,24 @@
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
         Status
       </th>
-      <% elsif FeatureFlag.enabled?('court_dates') %>
+      <% end %>
+      <% if FeatureFlag.enabled?('court_dates') %>
       <th class="sort hidden-xs" data-sort="next-court-date-at">
         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
         Court date
       </th>
-      <% else %>
+      <% end %>
+      <% if FeatureFlag.enabled?('scheduled_message_count') %>
+      <th class="sort hidden-xs scheduled-messages" data-sort="scheduled-message-count">
+        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <div>Scheduled messages</div>
+      </th>
+      <% end %>
+      <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>
       <th class="sort hidden-xs">
         Action
       </th>
@@ -86,13 +96,26 @@
                <%= rr.client_status&.name || '--' %>
             </a>
           </td>
-          <% elsif FeatureFlag.enabled?('court_dates') %>
+          <% end %>
+          <% if FeatureFlag.enabled?('court_dates') %>
           <td class="hidden-xs next-court-date-at" data-next-court-date-at="<%= client.next_court_date_at&.to_time&.to_i || 99999999999 %>">
             <a class="cell-content" href="<%= edit_client_path(client.id) %>">
               <%= client.next_court_date_at&.strftime('%m/%d/%Y') || '--' %>
             </a>
           </td>
-          <% else %>
+          <% end %>
+          <% if FeatureFlag.enabled?('scheduled_message_count') %>
+          <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= rr.messages.scheduled.count %>.<%= rr.timestamp %>">
+            <% if rr.messages.scheduled.count >= 9 %>
+            <div class='purple-circle'>...</div>
+            <% elsif rr.messages.scheduled.count > 1 %>
+            <div class='purple-circle'><%= rr.messages.scheduled.count %></div>
+            <% elsif rr.messages.scheduled.count == 1 %>
+            <div class='purple-circle'><%= rr.messages.scheduled.count %></div>
+            <% end %>
+          </td>
+          <% end %>
+          <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>
           <td class="hidden-xs">
             <a class="cell-content" href="<%= edit_client_path(client.id) %>">
               Manage
