@@ -5,14 +5,6 @@ RSpec.describe Attachment, type: :model do
     it { should belong_to :message }
   end
 
-  describe 'paperclip content type validations' do
-    it {
-      should validate_attachment_content_type(:media)
-        .allowing('text/vcard')
-        .rejecting('png/whatever')
-    }
-  end
-
   describe '#image?' do
     let(:attachment) {
       create :attachment, media: File.new(media_path)
