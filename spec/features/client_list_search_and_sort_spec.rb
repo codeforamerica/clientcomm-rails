@@ -118,37 +118,40 @@ feature 'search and sort clients' do
       end
     end
     context 'has scheduled messages' do
+      let(:clientfour) { create :client, user: myuser, first_name: 'Charlie', last_name: 'D' }
+
       before do
         FeatureFlag.create!(flag: 'scheduled_message_count', enabled: true)
 
-        create_list :text_message, 2, reporting_relationship: clienttwo.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
-        create_list :text_message, 1, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 10, reporting_relationship: clienttwo.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 2, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 1, reporting_relationship: clientfour.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
       end
 
       it 'sorts by court date', js: true do
         subject
         find('th', text: 'Scheduled messages').click
-        expect(page).to have_css('tr:first-child', text: clientone.full_name)
-        expect(page).to have_css('tr:nth-child(2)', text: clientthree.full_name)
-        expect(page).to have_css('tr:nth-child(3)', text: clienttwo.full_name)
+        expect(page).to have_css('tr:first-child td.scheduled-message-count', text: '')
+        expect(page).to have_css('tr:nth-child(2) td.scheduled-message-count div.purple-circle', text: '')
+        expect(page).to have_css('tr:nth-child(3) td.scheduled-message-count div.purple-circle', text: '2')
+        expect(page).to have_css('tr:nth-child(4) td.scheduled-message-count div.purple-circle', text: '...')
 
         find('th', text: 'Scheduled messages').click
-        expect(page).to have_css('tr:first-child', text: clienttwo.full_name)
-        expect(page).to have_css('tr:nth-child(2)', text: clientthree.full_name)
-        expect(page).to have_css('tr:nth-child(3)', text: clientone.full_name)
+        expect(page).to have_css('tr:first-child td.scheduled-message-count div.purple-circle', text: '...')
+        expect(page).to have_css('tr:nth-child(2) td.scheduled-message-count div.purple-circle', text: '2')
+        expect(page).to have_css('tr:nth-child(3) td.scheduled-message-count div.purple-circle', text: '')
+        expect(page).to have_css('tr:nth-child(4) td.scheduled-message-count', text: '')
       end
 
       it 'sorts by court date and timestamp', js: true do
-        create_list :text_message, 1, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
+        create_list :text_message, 8, reporting_relationship: clientthree.reporting_relationships.find_by(user: myuser), send_at: Time.zone.now + 1.day
         subject
         find('th', text: 'Scheduled messages').click
-        expect(page).to have_css('tr:first-child', text: clientone.full_name)
-        expect(page).to have_css('tr:nth-child(2)', text: clienttwo.full_name)
-        expect(page).to have_css('tr:nth-child(3)', text: clientthree.full_name)
+        expect(page).to have_css('tr:nth-child(3)', text: clienttwo.full_name)
+        expect(page).to have_css('tr:nth-child(4)', text: clientthree.full_name)
         find('th', text: 'Scheduled messages').click
         expect(page).to have_css('tr:first-child', text: clientthree.full_name)
         expect(page).to have_css('tr:nth-child(2)', text: clienttwo.full_name)
-        expect(page).to have_css('tr:nth-child(3)', text: clientone.full_name)
       end
     end
   end
