@@ -124,7 +124,7 @@ class Message < ApplicationRecord
     )
     twilio_params[:NumMedia].to_i.times.each do |i|
       attachment = Attachment.new
-      attachment.media_file(twilio_params["MediaUrl#{i}"])
+      attachment.update_media(url: twilio_params["MediaUrl#{i}"])
       new_message.attachments << attachment
     end
 

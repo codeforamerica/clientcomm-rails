@@ -4,7 +4,7 @@ class Attachment < ApplicationRecord
   has_attached_file :media
   validates_attachment_content_type :media, content_type: /video\/.*|audio\/.*|image\/.*|text\/.*|application\/pdf.*/
 
-  def media_file(url)
+  def update_media(url:)
     self.media = open(url,
                       http_basic_authentication: [ENV['TWILIO_ACCOUNT_SID'],
                                                   ENV['TWILIO_AUTH_TOKEN']])
