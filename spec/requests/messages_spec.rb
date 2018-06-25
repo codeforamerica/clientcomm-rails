@@ -474,7 +474,7 @@ describe 'Messages requests', type: :request, active_job: true do
         end
       end
 
-      context 'a message has an error' do
+      context 'a message has an undelivered error' do
         let(:rr) { user.reporting_relationships.find_by(client: client) }
 
         before do
@@ -486,7 +486,25 @@ describe 'Messages requests', type: :request, active_job: true do
 
           expect(response.body).to include('UNDELIVERED')
           expect(response.body).to include('NOT DELIVERED to cell')
-          expect(response.body).to include('ERROR: Message could not be')
+          error_text = I18n.t('message.status.undelivered')
+          expect(response.body).to include("ERROR: #{error_text}")
+        end
+      end
+
+      context 'a message has an blacklisted error' do
+        let(:rr) { user.reporting_relationships.find_by(client: client) }
+
+        before do
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'blacklisted'
+        end
+
+        it 'displays the issue prominently' do
+          get reporting_relationship_messages_download_path(rr)
+
+          expect(response.body).to include('UNDELIVERED')
+          expect(response.body).to include('NOT DELIVERED to cell')
+          error_text = I18n.t('message.status.blacklisted')
+          expect(response.body).to include("ERROR: #{error_text}")
         end
       end
 

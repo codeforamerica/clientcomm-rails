@@ -108,6 +108,18 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     end
   end
 
+  context 'the number is blacklisted' do
+    let(:error) { Twilio::REST::RestError.new('Blacklisted', 21610, 403) }
+
+    it 'sets the correct blacklisted status' do
+      expect(SMSService.instance).to receive(:send_message).and_raise(error)
+
+      subject
+      expect(message.reload.twilio_status).to eq('blacklisted')
+      expect(message.reload.twilio_sid).to be_nil
+    end
+  end
+
   context 'any other error occurs' do
     before do
       allow(SMSService.instance).to receive(:send_message).and_raise('Any Other Error')
