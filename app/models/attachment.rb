@@ -1,14 +1,13 @@
 class Attachment < ApplicationRecord
   belongs_to :message
 
-  attr_reader :media_remote_url
   has_attached_file :media
   validates_attachment_content_type :media, content_type: /video\/.*|audio\/.*|image\/.*|text\/.*|application\/pdf.*/
 
-  # Save attachment content with Paperclip
-  def media_remote_url=(url_value)
-    self.media = URI.parse(url_value)
-    @media_remote_url = url_value
+  def update_media(url:)
+    self.media = open(url,
+                      http_basic_authentication: [ENV['TWILIO_ACCOUNT_SID'],
+                                                  ENV['TWILIO_AUTH_TOKEN']])
   end
 
   def image?
