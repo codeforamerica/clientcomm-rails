@@ -151,5 +151,10 @@ th.scheduled-messages {
 }
 
 td.scheduled-message-count {
+  cursor: default;
   padding: 12px 30px 0px 0px;
+}
+
+i.category-symbol {
+  cursor: pointer;
 }
