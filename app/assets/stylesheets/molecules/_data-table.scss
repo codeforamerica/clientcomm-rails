@@ -24,6 +24,9 @@
       top: .5em;
       bottom: .5em;
     }
+    &:first-child {
+      padding-left: .7em;
+    }
     &:last-child {
       padding-right: $site-margins/2;
       @include media($tablet-up) {
@@ -50,6 +53,11 @@
     .is-selected {
       color: $color-teal;
       font-weight: 700;
+    }
+    &:first-child {
+      .cell-content {
+        padding-left: .7em;
+      }
     }
     &:last-child {
       .cell-content {
