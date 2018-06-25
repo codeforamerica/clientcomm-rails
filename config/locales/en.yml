@@ -46,7 +46,7 @@ en:
     auto_court_reminder: 'Automated alert: Your next court date is at %{location} on %{date}, %{time} in Rm %{room}. Please text with any questions.'
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
-      blacklisted: Message could not be delivered. The client has blacklisted this number.
+      blacklisted: Message could not be delivered. This phone number does not accept text messages from ClientComm.
     transcript:
       status:
         accepted: accepted
