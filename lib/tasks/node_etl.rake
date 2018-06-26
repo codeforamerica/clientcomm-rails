@@ -118,13 +118,17 @@ namespace :node_etl do
     SQL
 
     groups = (num_clients / 10.to_f).ceil
+    logs = []
 
-    Rails.logger.warn '--> beginning client load'
+    logs << "--> beginning client load -- loading #{num_clients} clients"
     imported_clients = 0
     errored_clients = []
 
+    offset = 0
+    groups -= offset
     groups.times do |group|
-      Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
+      group += offset
+      logs << "--> Loading group #{group + 1} of #{groups + offset}"
       node_clients = node_production.exec(<<-SQL, [group * 10])
         SELECT cl.*
         FROM clients cl
@@ -132,7 +136,7 @@ namespace :node_etl do
         WHERE cl.active = true
         AND cm.active = true
         AND cm.department IN (7, 4, 11, 3, 2)
-        ORDER BY cl.clid
+        ORDER BY cl.clid DESC
         LIMIT 10 OFFSET $1;
       SQL
 
@@ -172,7 +176,7 @@ namespace :node_etl do
           imported_clients += 1 if client.new_record?
 
           unless client.save
-            Rails.logger.error("--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})")
+            logs << "--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})"
             errored_clients << {
               clid: client.node_client_id,
               commid: client.node_comm_id,
@@ -183,6 +187,8 @@ namespace :node_etl do
             imported_clients -= 1
             next
           end
+
+          logs << "--> saved client #{client.node_client_id}, setting last_contacted_at"
 
           last_contacted_at = node_client['updated']
           if multicomms
@@ -198,16 +204,20 @@ namespace :node_etl do
 
             if last_message.nil? || last_message['created'].blank?
               last_contacted_at = node_client['created']
-              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} because message.created was missing, for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+              logs << "--> set last_contacted_at to #{last_contacted_at} because message.created was missing, for clid:#{client.node_client_id}, commid:#{comm['commid']}"
             else
               last_contacted_at = last_message['created']
-              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} instead of #{node_client['updated']} for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+              logs << "--> set last_contacted_at to #{last_contacted_at} instead of #{node_client['updated']} for clid:#{client.node_client_id}, commid:#{comm['commid']}"
             end
           end
 
           ReportingRelationship.find_by(user: user, client: client).update!(notes: node_client['otn'], last_contacted_at: last_contacted_at)
         end
       end
+    end
+
+    logs.each do |log|
+      Rails.logger.warn log
     end
 
     Rails.logger.warn { "--> client load of #{imported_clients} clients complete" }
