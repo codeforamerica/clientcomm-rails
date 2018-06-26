@@ -28,9 +28,8 @@ describe 'Mass messages requests', type: :request, active_job: true do
     end
 
     it 'sends message to multiple rrs' do
-      subject
+      perform_enqueued_jobs { subject }
 
-      expect(ScheduledMessageJob).to have_been_enqueued.twice
       expect(user.messages.count).to eq 2
       expect(client_1.messages.count).to eq 1
       expect(client_1.messages.first.body).to eq message_body
@@ -39,22 +38,6 @@ describe 'Mass messages requests', type: :request, active_job: true do
       expect(client_3.messages.count).to eq 1
       expect(client_3.messages.first.body).to eq message_body
       expect(client_3.messages.first.number_from).to eq department.phone_number
-    end
-
-    it 'sends an analytics event for each message in mass message' do
-      subject
-      expect_analytics_events(
-        'message_send' => {
-          'mass_message' => true
-        }
-      )
-
-      expect_analytics_event_sequence(
-        'login_success',
-        'message_send',
-        'message_send',
-        'mass_message_send'
-      )
     end
 
     it 'sends a single mass_message_send event with recipient_count' do
@@ -115,9 +98,8 @@ describe 'Mass messages requests', type: :request, active_job: true do
       end
 
       it 'sends message to multiple rrs at the right time' do
-        subject
+        perform_enqueued_jobs { subject }
 
-        expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
         expect(client_1.messages.first.send_at).to eq send_at
         expect(client_3.messages.first.send_at).to eq send_at
       end
@@ -140,29 +122,12 @@ describe 'Mass messages requests', type: :request, active_job: true do
 
         it 'sends message to multiple rrs immediately' do
           travel_to now do
-            subject
+            perform_enqueued_jobs { subject }
           end
 
-          expect(ScheduledMessageJob).to have_been_enqueued.at(now).twice
           expect(client_1.messages.first.send_at).to eq now
           expect(client_3.messages.first.send_at).to eq now
         end
-      end
-
-      it 'sends an analytics event for each message in mass message' do
-        subject
-        expect_analytics_events(
-          'message_scheduled' => {
-            'mass_message' => true
-          }
-        )
-
-        expect_analytics_event_sequence(
-          'login_success',
-          'message_scheduled',
-          'message_scheduled',
-          'mass_message_scheduled'
-        )
       end
 
       it 'sends a single mass_message_send event with recipient_count' do

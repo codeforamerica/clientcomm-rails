@@ -38,7 +38,8 @@ class MassMessagesController < ApplicationController
       return
     end
 
-    send_mass_message(mass_message)
+    SendMassMessageJob.perform_later(body: mass_message.message, send_at: mass_message.send_at.to_s, rrs: mass_message.reporting_relationships)
+
     if mass_message.send_at > Time.zone.now
       flash[:notice] = I18n.t('flash.notices.mass_message.scheduled')
       analytics_track(
@@ -60,33 +61,6 @@ class MassMessagesController < ApplicationController
   end
 
   private
-
-  def send_mass_message(mass_message)
-    mass_message.reporting_relationships.each do |rr_id|
-      rr = ReportingRelationship.find(rr_id)
-      send_at = mass_message.send_at || Time.zone.now
-      message = TextMessage.create!(
-        body: mass_message.message,
-        reporting_relationship: rr,
-        read: true,
-        inbound: false,
-        send_at: send_at
-      )
-
-      message.send_message
-      if mass_message.send_at > Time.zone.now
-        analytics_track(
-          label: 'message_scheduled',
-          data: message.analytics_tracker_data.merge(mass_message: true)
-        )
-      else
-        analytics_track(
-          label: 'message_send',
-          data: message.analytics_tracker_data.merge(mass_message: true)
-        )
-      end
-    end
-  end
 
   def default_send_at
     Time.current.beginning_of_day + 9.hours
