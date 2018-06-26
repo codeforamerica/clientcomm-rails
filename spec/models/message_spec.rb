@@ -68,14 +68,12 @@ RSpec.describe Message, type: :model do
   end
 
   describe 'analytics_tracker_data' do
-    let(:client_id) { 5 }
-    let(:user_id) { 10 }
     let(:body_length) { 10 }
     let(:body) { Faker::Lorem.characters(body_length) }
     let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 1) }
     let(:created_at) { Time.zone.local(2009, 2, 1, 1, 1, 1) }
-    let(:user) { create :user, id: user_id }
-    let(:client) { create :client, id: client_id, user: user }
+    let!(:user) { create :user }
+    let!(:client) { create :client, user: user }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:message) do
       create(
@@ -87,7 +85,6 @@ RSpec.describe Message, type: :model do
         inbound: false
       )
     end
-    let(:message_id) { message.id }
 
     subject do
       message.analytics_tracker_data
@@ -95,12 +92,12 @@ RSpec.describe Message, type: :model do
 
     it 'sends analytics tracking data' do
       expect(subject).to include(
-        client_id: client_id,
-        message_id: message_id,
+        client_id: client.id,
+        message_id: message.id,
         message_date_scheduled: send_at,
         message_date_created: created_at,
         message_length: body_length,
-        current_user_id: user_id,
+        current_user_id: user.id,
         attachments_count: 0,
         client_active: true, # Default
         first_message: true,
@@ -147,7 +144,7 @@ RSpec.describe Message, type: :model do
     end
 
     context 'client is inactive' do
-      let(:client) { create :client, id: client_id, user: user, active: false }
+      let(:client) { create :client, user: user, active: false }
 
       it 'client_active is correct' do
         expect(subject).to include(client_active: false)
