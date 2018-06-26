@@ -229,6 +229,83 @@ namespace :node_etl do
     end
   end
 
+  task etl_notifications: :environment do
+    num_notifications = node_production.exec(<<-SQL)[0]['count'].to_i
+      SELECT count(n.notificationid)
+      FROM notifications n
+      WHERE n.sent = false
+      AND n.closed = false
+      AND n.send > now();
+    SQL
+    groups = (num_notifications / 10.to_f).ceil
+    logs = []
+
+    logs << "--> beginning notification load -- loading #{num_notifications} notifications"
+    imported_notifications = 0
+
+    groups.times do |group|
+      logs << "--> Loading group #{group + 1} of #{groups}"
+      node_notifications = node_production.exec(<<-SQL, [group * 10])
+        SELECT *
+        FROM notifications n
+        WHERE n.sent = false
+        AND n.closed = false
+        AND n.send > now()
+        ORDER BY n.notificationid
+        LIMIT 10 OFFSET $1;
+      SQL
+
+      node_notifications.each do |node_notification|
+        user = User.find_by(node_id: node_notification['cm'])
+        client = Client.find_by(node_id: node_notification['client'])
+        if user.nil? || client.nil?
+          logs << "--> #{node_notification['notificationid']} Couldn't find user #{node_notification['cm']} and/or client #{node_notification['client']}"
+          next
+        end
+
+        rr = ReportingRelationship.find_by(user: user, client: client)
+        if rr.nil?
+          logs << "--> #{node_notification['notificationid']} Couldn't find relationship between user #{node_notification['cm']} and client #{node_notification['client']}"
+          next
+        end
+
+        send_at = node_notification['send']
+        found_dupe = false
+
+        rr.messages.scheduled.each do |existing_message|
+          if ((node_notification[send] - existing_message.send_at) * 24 * 60).to_i.abs < 1 && node_notification['message'].strip == existing_message.body
+            logs << "--> #{node_notification['notificationid']} found existing duplicate message with id #{existing_message.id}"
+            found_dupe = true
+          end
+        end
+
+        next if found_dupe
+
+        message = Message.new(
+          body: node_notification['message'].strip,
+          reporting_relationship: rr,
+          number_from: user.department.phone_number,
+          number_to: client.phone_number,
+          send_at: send_at,
+          read: true
+        )
+
+        if message.invalid? || message.past_message?
+          logs << "--> #{node_notification['notificationid']} Invalid message."
+          next
+        end
+
+        imported_notifications += 1 if message.new_record?
+        message.save!
+        message.send_message
+      end
+    end
+
+    logs.each do |log|
+      Rails.logger.warn log
+    end
+  end
+
   def node_production
     @client ||= PG::Connection.new(Rails.configuration.database_configuration['node_production'])
   end
