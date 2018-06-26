@@ -118,13 +118,17 @@ namespace :node_etl do
     SQL
 
     groups = (num_clients / 10.to_f).ceil
+    logs = []
 
-    Rails.logger.warn '--> beginning client load'
+    logs << "--> beginning client load -- loading #{num_clients} clients"
     imported_clients = 0
     errored_clients = []
 
+    offset = 0
+    groups -= offset
     groups.times do |group|
-      Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
+      group += offset
+      logs << "--> Loading group #{group + 1} of #{groups + offset}"
       node_clients = node_production.exec(<<-SQL, [group * 10])
         SELECT cl.*
         FROM clients cl
@@ -132,7 +136,7 @@ namespace :node_etl do
         WHERE cl.active = true
         AND cm.active = true
         AND cm.department IN (7, 4, 11, 3, 2)
-        ORDER BY cl.clid
+        ORDER BY cl.clid DESC
         LIMIT 10 OFFSET $1;
       SQL
 
@@ -172,7 +176,7 @@ namespace :node_etl do
           imported_clients += 1 if client.new_record?
 
           unless client.save
-            Rails.logger.error("--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})")
+            logs << "--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})"
             errored_clients << {
               clid: client.node_client_id,
               commid: client.node_comm_id,
@@ -183,6 +187,8 @@ namespace :node_etl do
             imported_clients -= 1
             next
           end
+
+          logs << "--> saved client #{client.node_client_id}, setting last_contacted_at"
 
           last_contacted_at = node_client['updated']
           if multicomms
@@ -198,10 +204,10 @@ namespace :node_etl do
 
             if last_message.nil? || last_message['created'].blank?
               last_contacted_at = node_client['created']
-              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} because message.created was missing, for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+              logs << "--> set last_contacted_at to #{last_contacted_at} because message.created was missing, for clid:#{client.node_client_id}, commid:#{comm['commid']}"
             else
               last_contacted_at = last_message['created']
-              Rails.logger.warn("--> set last_contacted_at to #{last_contacted_at} instead of #{node_client['updated']} for clid:#{client.node_client_id}, commid:#{comm['commid']}")
+              logs << "--> set last_contacted_at to #{last_contacted_at} instead of #{node_client['updated']} for clid:#{client.node_client_id}, commid:#{comm['commid']}"
             end
           end
 
@@ -210,12 +216,93 @@ namespace :node_etl do
       end
     end
 
+    logs.each do |log|
+      Rails.logger.warn log
+    end
+
     Rails.logger.warn { "--> client load of #{imported_clients} clients complete" }
     if errored_clients.count
       Rails.logger.warn { "--> #{errored_clients.count} clients not loaded!" }
       errored_clients.each_with_index do |ecs, index|
         Rails.logger.warn { "--> #{index}: #{ecs}" }
       end
+    end
+  end
+
+  task etl_notifications: :environment do
+    num_notifications = node_production.exec(<<-SQL)[0]['count'].to_i
+      SELECT count(n.notificationid)
+      FROM notifications n
+      WHERE n.sent = false
+      AND n.closed = false
+      AND n.send > now();
+    SQL
+    groups = (num_notifications / 10.to_f).ceil
+    logs = []
+
+    logs << "--> beginning notification load -- loading #{num_notifications} notifications"
+    imported_notifications = 0
+
+    groups.times do |group|
+      logs << "--> Loading group #{group + 1} of #{groups}"
+      node_notifications = node_production.exec(<<-SQL, [group * 10])
+        SELECT *
+        FROM notifications n
+        WHERE n.sent = false
+        AND n.closed = false
+        AND n.send > now()
+        ORDER BY n.notificationid
+        LIMIT 10 OFFSET $1;
+      SQL
+
+      node_notifications.each do |node_notification|
+        user = User.find_by(node_id: node_notification['cm'])
+        client = Client.find_by(node_id: node_notification['client'])
+        if user.nil? || client.nil?
+          logs << "--> #{node_notification['notificationid']} Couldn't find user #{node_notification['cm']} and/or client #{node_notification['client']}"
+          next
+        end
+
+        rr = ReportingRelationship.find_by(user: user, client: client)
+        if rr.nil?
+          logs << "--> #{node_notification['notificationid']} Couldn't find relationship between user #{node_notification['cm']} and client #{node_notification['client']}"
+          next
+        end
+
+        send_at = node_notification['send']
+        found_dupe = false
+
+        rr.messages.scheduled.each do |existing_message|
+          if ((node_notification[send] - existing_message.send_at) * 24 * 60).to_i.abs < 1 && node_notification['message'].strip == existing_message.body
+            logs << "--> #{node_notification['notificationid']} found existing duplicate message with id #{existing_message.id}"
+            found_dupe = true
+          end
+        end
+
+        next if found_dupe
+
+        message = Message.new(
+          body: node_notification['message'].strip,
+          reporting_relationship: rr,
+          number_from: user.department.phone_number,
+          number_to: client.phone_number,
+          send_at: send_at,
+          read: true
+        )
+
+        if message.invalid? || message.past_message?
+          logs << "--> #{node_notification['notificationid']} Invalid message."
+          next
+        end
+
+        imported_notifications += 1 if message.new_record?
+        message.save!
+        message.send_message
+      end
+    end
+
+    logs.each do |log|
+      Rails.logger.warn log
     end
   end
 
