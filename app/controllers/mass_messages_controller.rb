@@ -56,6 +56,7 @@ class MassMessagesController < ApplicationController
         }
       )
     end
+    sleep(40)
     redirect_to clients_path
   end
 
