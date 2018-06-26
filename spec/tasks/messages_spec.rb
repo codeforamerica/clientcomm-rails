@@ -14,6 +14,8 @@ describe 'messages rake tasks' do
     let!(:sending_message) { create :text_message, inbound: false, twilio_status: 'sending' }
     let!(:delivered_message) { create :text_message, inbound: false, twilio_status: 'delivered' }
     let!(:undelivered_message) { create :text_message, inbound: false, twilio_status: 'undelivered' }
+    let!(:failed_message) { create :text_message, inbound: false, twilio_status: 'failed' }
+    let!(:blacklisted_message) { create :text_message, inbound: false, twilio_status: 'blacklisted' }
     let!(:received_message) { create :text_message, inbound: true, twilio_status: 'received' }
 
     before do
@@ -34,7 +36,7 @@ describe 'messages rake tasks' do
     end
 
     it 'updates the status of transient messages' do
-      transient_messages = Message.where.not(inbound: true, twilio_status: %w[delivered undelivered])
+      transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted])
       undelivered_messages = Message.where(twilio_status: 'undelivered')
       received_messages = Message.where(twilio_status: 'received')
 
@@ -52,6 +54,14 @@ describe 'messages rake tasks' do
       expect(SMSService.instance).to receive(:status_lookup)
         .with(message: sending_message)
         .and_return('delivered')
+      expect(SMSService.instance).to_not receive(:status_lookup)
+        .with(message: failed_message)
+      expect(SMSService.instance).to_not receive(:status_lookup)
+        .with(message: delivered_message)
+      expect(SMSService.instance).to_not receive(:status_lookup)
+        .with(message: undelivered_message)
+      expect(SMSService.instance).to_not receive(:status_lookup)
+        .with(message: blacklisted_message)
 
       expect(SMSService.instance).to receive(:redact_message)
         .with(message: accepted_message.reload)
