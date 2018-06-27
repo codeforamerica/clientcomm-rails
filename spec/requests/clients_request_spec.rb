@@ -301,6 +301,7 @@ describe 'Clients requests', type: :request do
       let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
       let(:future_date_formatted) { future_date.strftime('%m/%d/%Y') }
       let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
+      let(:existing_rr) { existing_client.reporting_relationships.find_by(user: user) }
 
       subject do
         put client_path(existing_client), params: {
@@ -312,7 +313,7 @@ describe 'Clients requests', type: :request do
             next_court_date_at: future_date_formatted,
             reporting_relationships_attributes: {
               '0': {
-                id: existing_client.reporting_relationships.find_by(user: user).id,
+                id: existing_rr.id,
                 notes: notes
               }
             }
@@ -327,6 +328,7 @@ describe 'Clients requests', type: :request do
         let!(:survey_response3) { create :survey_response, survey_question: survey_question, text: 'Supervision rescinded' }
 
         before do
+          create_list :text_message, 5, reporting_relationship: existing_rr
           existing_client.reporting_relationship(user: user).update(created_at: 10.days.ago)
         end
 
@@ -348,10 +350,13 @@ describe 'Clients requests', type: :request do
           }
         end
 
-        it 'deactivates the rr' do
+        it 'deactivates the rr and marks messages as read' do
+          existing_rr.update(has_unread_messages: true)
           subject
           expect(existing_client.active(user: user))
             .to eq(false)
+          expect(existing_rr.reload.has_unread_messages).to eq(false)
+          expect(existing_rr.messages.unread).to be_empty
         end
 
         it 'creates a survey' do

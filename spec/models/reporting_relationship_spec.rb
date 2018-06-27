@@ -81,6 +81,11 @@ RSpec.describe ReportingRelationship, type: :model do
       before do
         create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day
       end
+      it 'marks messages as read' do
+        subject
+        expect(rr.reload.has_unread_messages).to eq(false)
+        expect(rr.messages.unread).to be_empty
+      end
       it 'deletes scheduled messages' do
         subject
         expect(rr.messages.scheduled).to be_empty

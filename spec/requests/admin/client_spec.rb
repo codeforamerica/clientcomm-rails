@@ -60,6 +60,34 @@ describe 'Clients', type: :request, active_job: true do
       expect(client_row.content).to include(expected_user_string)
     end
   end
+  describe 'GET#edit' do
+    let(:client) { create :client, first_name: 'Joey', last_name: 'Morrison' }
+    let(:created_at) { 2.days.ago }
+    let(:last_contacted_at) { 1.day.ago }
+    let(:notes) { 'beep beep i am a note blah' }
+    let(:has_unread_messages) { true }
+    let(:has_message_error) { true }
+    let!(:rr1) do
+      ReportingRelationship.create(
+        client: client,
+        user: user1,
+        created_at: created_at,
+        last_contacted_at: last_contacted_at,
+        notes: notes,
+        has_unread_messages: has_unread_messages,
+        has_message_error: has_message_error,
+        active: true
+      )
+    end
+
+    context 'has unread messages' do
+      let(:has_unread_messages) { true }
+      it 'displays warning about unreads' do
+        get edit_admin_client_path(client)
+        expect(response.body).to include('Client has unread messages with this user.  Deactivating with mark them as read.')
+      end
+    end
+  end
 
   describe 'GET#show' do
     let(:client) { create :client, first_name: 'Joey', last_name: 'Morrison' }
@@ -106,6 +134,14 @@ describe 'Clients', type: :request, active_job: true do
         table.css('.row-has_message_error').each do |row|
           expect(row.content).to include('Yes')
         end
+      end
+    end
+
+    context 'has unread messages' do
+      let(:has_unread_messages) { true }
+      it 'displays warning about unreads' do
+        get edit_admin_client_path(client)
+        expect(response.body).to include('Client has unread messages with this user.  Deactivating with mark them as read.')
       end
     end
 
@@ -169,16 +205,20 @@ describe 'Clients', type: :request, active_job: true do
       ReportingRelationship.create(
         client: client,
         user: user1,
-        active: true
+        active: true,
+        has_unread_messages: true
       )
     end
 
-    it 'deactivates a reporting relationship' do
+    it 'deactivates a reporting relationship and marks messages read' do
+      create_list :text_message, 5, reporting_relationship: rr1
       post deactivate_admin_client_path(client), params: {
         reporting_relationship_id: rr1.id
       }
 
       expect(rr1.reload.active).to eq(false)
+      expect(rr1.has_unread_messages).to eq(false)
+      expect(rr1.messages.unread).to be_empty
       expect(flash[:success]).to include "#{client.full_name} has been deactivated for #{user1.full_name} in #{department1.name}."
       expect(response).to redirect_to(admin_client_path(client))
     end
