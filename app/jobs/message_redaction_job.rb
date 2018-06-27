@@ -8,6 +8,7 @@ class MessageRedactionJob < ApplicationJob
   retry_on Faraday::ConnectionFailed, wait: :exponentially_longer
 
   def perform(message:)
+    Rails.logger.warn "[MESSAGE_REDACTION_JOB] redacting message #{message.id}"
     SMSService.instance.redact_message(message: message)
   end
 end
