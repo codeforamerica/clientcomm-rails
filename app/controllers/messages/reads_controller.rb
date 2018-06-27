@@ -4,13 +4,8 @@ module Messages
     skip_after_action :intercom_rails_auto_include
 
     def create
-      begin
-        message = current_user.messages.update(params[:message_id], read: message_params[:read])
-      rescue ActiveRecord::StaleObjectError
-        Rails.logger.warn('StaleObjectError on ReadsController create')
-      else
-        message.reporting_relationship.update!(has_unread_messages: false)
-      end
+      message = current_user.messages.update(params[:message_id], read: message_params[:read])
+      message.reporting_relationship.update!(has_unread_messages: false)
       head :no_content
     end
 
