@@ -83,6 +83,11 @@ class TwilioController < ApplicationController
   private
 
   def incoming_message_params
-    params.permit!
+    params.permit(:From, :To, :SmsSid, :SmsStatus, :Body, :NumMedia).tap do |whitelisted|
+      whitelisted['NumMedia'].to_i.times do |i|
+        whitelisted[:"MediaUrl#{i}"] = params[:"MediaUrl#{i}"]
+        whitelisted[:"MediaContentType#{i}"] = params[:"MediaContentType#{i}"]
+      end
+    end
   end
 end

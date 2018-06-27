@@ -37,8 +37,51 @@ describe 'Twilio controller', type: :request, active_job: true do
 
     it 'enqueues an Incoming Message job' do
       subject
+      expected_params = {
+        From: message_params[:From],
+        To: message_params[:To],
+        SmsSid: message_params[:SmsSid],
+        SmsStatus: message_params[:SmsStatus],
+        Body: message_params[:Body],
+        NumMedia: message_params[:NumMedia]
+      }
 
-      expect(IncomingMessageJob).to have_been_enqueued.with(params: message_params)
+      expect(IncomingMessageJob).to have_been_enqueued.with(params: expected_params)
+    end
+
+    context 'there are media URLs' do
+      let(:message_params) do
+        twilio_new_message_params(
+          from_number: phone_number,
+          to_number: dept_phone_number,
+          msg_txt: message_text,
+          sms_sid: sms_sid
+        ).merge(
+          NumMedia: 2,
+          MediaUrl0: 'http://cats.com/fluffy_cat.png',
+          MediaUrl1: 'http://cats.com/fluffy_cat.png',
+          MediaContentType0: 'text/png',
+          MediaContentType1: 'text/png'
+        )
+      end
+
+      it 'enqueues an Incoming Message job with media URLs' do
+        subject
+
+        expected_params = {
+          From: message_params[:From],
+          To: message_params[:To],
+          SmsSid: message_params[:SmsSid],
+          SmsStatus: message_params[:SmsStatus],
+          Body: message_params[:Body],
+          NumMedia: message_params[:NumMedia].to_s,
+          MediaUrl0: 'http://cats.com/fluffy_cat.png',
+          MediaUrl1: 'http://cats.com/fluffy_cat.png',
+          MediaContentType0: 'text/png',
+          MediaContentType1: 'text/png'
+        }
+        expect(IncomingMessageJob).to have_been_enqueued.with(params: expected_params)
+      end
     end
   end
 
