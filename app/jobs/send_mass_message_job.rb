@@ -48,6 +48,6 @@ class SendMassMessageJob < ApplicationJob
   end
 
   def distinct_id(user_id)
-    "#{deploy_prefix}-admin_#{user_id}"
+    "#{deploy_prefix}-#{user_id}"
   end
 end

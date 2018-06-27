@@ -4,45 +4,7 @@ class TwilioController < ApplicationController
   # config/application.rb:28
 
   def incoming_sms
-    new_message = Message.create_from_twilio! params
-    client = new_message.client
-
-    rr = new_message.reporting_relationship
-
-    client_previously_active = rr.active
-
-    rr.update!(
-      last_contacted_at: new_message.send_at,
-      has_unread_messages: true,
-      has_message_error: false,
-      active: true
-    )
-
-    MessageRedactionJob.perform_later(message: new_message)
-
-    # queue message and notification broadcasts
-    MessageBroadcastJob.perform_later(message: new_message)
-
-    # construct and queue an alert
-    message_alert = MessageAlertBuilder.build_alert(
-      reporting_relationship: rr,
-      reporting_relationship_path: reporting_relationship_path(rr),
-      clients_path: clients_path
-    )
-
-    NotificationBroadcastJob.perform_later(
-      channel_id: new_message.user.id,
-      text: message_alert[:text],
-      link_to: message_alert[:link_to],
-      properties: { client_id: client.id }
-    )
-
-    NotificationMailer.message_notification(new_message.user, new_message).deliver_later if new_message.user.message_notification_emails
-
-    analytics_track(
-      label: 'message_receive',
-      data: new_message.analytics_tracker_data.merge(client_active: client_previously_active)
-    )
+    IncomingMessageJob.perform_later(params: incoming_message_params.to_h)
 
     head :no_content
   end
@@ -116,5 +78,11 @@ class TwilioController < ApplicationController
         }
       )
     end
+  end
+
+  private
+
+  def incoming_message_params
+    params.permit!
   end
 end
