@@ -24,6 +24,7 @@ test_user = User.find_or_create_by(email: 'test@example.com')
 test_user.update!(full_name: 'Test Example', password: user_password, department: nil)
 
 puts 'Deleting Old Records'
+Attachment.delete_all
 Message.delete_all
 ReportingRelationship.delete_all
 Client.delete_all
@@ -85,6 +86,14 @@ puts 'Creating Messages'
 ReportingRelationship.all.each do |rr|
   rr.update!(client_status_id: ClientStatus.all.sample.id)
   FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true
+end
+
+puts 'Creating Attachments'
+ReportingRelationship.all.each do |rr|
+  messages = FactoryBot.create_list :text_message, 2, reporting_relationship: rr, read: true
+  messages.each do |msg|
+		FactoryBot.create :attachment, message: msg
+  end
 end
 
 puts 'Creating Court Reminders'
