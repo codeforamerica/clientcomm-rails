@@ -92,7 +92,7 @@ puts 'Creating Attachments'
 ReportingRelationship.all.each do |rr|
   messages = FactoryBot.create_list :text_message, 2, reporting_relationship: rr, read: true
   messages.each do |msg|
-		FactoryBot.create :attachment, message: msg
+    FactoryBot.create :attachment, message: msg
   end
 end
 

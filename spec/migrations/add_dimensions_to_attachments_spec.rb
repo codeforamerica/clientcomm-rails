@@ -13,12 +13,12 @@ describe AddDimensionsToAttachments do
     before do
       @current_migration = ActiveRecord::Migrator.current_version
       ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180627210514
-      Message.reset_column_information
+      Attachment.reset_column_information
     end
 
     subject do
       ActiveRecord::Migrator.migrate Rails.root.join('db', 'migrate'), 20180628172800
-      Message.reset_column_information
+      Attachment.reset_column_information
     end
 
     it 'Adds dimensions to images' do
@@ -38,8 +38,7 @@ describe AddDimensionsToAttachments do
       )
       subject
       attachment.reload
-      binding.pry
-      expect(attachment.dimensions).to eq(['1', '1'])
+      expect(attachment.dimensions).to eq([3024, 3024])
     end
   end
 end
