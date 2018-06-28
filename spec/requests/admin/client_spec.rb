@@ -65,7 +65,7 @@ describe 'Clients', type: :request, active_job: true do
     let(:created_at) { 2.days.ago }
     let(:last_contacted_at) { 1.day.ago }
     let(:notes) { 'beep beep i am a note blah' }
-    let(:has_unread_messages) { true }
+    let(:has_unread_messages) { false }
     let(:has_message_error) { true }
     let!(:rr1) do
       ReportingRelationship.create(
@@ -80,11 +80,16 @@ describe 'Clients', type: :request, active_job: true do
       )
     end
 
+    it 'displays warning about unreads' do
+      get edit_admin_client_path(client)
+      expect(response.body).to_not include('Client has unread messages with this user.  Deactivating will mark them as read.')
+    end
+
     context 'has unread messages' do
       let(:has_unread_messages) { true }
       it 'displays warning about unreads' do
         get edit_admin_client_path(client)
-        expect(response.body).to include('Client has unread messages with this user.  Deactivating with mark them as read.')
+        expect(response.body).to include('Client has unread messages with this user.  Deactivating will mark them as read.')
       end
     end
   end
@@ -134,14 +139,6 @@ describe 'Clients', type: :request, active_job: true do
         table.css('.row-has_message_error').each do |row|
           expect(row.content).to include('Yes')
         end
-      end
-    end
-
-    context 'has unread messages' do
-      let(:has_unread_messages) { true }
-      it 'displays warning about unreads' do
-        get edit_admin_client_path(client)
-        expect(response.body).to include('Client has unread messages with this user.  Deactivating with mark them as read.')
       end
     end
 
