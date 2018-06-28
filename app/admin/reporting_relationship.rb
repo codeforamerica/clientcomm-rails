@@ -89,8 +89,6 @@ ActiveAdmin.register ReportingRelationship do
         return
       end
 
-      rr.messages.unread.update(read: true)
-
       redirect_to(admin_client_path(rr.client)) && return if new_user == previous_user
 
       client = rr.client
@@ -145,7 +143,7 @@ ActiveAdmin.register ReportingRelationship do
     def deactivate_old_relationships(client:, users:)
       ReportingRelationship.where(client: client, user: users).each do |relationship|
         relationship.update!(active: false, has_unread_messages: false)
-        relationship.messages.unread.update(read: false)
+        relationship.messages.unread.update(read: true)
       end
     end
 
