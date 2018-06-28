@@ -1,16 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Attachment, type: :model do
-  describe 'relationships' do
+  describe 'validations' do
     it { should belong_to :message }
-  end
-
-  describe 'paperclip content type validations' do
     it {
       should validate_attachment_content_type(:media)
         .allowing('text/vcard')
         .rejecting('png/whatever')
     }
+    it 'extracts dimensions' do
+      attachment = create :attachment
+      attachment.reload
+      expect(attachment.dimensions).to eq([3024, 3024])
+    end
+    it 'does not extract dimensions from non-image' do
+      attachment = create :attachment, media: File.new(Rails.root.join('spec', 'fixtures', 'cat_contact.vcf'))
+      attachment.save!
+      expect(attachment.dimensions).to eq([])
+    end
   end
 
   describe '#image?' do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180627210514) do
+ActiveRecord::Schema.define(version: 20180628172800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20180627210514) do
     t.string "media_content_type"
     t.integer "media_file_size"
     t.datetime "media_updated_at"
+    t.string "dimensions"
     t.index ["message_id"], name: "index_attachments_on_message_id"
   end
 
