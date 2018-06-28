@@ -13,6 +13,11 @@ RSpec.describe Attachment, type: :model do
       attachment.reload
       expect(attachment.dimensions).to eq([3024, 3024])
     end
+    it 'does not extract dimensions from image' do
+      attachment = create :attachment, media: File.new(Rails.root.join('spec', 'fixtures', 'cat_contact.vcf'))
+      attachment.save!
+      expect(attachment.dimensions).to eq([])
+    end
   end
 
   describe '#image?' do
