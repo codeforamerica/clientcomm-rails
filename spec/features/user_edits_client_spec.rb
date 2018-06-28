@@ -24,6 +24,7 @@ feature 'user edits client', :js do
   let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
 
   let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
+  let(:unread_deactivate_error_message) { 'You have unread messages from this client. These messages will be marked as read. Deactivate, or click here to read them.' }
   before do
     FeatureFlag.create!(flag: 'court_dates', enabled: true)
     other_user.clients << clientone
@@ -124,6 +125,7 @@ feature 'user edits client', :js do
 
       expect(page).to have_current_path(edit_client_path(clientone))
       expect(page).to have_content(unread_error_message)
+      expect(page).to have_content(unread_deactivate_error_message)
     end
   end
 
@@ -141,6 +143,7 @@ feature 'user edits client', :js do
 
       expect(page).to have_current_path(edit_client_path(clientone))
       expect(page).to_not have_content(unread_error_message)
+      expect(page).to_not have_content(unread_deactivate_error_message)
 
       twilio_post_sms(twilio_new_message_params(
                         from_number: clientone.phone_number,
@@ -150,7 +153,11 @@ feature 'user edits client', :js do
       wait_for_ajax
       expect(page).to have_content(unread_error_message)
 
-      within '#unread-warning' do
+      within '.unread-warning.deactivate' do
+        find_link('click here', href: reporting_relationship_path(rr))
+      end
+
+      within '.unread-warning.transfer' do
         click_on 'click here'
       end
 

@@ -145,6 +145,7 @@ ActiveAdmin.register ReportingRelationship do
     def deactivate_old_relationships(client:, users:)
       ReportingRelationship.where(client: client, user: users).each do |relationship|
         relationship.update!(active: false, has_unread_messages: false)
+        relationship.messages.unread.update(read: false)
       end
     end
 

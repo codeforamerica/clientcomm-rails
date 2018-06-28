@@ -16,7 +16,7 @@
       </fieldset>
       <%= transfer_form.hidden_field :client_id, value: @client.id %>
       <%= transfer_form.submit "Transfer #{@client.first_name} #{@client.last_name}", id: :transfer_client, class: :button %>
-      <div id="unread-warning" class="notice <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
+      <div class="notice unread-warning transfer <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
         <div class="icon-warning-container"><i class="icon-warning"></i></div>
         <div>
           <%= t('views.clients.edit.manage.unread_transfer', href: reporting_relationship_path(@reporting_relationship)).html_safe %>
@@ -56,6 +56,12 @@
         <% end %>
       </div>
       <%= client_form.submit "Deactivate #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
+      <div class="notice unread-warning deactivate <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
+        <div class="icon-warning-container"><i class="icon-warning"></i></div>
+        <div>
+          <%= t('views.clients.edit.manage.unread_deactivate', href: reporting_relationship_path(@reporting_relationship)).html_safe %>
+        </div>
+      </div>
     <% end %>
       <h4>Download transcript</h4>
       <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>

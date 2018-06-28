@@ -107,6 +107,7 @@ ActiveAdmin.register Client do
               span active_user.full_name, disabled: true
               a 'Change', href: edit_admin_reporting_relationship_path(rr)
               a 'Deactivate', href: deactivate_admin_client_path(resource, reporting_relationship_id: rr.id), 'data-method': :post
+              span 'Client has unread messages with this user.  Deactivating will mark them as read.' if rr.has_unread_messages
             else
               last_active_user = department.users
                                            .joins(:clients)

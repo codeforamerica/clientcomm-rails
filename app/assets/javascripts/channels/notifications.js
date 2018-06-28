@@ -47,10 +47,10 @@ $(document).ready(function() {
           if ($("#client-list").length) {
             Notifications.refreshClientList();
           }
-          if ($("#unread-warning").length) {
+          if ($(".unread-warning").length) {
             clientId = $('#reporting_relationship_client_id').attr('value');
             if (data.properties.client_id == clientId) {
-              $('#unread-warning').removeClass('hidden')
+              $('.unread-warning').removeClass('hidden')
             }
           }
         }
