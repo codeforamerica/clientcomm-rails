@@ -13,7 +13,7 @@
 
         <div class="form-card__content">
         <%= form_for resource, as: resource_name, url: session_path(resource_name), builder: GcfFormBuilder do |f| %>
-          <%= f.gcf_input_field :email, "Email", autofocus: true, classes: ['form-width--long'] %>
+          <%= f.gcf_input_field :email, 'Email', autofocus: true, type:'email',classes: ['form-width--long'] %>
           <div class="form-group">
             <%= f.label :password, "Password", class: 'form-question' %>
             <%= f.password_field :password, autocomplete: "off", class: 'text-input form-width--long' %>
