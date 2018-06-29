@@ -13,23 +13,25 @@ class TwilioController < ApplicationController
     message = Message.find_by twilio_sid: params[:SmsSid]
     return if message.nil?
 
-    request_start = request.headers['X-Request-Start']
+    message.with_lock do
+      request_start = request.headers['X-Request-Start']
 
-    if !message.last_twilio_update || request_start > message.last_twilio_update
-      message.update!(twilio_status: params[:SmsStatus], last_twilio_update: request_start)
-    end
+      if !message.last_twilio_update || request_start > message.last_twilio_update
+        message.update!(twilio_status: params[:SmsStatus], last_twilio_update: request_start)
+      end
 
-    # put the message broadcast in the queue
-    MessageBroadcastJob.perform_later(message: message)
+      # put the message broadcast in the queue
+      MessageBroadcastJob.perform_later(message: message)
 
-    if params[:SmsStatus] == 'delivered'
-      message.reporting_relationship.update!(has_message_error: false)
-    elsif ['failed', 'undelivered'].include?(params[:SmsStatus])
-      message.reporting_relationship.update!(has_message_error: true)
-      analytics_track(
-        label: 'message_send_failed',
-        data: message.analytics_tracker_data
-      )
+      if params[:SmsStatus] == 'delivered'
+        message.reporting_relationship.update!(has_message_error: false)
+      elsif ['failed', 'undelivered'].include?(params[:SmsStatus])
+        message.reporting_relationship.update!(has_message_error: true)
+        analytics_track(
+          label: 'message_send_failed',
+          data: message.analytics_tracker_data
+        )
+      end
     end
 
     head :no_content
