@@ -22,7 +22,6 @@ feature 'User receives a message from a client' do
                         from_number: clientone.phone_number,
                         to_number: phone_number
       ))
-
       expect(page).to have_css '.flash p', text: "You have 1 unread message from #{clientone.full_name}"
     end
 

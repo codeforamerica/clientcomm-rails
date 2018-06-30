@@ -51,18 +51,6 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
       expect(response.body).to_not include(message3.body)
     end
 
-    it 'marks all messages read when index loaded' do
-      message = create :text_message, reporting_relationship: rr, inbound: true
-      client.reporting_relationship(user: user).update!(has_unread_messages: true)
-
-      # when we visit the messages path, it should mark the message read
-      expect { subject }
-        .to change { message.reload.read? }
-        .from(false)
-        .to(true)
-      expect(client.reporting_relationship(user: user).has_unread_messages).to eq(false)
-    end
-
     context 'there are scheduled messages' do
       it 'does not show scheduled messages in the main timeline' do
         message = create :text_message, reporting_relationship: rr, send_at: Time.zone.now.tomorrow

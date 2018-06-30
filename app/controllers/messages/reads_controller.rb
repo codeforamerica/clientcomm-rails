@@ -5,7 +5,9 @@ module Messages
 
     def create
       message = current_user.messages.update(params[:message_id], read: message_params[:read])
-      message.reporting_relationship.update!(has_unread_messages: false)
+      if message.reporting_relationship.messages.unread.count?
+        message.reporting_relationship.update!(has_unread_messages: false)
+      end
       head :no_content
     end
 

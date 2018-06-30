@@ -1,6 +1,32 @@
 //= require cable
 //= require_self
 //= require_tree .
+//= require withinviewport
+//= require jquery.withinviewport
+
+function markMessageRead(id) {
+  // tell the server to mark this message read
+  $.ajax({
+    type: "POST",
+    url: "/messages/" + id.toString() + "/read",
+    id: id,
+    data: {
+      message: {
+        read: true
+      }
+    }
+  });
+}
+
+markAsRead =  _.throttle(function() {
+  if(document.visibilityState == 'visible') {
+    $('div.message--inbound.unread').withinviewport().each(function(i, el) {
+      el = $(el);
+      markMessageRead(el.attr('id').replace('message_',''));
+      el.removeClass('unread').addClass('read');
+    });
+  }
+}, 300);
 
 var Messages = {
   init: function() {
@@ -26,22 +52,9 @@ var Messages = {
     if (msgElement.length) {
         msgElement.replaceWith(message_html);
     } else {
-      Messages.markMessageRead(message_id);
       this.appendMessage(message_html);
     }
-  },
-  markMessageRead: function(id) {
-    // tell the server to mark this message read
-    $.ajax({
-      type: "POST",
-      url: "/messages/" + id.toString() + "/read",
-      id: id,
-      data: {
-        message: {
-          read: true
-        }
-      }
-    });
+    markAsRead();
   },
   messagesToBottom: function() {
     $(document).scrollTop(this.msgs.prop('scrollHeight'));
@@ -99,6 +112,7 @@ $(document).ready(function() {
   if (!clientId) {
     return;
   }
+  $(window).on('resize scroll visibilitychange', markAsRead);
 
   App.messages = App.cable.subscriptions.create(
     { channel: 'MessagesChannel', client_id: clientId },

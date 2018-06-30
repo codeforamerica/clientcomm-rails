@@ -1,4 +1,4 @@
-<div class="message--<%= message_inbound_or_outbound(text_message) %>" id="message_<%= text_message.id %>">
+<div class="message--<%= message_inbound_or_outbound(text_message) %> <%= text_message.read ? 'read' : 'unread' %>" id="message_<%= text_message.id %>">
   <div class="message-row-container">
     <div class="message--<%= text_message.any_image_attachments? ? 'image' : 'content' %> <%= text_message.twilio_status %>"><%= text_message.body %>
     <%= render text_message.attachments %>

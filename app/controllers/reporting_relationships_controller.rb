@@ -20,8 +20,6 @@ class ReportingRelationshipsController < ApplicationController
 
     # the list of past messages
     @messages = past_messages
-    @messages.where(read: false).update(read: true)
-    @rr.update(has_unread_messages: false)
 
     @message = Message.new(send_at: default_send_at)
     @sendfocus = true
