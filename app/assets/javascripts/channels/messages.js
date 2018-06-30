@@ -19,7 +19,7 @@ function markMessageRead(id) {
 }
 
 markAsRead =  _.throttle(function() {
-  if(document.visibilityState == 'visible') {
+  if(typeof document.visibilittyState == 'undefined' || document.visibilityState == 'visible') {
     $('div.message--inbound.unread').withinviewport().each(function(i, el) {
       el = $(el);
       markMessageRead(el.attr('id').replace('message_',''));
