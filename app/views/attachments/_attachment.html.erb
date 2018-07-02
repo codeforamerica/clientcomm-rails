@@ -1,6 +1,7 @@
 <% if attachment.image? %>
-  <!-- (naturalHeight / naturalWidth) * clientWidth = clientHeight -->
-  <img style="max-width: 100%;" src="<%= attachment.media.expiring_url(10) %>" data-image-ratio="<%= attachment.dimensions[1].to_f / attachment.dimensions[0].to_f %>" />
+  <div class="image-container" style="padding-top: <%= (100 * (attachment.dimensions[1].to_f / attachment.dimensions[0].to_f)).to_i %>%;">
+    <img href="<%= attachment.media.expiring_url(10) %>" src="<%= attachment.media.expiring_url(10) %>" />
+  </div>
 <% else %>
   <a href="<%= attachment.media.expiring_url(10) %>">View Attachment</a>
 <% end %>

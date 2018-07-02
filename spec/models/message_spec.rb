@@ -294,14 +294,14 @@ RSpec.describe Message, type: :model do
           to_number: department.phone_number,
           msg_txt: body
         ).merge(NumMedia: 2,
-                MediaUrl0: 'http://cats.com/fluffy_cat.png',
-                MediaUrl1: 'http://cats.com/fluffy_cat.png',
-                MediaContentType0: 'text/png',
-                MediaContentType1: 'text/png')
+                MediaUrl0: 'http://cats.com/fluffy_cat.jpg',
+                MediaUrl1: 'http://cats.com/fluffy_cat.jpg',
+                MediaContentType0: 'image/jpeg',
+                MediaContentType1: 'image/jpeg')
       end
 
       before do
-        stub_request(:get, 'http://cats.com/fluffy_cat.png')
+        stub_request(:get, 'http://cats.com/fluffy_cat.jpg')
           .to_return(status: 200,
                      body: File.read('spec/fixtures/fluffy_cat.jpg'),
                      headers: {
@@ -318,6 +318,8 @@ RSpec.describe Message, type: :model do
         attachments.each do |attachment|
           expect(attachment.media.exists?).to eq true
         end
+
+        expect(subject.any_image_attachments?).to eq true
       end
 
       context 'message body is present' do
@@ -331,6 +333,37 @@ RSpec.describe Message, type: :model do
             expect(attachment.media.exists?).to eq true
           end
         end
+      end
+    end
+
+    context 'there is a non-image attachment' do
+      let(:body) { '' }
+      let(:twilio_params) do
+        twilio_new_message_params(
+          from_number: unknown_number,
+          to_number: department.phone_number,
+          msg_txt: body
+        ).merge(NumMedia: 1,
+                MediaUrl0: 'http://cats.com/cat_contact.vcf',
+                MediaContentType0: 'text/x-vcard')
+      end
+
+      before do
+        stub_request(:get, 'http://cats.com/cat_contact.vcf')
+          .to_return(status: 200,
+                     body: File.read('spec/fixtures/cat_contact.vcf'),
+                     headers: {
+                       'Accept-Ranges' => 'bytes',
+                       'Content-Length' => '162',
+                       'Content-Type' => 'text/x-vcard'
+                     })
+      end
+
+      it 'creates a message with an attachment' do
+        attachments = subject.attachments.all
+        expect(attachments.length).to eq 1
+        expect(attachments.first.media.exists?).to eq true
+        expect(subject.any_image_attachments?).to eq false
       end
     end
 

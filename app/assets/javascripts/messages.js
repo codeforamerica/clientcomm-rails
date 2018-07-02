@@ -74,14 +74,6 @@ $(document).ready(function(){
 
   autosize(sendInput);
 
-  $("img[data-image-ratio]").each(function(index, imgTag) {
-    // tagWidth = imgTag.clientWidth;
-    tagWidth = 430;
-    console.log("--> I want to multiply " + $(imgTag).data("image-ratio") + " by " + tagWidth);
-    setHeight = Math.round($(imgTag).data("image-ratio") * tagWidth);
-    $(imgTag).attr("height", setHeight);
-  });
-
   $('form#new_message').on('ajax:success', function(e) {
     autosize.update(sendInput);
   });
