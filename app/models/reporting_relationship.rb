@@ -86,7 +86,6 @@ class ReportingRelationship < ApplicationRecord
 
   def attachments
     Attachment.where(message: messages)
-    # select * from attachments where attachments.message_id in [1, 2, 3]
   end
 
   def hours_since_contact
