@@ -109,7 +109,8 @@
         position: relative;
       }
 
-      .message--content {
+
+      %message--shared {
         max-width: 100%;
         background: $color-light-grey;
         border-radius: 10px 10px 10px 0px;
@@ -124,7 +125,30 @@
         @include media($mobile-up){
           max-width: 60%;
         }
+      }
+
+      .message--content {
+        @extend %message--shared;
         display: inline-block;
+      }
+
+      .message--image {
+        @extend %message--shared;
+
+        .image-container {
+          display: block;
+          height: 0;
+          position: relative;
+          width: 100%;
+        }
+
+        img {
+          height: 100%;
+          left: 0;
+          position: absolute;
+          top: 0;
+          width: 100%;
+        }
       }
 
       .message--label {

@@ -184,6 +184,10 @@ class Message < ApplicationRecord
     reporting_relationship.messages.order(send_at: :asc).first == self
   end
 
+  def any_image_attachments?
+    attachments.map(&:image?).reduce(:|)
+  end
+
   def self.send_unclaimed_autoreply(rr:)
     now = Time.zone.now
     unclaimed_response = rr.department.unclaimed_response
