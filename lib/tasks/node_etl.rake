@@ -3,46 +3,54 @@ namespace :node_etl do
     num_users = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT count(cm.cmid)
       FROM cms cm
-      WHERE cm.active = true
+      WHERE cm.active = false
       AND cm.department IN (7, 4, 11, 3, 2);
     SQL
     groups = (num_users / 10.to_f).ceil
+    logs = []
 
-    Rails.logger.warn '--> beginning user load'
+    logs << "--> beginning user load -- loading #{num_users} users"
     imported_users = 0
 
     groups.times do |group|
-      Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
+      logs << "--> Loading group #{group + 1} of #{groups}"
       node_users = node_production.exec(<<-SQL, [group * 10])
         SELECT *
         FROM cms cm
-        WHERE cm.active = true
+        WHERE cm.active = false
         AND cm.department IN (7, 4, 11, 3, 2)
         ORDER BY cm.cmid
         LIMIT 10 OFFSET $1;
       SQL
 
       node_users.each do |node_user|
+        existing_user = User.find_by(node_id: node_user['cmid'])
+        next unless existing_user.nil?
+
         first_name = "#{node_user['first'].strip} #{node_user['middle'].strip}"
 
-        user = User.find_or_initialize_by(node_id: node_user['cmid']) do |u|
-          u.full_name = "#{first_name} #{node_user['last'].strip}"
-          u.email = node_user['email']
-          u.password = 'xxxyyyzzz'
-          u.password_confirmation = 'xxxyyyzzz'
-          u.department = Department.first
-        end
+        User.create(
+          node_id: node_user['cmid'],
+          full_name: "#{first_name} #{node_user['last'].strip}",
+          email: node_user['email'],
+          password: 'surcease-undulate-overlord-rebate-monad',
+          password_confirmation: 'surcease-undulate-overlord-rebate-monad',
+          department: Department.first,
+          active: false
+        )
 
-        imported_users += 1 if user.new_record?
-
-        user.save!
+        imported_users += 1
       end
+    end
+
+    logs.each do |log|
+      Rails.logger.warn log
     end
 
     Rails.logger.warn { "--> user load of #{imported_users} users complete" }
   end
 
-  task etl_active_messages: :environment do
+  task etl_inactive_messages: :environment do
     num_messages = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT COUNT(DISTINCT(msgs.tw_sid))
       FROM msgs
@@ -52,9 +60,8 @@ namespace :node_etl do
       INNER JOIN clients ON clients.clid = convos.client
       WHERE comms.type = 'cell'
       AND msgs.tw_sid != ''
-      AND cms.active = true
       AND cms.department IN (7, 4, 11, 3, 2)
-      AND clients.active = true;
+      AND clients.active = false;
     SQL
 
     group_size = 1000
@@ -75,9 +82,8 @@ namespace :node_etl do
         INNER JOIN clients ON clients.clid = convos.client
         WHERE comms.type = 'cell'
         AND msgs.tw_sid != ''
-        AND cms.active = true
         AND cms.department IN (7, 4, 11, 3, 2)
-        AND clients.active = true
+        AND clients.active = false
         ORDER BY msgs.tw_sid DESC
         LIMIT $1 OFFSET $2;
       SQL
@@ -112,19 +118,20 @@ namespace :node_etl do
       SELECT COUNT(cl.clid)
       FROM clients cl
       LEFT JOIN cms cm ON cm.cmid = cl.cm
-      WHERE cl.active = true
-      AND cm.active = true
+      WHERE cl.active = false
       AND cm.department IN (7, 4, 11, 3, 2);
     SQL
 
     groups = (num_clients / 10.to_f).ceil
+    groups = 7
     logs = []
 
     logs << "--> beginning client load -- loading #{num_clients} clients"
     imported_clients = 0
+    skipped_clients = 0
     errored_clients = []
 
-    offset = 0
+    offset = 6
     groups -= offset
     groups.times do |group|
       group += offset
@@ -133,14 +140,22 @@ namespace :node_etl do
         SELECT cl.*
         FROM clients cl
         LEFT JOIN cms cm ON cm.cmid = cl.cm
-        WHERE cl.active = true
-        AND cm.active = true
+        WHERE cl.active = false
         AND cm.department IN (7, 4, 11, 3, 2)
         ORDER BY cl.clid DESC
         LIMIT 10 OFFSET $1;
       SQL
 
       node_clients.each do |node_client|
+        Rails.logger.warn "--> starting client #{node_client['clid']}"
+        logs << "--> starting client #{node_client['clid']}"
+
+        unless Client.find_by(node_client_id: node_client['clid']).nil?
+          logs << "--> SKIPPING because client #{node_client['clid']} already exists!"
+          skipped_clients += 1
+          next
+        end
+
         comms = node_production.exec(<<-SQL, [node_client['clid']])
           SELECT
           co.commid,
@@ -154,7 +169,18 @@ namespace :node_etl do
           AND cc.retired IS NULL;
         SQL
 
+        if comms.count.zero?
+          logs << "--> SKIPPING because user #{node_client['clid']} has zero comms!"
+          skipped_clients += 1
+          next
+        end
+
         user = User.find_by(node_id: node_client['cm'])
+        if user.nil?
+          logs << "--> SKIPPING because user #{node_client['cm']} doesn't exist!"
+          skipped_clients += 1
+          next
+        end
 
         multicomms = comms.count > 1
         comms.each_with_index do |comm, index|
@@ -164,16 +190,21 @@ namespace :node_etl do
           last_name = node_client['last'].strip
           last_name = "#{last_name} (#{comm_name})" if multicomms
 
-          client = Client.find_or_initialize_by(node_client_id: node_client['clid'], node_comm_id: comm['commid']) do |c|
-            c.first_name = first_name
-            c.last_name = last_name
-            c.phone_number = comm['value']
-            c.node_client_id = node_client['clid']
-            c.node_comm_id = comm['commid']
-            c.users = [user]
+          unless Client.find_by(phone_number: "+#{comm['value']}").nil?
+            logs << "--> SKIPPING client #{node_client['clid']} + comm #{comm['commid']} because the phone number is taken!"
+            skipped_clients += 1
+            next
           end
 
-          imported_clients += 1 if client.new_record?
+          client = Client.new(
+            node_client_id: node_client['clid'],
+            node_comm_id: comm['commid'],
+            first_name: first_name,
+            last_name: last_name,
+            phone_number: comm['value']
+          )
+
+          imported_clients += 1
 
           unless client.save
             logs << "--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})"
@@ -211,7 +242,10 @@ namespace :node_etl do
             end
           end
 
-          ReportingRelationship.find_by(user: user, client: client).update!(notes: node_client['otn'], last_contacted_at: last_contacted_at)
+          rr = ReportingRelationship.find_by(user: user, client: client)
+          logs << "--> WARNING found existing rr for client #{node_client['clid']} + user #{node_client['cm']}" unless rr.nil?
+          rr ||= ReportingRelationship.create(user: user, client: client)
+          rr.update!(active: false, last_contacted_at: last_contacted_at)
         end
       end
     end
@@ -221,6 +255,11 @@ namespace :node_etl do
     end
 
     Rails.logger.warn { "--> client load of #{imported_clients} clients complete" }
+
+    if skipped_clients.positive?
+      Rails.logger.warn { "--> #{skipped_clients} clients skipped!" }
+    end
+
     if errored_clients.count
       Rails.logger.warn { "--> #{errored_clients.count} clients not loaded!" }
       errored_clients.each_with_index do |ecs, index|
