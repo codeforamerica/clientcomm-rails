@@ -123,7 +123,6 @@ namespace :node_etl do
     SQL
 
     groups = (num_clients / 10.to_f).ceil
-    groups = 7
     logs = []
 
     logs << "--> beginning client load -- loading #{num_clients} clients"
@@ -131,11 +130,12 @@ namespace :node_etl do
     skipped_clients = 0
     errored_clients = []
 
-    offset = 6
+    offset = 0
     groups -= offset
     groups.times do |group|
       group += offset
       logs << "--> Loading group #{group + 1} of #{groups + offset}"
+      Rails.logger.warn "--> Loading group #{group + 1} of #{groups + offset}"
       node_clients = node_production.exec(<<-SQL, [group * 10])
         SELECT cl.*
         FROM clients cl
@@ -208,6 +208,7 @@ namespace :node_etl do
 
           unless client.save
             logs << "--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name})"
+            Rails.logger.warn "--> could not save client with clid:#{client.node_client_id} commid:#{client.node_comm_id} (#{client.full_name}) errors: #{client.errors.full_messages}"
             errored_clients << {
               clid: client.node_client_id,
               commid: client.node_comm_id,
@@ -243,7 +244,7 @@ namespace :node_etl do
           end
 
           rr = ReportingRelationship.find_by(user: user, client: client)
-          logs << "--> WARNING found existing rr for client #{node_client['clid']} + user #{node_client['cm']}" unless rr.nil?
+          logs << "--> WARNING found existing rr #{rr.id} with active #{rr.active} and last_contacted_at #{rr.last_contacted_at} for client #{node_client['clid']} + user #{node_client['cm']}" unless rr.nil?
           rr ||= ReportingRelationship.create(user: user, client: client)
           rr.update!(active: false, last_contacted_at: last_contacted_at)
         end
