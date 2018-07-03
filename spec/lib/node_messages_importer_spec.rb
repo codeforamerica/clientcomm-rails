@@ -33,7 +33,7 @@ describe NodeMessagesImporter do
   let(:client) { create :client, node_comm_id: comm_id }
   let(:client_number) { client.phone_number.gsub(/\D/, '') }
   let(:client_number_normalized) { client.phone_number }
-  let!(:rr) { create :reporting_relationship, user: user_1, client: client }
+  let!(:rr) { create :reporting_relationship, user: user_1, client: client, active: false }
 
   subject { described_class.import_message(message_segments) }
 
@@ -49,6 +49,17 @@ describe NodeMessagesImporter do
       expect(message.read).to eq read_boolean
       expect(message.twilio_status).to eq twilio_status
       expect(message.number_from).to eq client_number_normalized
+    end
+
+    context 'no reporting relationship exists for the message' do
+      let(:user_2) { create :user }
+      let!(:rr) { create :reporting_relationship, user: user_2, client: client }
+
+      it 'does not create a message object' do
+        subject
+        message = rr.messages.find_by(twilio_sid: twilio_sid)
+        expect(message).to be_nil
+      end
     end
 
     context 'a message with the same sid already exists' do

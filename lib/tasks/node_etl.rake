@@ -66,15 +66,17 @@ namespace :node_etl do
 
     group_size = 1000
     groups = (num_messages / group_size.to_f).ceil
+    logs = []
 
-    Rails.logger.warn "--> beginning active message load of #{num_messages} messages in #{groups} groups."
+    double_log "--> beginning active message load of #{num_messages} messages in #{groups} groups.", logs
 
+    offset = 0
+    groups -= offset
     groups.times do |group|
-      Rails.logger.warn { "--> Loading group #{group + 1} of #{groups}" }
+      group += offset
+      double_log "--> Loading group #{group + 1} of #{groups + offset}", logs
       distinct_node_messages = node_production.exec(<<-SQL, [group_size, group * group_size])
-        SELECT DISTINCT ON (msgs.tw_sid)
-          msgs.tw_sid,
-          msgs.msgid
+        SELECT DISTINCT msgs.tw_sid
         FROM msgs
         INNER JOIN comms ON comms.commid = msgs.comm
         INNER JOIN convos ON convos.convid = msgs.convo
@@ -108,8 +110,14 @@ namespace :node_etl do
           ORDER BY msgs.msgid;
         SQL
 
-        NodeMessagesImporter.import_message(node_message_segments)
+        double_log "--> IMPORTING message #{node_message_segments.first['tw_sid']}!", logs
+        mlog = NodeMessagesImporter.import_message(node_message_segments)
+        double_log(mlog, logs) if mlog.present? && mlog.class == String
       end
+    end
+
+    logs.each do |log|
+      Rails.logger.warn log
     end
   end
 
@@ -344,6 +352,11 @@ namespace :node_etl do
     logs.each do |log|
       Rails.logger.warn log
     end
+  end
+
+  def double_log(log_text, log_list)
+    Rails.logger.warn log_text
+    log_list << log_text
   end
 
   def node_production

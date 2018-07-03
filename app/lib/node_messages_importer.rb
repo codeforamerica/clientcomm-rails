@@ -1,7 +1,7 @@
 module NodeMessagesImporter
   # rubocop:disable Metrics/PerceivedComplexity
   def self.import_message(message_segments)
-    return if Message.find_by(twilio_sid: message_segments.first['tw_sid']).present?
+    return '--> SKIPPED because the message is already in the database' if Message.find_by(twilio_sid: message_segments.first['tw_sid']).present?
 
     body, segment, user, client, rr = nil
     message_groups = message_segments.group_by { |s| s['convid'] }
@@ -14,7 +14,9 @@ module NodeMessagesImporter
       break if rr.present?
     end
 
-    return if rr.nil? || body.blank?
+    return '--> SKIPPED because no reporting relationship could be found' if rr.nil?
+
+    return '--> SKIPPED because there was no message body' if body.blank?
 
     normalized_phone_number = "+#{segment['value']}"
     inbound = segment['inbound'] == 't'
@@ -25,7 +27,7 @@ module NodeMessagesImporter
       inbound: segment['inbound'],
       number_from: inbound ? normalized_phone_number : rr.department.phone_number,
       number_to: inbound ? rr.department.phone_number : normalized_phone_number,
-      read: inbound ? segment['read'] : true,
+      read: true,
       reporting_relationship: rr,
       send_at: segment['created'],
       sent: sent,
