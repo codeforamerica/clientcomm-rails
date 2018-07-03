@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180628172800) do
+ActiveRecord::Schema.define(version: 20180703180216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,15 @@ ActiveRecord::Schema.define(version: 20180628172800) do
     t.datetime "media_updated_at"
     t.string "dimensions"
     t.index ["message_id"], name: "index_attachments_on_message_id"
+  end
+
+  create_table "change_images", force: :cascade do |t|
+    t.string "file_file_name"
+    t.string "file_content_type"
+    t.integer "file_file_size"
+    t.datetime "file_updated_at"
+    t.bigint "admin_user_id", default: 1, null: false
+    t.index ["admin_user_id"], name: "index_change_images_on_admin_user_id"
   end
 
   create_table "client_statuses", force: :cascade do |t|
@@ -236,6 +245,7 @@ ActiveRecord::Schema.define(version: 20180628172800) do
   end
 
   add_foreign_key "attachments", "messages"
+  add_foreign_key "change_images", "admin_users"
   add_foreign_key "clients", "users"
   add_foreign_key "court_date_csvs", "admin_users"
   add_foreign_key "departments", "users"
