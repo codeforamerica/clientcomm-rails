@@ -76,7 +76,7 @@ feature 'search and sort clients' do
   describe 'user sorts clients' do
     it 'sorts by most recent contact by default', js: true do
       subject
-      expect(page).to have_css('.glyphicon-arrow-down')
+      expect(page).to have_css('.icon-sort-arrows')
       expect(page).to have_css('tr:first-child', text: @clientthree.full_name)
       expect(page).to have_css('tr:last-child', text: @clientone.full_name)
     end
