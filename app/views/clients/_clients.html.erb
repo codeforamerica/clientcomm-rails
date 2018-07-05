@@ -15,44 +15,32 @@
     <tr>
       <% if FeatureFlag.enabled?('categories') %>
       <th class="sort hidden-xs category-order" data-sort="category-order">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
       </th>
       <% end %>
       <th class="sort lastname-order" data-sort="lastname">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
         Name
       </th>
       <th class="sort desc" data-sort="timestamp">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
         Last contact
       </th>
       <% if current_user.department.client_statuses? %>
       <th class="sort hidden-xs" data-sort="client-status">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
         Status
       </th>
       <% end %>
       <% if FeatureFlag.enabled?('court_dates') %>
       <th class="sort hidden-xs" data-sort="next-court-date-at">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
         Court date
       </th>
       <% end %>
       <% if FeatureFlag.enabled?('scheduled_message_count') %>
       <th class="sort hidden-xs scheduled-messages" data-sort="scheduled-message-count">
-        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+        <span class="icon-sort-arrows" aria-hidden="true"></span>
         <div>Scheduled messages</div>
       </th>
       <% end %>

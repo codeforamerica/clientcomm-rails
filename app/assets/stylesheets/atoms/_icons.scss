@@ -300,6 +300,13 @@
 .icon-settings:before {
   content: "\e8b8";
 }
+.icon-sort-arrows:before {
+  content: "\e900";
+}
+.icon-sort-arrows:after {
+  content: "\e901";
+  margin-left: -1em;
+}
 .icon-star_border:before {
   content: "\e83a";
 }
