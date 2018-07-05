@@ -25,7 +25,7 @@
       bottom: .5em;
     }
     &:first-child {
-      padding-left: .7em;
+      padding-left: 1.7em;
     }
     &:last-child {
       padding-right: $site-margins/2;
@@ -125,36 +125,15 @@
   .sort {
     cursor: pointer;
 
-    .glyphicon-arrow-down {
-      display: none;
-    }
-    .glyphicon-arrow-up {
-      display: none;
-    }
-
     &.asc {
-      .glyphicon-sort {
-        display: none;
-      }
-      .glyphicon-arrow-down {
-        display: none;
-      }
-      .glyphicon-arrow-up {
-        color: $color-teal;
-        display: inline;
+      span.icon-sort-arrows:after {
+        color: $color-magenta;
       }
     }
 
     &.desc {
-      .glyphicon-sort {
-        display: none;
-      }
-      .glyphicon-arrow-up {
-        display: none;
-      }
-      .glyphicon-arrow-down {
-        color: $color-teal;
-        display: inline;
+      span.icon-sort-arrows:before {
+        color: $color-magenta;
       }
     }
   }
@@ -203,5 +182,9 @@ td.category-order {
 th.category-order {
   text-align: center;
   padding-right: 10px;
-  padding-left: 10px;
+  padding-left: 8px;
+}
+
+th.category-order.after-checkbox {
+  text-align: left;
 }

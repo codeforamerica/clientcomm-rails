@@ -38,29 +38,21 @@
                     <th class="check-column">
                     </th>
                     <% if FeatureFlag.enabled?('categories') %>
-                    <th class="sort hidden-xs category-order" data-sort="category-order">
-                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    <th class="sort hidden-xs category-order after-checkbox" data-sort="category-order">
+                      <span class="icon-sort-arrows" aria-hidden="true"></span>
                     </th>
                     <% end %>
-                    <th class="sort" data-sort="lastname">
-                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    <th class="sort lastname-order" data-sort="lastname">
+                      <span class="icon-sort-arrows" aria-hidden="true"></span>
                       Name
                     </th>
                     <th class="sort desc" data-sort="timestamp">
-                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                      <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                      <span class="icon-sort-arrows" aria-hidden="true"></span>
                       Last contact
                     </th>
                     <% if current_user.department.client_statuses? %>
                       <th class="sort hidden-xs" data-sort="client-status">
-                          <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                          <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                          <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                          <span class="icon-sort-arrows" aria-hidden="true"></span>
                           Status
                       </th>
                     <% end %>
