@@ -13,6 +13,13 @@
             <div class="media-body"><%= t('views.tips.positive_reinforcement_html') %></div>
           </div>
           <% end %>
+          <% if @change_image.present? %>
+          <div class="tip">
+            <span class="tip-title">This is a messages from clientcomm to you thank you very much.</span>
+            <div class="media-body">Making a difference, one text at a time</div>
+            <img src="<%= @change_image.file.expiring_url(10) %>" />
+          </div>
+          <% end %>
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">
               <h1>My clients</h1>
