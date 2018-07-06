@@ -17,6 +17,7 @@ describe 'messages rake tasks' do
     let!(:failed_message) { create :text_message, inbound: false, twilio_status: 'failed' }
     let!(:blacklisted_message) { create :text_message, inbound: false, twilio_status: 'blacklisted' }
     let!(:received_message) { create :text_message, inbound: true, twilio_status: 'received' }
+    let!(:old_message) { create :text_message, inbound: false, twilio_status: 'sent', send_at: Time.current - 10.days }
 
     before do
       load File.expand_path('../../lib/tasks/messages.rake', __dir__)
@@ -37,6 +38,7 @@ describe 'messages rake tasks' do
 
     it 'updates the status of transient messages' do
       transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted])
+                                  .where('send_at > ?', Time.current - 7.days)
       undelivered_messages = Message.where(twilio_status: 'undelivered')
       received_messages = Message.where(twilio_status: 'received')
 
@@ -62,6 +64,8 @@ describe 'messages rake tasks' do
         .with(message: undelivered_message)
       expect(SMSService.instance).to_not receive(:status_lookup)
         .with(message: blacklisted_message)
+      expect(SMSService.instance).to_not receive(:status_lookup)
+        .with(message: old_message)
 
       expect(SMSService.instance).to receive(:redact_message)
         .with(message: accepted_message.reload)

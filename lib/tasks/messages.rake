@@ -1,6 +1,7 @@
 namespace :messages do
   task update_twilio_statuses: :environment do
     transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted])
+                                .where('send_at > ?', Time.current - 7.days)
     Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating #{transient_messages.count} transient messages" }
 
     transient_messages.each do |m|
