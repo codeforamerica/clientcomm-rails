@@ -14,10 +14,11 @@
           </div>
           <% end %>
           <% if @change_image.present? %>
-            <div class="tip">
-              <div id="change-txt" style="flex-shrink:8">
-                <span class="tip-title">This is a messages from clientcomm to you thank you very much.</span>
-                <div class="media-body">Making a difference, one text at a time</div>
+            <div class="change-alert">
+              <div class="change-alert--text">
+                <span class="change-alert--title">Making a difference, one text at a time</span>
+                <div class="change-alert--body">In honor of CSO appreciation week, read  thank you's  from real clients on Clientcomm.</div>
+                <div class="change-alert--explainer"><a href="#">More about positive reinforcements &gt;</a></div>
               </div>
               <div>
                 <img src="<%= @change_image.file.expiring_url(10) %>" />
