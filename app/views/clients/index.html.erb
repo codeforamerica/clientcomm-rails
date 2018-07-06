@@ -14,11 +14,15 @@
           </div>
           <% end %>
           <% if @change_image.present? %>
-          <div class="tip">
-            <span class="tip-title">This is a messages from clientcomm to you thank you very much.</span>
-            <div class="media-body">Making a difference, one text at a time</div>
-            <img src="<%= @change_image.file.expiring_url(10) %>" />
-          </div>
+            <div class="tip">
+              <div id="change-txt" style="flex-shrink:8">
+                <span class="tip-title">This is a messages from clientcomm to you thank you very much.</span>
+                <div class="media-body">Making a difference, one text at a time</div>
+              </div>
+              <div>
+                <img src="<%= @change_image.file.expiring_url(10) %>" />
+              </div>
+            </div>
           <% end %>
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">

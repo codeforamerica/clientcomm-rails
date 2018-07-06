@@ -76,6 +76,8 @@
   bottom: 30px;
   left: 0;
   width: 100%;
+  display: flex;
+
 
   .tip-title {
     font-weight: bold;
@@ -83,7 +85,9 @@
     top: -0.2em;
   }
 }
-
+#change-txt{
+  float: left;
+}
 .textwell {
   padding: 2em;
   max-height: 30rem;
