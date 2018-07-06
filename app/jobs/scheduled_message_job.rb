@@ -3,7 +3,7 @@ class ScheduledMessageJob < ApplicationJob
 
   retry_on Twilio::REST::TwilioError
 
-  queue_as :default
+  queue_as :high_priority
 
   # rubocop:disable Metrics/PerceivedComplexity
   def perform(message:, send_at:, callback_url:)

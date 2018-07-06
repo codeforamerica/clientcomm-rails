@@ -1,6 +1,8 @@
 class IncomingMessageJob < ApplicationJob
   include Rails.application.routes.url_helpers
 
+  queue_as :high_priority
+
   def perform(params:)
     new_message = Message.create_from_twilio! params
     client = new_message.client
