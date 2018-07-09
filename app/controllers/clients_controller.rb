@@ -2,6 +2,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
+    @change_image = ChangeImage.order(file_updated_at: :desc).first
     @reporting_relationships = current_user.active_reporting_relationships
     @relationships_by_status = current_user.relationships_with_statuses_due_for_follow_up
     analytics_track(
