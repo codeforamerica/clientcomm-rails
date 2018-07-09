@@ -643,15 +643,26 @@ describe 'Clients requests', type: :request do
 
       it 'does not show the change text if there is none' do
         subject
-        expect(response.body).to_not include('Making a difference, one text at a time')
+        expect(response.body).to_not include(I18n.t('views.change_text.title'))
       end
 
       context 'has change image' do
         let!(:image) { create :change_image }
         it 'does show the change text if there is one' do
           subject
-          expect(response.body).to include('Making a difference, one text at a time')
+          expect(response.body).to include(I18n.t('views.change_text.title'))
           expect(response.body).to include(image.file.url)
+        end
+
+        context 'has multiple change images' do
+          it 'only shows the most recently created image' do
+            travel_to 1.day.ago do
+              create_list :change_image, 10
+            end
+
+            subject
+            expect(response.body).to include(image.file.url)
+          end
         end
       end
 

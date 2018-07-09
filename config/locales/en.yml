@@ -132,6 +132,11 @@ en:
       reporting_relationships:
         edit:
           unread_transfer: 'This client has unread messages. The messages will not be transferred to the new user.'
+    change_text:
+      title: Making a difference, one text at a time
+      body: We’re highlighting thank you’s from real clients who appreciate the work you do every day!
+      more_link_text: More about positive reinforcements
+      more_body: Research shows that sending four positive reinforcements for every one sanction helps client succeed. When you text clients — even something as basic as a reminder — think about how you can turn that communication into an opportunity for encouragement. Clients will thank you!
     clients:
       edit:
         manage:

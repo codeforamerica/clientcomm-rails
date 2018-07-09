@@ -86,23 +86,31 @@
 }
 
 .change-alert {
-  display: flex;
   bottom: 30px;
   left: 0;
   top: 30px;
   width: 100%;
-  padding: $site-margins/2;
   margin-bottom: 3em;
   background-color: $color-white;
   border: 1px solid $color-light-grey;
+
+  td {
+    padding: $site-margins/2;
+  }
 }
 
-
 .change-alert--text{
-  float: left;
+  width: 30%;
   padding-right: $site-margins/2;
 }
 
+.change-alert--image{
+  width: 60%;
+  vertical-align: top;
+}
+.change-alert--body{
+  margin: 1em 0;
+}
 .change-alert--title{
   font-weight: 550;
   font-size: $font-size-h2;
