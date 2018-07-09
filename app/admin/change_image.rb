@@ -32,7 +32,11 @@ ActiveAdmin.register ChangeImage do
   controller do
     def create
       @change_image = ChangeImage.create(file: permitted_params[:change_image][:file], admin_user: current_admin_user)
-      redirect_to :admin_change_images, notice: 'Image uploaded.'
+      if @change_image.valid?
+        redirect_to :admin_change_images, notice: 'Image uploaded.'
+      else
+        redirect_to :admin_change_images, alert: 'Image could not be uploaded!'
+      end
     end
   end
 end
