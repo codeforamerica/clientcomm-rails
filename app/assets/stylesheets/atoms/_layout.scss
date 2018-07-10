@@ -93,15 +93,11 @@
   margin-bottom: 3em;
   background-color: $color-white;
   border: 1px solid $color-light-grey;
-
-  td {
-    padding: $site-margins/2;
-  }
 }
 
 .change-alert--text{
   width: 30%;
-  padding-right: $site-margins/2;
+  padding: $site-margins/2;
 }
 
 .change-alert--image{
