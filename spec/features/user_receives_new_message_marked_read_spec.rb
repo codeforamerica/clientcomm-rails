@@ -22,7 +22,9 @@ feature 'User receives a message from a client', :js do
       ))
       # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
+      sleep 0.5
       wait_for_ajax # visiting the page calls $.ajax to mark all messages read
+
       # now load the message index
       visit clients_path
       # the client isn't marked as having unread messages

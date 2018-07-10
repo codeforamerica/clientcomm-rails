@@ -18,7 +18,7 @@ function markMessageRead(id) {
   });
 }
 
-markAsRead =  _.throttle(function() {
+markAsRead = _.throttle(function() {
   if(typeof document.visibilittyState == 'undefined' || document.visibilityState == 'visible') {
     $('div.message--inbound.unread').withinviewport().each(function(i, el) {
       el = $(el);
@@ -113,7 +113,7 @@ $(document).ready(function() {
     return;
   }
   $(window).on('resize scroll visibilitychange', markAsRead);
-
+  markAsRead();
   App.messages = App.cable.subscriptions.create(
     { channel: 'MessagesChannel', client_id: clientId },
     {

@@ -68,6 +68,7 @@ feature 'User receives a message from a client' do
       # click the flash to go to the messages page
       click_on flash_text
       expect(current_path).to eq reporting_relationship_path(myuser.reporting_relationships.find_by(client: clientone_record))
+      wait_for_ajax
       # return to the clients page
       visit clients_path
       # post a second message
