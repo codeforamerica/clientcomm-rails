@@ -6,6 +6,7 @@
   border-radius: 10px;
   padding: .2em .5em .3em .7em;
 
+
   &:visited {
     text-decoration: none;
     color: $color-darkest-grey;
@@ -29,6 +30,7 @@
   background-color: $color-background;
   border: 1px solid $color-light-grey;
   border-radius: 10px;
+  margin-bottom: 2em;
 }
 
 .reveal {
