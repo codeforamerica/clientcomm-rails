@@ -55,6 +55,7 @@ group :development, :test do
   gem 'faraday'
   gem 'jasmine-rails'
   gem 'overcommit'
+  gem 'paint'
   gem 'poltergeist'
   gem 'pry-byebug'
   gem 'rspec-rails'
