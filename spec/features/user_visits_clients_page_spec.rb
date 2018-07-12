@@ -137,6 +137,7 @@ end
 feature 'logged-in user interacts with texts of change' do
   let(:department) { create :department }
   let(:user) { create :user, department: department }
+  let!(:clients) { create_list :client, 5, user: user }
   let(:admin_user) { create :admin_user }
   let(:filename) { 'fluffy_cat.jpg' }
   let!(:change_image) { ChangeImage.create!(file: File.new("./spec/fixtures/#{filename}"), admin_user: admin_user) }
@@ -147,17 +148,15 @@ feature 'logged-in user interacts with texts of change' do
 
   scenario 'successfully', js: true do
     visit clients_path
-    expect(page).to_not have_content 'Research shows'
-    find('div.reveal', text: 'More about positive reinforcements').click
-    expect(page).to have_content 'Research shows'
-
+    expect(page).to_not have_content I18n.t('views.change_text.more_body')
+    find('div#change-alert-reveal a', text: I18n.t('views.change_text.more_link_text')).click
     wait_for_ajax
     expect_analytics_events_with_keys('texts_of_change_expand' => ['visitor_id'])
+    expect(page).to have_content I18n.t('views.change_text.more_body')
 
-    find('div.reveal', text: 'More about positive reinforcements').click
-    expect(page).to_not have_content 'Research shows'
-
+    find('div#change-alert-reveal a', text: I18n.t('views.change_text.more_link_text')).click
     wait_for_ajax
     expect_analytics_events_with_keys('texts_of_change_collapse' => ['visitor_id'])
+    expect(page).to_not have_content I18n.t('views.change_text.more_body')
   end
 end

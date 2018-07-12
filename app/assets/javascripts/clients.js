@@ -8,9 +8,17 @@ var revealer = (function() {
         var self = revealer;
         $(self).addClass('is-hidden');
         $(self).find('.reveal__link').click(function(e) {
-          console.log('got a click!');
           e.preventDefault();
           $(self).toggleClass('is-hidden');
+
+          if ($(self).attr('id') === 'change-alert-reveal') {
+            var label = $(self).hasClass('is-hidden') ? 'texts_of_change_collapse' : 'texts_of_change_expand';
+            $.post({
+              url: '/tracking_events',
+              data: { label: label }
+            });
+          }
+
         });
       });
     }
@@ -36,4 +44,3 @@ $(document).ready(function() {
 
   revealer.init();
 });
-
