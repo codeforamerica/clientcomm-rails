@@ -3,7 +3,8 @@ class TrackingEventsController < ApplicationController
   skip_after_action :intercom_rails_auto_include
 
   def create
-    analytics_track(label: label, data: data)
+    track_data = params.key?('data') ? data : {}
+    analytics_track(label: label, data: track_data)
   end
 
   private

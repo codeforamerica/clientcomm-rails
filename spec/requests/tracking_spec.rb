@@ -26,6 +26,16 @@ describe 'tracking_events', type: :request do
         expect(response.code).to eq('204')
         expect_most_recent_analytics_event('foo' => { 'key' => 'value' })
       end
+
+      context 'only a label is sent' do
+        let(:params) { { label: 'foo' } }
+
+        it 'tracks the submitted event' do
+          subject
+          expect(response.code).to eq('204')
+          expect_analytics_events_happened('foo')
+        end
+      end
     end
   end
 end
