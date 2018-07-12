@@ -17,13 +17,13 @@
             <table class="change-alert hidden-xs">
               <tr>
                 <td class="change-alert--text">
-                  <span class="change-alert--title"><%= t('views.change_text.title') %></span>
-                  <div class="change-alert--body"><%= t('views.change_text.body') %></div>
+                  <h2><%= t('views.change_text.title') %></h2>
+                  <div class="change-alert--body text--small"><p><%= t('views.change_text.body') %></p></div>
                   <div id="change-alert-reveal" class="reveal is-hidden">
-                    <p><a href="#" class="reveal__link"><%= t('views.change_text.more_link_text') %></a></p>
+                    <p><a href="#" class="reveal__link text--small"><%= t('views.change_text.more_link_text') %></a></p>
                     <div class="reveal__content text--left">
-                      <div class="notice">
-                        <p><%= t('views.change_text.more_body') %></p>
+                      <div class="notice text--small">
+                        <%= t('views.change_text.more_body') %>
                       </div>
                     </div>
                   </div>
