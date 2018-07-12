@@ -134,19 +134,18 @@
 
       .message--image {
         @extend %message--shared;
-
-        .image-container {
-          display: block;
+          width: 60%;
+          display: inline-block;.image-container {
           height: 0;
+          overflow: hidden;
           position: relative;
-          width: 100%;
         }
 
         img {
-          height: 100%;
-          left: 0;
           position: absolute;
           top: 0;
+          left: 0;
+          height: 100%;
           width: 100%;
         }
       }

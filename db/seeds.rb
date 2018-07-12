@@ -21,7 +21,7 @@ AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_
 
 puts "Creating Test User with password #{user_password}"
 test_user = User.find_or_create_by(email: 'test@example.com')
-test_user.update!(full_name: 'Test Example', password: user_password, department: nil)
+test_user.update!(full_name: 'Test Example', password: user_password, department: nil, treatment_group: 'ebp-liking-messages')
 
 puts 'Deleting Old Records'
 Attachment.delete_all
