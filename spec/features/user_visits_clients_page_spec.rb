@@ -134,9 +134,30 @@ feature 'manage action is hidden on mobile', js: true do
   end
 end
 
-feature 'logged-in user visits clients page' do
-  scenario 'successfully' do
-    myuser = create :user
-    login(myuser)
+feature 'logged-in user interacts with texts of change' do
+  let(:department) { create :department }
+  let(:user) { create :user, department: department }
+  let(:admin_user) { create :admin_user }
+  let(:filename) { 'fluffy_cat.jpg' }
+  let!(:change_image) { ChangeImage.create!(file: File.new("./spec/fixtures/#{filename}"), admin_user: admin_user) }
+
+  before do
+    login_as user
+  end
+
+  scenario 'successfully', js: true do
+    visit clients_path
+    expect(page).to_not have_content 'Research shows'
+    find('div.reveal', text: 'More about positive reinforcements').click
+    expect(page).to have_content 'Research shows'
+
+    wait_for_ajax
+    expect_analytics_events_with_keys('texts_of_change_expand' => ['visitor_id'])
+
+    find('div.reveal', text: 'More about positive reinforcements').click
+    expect(page).to_not have_content 'Research shows'
+
+    wait_for_ajax
+    expect_analytics_events_with_keys('texts_of_change_collapse' => ['visitor_id'])
   end
 end
