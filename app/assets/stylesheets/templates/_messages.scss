@@ -134,8 +134,10 @@
 
       .message--image {
         @extend %message--shared;
-          width: 60%;
-          display: inline-block;.image-container {
+        width: 60%;
+        display: inline-block;
+
+        .image-container {
           height: 0;
           overflow: hidden;
           position: relative;
