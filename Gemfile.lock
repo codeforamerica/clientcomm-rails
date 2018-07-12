@@ -232,6 +232,7 @@ GEM
     overcommit (0.41.0)
       childprocess (~> 0.6, >= 0.6.3)
       iniparse (~> 1.4)
+    paint (2.0.1)
     paperclip (5.2.1)
       activemodel (>= 4.2.0)
       activesupport (>= 4.2.0)
@@ -450,6 +451,7 @@ DEPENDENCIES
   mixpanel-ruby
   neat (~> 1.8.0)
   overcommit
+  paint
   paperclip
   pg (~> 0.18)
   poltergeist
