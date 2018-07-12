@@ -1,7 +1,3 @@
-require 'csv'
-require 'paint'
-require 'twilio-ruby'
-
 # usage: rake utils:get_alerts[app_name,days_past]
 #   args:
 #      app_name: the app name of the heroku deploy
