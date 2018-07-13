@@ -30,6 +30,7 @@ variable "papertrail_plan" {}
 
 variable "admin_email" {}
 variable "admin_password" {}
+variable "devise_secret_key_base" {}
 variable "report_day" {}
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
@@ -55,6 +56,10 @@ resource "heroku_app" "clientcomm" {
   }
 
   config_vars {
+    AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
+    AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
+    AWS_KMS_KEY_ID = "${aws_kms_key.bucket_key.arn}"
+    AWS_SECRET_ACCESS_KEY = "${aws_iam_access_key.paperclip.secret}"
     DEPLOYMENT = "${var.heroku_app_name}"
     DEPLOY_BASE_URL = "https://${var.app_domain}"
     INTERCOM_APP_ID = "${var.intercom_app_id}"
@@ -67,17 +72,14 @@ resource "heroku_app" "clientcomm" {
     RAILS_ENV = "${var.environment}"
     RAILS_LOG_TO_STDOUT = "enabled"
     RAILS_SERVE_STATIC_FILES = "true"
+    REPORT_DAY = "${var.report_day}"
+    SECRET_KEY_BASE = "${var.devise_secret_key_base}"
     SENTRY_ENDPOINT = "${var.sentry_endpoint}"
     SKYLIGHT_AUTHENTICATION = "${var.skylight_authentication}"
     TIME_ZONE = "${var.time_zone}"
     TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
     TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"
-    AWS_SECRET_ACCESS_KEY = "${aws_iam_access_key.paperclip.secret}"
-    AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
-    AWS_ATTACHMENTS_BUCKET = "${aws_s3_bucket.paperclip.bucket}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
-    REPORT_DAY = "${var.report_day}"
-    AWS_KMS_KEY_ID = "${aws_kms_key.bucket_key.arn}"
   }
 }
 

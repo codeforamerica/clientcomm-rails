@@ -48,6 +48,8 @@ variable "admin_password" {}
 variable "unclaimed_email" {}
 variable "unclaimed_password" {}
 
+variable "devise_secret_key_base" {}
+
 variable "department_name" {
   default = "Main"
 }
@@ -86,6 +88,7 @@ module "app" {
   report_day         = "${var.report_day}"
   admin_email        = "${var.admin_email}"
   admin_password     = "${var.admin_password}"
+  devise_secret_key_base = "${var.devise_secret_key_base}"
 
   unclaimed_email     = "${var.unclaimed_email}"
   unclaimed_password  = "${var.unclaimed_password}"
