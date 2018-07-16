@@ -1,6 +1,3 @@
-//= require cable
-//= require_self
-//= require_tree .
 //= require withinviewport
 //= require jquery.withinviewport
 

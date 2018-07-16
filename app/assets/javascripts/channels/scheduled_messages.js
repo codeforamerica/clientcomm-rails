@@ -1,7 +1,3 @@
-//= require cable
-//= require_self
-//= require_tree .
-
 var ScheduledMessages = {
   updateLink: function(link_html, count) {
     var linkElement = $('.scheduled-messages-bar');

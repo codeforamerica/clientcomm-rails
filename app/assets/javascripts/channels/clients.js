@@ -1,6 +1,3 @@
-//= require cable
-//= require_self
-
 var Clients = {
   init: function () {
     this.$clientList = $('#client-list');

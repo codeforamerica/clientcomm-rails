@@ -1,3 +1,5 @@
+//= require channels/messages
+
 $(document).ready(function(){
   var $templateButton = $('#template-button');
 

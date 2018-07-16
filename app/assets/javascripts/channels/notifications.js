@@ -1,7 +1,3 @@
-//= require cable
-//= require_self
-//= require_tree .
-
 var Notifications = {
   init: function(client_id_selector) {
     this.clientId = $(client_id_selector).data('client-id');

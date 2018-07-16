@@ -3,7 +3,9 @@
 //
 //= require action_cable
 //= require_self
-//= require_tree ./channels
+//= require channels/clients
+//= require channels/notifications
+//= require channels/scheduled_messages
 
 (function() {
   this.App || (this.App = {});
