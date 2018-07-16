@@ -50,6 +50,75 @@ namespace :node_etl do
     Rails.logger.warn { "--> user load of #{imported_users} users complete" }
   end
 
+  task etl_surveys: :environment do
+    num_surveys = node_production.exec(<<-SQL)[0]['count'].to_i
+      SELECT COUNT(*)
+      FROM client_closeout_surveys;
+    SQL
+
+    group_size = 100
+    groups = (num_surveys / group_size.to_f).ceil
+    logs = []
+
+    double_log "--> beginning load of #{num_surveys} surveys in #{groups} groups.", logs
+
+    response_lookup = {
+      'success': SurveyResponse.find_by(text: 'Successful termination'),
+      'stillOpen': SurveyResponse.find_by(text: 'Transferred out-of-state or new PO'),
+      'failure': SurveyResponse.find_by(text: 'Revoked - probation violation')
+    }
+
+    offset = 0
+    groups -= offset
+    groups.times do |group|
+      group += offset
+      double_log "--> Loading group #{group + 1} of #{groups + offset}", logs
+      node_surveys = node_production.exec(<<-SQL, [group_size, group * group_size])
+        SELECT
+          client_closeout_surveys.survey_id,
+          client_closeout_surveys.client,
+          clients.cm,
+          client_closeout_surveys.closeout_status,
+          client_closeout_surveys.created
+        FROM client_closeout_surveys
+        INNER JOIN clients ON clients.clid = client_closeout_surveys.client
+        ORDER BY client_closeout_surveys.survey_id ASC
+        LIMIT $1 OFFSET $2;
+      SQL
+
+      node_surveys.each do |node_survey|
+        double_log "--> starting survey #{node_survey['survey_id']} (#{group + 1}/#{groups + offset})", logs
+        user = User.find_by(node_id: node_survey['cm'])
+        clients = Client.where(node_client_id: node_survey['client'])
+        double_log("--> NOTE node client id #{node_survey['client']} is associated with more than one record", logs) if clients.count > 1
+        client = clients.first
+        rr = ReportingRelationship.find_by(user: user, client: client)
+        if rr.nil?
+          double_log '--> SKIPPED because no reporting relationship could be found', logs
+          next
+        end
+        double_log("--> NOTE client #{client.id}/#{client.node_client_id} has an active rr with user #{user.id}/#{user.node_id}", logs) if rr.active
+
+        if client.surveys.any?
+          double_log "--> SKIPPED because client #{client.id}/#{client.node_client_id} already has survey(s) with ids: #{client.surveys.map(&:id).join(', ')}", logs
+          next
+        end
+
+        double_log "--> CREATING a new survey for client #{client.id}/#{client.node_client_id} created_at #{node_survey['created']} with response #{response_lookup[node_survey['closeout_status'].to_sym].text}", logs
+
+        survey = Survey.new(
+          client: client,
+          user: user,
+          created_at: node_survey['created']
+        )
+
+        survey.survey_responses << response_lookup[node_survey['closeout_status'].to_sym]
+
+        survey.save!
+      end
+    end
+  end
+
   task etl_inactive_messages: :environment do
     num_messages = node_production.exec(<<-SQL)[0]['count'].to_i
       SELECT COUNT(DISTINCT(msgs.tw_sid))
