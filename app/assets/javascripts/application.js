@@ -23,8 +23,8 @@
 //= require clients
 //= require errors
 //= require mass_messages
-//= require messages
 //= require scheduled_messages
 //= require templates
 //= require twemoji
 //= require twemoji-init
+//= require clientcomm

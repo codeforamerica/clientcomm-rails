@@ -1,4 +1,7 @@
 <% content_for(:template_name) { "messages" }  %>
+<% content_for(:js) do %>
+  <%= javascript_include_tag 'messages' %>
+<% end %>
 
 <section class="slab slab--header chat--header" data-spy="affix" data-offset-top="60">
     <div id="flexbox--container">

@@ -11,6 +11,7 @@
     <meta name="deploy" content="<%= deploy_prefix %>">
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
+    <%= content_for(:js) if content_for?(:js) %>
     <%= content_for(:head) if content_for?(:head) %>
   </head>
   <body<% if content_for?(:template_name) %> class="template--<%= content_for(:template_name) %>"<% end %><% if user_signed_in? %> data-user-id="<%= current_user.id %>"<% end %>>
