@@ -28,6 +28,10 @@ markAsRead = _.throttle(function() {
   }
 }, 300);
 
+messagesToBottom = function() {
+  window.scrollTo(0,document.body.scrollHeight);
+}
+
 var Messages = {
   init: function() {
     this.msgs = $('#message-list');
@@ -42,7 +46,7 @@ var Messages = {
       generateLikeBindings(null, last_msg);
     };
 
-    this.messagesToBottom();
+    messagesToBottom();
 
     replaceEmoji(message_html);
   },
@@ -56,9 +60,6 @@ var Messages = {
     }
     markAsRead();
   },
-  messagesToBottom: function() {
-    $(document).scrollTop(this.msgs.prop('scrollHeight'));
-  }
 };
 
 function postLikeExpandEvent(msg_id, client_id) {
@@ -116,7 +117,7 @@ $(document).ready(function() {
   });
   Messages.init();
   var clientId = Messages.msgs.data('client-id');
-  Messages.messagesToBottom();
+  messagesToBottom();
 
   $('.message--inbound').each(generateLikeBindings);
 
