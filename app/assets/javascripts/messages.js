@@ -12,8 +12,7 @@ $(document).ready(function(){
       "template_popover_view", {
         templates_count: $(this).data('template-count'),
         client_id: $(this).data('client-id')
-      }
-    );
+      });
   });
 
   $templateButton.on('shown.bs.popover', function () {
@@ -152,11 +151,8 @@ function setCounter(counter, textField, modalVisible) {
 }
 
 function mixpanelTrack(event, params) {
-  var meta_tags = {
-    visitor_id: $('meta[name=visitor_id]').attr("content"),
-    deploy: $('meta[name=deploy]').attr("content")
-  };
-
-  $.extend(params, meta_tags);
-  mixpanel.track(event, params);
+  $.post({
+    url: '/tracking_events',
+    data: { label: event, data: params }
+  });
 }
