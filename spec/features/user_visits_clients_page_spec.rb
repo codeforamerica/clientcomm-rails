@@ -16,14 +16,24 @@ feature 'clients have categories' do
     let!(:rr4) { create :reporting_relationship, user: user, client: create(:client), created_at: Time.zone.now - 1.minute, updated_at: Time.zone.now - 1.minute }
 
     before do
-      rr1.update(category: 'cat2')
-      rr2.update(category: 'cat1')
-      rr3.update(category: 'no_cat')
-      rr4.update(category: 'cat3')
+      rr1.update(active: false, category: 'cat2')
+      rr2.update(active: false, category: 'cat1')
+      rr3.update(active: false, category: 'no_cat')
+      rr4.update(active: false, category: 'cat3')
     end
 
     scenario 'user sees list of clients with categories' do
+      step 'user loads client list with no active RRs' do
+        visit clients_path
+        expect(page).to have_text('Add a client to get started.')
+      end
+
       step 'user loads client list' do
+        rr1.update(active: true)
+        rr2.update(active: true)
+        rr3.update(active: true)
+        rr4.update(active: true)
+
         visit clients_path
 
         expect(page).to have_css('tr:first-child', text: rr4.client.full_name)

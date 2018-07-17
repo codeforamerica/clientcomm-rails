@@ -49,7 +49,14 @@
               <% end %>
             </div>
           </div>
-          <%= render "clients/clients" %>
+          <% if @reporting_relationships.any? %>
+            <%= render "clients/clients" %>
+          <% else %>
+            <div id="client-empty-dialog" class="center-align">
+              <%= image_tag "mailbox.svg" %>
+              <p class="text--help"><%= t('clients.empty') %></p>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>

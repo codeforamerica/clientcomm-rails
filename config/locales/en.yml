@@ -39,6 +39,8 @@ en:
         sent: Your mass message has been sent.
         scheduled: Your mass message has been scheduled.
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
+  clients:
+    empty: Add a client to get started.
   messages:
     empty: 'You haven’t sent %{client_first_name} any messages yet. Start by introducing yourself.'
     transferred_from: '%{client_full_name} was transferred to you from %{user_full_name}.'
