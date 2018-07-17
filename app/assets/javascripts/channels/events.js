@@ -1,4 +1,4 @@
-window.name = window.location.href; // set name of page
+window.name = window.location.href;
 
 EVENT_TYPES = {
   message: function (message) {
@@ -19,16 +19,26 @@ EVENT_TYPES = {
   }
 }
 
+var Events = {
+  init: function() {
+    this.userId = $(document.body).data('user-id');
+  }
+};
+
 $(document).ready(function() {
+  Events.init();
+
+  if (!Events.userId) {
+    return;
+  }
+
   App.events = App.cable.subscriptions.create(
-    { channel: 'EventsChannel' },
+    { channel: 'EventsChannel', user_id: Events.userId },
     {
       received: function(event) {
         EVENT_TYPES[event.type](event.data);
       }
     }
   );
-  if (!Push.Permission.has()) {
-    Push.Permission.request(function() {}, function() {});
-  }
+  Push.Permission.request(function() {}, function() {});
 });
