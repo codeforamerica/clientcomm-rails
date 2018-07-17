@@ -38,6 +38,11 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
         message_dom_id: "message_#{message.id}",
         message_id: message.id
       )
+      expect(mock_server).to have_received(:broadcast).once.with(
+        "events_#{user.id}",
+        type: 'message',
+        data: hash_including('id' => message.id, 'body' => message.body, 'reporting_relationship' => hash_including('id' => rr.id, 'client' => hash_including('id' => rr.client.id)))
+      )
       expect(mock_server).to have_received(:broadcast).once.with("clients_#{user.id}", {})
     end
   end

@@ -99,19 +99,9 @@ function generateLikeBindings(i, msg) {
   });
 };
 
-window.hasFocus = true;
-
 $(document).ready(function() {
   $(window).on('resize scroll visibilitychange focuschange', markAsRead);
   markAsRead();
-  $(window).on('focus', function() {
-    window.hasFocus = true;
-    $(window).trigger('focuschange');
-  });
-  $(window).on('blur', function() {
-    window.hasFocus = false;
-    $(window).trigger('focuschange');
-  });
   Messages.init();
   var clientId = Messages.msgs.data('client-id');
   messagesToBottom();

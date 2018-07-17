@@ -16,6 +16,7 @@
 //= require lodash
 //= require bootstrap-sprockets
 //= require jquery_ujs
+//= require push.min
 //= require autosize
 //= require lib/mixpanel.min
 //= require lib/list.min

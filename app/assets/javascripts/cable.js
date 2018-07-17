@@ -6,6 +6,7 @@
 //= require channels/clients
 //= require channels/notifications
 //= require channels/scheduled_messages
+//= require channels/events
 
 (function() {
   this.App || (this.App = {});

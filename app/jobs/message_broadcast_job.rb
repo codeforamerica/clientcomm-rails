@@ -13,6 +13,9 @@ class MessageBroadcastJob < ApplicationJob
       message_id: message.id
     )
     ActionCable.server.broadcast("clients_#{message.user.id}", {})
+    message_json = message.as_json(include: { reporting_relationship: { include: :client } })
+    ActionCable.server.broadcast("events_#{message.user.id}", type: 'message',
+                                                              data: message_json)
   end
 
   def render_message_partial(message)

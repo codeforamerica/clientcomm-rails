@@ -1,3 +1,17 @@
+
+window.hasFocus = true;
+
+$(document).ready(function() {
+  $(window).on('focus', function() {
+    window.hasFocus = true;
+    $(window).trigger('focuschange');
+  });
+  $(window).on('blur', function() {
+    window.hasFocus = false;
+    $(window).trigger('focuschange');
+  });
+});
+
 function characterCount(element) {
   if(element.length === 0) { return; }
 
