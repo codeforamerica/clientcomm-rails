@@ -17,7 +17,7 @@ function markMessageRead(id) {
 
 markAsRead = _.throttle(function() {
   if(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible')) {
-    $('div.message--inbound.unread').withinviewport().each(function(i, el) {
+    $('div.message--inbound.unread').withinviewport({top: -100, bottom: -100}).each(function(i, el) {
       el = $(el);
       markMessageRead(el.attr('id').replace('message_',''));
       el.removeClass('unread').addClass('read');
