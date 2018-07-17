@@ -20,16 +20,15 @@ EVENT_TYPES = {
 }
 
 $(document).ready(function() {
-  if (Push.Permission.has()) {
-    App.events = App.cable.subscriptions.create(
-      { channel: 'EventsChannel' },
-      {
-        received: function(event) {
-          EVENT_TYPES[event.type](event.data);
-        }
+  App.events = App.cable.subscriptions.create(
+    { channel: 'EventsChannel' },
+    {
+      received: function(event) {
+        EVENT_TYPES[event.type](event.data);
       }
-    );
-  } else {
+    }
+  );
+  if (!Push.Permission.has()) {
     Push.Permission.request(function() {}, function() {});
   }
 });
