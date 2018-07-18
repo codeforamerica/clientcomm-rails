@@ -78,12 +78,12 @@ feature 'Client status banner', active_job: true do
 
       recent_clients.each do |client|
         rr = ReportingRelationship.find_by(client: client, user: user)
-        expect(find("#mass_message_reporting_relationships_#{rr.id}")['checked']).to eq(false)
+        expect(find("#mass_message_reporting_relationships_#{rr.id}")['checked']).to eq(nil)
       end
 
       older_clients.each do |client|
         rr = ReportingRelationship.find_by(client: client, user: user)
-        expect(find("#mass_message_reporting_relationships_#{rr.id}")['checked']).to eq(true)
+        expect(find("#mass_message_reporting_relationships_#{rr.id}")['checked']).to eq('true')
       end
     end
 

@@ -7,10 +7,6 @@ feature 'Twilio' do
   let(:client) { create :client, user: user, phone_number: twilio_new_message_params['From'] }
   let(:message_body) { 'some message body' }
 
-  after do
-    page.driver.header 'X-Twilio-Signature', nil
-  end
-
   describe 'POSTs to #incoming_sms' do
     context 'with incorrect signature' do
       it 'returns a forbidden response' do

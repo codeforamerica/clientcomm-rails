@@ -2,7 +2,7 @@ window.name = window.location.href;
 
 EVENT_TYPES = {
   message: function (message) {
-    if (!(window._phantom || window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
+    if (!(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
         icon: $('link[rel="shortcut icon"]')[0].href,

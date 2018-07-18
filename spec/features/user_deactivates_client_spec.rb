@@ -7,15 +7,10 @@ feature 'user deactivates client', :js do
   let(:response_text3) { 'Supervision rescinded' }
 
   before do
-    page.driver.browser.js_errors = false
     survey_question = create :survey_question, text: question_text
     create :survey_response, survey_question: survey_question, text: response_text1
     create :survey_response, survey_question: survey_question, text: response_text2
     create :survey_response, survey_question: survey_question, text: response_text3
-  end
-
-  after do
-    page.driver.browser.js_errors = true
   end
 
   scenario 'user clicks deactivate client button' do

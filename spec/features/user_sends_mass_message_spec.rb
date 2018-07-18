@@ -84,18 +84,18 @@ feature 'sending mass messages', active_job: true do
     step 'user can select all clients' do
       check 'Select all'
 
-      expect(find('#select_all')['checked']).to eq true
+      expect(find('#select_all')['checked']).to eq 'true'
 
       id1 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_1.phone_number), user: user).id
       id2 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_2.phone_number), user: user).id
       id3 = ReportingRelationship.find_by(client: Client.find_by(phone_number: client_3.phone_number), user: user).id
 
-      expect(find("#mass_message_reporting_relationships_#{id1}")['checked']).to eq(true)
-      expect(find("#mass_message_reporting_relationships_#{id2}")['checked']).to eq(true)
-      expect(find("#mass_message_reporting_relationships_#{id3}")['checked']).to eq(true)
+      expect(find("#mass_message_reporting_relationships_#{id1}")['checked']).to eq('true')
+      expect(find("#mass_message_reporting_relationships_#{id2}")['checked']).to eq('true')
+      expect(find("#mass_message_reporting_relationships_#{id3}")['checked']).to eq('true')
 
       find('tr', text: client_1.full_name).click
-      expect(find('#select_all')['checked']).to eq(false)
+      expect(find('#select_all')['checked']).to eq(nil)
     end
 
     step 'user sorts clients' do

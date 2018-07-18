@@ -20,18 +20,25 @@ ActiveRecord::Migration.maintain_test_schema!
 ActiveJob::Base.queue_adapter = :test
 
 # Capybara settings
-headless_capybara = true
 Capybara.server = :puma
 Capybara.default_max_wait_time = 5
 
-if headless_capybara
-  Capybara.javascript_driver = :poltergeist
-else
-  Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, browser: :chrome)
-  end
-  Capybara.javascript_driver = :chrome
+def headless_options
+  browser_options = ::Selenium::WebDriver::Chrome::Options.new
+  browser_options.args << '--headless'
+  browser_options.args << '--disable-gpu' if Gem.win_platform?
+  browser_options
 end
+
+Capybara.register_driver :headless_chrome do |app|
+  browser_options = headless_options
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: browser_options)
+end
+Capybara.register_driver :chrome do |app|
+  Capybara::Selenium::Driver.new(app, browser: :chrome)
+end
+
+Capybara.javascript_driver = :headless_chrome
 
 # change to ':accessible_poltergeist' for accessibility warnings
 # NOTE: you'll need to include the capybara-accessible gem

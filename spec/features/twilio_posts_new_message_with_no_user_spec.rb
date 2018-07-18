@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 feature 'Twilio', :js do
-  after do
-    page.driver.headers = { 'X-Twilio-Signature' => nil }
-  end
-
   describe 'POSTs to #incoming_sms' do
     context 'from an unknown user' do
       let(:phone_number) { 'just some phone number' }
