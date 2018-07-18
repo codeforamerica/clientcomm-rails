@@ -12,9 +12,14 @@ user_password = ENV['upw'] || ENV['UPW'] || ENV['USER_PASSWORD'] || SecureRandom
 admin_password = ENV['apw'] || ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_password
 
 puts 'Populating Feature Flags'
-FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
-FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'scheduled_message_count').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'court_dates').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'hide_notes').update!(enabled: true)
 FeatureFlag.find_or_create_by(flag: 'client_id_number').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'categories').update!(enabled: true)
+FeatureFlag.find_or_create_by(flag: 'client_status').update!(enabled: false)
+FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: false)
+FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 
 puts "Creating Admin User with password #{admin_password}"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
