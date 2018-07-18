@@ -1,7 +1,6 @@
 var Notifications = {
   init: function(client_id_selector) {
     this.clientId = $(client_id_selector).data('client-id');
-    this.userId = $(document.body).data('user-id');
   },
   updateNotification: function(notification_html) {
     // replace or place the notification on the page
@@ -24,13 +23,9 @@ var Notifications = {
 $(document).ready(function() {
   Notifications.init('#message-list');
 
-  // only subscribe if we've got a user ID
-  if (!Notifications.userId) {
-    return;
-  }
 
   App.notifications = App.cable.subscriptions.create(
-    { channel: 'NotificationsChannel', user_id: Notifications.userId },
+    { channel: 'NotificationsChannel' },
     {
       received: function(data) {
         if(data.properties && data.properties.client_id) {

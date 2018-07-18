@@ -2,7 +2,7 @@ window.name = window.location.href;
 
 EVENT_TYPES = {
   message: function (message) {
-    if (!(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
+    if (!(window._phantom || window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
         icon: $('link[rel="shortcut icon"]')[0].href,
@@ -19,21 +19,10 @@ EVENT_TYPES = {
   }
 }
 
-var Events = {
-  init: function() {
-    this.userId = $(document.body).data('user-id');
-  }
-};
 
 $(document).ready(function() {
-  Events.init();
-
-  if (!Events.userId) {
-    return;
-  }
-
   App.events = App.cable.subscriptions.create(
-    { channel: 'EventsChannel', user_id: Events.userId },
+    { channel: 'EventsChannel' },
     {
       received: function(event) {
         EVENT_TYPES[event.type](event.data);
