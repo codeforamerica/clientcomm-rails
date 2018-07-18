@@ -193,8 +193,10 @@ class Message < ApplicationRecord
     unclaimed_response = rr.department.unclaimed_response
     unclaimed_response = I18n.t('message.unclaimed_response') if unclaimed_response.blank?
     message = TextMessage.create!(
-      reporting_relationship: rr,
       body: unclaimed_response,
+      inbound: false,
+      read: true,
+      reporting_relationship: rr,
       send_at: now
     )
     ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
