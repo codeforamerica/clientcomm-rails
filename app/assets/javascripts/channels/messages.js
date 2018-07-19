@@ -17,10 +17,12 @@ function markMessageRead(id) {
 
 markAsRead = _.throttle(function() {
   if(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible')) {
-    $('div.message--inbound.unread').withinviewport({top: -100, bottom: -100}).each(function(i, el) {
+    $('div.message--inbound.unread p.message--label').withinviewport({ top: 100, bottom: -100 }).each(function(i, el) {
+      console.log(el);
       el = $(el);
-      markMessageRead(el.attr('id').replace('message_',''));
-      el.removeClass('unread').addClass('read');
+      message_el = el.parent();
+      markMessageRead(message_el.attr('id').replace('message_',''));
+      message_el.removeClass('unread').addClass('read');
     });
   }
 }, 300);
