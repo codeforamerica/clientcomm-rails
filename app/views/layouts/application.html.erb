@@ -3,7 +3,8 @@
   <head>
     <title><%= @title || 'ClientComm' %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" data-read-href="<%= asset_path('favicon.read.png') %>" data-unread-href="<%= asset_path('favicon.unread.png') %>" href="<%= asset_path('favicon.ico') %>" type="image/x-icon">
+    <% read_state = current_user.has_unread_messages ? asset_path('favicon.unread.png') : asset_path('favicon.read.png') %>
+    <link rel="shortcut icon" data-read-href="<%= asset_path('favicon.read.png') %>" data-unread-href="<%= asset_path('favicon.unread.png') %>" href="<%= read_state %>" type="image/x-icon">
     <%= csrf_meta_tags %>
     <%= action_cable_meta_tag %>
     <meta name="visitor_id" content="<%= visitor_id %>">

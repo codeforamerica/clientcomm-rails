@@ -8,7 +8,7 @@ module Messages
       if message.reporting_relationship.messages.unread.empty?
         message.reporting_relationship.update!(has_unread_messages: false)
         user = message.reporting_relationship.user
-        if user.reporting_relationships.active.where(has_unread_messages: false).empty?
+        if user.reporting_relationships.active.where(has_unread_messages: true).empty?
           user.update!(has_unread_messages: false)
         end
       end

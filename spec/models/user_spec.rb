@@ -10,6 +10,13 @@ RSpec.describe User, type: :model do
   it { should have_many(:clients).through(:reporting_relationships) }
   it { should have_many :messages }
 
+  describe 'after save' do
+    it 'broadcasts user event' do
+      expect(ActionCable.server).to receive(:broadcast).with("events_#{user.id}", type: 'user', data: hash_including("id" => user.id))
+      user.update!(full_name: 'test')
+    end
+  end
+
   describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }
     let(:normalized_phone_number) { '+17605557890' }

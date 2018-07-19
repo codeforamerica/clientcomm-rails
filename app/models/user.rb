@@ -25,6 +25,12 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  after_save :broadcast_user_event
+
+  def broadcast_user_event
+    ActionCable.server.broadcast("events_#{id}", type: 'user', data: self.as_json)
+  end
+
   def analytics_tracker_data
     {
       clients_count: clients_count,
