@@ -5,10 +5,11 @@ $(window).on('focuschange', function() {
 EVENT_TYPES = {
   message: function (message) {
     has_focus = window.localStorage.getItem('any_window_has_focus') == 'true'
+    favicon = $('link[rel="shortcut icon"]')[0];
     if (message.inbound && !has_focus) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
-        icon: $('link[rel="shortcut icon"]')[0].href,
+        icon: favicon.href,
         timeout: 40000,
         tag: window.location.hostname + '_' + message.id,
         onClick: function () {

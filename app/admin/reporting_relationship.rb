@@ -144,6 +144,9 @@ ActiveAdmin.register ReportingRelationship do
       ReportingRelationship.where(client: client, user: users).each do |relationship|
         relationship.update!(active: false, has_unread_messages: false)
         relationship.messages.unread.update(read: true)
+        if relationship.user.reporting_relationships.active.where(has_unread_messages: true).empty?
+          relationship.user.update!(has_unread_messages: false)
+        end
       end
     end
 

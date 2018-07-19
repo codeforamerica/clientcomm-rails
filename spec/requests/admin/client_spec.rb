@@ -4,7 +4,7 @@ describe 'Clients', type: :request, active_job: true do
   let(:department1) { create :department, name: 'AAA' }
   let(:department2) { create :department, name: 'BBB' }
   let(:department3) { create :department, name: 'CCC' }
-  let(:user1) { create :user, department: department1, full_name: 'Jamie Oberg' }
+  let(:user1) { create :user, department: department1, full_name: 'Jamie Oberg', has_unread_messages: true }
   let(:user2) { create :user, department: department1, full_name: 'Maureen Brown' }
   let(:user3) { create :user, department: department2, full_name: 'Rosemary Brown' }
   let(:user4) { create :user, department: department3, full_name: 'Michael Newberry' }
@@ -215,6 +215,7 @@ describe 'Clients', type: :request, active_job: true do
 
       expect(rr1.reload.active).to eq(false)
       expect(rr1.has_unread_messages).to eq(false)
+      expect(user1.reload.has_unread_messages).to eq(false)
       expect(rr1.messages.unread).to be_empty
       expect(flash[:success]).to include "#{client.full_name} has been deactivated for #{user1.full_name} in #{department1.name}."
       expect(response).to redirect_to(admin_client_path(client))
