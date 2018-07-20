@@ -53,6 +53,8 @@ class ReportingRelationship < ApplicationRecord
     new_reporting_relationship.active = true
     self.active = false
     self.has_unread_messages = false
+    user.set_has_unread_messages
+
     ActiveRecord::Base.transaction do
       save!
       new_reporting_relationship.save!

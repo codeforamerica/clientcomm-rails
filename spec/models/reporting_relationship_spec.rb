@@ -102,7 +102,9 @@ RSpec.describe ReportingRelationship, type: :model do
     let!(:scheduled_messages) { create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
     let(:old_reporting_relationship) { ReportingRelationship.find_by(user: old_user, client: client) }
     let(:new_reporting_relationship) { ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id) }
-
+    before do
+      rr.update!(has_unread_messages: true)
+    end
     subject do
       old_reporting_relationship.transfer_to(new_reporting_relationship)
     end
@@ -112,6 +114,7 @@ RSpec.describe ReportingRelationship, type: :model do
 
       expect(old_reporting_relationship.reload).to_not be_active
       expect(new_reporting_relationship.reload).to be_active
+      expect(old_user.reload.has_unread_messages).to eq(false)
     end
 
     it 'transfers creates transfer markers' do
