@@ -1,6 +1,11 @@
+$(window).on('focuschange', function() {
+  window.localStorage.setItem('any_window_has_focus', window.hasFocus);
+});
+
 EVENT_TYPES = {
   message: function (message) {
-    if (message.inbound && !(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
+    has_focus = window.localStorage.getItem('any_window_has_focus') == 'true'
+    if (message.inbound && !has_focus) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
         icon: $('link[rel="shortcut icon"]')[0].href,
