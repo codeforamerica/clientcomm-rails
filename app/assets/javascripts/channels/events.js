@@ -3,12 +3,18 @@ $(window).on('focuschange', function() {
 });
 
 EVENT_TYPES = {
+  user: function(user) {
+    favicon = $($('link[rel="shortcut icon"]')[0]);
+    new_favicon_href = user.has_unread_messages ? favicon.data('unread-href') : favicon.data('read-href');
+    favicon.attr('href', new_favicon_href);
+  },
   message: function (message) {
     has_focus = window.localStorage.getItem('any_window_has_focus') == 'true'
+    favicon = $('link[rel="shortcut icon"]')[0];
     if (message.inbound && !has_focus) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
-        icon: $('link[rel="shortcut icon"]')[0].href,
+        icon: favicon.href,
         timeout: 40000,
         tag: window.location.hostname + '_' + message.id,
         onClick: function () {

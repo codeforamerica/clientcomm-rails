@@ -117,7 +117,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
       it 'associated client has false message error' do
         subject
-        expect(client.has_message_error(user: user)).to be_falsey
+        expect(rr.reload.has_message_error).to be_falsey
       end
     end
 
@@ -146,7 +146,7 @@ describe 'Twilio controller', type: :request, active_job: true do
 
       it 'sets error true on associated client' do
         subject
-        expect(client.has_message_error(user: user)).to be_truthy
+        expect(rr.reload.has_message_error).to be_truthy
       end
     end
 

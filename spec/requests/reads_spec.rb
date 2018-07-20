@@ -27,6 +27,7 @@ describe 'reads', type: :request do
     it 'updates client has_unread_messages' do
       subject
       expect(rr.reload.has_unread_messages).to eq false
+      expect(user.has_unread_messages).to eq false
     end
 
     context 'message does not belong to user' do

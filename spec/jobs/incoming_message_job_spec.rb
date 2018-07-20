@@ -101,6 +101,7 @@ RSpec.describe IncomingMessageJob, active_job: true, type: :job do
         rr = client.reporting_relationships.find_by(user: user)
         expect(rr.last_contacted_at).to be_within(1.second).of some_date
         expect(rr.has_unread_messages).to eq true
+        expect(user.reload.has_unread_messages).to eq true
         expect(rr.has_message_error).to eq false
       end
     end

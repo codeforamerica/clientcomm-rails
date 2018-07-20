@@ -29,6 +29,7 @@ feature 'sending messages', active_job: true do
       sleep 0.3
       wait_for_ajax
       expect(page).not_to have_css '.message--inbound.unread'
+      expect(page).to have_css "link[rel='shortcut icon'][href='#{ActionController::Base.helpers.asset_path('favicon.read.png')}']"
     end
 
     step 'scroll to top' do
@@ -48,6 +49,7 @@ feature 'sending messages', active_job: true do
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
       wait_for_ajax
       expect(page).to have_css '.message--inbound.unread'
+      expect(page).to have_css "link[rel='shortcut icon'][href='#{ActionController::Base.helpers.asset_path('favicon.unread.png')}']"
     end
 
     step 'scroll to bottom' do
@@ -56,6 +58,7 @@ feature 'sending messages', active_job: true do
       sleep 0.3
       wait_for_ajax
       expect(rr.messages.unread).to be_empty
+      expect(page).to have_css "link[rel='shortcut icon'][href='#{ActionController::Base.helpers.asset_path('favicon.read.png')}']"
     end
   end
 end

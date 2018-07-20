@@ -80,6 +80,7 @@ class ReportingRelationship < ApplicationRecord
     update!(active: false, has_unread_messages: false)
     messages.unread.update(read: true)
     messages.scheduled.destroy_all
+    user.set_has_unread_messages
   end
 
   private

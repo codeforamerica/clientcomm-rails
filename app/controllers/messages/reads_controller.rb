@@ -7,6 +7,8 @@ module Messages
       message = current_user.messages.update(params[:message_id], read: message_params[:read])
       if message.reporting_relationship.messages.unread.empty?
         message.reporting_relationship.update!(has_unread_messages: false)
+        user = message.reporting_relationship.user
+        user.set_has_unread_messages
       end
       head :no_content
     end

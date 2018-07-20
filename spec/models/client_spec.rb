@@ -89,26 +89,6 @@ RSpec.describe Client, type: :model do
       end
     end
 
-    describe '#has_message_error:user' do
-      let(:user) { create :user }
-      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
-      let!(:rr) { ReportingRelationship.create(user: user, client: client, has_message_error: true) }
-
-      it 'returns the relevant value' do
-        expect(client.has_message_error(user: user)).to eq(true)
-      end
-    end
-
-    describe '#has_unread_messages:user' do
-      let(:user) { create :user }
-      let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
-      let!(:rr) { ReportingRelationship.create(user: user, client: client, has_unread_messages: true) }
-
-      it 'returns the relevant value' do
-        expect(client.has_unread_messages(user: user)).to eq(true)
-      end
-    end
-
     describe '#timestamp' do
       let(:user) { create :user }
       let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }

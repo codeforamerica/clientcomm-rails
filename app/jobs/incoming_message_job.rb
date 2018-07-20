@@ -18,6 +18,8 @@ class IncomingMessageJob < ApplicationJob
       active: true
     )
 
+    rr.user.update!(has_unread_messages: true)
+
     MessageRedactionJob.perform_later(message: new_message)
 
     # queue message and notification broadcasts

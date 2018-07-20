@@ -237,6 +237,7 @@ describe 'Reporting Relationship Requests', type: :request, active_job: true do
         subject
 
         expect(rr.reload.has_unread_messages).to eq(false)
+        expect(user.reload.has_unread_messages).to eq(false)
         expect(msg.reload).to be_read
 
         expect_most_recent_analytics_event(

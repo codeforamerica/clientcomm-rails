@@ -1,14 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  let!(:user) { create :user }
-  let!(:client) { create :client, user: user }
-  let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+  let(:rr) { create :reporting_relationship, active: true, has_unread_messages: false }
+  let!(:user) { rr.user }
+  let!(:client) { rr.client }
   let!(:message) { create :text_message, reporting_relationship: rr }
 
   it { should belong_to :department }
   it { should have_many(:clients).through(:reporting_relationships) }
   it { should have_many :messages }
+
+  describe 'after save' do
+    it 'broadcasts user event' do
+      expect(ActionCable.server).to receive(:broadcast).with("events_#{user.id}", type: 'user', data: hash_including('id' => user.id))
+      user.update!(full_name: 'test')
+    end
+  end
 
   describe 'normalizing' do
     let(:input_phone_number) { '(760) 555-7890' }
@@ -21,6 +28,17 @@ RSpec.describe User, type: :model do
 
       user = create :user, phone_number: input_phone_number, department: nil
       expect(user.reload.phone_number).to eq(normalized_phone_number)
+    end
+  end
+
+  describe 'set_has_unread_messages' do
+    subject do
+      user.set_has_unread_messages
+    end
+    it 'sets unread to false' do
+      user.update!(has_unread_messages: true)
+      subject
+      expect(user.reload.has_unread_messages).to eq(false)
     end
   end
 
