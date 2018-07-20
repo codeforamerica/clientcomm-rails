@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require modernizr-custom
+//= require promise
 //= require jquery3
 //= require jquery-ui/widgets/datepicker
 //= require lodash
