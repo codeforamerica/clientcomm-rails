@@ -12,7 +12,7 @@ RSpec.describe User, type: :model do
 
   describe 'after save' do
     it 'broadcasts user event' do
-      expect(ActionCable.server).to receive(:broadcast).with("events_#{user.id}", type: 'user', data: hash_including("id" => user.id))
+      expect(ActionCable.server).to receive(:broadcast).with("events_#{user.id}", type: 'user', data: hash_including('id' => user.id))
       user.update!(full_name: 'test')
     end
   end
