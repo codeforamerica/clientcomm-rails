@@ -4,7 +4,6 @@ $(window).on('focuschange', function() {
 
 EVENT_TYPES = {
   user: function(user) {
-    console.log(user);
     favicon = $($('link[rel="shortcut icon"]')[0]);
     new_favicon_href = user.has_unread_messages ? favicon.data('unread-href') : favicon.data('read-href');
     favicon.attr('href', new_favicon_href);
