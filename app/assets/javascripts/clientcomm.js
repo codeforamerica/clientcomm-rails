@@ -1,15 +1,13 @@
-
+window.name = window.location.href;
 window.hasFocus = true;
 
-$(document).ready(function() {
-  $(window).on('focus', function() {
-    window.hasFocus = true;
-    $(window).trigger('focuschange');
-  });
-  $(window).on('blur', function() {
-    window.hasFocus = false;
-    $(window).trigger('focuschange');
-  });
+$(window).on('focus', function() {
+  window.hasFocus = true;
+  $(window).trigger('focuschange');
+});
+$(window).on('blur', function() {
+  window.hasFocus = false;
+  $(window).trigger('focuschange');
 });
 
 function mixpanelTrack(event, params) {
