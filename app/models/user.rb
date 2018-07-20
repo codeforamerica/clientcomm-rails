@@ -90,6 +90,10 @@ class User < ApplicationRecord
     output
   end
 
+  def set_has_unread_messages
+    self.update!(has_unread_messages: false) if reporting_relationships.active.where(has_unread_messages: true).empty?
+  end
+
   private
 
   def symbols_count
