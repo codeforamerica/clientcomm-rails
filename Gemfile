@@ -18,14 +18,14 @@ gem 'validates_timeliness'
 gem 'autosize'
 gem 'bootstrap-sass'
 gem 'bourbon', '~> 4.2.0'
+gem 'es6-promise-rails', '~> 3.2'
+gem 'intercom-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+gem 'mixpanel-ruby'
 gem 'neat', '~> 1.8.0'
 gem 'premailer-rails'
 gem 'sass-rails', '~> 5.0'
-
-gem 'intercom-rails'
-gem 'mixpanel-ruby'
 gem 'sentry-raven'
 gem 'skylight'
 
@@ -75,5 +75,3 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-
-gem "es6-promise-rails", "~> 3.2"
