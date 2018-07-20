@@ -1,5 +1,3 @@
-window.name = window.location.href;
-
 EVENT_TYPES = {
   message: function (message) {
     if (message.inbound && !(window.hasFocus && (typeof document.visibilityState == 'undefined' || document.visibilityState == 'visible'))) {
@@ -7,6 +5,7 @@ EVENT_TYPES = {
         body: message.body,
         icon: $('link[rel="shortcut icon"]')[0].href,
         timeout: 40000,
+        tag: window.location.hostname + '_' + message.id,
         onClick: function () {
           conversation_url = '/conversations/' + message.reporting_relationship.id;
           conversation_window_name = 'https://' + document.domain + '/conversations/' + message.reporting_relationship.id;

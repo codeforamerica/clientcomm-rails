@@ -1,15 +1,22 @@
-
+window.name = window.location.href;
 window.hasFocus = true;
 
-$(document).ready(function() {
-  $(window).on('focus', function() {
-    window.hasFocus = true;
-    $(window).trigger('focuschange');
-  });
-  $(window).on('blur', function() {
-    window.hasFocus = false;
-    $(window).trigger('focuschange');
-  });
+$(window).on('focus', function() {
+  window.hasFocus = true;
+  $(window).trigger('focuschange');
+});
+$(window).on('blur', function() {
+  window.hasFocus = false;
+  $(window).trigger('focuschange');
+});
+$(window).on('focuschange', function() {
+  count = parseInt(window.localStorage.getItem('windows_focus_counter')) || 0;
+  if (window.hasFocus) {
+    count = count + 1;
+  } else {
+    count = count - 1;
+  }
+  window.localStorage.setItem('windows_focus_counter', count);
 });
 
 function mixpanelTrack(event, params) {
