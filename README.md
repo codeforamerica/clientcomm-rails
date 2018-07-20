@@ -62,6 +62,7 @@ rails db:schema:load RAILS_ENV=test
 ## Testing
 
 - [Phantom](http://phantomjs.org/) is required to run some of the feature tests. [Download](http://phantomjs.org/download.html) or install with [Homebrew](https://brew.sh/): `brew install phantomjs`
+- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/) is also required to run some of the feature tests. [Download](https://sites.google.com/a/chromium.org/chromedriver/downloads) or install with [Homebrew](https://brew.sh/): `brew cask install chromedriver`
 - Test suite: `bin/rspec`. For more detailed logging use `LOUD_TESTS=true bin/rspec`.
 - File-watcher: `bin/guard` when running will automatically run corresponding specs when a file is edited.
 
