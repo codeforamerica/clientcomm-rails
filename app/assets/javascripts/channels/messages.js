@@ -62,16 +62,12 @@ var Messages = {
 };
 
 function postLikeExpandEvent(msg_id, client_id) {
-  $.post({
-    url: '/tracking_events',
-    data: {
-      label: 'positive_template_expand',
-      data: {
-        like_message_id: msg_id,
-        client_id: client_id
-      }
+  mixpanelTrack(
+    "positive_template_expand", {
+      like_message_id: msg_id,
+      client_id: client_id
     }
-  })
+  );
 }
 
 function generateLikeBindings(i, msg) {

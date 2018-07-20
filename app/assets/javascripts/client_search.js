@@ -22,16 +22,12 @@ function clientListInit() {
   $('.sort').click(function(e) {
     order = $(this).hasClass('asc') ? 'ascending' : 'descending'
 
-    $.post({
-      url: '/tracking_events',
-      data: {
-        label: 'clients_sort',
-        data: {
-          sort_by: $(this).data('sort'),
-          order: order
-        }
+    mixpanelTrack(
+      "clients_sort", {
+        sort_by: $(this).data('sort'),
+        order: order
       }
-    })
+    );
   });
 
   list.on('updated', function(list){

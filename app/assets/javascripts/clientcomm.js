@@ -12,6 +12,13 @@ $(document).ready(function() {
   });
 });
 
+function mixpanelTrack(event, params) {
+  $.post({
+    url: '/tracking_events',
+    data: { label: event, data: params }
+  });
+}
+
 function characterCount(element) {
   if(element.length === 0) { return; }
 

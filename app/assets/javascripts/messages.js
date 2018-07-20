@@ -14,7 +14,8 @@ $(document).ready(function(){
       "template_popover_view", {
         templates_count: $(this).data('template-count'),
         client_id: $(this).data('client-id')
-      });
+      }
+    );
   });
 
   $templateButton.on('shown.bs.popover', function () {
@@ -91,10 +92,3 @@ $(document).ready(function(){
 
   characterCount($('.main-message-input'));
 });
-
-function mixpanelTrack(event, params) {
-  $.post({
-    url: '/tracking_events',
-    data: { label: event, data: params }
-  });
-}
