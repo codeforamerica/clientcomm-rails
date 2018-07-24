@@ -111,9 +111,9 @@ describe NotificationMailer, type: :mailer do
     let(:email) { 'test@example.com' }
     let(:metrics) do
       [
-        ['User One', '0', '1', '1'],
-        ['User Two', '3', '4', '7'],
-        ['User Three', '5', '6', '11']
+        ['User One', '0', '0', '1', '1'],
+        ['User Two', '3', '2', '4', '7'],
+        ['User Three', '5', '1', '6', '11']
       ]
     end
 
@@ -127,14 +127,14 @@ describe NotificationMailer, type: :mailer do
       expect(subject.to).to contain_exactly(email)
       expect(subject.subject).to eq(I18n.t('report_mailer.subject', start_date: start_date.strftime('%-m/%-d/%y'), end_date: end_date.strftime('%-m/%-d/%y')))
       expect(body).to include("#{start_date.strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
-      expect(body).to include('<td>8</td><td>11</td><td>19</td>') # Outbound, Inbound, Total Totals
+      expect(body).to include('<td>8</td><td>3</td><td>11</td><td>19</td>') # Outbound, Scheduled, Inbound, Total Totals
       expect(subject.attachments.count).to eq 1
       csv = subject.attachments.first
       csv_content = CSV.new(csv.body.raw_source, headers: true)
       csv_content.each_with_index do |row, i|
         expect(metrics[i]).to eq(row.values_at)
       end
-      expect(csv_content.headers).to eq(%w[Name Outbound Inbound Total])
+      expect(csv_content.headers).to eq(%w[Name Outbound Scheduled Inbound Total])
     end
   end
 

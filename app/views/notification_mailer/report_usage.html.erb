@@ -16,7 +16,7 @@
                     <p class="header-appname">ClientComm</p>
                     <p>Usage statistics for the week of <%= @start_date.strftime('%-m/%-d/%y') %> to <%= @end_date.strftime('%-m/%-d/%y') %></p>
                     <table class="csv">
-                      <tr><th>User</th><th>Outbound</th><th>Inbound</th><th>Total</th></tr>
+                      <tr><th>User</th><th>Outbound</th><th>Scheduled</th><th>Inbound</th><th>Total</th></tr>
                       <% @metrics.each do |row| %>
                         <tr>
                           <% row.each do |column| %>
@@ -26,7 +26,7 @@
                       <% end %>
                       <tr>
                         <td>Total</td>
-                        <td><%= @total_outbound %></td><td><%= @total_inbound %></td><td><%= @total_total %></td>
+                        <td><%= @total_outbound %></td><td><%= @total_scheduled %></td><td><%= @total_inbound %></td><td><%= @total_total %></td>
                       </tr>
                     </table>
                     <!-- END CSV STUFF -->
