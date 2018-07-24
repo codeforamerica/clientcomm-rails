@@ -11,7 +11,7 @@ class DeadManSwitchJob < ApplicationJob
       region: 'us-east-1'
     )
     cw.put_metric_data(
-      namespace: ENV['DEPLOY_BASE_URL'],
+      namespace: ENV['HEROKU_APP_NAME'],
       metric_data: [
         {
           metric_name: 'DeadManSwitchRan',

@@ -151,6 +151,42 @@ resource "aws_iam_user_policy" "paperclip" {
 POLICY
 }
 
+resource "aws_iam_user_policy" "paperclip" {
+  name = "put_metric_events"
+  user = "${aws_iam_user.paperclip.name}"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "cloudwatch:PutMetricData",
+            "Resource": "*"
+        }
+    ]
+}
+POLICY
+}
+
+data "aws_sns_topic" "email_alerts_channel" {
+  name = "cc-alerts"
+}
+
+resource "aws_cloudwatch_metric_alarm" "queue-busy-or-down-alarm" {
+  alarm_name                = "${heroku_app.clientcomm.name}-queue-busy-or-down-alarm"
+  comparison_operator       = "LessThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "DeadManSwitchRan"
+  namespace                 = "${heroku_app.clientcomm.name}"
+  period                    = "60"
+  statistic                 = "Average"
+  threshold                 = "1"
+  alarm_description         = "This metric alerts if the queue is not flowing"
+  insufficient_data_actions = ["${email_alerts_channel.arn}"]
+}
+
 resource "heroku_addon" "database" {
   lifecycle = {
     prevent_destroy = true
