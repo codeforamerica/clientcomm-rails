@@ -151,7 +151,7 @@ resource "aws_iam_user_policy" "paperclip" {
 POLICY
 }
 
-resource "aws_iam_user_policy" "paperclip" {
+resource "aws_iam_user_policy" "put_metric_data" {
   name = "put_metric_events"
   user = "${aws_iam_user.paperclip.name}"
 
@@ -170,7 +170,7 @@ resource "aws_iam_user_policy" "paperclip" {
 POLICY
 }
 
-data "aws_sns_topic" "email_alerts_channel" {
+data "aws_sns_topic" "email_alerts" {
   name = "cc-alerts"
 }
 
@@ -184,7 +184,7 @@ resource "aws_cloudwatch_metric_alarm" "queue-busy-or-down-alarm" {
   statistic                 = "Average"
   threshold                 = "1"
   alarm_description         = "This metric alerts if the queue is not flowing"
-  insufficient_data_actions = ["${email_alerts_channel.arn}"]
+  insufficient_data_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
 }
 
 resource "heroku_addon" "database" {
