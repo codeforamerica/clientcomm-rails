@@ -17,12 +17,6 @@ class DeadManSwitchJob < ApplicationJob
           metric_name: 'DeadManSwitchRan',
           timestamp: Time.zone.now,
           value: 1.0,
-          statistic_values: {
-            sample_count: 1.0,
-            sum: 1.0,
-            minimum: 1.0,
-            maximum: 1.0
-          },
           unit: 'None',
           storage_resolution: 1
         }
