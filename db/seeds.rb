@@ -59,9 +59,11 @@ end
 puts 'Creating Users and Clients'
 Department.all.each do |department|
   FactoryBot.create_list :user, 3, department: department
-  unclaimed_user = FactoryBot.create :user, full_name: 'Unclaimed User', department: department
+  unclaimed_user = FactoryBot.create :user, full_name: 'Unclaimed User', email: "unclaimed+#{department.id}@example.com", password: user_password, department: department
   department.unclaimed_user = unclaimed_user
   department.save
+
+  puts "> Created unclaimed user #{unclaimed_user.email} with password #{user_password} for department #{department.name}"
 
   department.users.where.not(id: department.unclaimed_user.id).each do |user|
     FactoryBot.create_list :client, 5, user: user
@@ -95,7 +97,7 @@ end
 
 puts 'Creating Attachments'
 ReportingRelationship.all.each do |rr|
-  messages = FactoryBot.create_list :text_message, 2, reporting_relationship: rr, read: true
+  messages = FactoryBot.create_list :text_message, 2, reporting_relationship: rr, read: true, inbound: true, twilio_status: 'received'
   messages.each do |msg|
     FactoryBot.create :attachment, message: msg
   end
