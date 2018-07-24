@@ -93,12 +93,13 @@
           </td>
           <% end %>
           <% if FeatureFlag.enabled?('scheduled_message_count') %>
-          <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= rr.messages.scheduled.count %>.<%= rr.timestamp %>">
-            <% if rr.messages.scheduled.count >= 9 %>
+          <% scheduled_messages_count = rr.messages.scheduled.count %>
+          <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= scheduled_messages_count %>.<%= rr.timestamp %>">
+            <% if scheduled_messages_count >= 9 %>
             <div class='purple-circle'>...</div>
-            <% elsif rr.messages.scheduled.count > 1 %>
-            <div class='purple-circle'><%= rr.messages.scheduled.count %></div>
-            <% elsif rr.messages.scheduled.count == 1 %>
+            <% elsif scheduled_messages_count > 1 %>
+            <div class='purple-circle'><%= scheduled_messages_count %></div>
+            <% elsif scheduled_messages_count == 1 %>
             <div class='purple-circle'></div>
             <% end %>
           </td>

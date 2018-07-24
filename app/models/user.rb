@@ -58,14 +58,14 @@ class User < ApplicationRecord
 
   def active_reporting_relationships
     reporting_relationships
-      .eager_load(:client)
+      .includes(:client, :client_status)
       .active
       .order('has_unread_messages DESC, COALESCE(reporting_relationships.last_contacted_at, reporting_relationships.created_at) DESC')
   end
 
   def active_reporting_relationships_with_selection(selected_reporting_relationships: [])
     reporting_relationships
-      .eager_load(:client)
+      .includes(:client)
       .active
       .sort_by do |rr|
         [selected_reporting_relationships.include?(rr.id) ? 1 : 0, rr.timestamp]
