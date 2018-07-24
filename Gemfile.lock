@@ -115,6 +115,8 @@ GEM
     css_parser (1.6.0)
       addressable
     database_cleaner (1.6.2)
+    delayed_cron_job (0.7.2)
+      delayed_job (>= 4.1)
     delayed_job (4.1.5)
       activesupport (>= 3.0, < 5.3)
     delayed_job_active_record (4.1.2)
@@ -435,6 +437,7 @@ DEPENDENCIES
   capybara-screenshot
   codeclimate-test-reporter (= 1.0.8)
   database_cleaner
+  delayed_cron_job (~> 0.7.2)
   delayed_job_active_record
   delayed_job_web
   device_detector
