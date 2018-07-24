@@ -1,5 +1,5 @@
 ActiveAdmin.register FeatureFlag do
-  menu priority: 1
+  menu priority: 4, parent: 'Manage'
 
   permit_params :flag, :enabled
   actions :edit, :update, :index

@@ -1,5 +1,5 @@
 ActiveAdmin.register AdminUser do
-  menu priority: 2, label: 'Administrators'
+  menu priority: 1, label: 'Administrators', parent: 'Manage'
 
   permit_params :email, :password, :password_confirmation
 

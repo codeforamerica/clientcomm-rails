@@ -1,4 +1,5 @@
 ActiveAdmin.register Department do
+  menu priority: 3, parent: 'Manage'
   permit_params :user_id, :name, :phone_number, :unclaimed_response
 
   index do

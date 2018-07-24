@@ -58,6 +58,16 @@ body {
   }
 }
 
+.has_nested {
+  li a {
+    color: white !important;
+    &:hover {
+      background-color: black !important;
+      border-radius: 0 !important;
+    }
+  }
+}
+
 
 .table_tools_segmented_control {
 

@@ -1,4 +1,6 @@
 ActiveAdmin.register ChangeImage do
+  menu priority: 2, label: 'Highlight Box', parent: 'Manage'
+
   permit_params :file
   actions :all, except: %i[edit]
   form do |f|
