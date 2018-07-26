@@ -4,7 +4,7 @@
     <td class="container">
       <div class="content">
         <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader">You've received a new message on ClientComm.</span>
+        <span class="preheader"><%= I18n.t('report_mailer.subject', start_date: @start_date.strftime('%-m/%-d/%y'), end_date: @end_date.strftime('%-m/%-d/%y')) %></span>
         <table class="main">
           <!-- START MAIN CONTENT AREA -->
           <tr>
@@ -14,9 +14,9 @@
                   <td>
                     <!-- START CSV STUFF -->
                     <p class="header-appname">ClientComm</p>
-                    <p>Usage statistics for the week of <%= @start_date.strftime('%-m/%-d/%y') %> to <%= @end_date.strftime('%-m/%-d/%y') %></p>
+                    <p><%= t('report_mailer.summary', start_date: @start_date.strftime('%-m/%-d/%y'), end_date: @end_date.strftime('%-m/%-d/%y')) %></p>
                     <table class="csv">
-                      <tr><th>User</th><th>Outbound</th><th>Inbound</th><th>Total</th></tr>
+                      <tr><th><%= t('report_mailer.column_headers.name') %></th><th><%= t('report_mailer.column_headers.outbound') %></th><th><%= t('report_mailer.column_headers.scheduled') %></th><th><%= t('report_mailer.column_headers.inbound') %></th><th><%= t('report_mailer.column_headers.total') %></th></tr>
                       <% @metrics.each do |row| %>
                         <tr>
                           <% row.each do |column| %>
@@ -26,9 +26,10 @@
                       <% end %>
                       <tr>
                         <td>Total</td>
-                        <td><%= @total_outbound %></td><td><%= @total_inbound %></td><td><%= @total_total %></td>
+                        <td><%= @total_outbound %></td><td><%= @total_scheduled %></td><td><%= @total_inbound %></td><td><%= @total_total %></td>
                       </tr>
                     </table>
+                    <p><%= t('report_mailer.footer') %></p>
                     <!-- END CSV STUFF -->
                   </td>
                 </tr>

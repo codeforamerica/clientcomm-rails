@@ -67,8 +67,10 @@ describe Department, type: :model do
     let!(:clients2) { create_list :client, 5, user: user2 }
     let(:inbound1_count) { 21 }
     let(:outbound1_count) { 55 }
+    let(:scheduled1_count) { 7 }
     let(:inbound2_count) { 34 }
     let(:outbound2_count) { 89 }
+    let(:scheduled2_count) { 13 }
     let!(:transfers1) { create_list :transfer_marker, 2, send_at: now - 1.day, reporting_relationship: user1.reporting_relationships.active.sample }
     let!(:messages_inbound1) { create_list :text_message, inbound1_count, send_at: now - 1.day, inbound: true, reporting_relationship: user1.reporting_relationships.active.sample }
     let!(:messages_outbound1) { create_list :text_message, outbound1_count, send_at: now - 2.days, inbound: false, reporting_relationship: user1.reporting_relationships.active.sample }
@@ -76,11 +78,20 @@ describe Department, type: :model do
     let!(:messages_inbound2) { create_list :text_message, inbound2_count, send_at: now - 3.days, inbound: true, reporting_relationship: user2.reporting_relationships.active.sample }
     let!(:messages_outbound2) { create_list :text_message, outbound2_count, send_at: now - 4.days, inbound: false, reporting_relationship: user2.reporting_relationships.active.sample }
 
+    before do
+      messages_outbound1.sample(scheduled1_count).each do |msg|
+        msg.update(created_at: msg.send_at - 1.week)
+      end
+      messages_outbound2.sample(scheduled2_count).each do |msg|
+        msg.update(created_at: msg.send_at - 1.week)
+      end
+    end
+
     it 'returns accurate metrics' do
       metrics = department.message_metrics now
       expect(metrics.count).to eq 3
-      expect(metrics).to include([user1.full_name, outbound1_count, inbound1_count, outbound1_count + inbound1_count])
-      expect(metrics).to include([user2.full_name, outbound2_count, inbound2_count, outbound2_count + inbound2_count])
+      expect(metrics).to include([user1.full_name, outbound1_count, scheduled1_count, inbound1_count, outbound1_count + inbound1_count])
+      expect(metrics).to include([user2.full_name, outbound2_count, scheduled2_count, inbound2_count, outbound2_count + inbound2_count])
     end
 
     context 'scoping by date' do
@@ -91,8 +102,8 @@ describe Department, type: :model do
       it 'scopes metrics by the date passed in' do
         metrics = department.message_metrics now
         expect(metrics.count).to eq 3
-        expect(metrics).to include([user1.full_name, outbound1_count, inbound1_count, outbound1_count + inbound1_count])
-        expect(metrics).to include([user2.full_name, outbound2_count, inbound2_count, outbound2_count + inbound2_count])
+        expect(metrics).to include([user1.full_name, outbound1_count, scheduled1_count, inbound1_count, outbound1_count + inbound1_count])
+        expect(metrics).to include([user2.full_name, outbound2_count, scheduled2_count, inbound2_count, outbound2_count + inbound2_count])
       end
     end
   end

@@ -15,8 +15,13 @@ class Department < ApplicationRecord
     metrics = []
     users.active.order(:full_name).each do |user|
       all_messages = user.messages.messages.where('send_at < ?', this_date).where('send_at > ?', this_date - 7.days)
-      metrics << [user.full_name, all_messages.outbound.count, all_messages.inbound.count,
-                  all_messages.outbound.count + all_messages.inbound.count]
+      metrics << [
+        user.full_name,
+        all_messages.outbound.count,
+        all_messages.outbound.where("messages.send_at > messages.created_at + interval '15 minutes'").count,
+        all_messages.inbound.count,
+        all_messages.outbound.count + all_messages.inbound.count
+      ]
     end
     metrics
   end
