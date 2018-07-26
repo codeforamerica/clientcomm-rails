@@ -177,10 +177,10 @@ data "aws_sns_topic" "email_alerts" {
 resource "aws_cloudwatch_metric_alarm" "queue-busy-or-down-alarm" {
   alarm_name                = "${heroku_app.clientcomm.name}-queue-busy-or-down-alarm"
   comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = "2"
+  evaluation_periods        = "1"
   metric_name               = "DeadManSwitchRan"
   namespace                 = "${heroku_app.clientcomm.name}"
-  period                    = "30"
+  period                    = "60"
   statistic                 = "Sum"
   threshold                 = "1"
   datapoints_to_alarm       = "1"
