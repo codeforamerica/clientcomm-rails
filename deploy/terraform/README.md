@@ -42,7 +42,12 @@ On [Pingdom](https://my.pingdom.com/newchecks/checks), create a new uptime check
 new deploy's front page. It should check once a minute and alert Mikela and Tomas; it should alert
 after 2 minutes down; and the Slack webhook integration should be checked.
 
+## Setup Alerts Topic
+
+Metric Alarms need an SNS topic to send events to.  Create a SNS topic called cc-alerts and add the Alets email to it as a subscriber.
+
 ## Managing a ClientComm deployment
+
 Create a var-file in lastpass called clientcomm-personal-terraform-secrets with this content:
 
 ```
@@ -114,7 +119,7 @@ and `twilio_phone_number`.
 
 Once you have created and saved the var file in lastpass you are ready to deploy:
 ```bash
-terraform plan -var-file =(lpass show --notes [YOUR VAR FILE]) --var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform plan -var-file =(lpass show --notes [YOUR VAR FILE]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 If you believe the plan accurately reflects the changes or additions you wish
