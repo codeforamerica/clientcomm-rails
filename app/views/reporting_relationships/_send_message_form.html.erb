@@ -38,6 +38,13 @@
           <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
         </div>
       <% end %>
+    <% if current_user.treatment_group == 'ebp-liking-messages' %>
+      <div class="like-options">
+        <% APP_CONFIG['like_text'].each do |text| %>
+          <div><%= text %></div>
+        <% end %>
+      </div>
+    <% end %>
     </div>
   </div>
 </section>
