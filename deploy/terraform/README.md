@@ -43,6 +43,13 @@ new deploy's front page. It should check once a minute and alert Mikela and Toma
 after 2 minutes down; and the Slack webhook integration should be checked.
 
 ## Managing a ClientComm deployment
+Create a var-file in lastpass called clientcomm-personal-terraform-secrets with this content:
+
+```
+aws_access_key = "[your personal access key]"
+aws_secret_key = "[your personal secret access key]"
+```
+
 
 Once you have set your backend you are ready to manage a production deployment.
 We use a var-file in lastpass to contain secrets and specific configuration
@@ -51,8 +58,6 @@ for each deployment:
 mailgun_api_key = ""
 mailgun_domain = ""
 mailgun_smtp_password = ""
-aws_access_key = ""
-aws_secret_key = ""
 mailgun_require_dkim = ""
 papertrail_plan = ""
 
@@ -109,7 +114,7 @@ and `twilio_phone_number`.
 
 Once you have created and saved the var file in lastpass you are ready to deploy:
 ```bash
-terraform plan -var-file =(lpass show --notes [YOUR VAR FILE])
+terraform plan -var-file =(lpass show --notes [YOUR VAR FILE]) --var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 If you believe the plan accurately reflects the changes or additions you wish
