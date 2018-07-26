@@ -127,14 +127,20 @@ describe NotificationMailer, type: :mailer do
       expect(subject.to).to contain_exactly(email)
       expect(subject.subject).to eq(I18n.t('report_mailer.subject', start_date: start_date.strftime('%-m/%-d/%y'), end_date: end_date.strftime('%-m/%-d/%y')))
       expect(body).to include("#{start_date.strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
-      expect(body).to include('<td>8</td><td>3</td><td>11</td><td>19</td>') # Outbound, Scheduled, Inbound, Total Totals
+      expect(body).to include('<td>8</td><td>3</td><td>11</td><td>19</td>')
       expect(subject.attachments.count).to eq 1
       csv = subject.attachments.first
       csv_content = CSV.new(csv.body.raw_source, headers: true)
       csv_content.each_with_index do |row, i|
         expect(metrics[i]).to eq(row.values_at)
       end
-      expect(csv_content.headers).to eq(%w[Name Outbound Scheduled Inbound Total])
+      expect(csv_content.headers).to eq([
+                                          I18n.t('report_mailer.column_headers.name'),
+                                          I18n.t('report_mailer.column_headers.outbound'),
+                                          I18n.t('report_mailer.column_headers.scheduled'),
+                                          I18n.t('report_mailer.column_headers.inbound'),
+                                          I18n.t('report_mailer.column_headers.total')
+                                        ])
     end
   end
 

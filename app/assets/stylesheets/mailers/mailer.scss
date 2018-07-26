@@ -176,9 +176,17 @@ p {
 /* CSV EMAIL */
 $color-black: #333333;
 table.csv {
-  width: 100%;
-  background-color:$color-white;
+  background-color: $color-white;
   border-collapse: collapse;
+  margin-bottom: .5em;
+  td {
+    border: 1px solid $color-black;
+    padding: 5px;
+    width: 15%;
+  }
+  td:first-child {
+    width: auto;
+  }
   th {
     padding: 5px;
     border-right: 1px solid $color-white;
@@ -193,10 +201,6 @@ table.csv {
   th:last-of-type {
     border-right: 1px solid $color-black;
   }
-  td {
-    padding: 5px;
-    border: 1px solid $color-black;
-  }
   tr:last-of-type {
     color: $color-white;
     background-color: $color-black;
@@ -207,5 +211,6 @@ table.csv {
       border-right: 1px solid $color-black;
     }
   }
+  width: 100%;
 }
 

@@ -66,7 +66,15 @@ en:
         sent: sent
         undelivered: NOT DELIVERED
   report_mailer:
-      subject: '[ClientComm] Usage report for %{start_date} - %{end_date}'
+    subject: '[ClientComm] Usage report for %{start_date} - %{end_date}'
+    summary: 'Usage statistics for the week of %{start_date} to %{end_date}'
+    column_headers:
+      name: User
+      outbound: Outbound
+      scheduled: Outbound Scheduled
+      inbound: Inbound
+      total: Total
+    footer: '* Total includes Outbound and Inbound, but not Outbound Scheduled messages.'
   activerecord:
     models:
       court_date_csv:

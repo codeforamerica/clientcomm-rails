@@ -60,7 +60,13 @@ class NotificationMailer < ApplicationMailer
     @total_inbound = 0
     @total_total = 0
     csv_str = CSV.generate headers: true do |csv|
-      csv << %w[Name Outbound Scheduled Inbound Total]
+      csv << [
+        I18n.t('report_mailer.column_headers.name'),
+        I18n.t('report_mailer.column_headers.outbound'),
+        I18n.t('report_mailer.column_headers.scheduled'),
+        I18n.t('report_mailer.column_headers.inbound'),
+        I18n.t('report_mailer.column_headers.total')
+      ]
 
       metrics.each do |metric|
         csv << metric
