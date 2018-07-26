@@ -74,7 +74,7 @@ en:
       scheduled: Outbound Scheduled
       inbound: Inbound
       total: Total
-    footer: '* Total includes Outbound and Inbound, but not Outbound Scheduled messages.'
+    footer: '* Outbound Scheduled is the subset of outbound messages that were scheduled in advance by a user. Total is the total number of all outbound and inbound messages.'
   activerecord:
     models:
       court_date_csv:

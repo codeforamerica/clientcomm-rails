@@ -187,6 +187,9 @@ table.csv {
   td:first-child {
     width: auto;
   }
+  td.scheduled-column, th.scheduled-column {
+    font-style: italic;
+  }
   th {
     padding: 5px;
     border-right: 1px solid $color-white;
