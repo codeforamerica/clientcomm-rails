@@ -127,7 +127,7 @@ describe NotificationMailer, type: :mailer do
       expect(subject.to).to contain_exactly(email)
       expect(subject.subject).to eq(I18n.t('report_mailer.subject', start_date: start_date.strftime('%-m/%-d/%y'), end_date: end_date.strftime('%-m/%-d/%y')))
       expect(body).to include("#{start_date.strftime '%-m/%-d/%y'} to #{end_date.strftime('%-m/%-d/%y')}")
-      expect(body).to include('<td>8</td><td>3</td><td>11</td><td>19</td>')
+      expect(body).to include('<td>8</td><td class="scheduled-column">3</td><td>11</td><td>19</td>')
       expect(subject.attachments.count).to eq 1
       csv = subject.attachments.first
       csv_content = CSV.new(csv.body.raw_source, headers: true)
