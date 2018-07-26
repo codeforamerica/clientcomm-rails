@@ -32,6 +32,8 @@ gem 'skylight'
 gem 'aws-sdk', '~> 2'
 gem 'paperclip'
 
+gem 'delayed_cron_job', '~> 0.7.2'
+
 gem 'lodash-rails'
 
 group :test do
