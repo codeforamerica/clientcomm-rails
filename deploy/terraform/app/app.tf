@@ -177,14 +177,17 @@ data "aws_sns_topic" "email_alerts" {
 resource "aws_cloudwatch_metric_alarm" "queue-busy-or-down-alarm" {
   alarm_name                = "${heroku_app.clientcomm.name}-queue-busy-or-down-alarm"
   comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = "1"
+  evaluation_periods        = "2"
   metric_name               = "DeadManSwitchRan"
   namespace                 = "${heroku_app.clientcomm.name}"
-  period                    = "60"
-  statistic                 = "Average"
+  period                    = "30"
+  statistic                 = "Sum"
   threshold                 = "1"
+  datapoints_to_alarm       = "1"
   alarm_description         = "This metric alerts if the queue is not flowing"
-  insufficient_data_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
+  ok_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
+  alarm_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
+  treat_missing_data = "breaching"
 }
 
 resource "heroku_addon" "database" {
