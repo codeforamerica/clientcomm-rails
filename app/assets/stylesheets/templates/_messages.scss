@@ -221,8 +221,8 @@
       padding: $padding-small;
       border-top: 2px solid $color-light-grey;
 
-      div.like-options {
-        div {
+      like-options {
+        like-option {
           cursor: pointer;
           display: inline-block;
           background: white;
@@ -236,12 +236,13 @@
             width: 23%;
           }
         }
-
-        div:hover {
+        like-option:hover {
           background: $color-tan;
         }
-
-        div:focus {
+        like-option:nth-child(n+5) {
+          display: none;
+        }
+        like-option:focus {
           border: 2px $color-teal solid;
           margin: 6px 0px 1px 0px;
         }

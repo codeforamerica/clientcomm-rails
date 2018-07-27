@@ -39,11 +39,11 @@
         </div>
       <% end %>
     <% if current_user.treatment_group == 'ebp-liking-messages' %>
-      <div class="like-options">
+      <like-options>
         <% APP_CONFIG['like_text'].each do |text| %>
-          <div><%= text %></div>
+          <like-option><%= text %></like-option>
         <% end %>
-      </div>
+      </like-options>
     <% end %>
     </div>
   </div>

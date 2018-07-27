@@ -1,6 +1,15 @@
 //= require channels/messages
 
 $(document).ready(function(){
+
+  $('like-options like-option').click(function(e) {
+    elm  = $(this);
+    text = elm.text();
+    $('form#new_message textarea.main-message-input').val(text);
+    console.log(elm.parent());
+    elm.parent().toggleClass('hidden');
+  });
+
   var $templateButton = $('#template-button');
 
   var sendInput = $('textarea.autosize');
@@ -92,3 +101,4 @@ $(document).ready(function(){
 
   characterCount($('.main-message-input'));
 });
+
