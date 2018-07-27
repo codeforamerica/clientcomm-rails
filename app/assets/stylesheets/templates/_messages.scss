@@ -230,9 +230,10 @@
           border-radius: 5px;
           margin-top: 7px;
           padding: 7px;
+          text-align: center;
           width: 45%;
           @include media($site-max-up) {
-            width: 24%;
+            width: 23%;
           }
         }
 
@@ -240,6 +241,8 @@
           -webkit-box-shadow: 0px 2px 3px 2px rgba(0,0,0,0.12);
           -moz-box-shadow: 0px 2px 3px 2px rgba(0,0,0,0.12);
           box-shadow: 0px 2px 3px 2px rgba(0,0,0,0.12);
+        }
+        div:focus{
         }
       }
     }
