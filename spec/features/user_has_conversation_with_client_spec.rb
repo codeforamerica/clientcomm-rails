@@ -71,13 +71,23 @@ feature 'sending messages', active_job: true do
     end
 
     step 'the user clicks a positive reinforcement message button' do
-      perform_enqueued_jobs do
-        find('like-options like-option', text: 'option1').click
-      end
-      expect(page.find('textarea#message_body').value).to eq('option1')
+      option = find('like-options like-option:first-child')
+      option_text = option.text
+
+      option.click
+
+      expect(page.find('textarea#message_body').value).to eq(option_text)
       expect(page).to have_css('like-options', visible: :hidden)
 
       click_on 'send_message'
+
+      wait_for_ajax
+      expect_most_recent_analytics_event(
+        'message_send' => {
+          'positive_template' => true,
+          'positive_template_type' => option_text
+        }
+      )
     end
 
     step 'postiive reinforcements do not show up if the last message was outbound' do
@@ -95,7 +105,27 @@ feature 'sending messages', active_job: true do
 
       expect(page).to have_css('like-options')
     end
+
+    step 'user clicks positive reinforcement but deletes whole body' do
+      perform_enqueued_jobs do
+        find('like-options like-option:first-child').click
+      end
+
+      fill_in 'Send a text message', with: ''
+      fill_in 'Send a text message', with: message_body
+
+      click_on 'send_message'
+
+      wait_for_ajax
+      expect_most_recent_analytics_event(
+        'message_send' => {
+          'positive_template' => false,
+          'positive_template_type' => ''
+        }
+      )
+    end
   end
+
   scenario 'user schedules a message to client', :js do
     step 'when user logs in' do
       login_as(myuser, scope: :user)

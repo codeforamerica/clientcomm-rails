@@ -57,9 +57,13 @@ class MessagesController < ApplicationController
         data: message.analytics_tracker_data.merge(mass_message: false)
       )
     else
+      tracking_data = { mass_message: false }
+      tracking_data[:positive_template] = params[:positive_template_type].present?
+      tracking_data[:positive_template_type] = params[:positive_template_type]
+
       analytics_track(
         label: 'message_send',
-        data: message.analytics_tracker_data.merge(mass_message: false)
+        data: message.analytics_tracker_data.merge(tracking_data)
       )
     end
 

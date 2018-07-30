@@ -88,19 +88,19 @@ describe 'Messages requests', type: :request, active_job: true do
               'message_id' => message.id,
               'message_length' => body.length,
               'positive_template' => false,
-              'positive_template_type' => nil,
-              'positive_template_message_id' => nil
+              'positive_template_type' => nil
             }
           )
         end
       end
 
-      context 'had like_message_id' do
+      context 'had positive_template_type' do
+        let(:positive_template) { 'some positive template' }
         let(:post_params) do
           {
             message: { body: body, send_at: message_send_at },
             client_id: client.id,
-            like_message_id: likeable_message.id
+            positive_template_type: positive_template
           }
         end
         let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
@@ -118,8 +118,7 @@ describe 'Messages requests', type: :request, active_job: true do
               'message_id' => message.id,
               'message_length' => body.length,
               'positive_template' => true,
-              'positive_template_type' => message.body,
-              'positive_template_message_id' => likeable_message.id
+              'positive_template_type' => positive_template
             }
           )
         end
