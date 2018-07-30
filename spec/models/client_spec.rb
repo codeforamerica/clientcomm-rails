@@ -179,6 +179,21 @@ RSpec.describe Client, type: :model do
       client.update!(first_name: 'some other name')
       expect(SMSService.instance).to_not have_received(:number_lookup)
     end
+
+    it 'validates correctness of next court date' do
+      bad_next_court_date_at = '1111'
+      new_client = build(:client, next_court_date_at: bad_next_court_date_at, user: user)
+      expect(new_client.valid?).to eq(false)
+      expect(new_client.errors.keys).to contain_exactly(:next_court_date_at)
+    end
+
+    it 'correctly formats a date submitted as a string in %m/%d/%Y format' do
+      next_court_date = Time.zone.now.change(min: 0, day: 3) + 1.month
+      submit_next_court_date_at = next_court_date.strftime('%m/%d/%Y')
+      new_client = create(:client, next_court_date_at: submit_next_court_date_at, user: user)
+      expect(new_client.valid?).to eq(true)
+      expect(new_client.reload.next_court_date_at).to eq next_court_date.to_date
+    end
   end
 
   describe '#analytics_tracker_data' do

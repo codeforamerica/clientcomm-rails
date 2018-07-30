@@ -25,6 +25,7 @@ feature 'user edits client', :js do
 
   let(:unread_error_message) { 'You have unread messages from this client. The messages will not be transferred to the new user. Transfer now, or click here to read them.' }
   let(:unread_deactivate_error_message) { 'You have unread messages from this client. These messages will be marked as read. Deactivate, or click here to read them.' }
+
   before do
     FeatureFlag.create!(flag: 'court_dates', enabled: true)
     other_user.clients << clientone
@@ -195,13 +196,36 @@ feature 'user edits client', :js do
   end
 
   scenario 'and fails validation' do
-    within "tr#client_#{clientone.id}" do
-      find('td.next-court-date-at', text: '--').click
+    step 'navigates to edit client form' do
+      within "tr#client_#{clientone.id}" do
+        find('td.next-court-date-at', text: '--').click
+      end
+      expect(page).to have_current_path(edit_client_path(clientone))
     end
-    expect(page).to have_current_path(edit_client_path(clientone))
-    fill_in 'Last name', with: ''
-    click_on 'Save changes'
-    expect(page).to have_content 'Edit client'
-    expect(page).to have_content "Last name can't be blank"
+
+    step 'submits empty last name' do
+      fill_in 'Last name', with: ''
+      click_on 'Save changes'
+      expect(page).to have_content 'Edit client'
+      expect(page).to have_content "Last name can't be blank"
+    end
+
+    step 'cancels the edit' do
+      click_on 'Cancel'
+    end
+
+    step 'navigates to edit client form' do
+      within "tr#client_#{clientone.id}" do
+        find('td.next-court-date-at', text: '--').click
+      end
+      expect(page).to have_current_path(edit_client_path(clientone))
+    end
+
+    step 'submits badly formatted next court date' do
+      fill_in 'Court date (optional)', with: '111'
+      click_on 'Save changes'
+      expect(page).to have_content 'Edit client'
+      expect(page).to have_content I18n.t('activerecord.errors.models.client.attributes.next_court_date_at.invalid')
+    end
   end
 end
