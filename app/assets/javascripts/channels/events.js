@@ -48,9 +48,11 @@ jQuery.fn.shuffle = function () {
 };
 
 function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+  for (i = array.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    swap = array[i]
+    array[i] = array[j]
+    array[j] = swap
   }
 }
 
