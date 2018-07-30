@@ -6,7 +6,6 @@ $(document).ready(function(){
     elm  = $(this);
     text = elm.text();
     $('form#new_message textarea.main-message-input').val(text);
-    console.log(elm.parent());
     elm.parent().toggleClass('hidden');
   });
 

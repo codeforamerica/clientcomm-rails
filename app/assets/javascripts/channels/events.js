@@ -11,6 +11,9 @@ EVENT_TYPES = {
   message: function (message) {
     has_focus = window.localStorage.getItem('any_window_has_focus') == 'true'
     favicon = $('link[rel="shortcut icon"]')[0];
+    if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
+      $('like-options').removeClass('hidden');
+    }
     if (message.inbound && !has_focus) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
         body: message.body,
