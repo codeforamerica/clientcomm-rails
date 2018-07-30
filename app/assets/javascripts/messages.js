@@ -5,6 +5,7 @@ $(document).ready(function(){
     elm  = $(elm);
     text = elm.text();
     $('form#new_message textarea.main-message-input').val(text);
+    $('form#new_message input.positive-template-type').val(text);
     elm.parent().toggleClass('hidden');
   }
 
@@ -15,6 +16,14 @@ $(document).ready(function(){
   $('like-options like-option').on('keyup', function(e) {
     if (e.keyCode == 13) {
       fillLikeOption(this);
+    }
+  });
+
+  $('form#new_message textarea.main-message-input').on('input keydown keyup focus paste', function(e) {
+    console.log('Input is: ' + $(this).val());
+    if ($(this).val() == '') {
+      console.log('attempting to empty template type');
+      $('form#new_message input.positive-template-type').val('');
     }
   });
 

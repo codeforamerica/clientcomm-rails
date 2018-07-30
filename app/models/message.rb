@@ -149,9 +149,6 @@ class Message < ApplicationRecord
       message_date_created: created_at,
       client_active: client.active(user: user),
       first_message: first?,
-      positive_template: like_message.present?,
-      positive_template_type: positive_template_type,
-      positive_template_message_id: like_message&.id,
       created_by: created_by_type
     }
   end

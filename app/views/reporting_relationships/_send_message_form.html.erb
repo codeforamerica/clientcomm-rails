@@ -10,7 +10,7 @@
     <div class="grid">
       <%= form_for Message.new, remote: true do |f| %>
         <input name="client_id" type="hidden" value="<%= @client.id %>">
-        <input name="like_message_id" class='like-message-id' type="hidden" value="">
+        <input name="positive_template_type" class='positive-template-type' type="hidden" value="">
 
         <div class="grid__item width-two-thirds-lg">
           <div class="inner-addon right-addon">
