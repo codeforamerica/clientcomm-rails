@@ -41,9 +41,6 @@ var Messages = {
     this.msgs.append(message_html);
 
     last_msg = this.msgs.children().last();
-    if (last_msg.hasClass('message--inbound')) {
-      generateLikeBindings(null, last_msg);
-    };
 
     messagesToBottom();
 
@@ -74,27 +71,6 @@ function generateLikeBindings(i, msg) {
   msg = $(msg);
   client_id = $('div#message-list').data('client-id');
   message_id = msg.attr('id').slice(8);
-  msg.find('.show-like-options').click(function(e) {
-    elm = $(this);
-    elm.toggleClass('icon-close');
-    elm.toggleClass('icon-add');
-    options_div = elm.next('div.like-options');
-    options_div.toggleClass('hidden');
-    postLikeExpandEvent(message_id, client_id);
-  });
-
-  msg.find('div.like-options div').click(function(e) {
-    elm  = $(this);
-    text = elm.text();
-    $('form#new_message textarea.main-message-input').val(text);
-    $('form#new_message input.like-message-id').val(message_id);
-    $('form#new_message').submit();
-    $('form#new_message input.like-message-id').val('');
-    elm.parent().toggleClass('hidden');
-    button = elm.parent().siblings('.show-like-options');
-    button.toggleClass('icon-close');
-    button.toggleClass('icon-add');
-  });
 };
 
 $(document).ready(function() {
@@ -104,7 +80,6 @@ $(document).ready(function() {
   var clientId = Messages.msgs.data('client-id');
   messagesToBottom();
 
-  $('.message--inbound').each(generateLikeBindings);
 
   // only subscribe if we're on a message page
   if (!clientId) {

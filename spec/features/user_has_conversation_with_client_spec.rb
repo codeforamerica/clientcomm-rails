@@ -60,22 +60,22 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when the user is not in the treatment group' do
-      expect(page).to_not have_css('div.like-options')
+      expect(page).to_not have_css('like-options')
     end
 
     step 'when the user is added to the treatment group' do
       myuser.update(treatment_group: 'ebp-liking-messages')
       visit reporting_relationship_path(rr)
 
-      expect(page).to have_css('div.like-options')
+      expect(page).to have_css('like-options')
     end
 
     step 'the user clicks a positive reinforcement message button' do
       perform_enqueued_jobs do
-        find('div.like-options div', text: 'option1').click
+        find('like-options like-option', text: 'option1').click
       end
-
-      expect(page).to have_css 'textarea#message_body', text: 'option1'
+      expect(page.find('textarea#message_body').value).to eq('option1')
+      expect(page).to have_css('like-options', visible: :hidden)
     end
   end
 

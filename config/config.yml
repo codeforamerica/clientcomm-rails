@@ -17,10 +17,10 @@ production: &default
     - I appreciate it.
     - Good for you!
     - Congratulations!
-    - Keep up the hard work.
+    - Good luck!
     - Keep it up!
     - I'm proud of you.
-    - Thanks for responding
+    - Hang in there.
 
 development:
   <<: *default
