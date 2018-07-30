@@ -13,6 +13,7 @@ EVENT_TYPES = {
     favicon = $('link[rel="shortcut icon"]')[0];
     if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
       $('like-options').removeClass('hidden');
+      $('like-options like-option').shuffle();
     }
     if (message.inbound && !has_focus) {
       Push.create('Message from ' + message.reporting_relationship.client.first_name + ' ' + message.reporting_relationship.client.last_name, {
@@ -32,6 +33,26 @@ EVENT_TYPES = {
   }
 }
 
+jQuery.fn.shuffle = function () {
+  phrases = this.map(function(i, elem) {
+    return $(elem).text();
+  });
+
+  shuffleArray(phrases);
+
+  this.each(function(i, elem) {
+    $(elem).text(phrases[i]);
+  });
+
+  return this;
+};
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+  }
+}
 
 $(document).ready(function() {
   App.events = App.cable.subscriptions.create(
