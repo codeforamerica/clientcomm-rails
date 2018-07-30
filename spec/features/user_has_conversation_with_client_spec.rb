@@ -76,9 +76,26 @@ feature 'sending messages', active_job: true do
       end
       expect(page.find('textarea#message_body').value).to eq('option1')
       expect(page).to have_css('like-options', visible: :hidden)
+
+      click_on 'send_message'
+    end
+
+    step 'postiive reinforcements do not show up if the last message was outbound' do
+      visit reporting_relationship_path(rr)
+      expect(page).to have_css('like-options', visible: :hidden)
+    end
+
+    step 'positive reinforcement messages reappear when messages come in' do
+      perform_enqueued_jobs do
+        twilio_post_sms(twilio_new_message_params(
+                          from_number: client_1.phone_number,
+                          to_number: myuser.department.phone_number
+        ))
+      end
+
+      expect(page).to have_css('like-options')
     end
   end
-
   scenario 'user schedules a message to client', :js do
     step 'when user logs in' do
       login_as(myuser, scope: :user)

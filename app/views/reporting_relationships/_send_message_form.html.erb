@@ -39,7 +39,7 @@
         </div>
       <% end %>
     <% if current_user.treatment_group == 'ebp-liking-messages' %>
-      <like-options>
+      <like-options class="<%= 'hidden' unless @messages.last.inbound %>" >
         <% APP_CONFIG['like_text'].each do |text| %>
           <like-option><%= text %></like-option>
         <% end %>
