@@ -85,6 +85,18 @@ RSpec.describe IncomingMessageJob, active_job: true, type: :job do
       )
     end
 
+    context 'MessageAlertBuilder returns nil' do
+      before do
+        allow(MessageAlertBuilder).to receive(:build_alert).and_return(nil)
+      end
+
+      it 'does not enqueue a NotificationBroadcastJob' do
+        subject
+
+        expect(NotificationBroadcastJob).to_not have_been_enqueued
+      end
+    end
+
     context 'client has message error and no unread messages' do
       let(:has_unread_messages) { false }
       let(:has_message_error) { true }

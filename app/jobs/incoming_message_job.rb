@@ -32,12 +32,14 @@ class IncomingMessageJob < ApplicationJob
       clients_path: clients_path
     )
 
-    NotificationBroadcastJob.perform_later(
-      channel_id: new_message.user.id,
-      text: message_alert[:text],
-      link_to: message_alert[:link_to],
-      properties: { client_id: client.id }
-    )
+    unless message_alert.nil?
+      NotificationBroadcastJob.perform_later(
+        channel_id: new_message.user.id,
+        text: message_alert[:text],
+        link_to: message_alert[:link_to],
+        properties: { client_id: client.id }
+      )
+    end
 
     NotificationMailer.message_notification(new_message.user, new_message).deliver_later if new_message.user.message_notification_emails
 
