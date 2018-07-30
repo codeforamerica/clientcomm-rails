@@ -60,51 +60,22 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when the user is not in the treatment group' do
-      within '.message--inbound', text: twilio_message_text do
-        expect(page).to_not have_css('i.show-like-options')
-      end
+      expect(page).to_not have_css('div.like-options')
     end
 
     step 'when the user is added to the treatment group' do
       myuser.update(treatment_group: 'ebp-liking-messages')
       visit reporting_relationship_path(rr)
 
-      within '.message--inbound', text: twilio_message_text do
-        expect(page).to have_css('i.show-like-options')
-      end
+      expect(page).to have_css('div.like-options')
     end
 
-    step 'when the user opens the message like options' do
-      within '.message--inbound', text: twilio_message_text do
-        find('i.show-like-options').click
-        expect(page).to have_css('div.like-options')
-        wait_for_ajax
-        expect_most_recent_analytics_event(
-          'positive_template_expand' => {
-            'like_message_id' => Message.find_by(body: twilio_message_text).id.to_s,
-            'client_id' => rr.client.id.to_s
-          }
-        )
-      end
-    end
-
-    step 'the user selects an option' do
-      within '.message--inbound', text: twilio_message_text do
-        perform_enqueued_jobs do
-          find('div.like-options div', text: 'option1').click
-          expect(page).to_not have_css('div.like-options')
-        end
+    step 'the user clicks a positive reinforcement message button' do
+      perform_enqueued_jobs do
+        find('div.like-options div', text: 'option1').click
       end
 
-      wait_for_ajax
-      expect(page).to have_css '.message--outbound div.message--content', text: 'option1'
-      expect_most_recent_analytics_event(
-        'message_send' => {
-          'positive_template' => true,
-          'positive_template_type' => 'option1',
-          'positive_template_message_id' => Message.find_by(body: twilio_message_text).id
-        }
-      )
+      expect(page).to have_css 'textarea#message_body', text: 'option1'
     end
   end
 

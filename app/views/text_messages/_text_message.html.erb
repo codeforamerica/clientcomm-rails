@@ -8,14 +8,6 @@
       <% end %>
       <%= render text_message.attachments %>
     </div>
-    <% if text_message.inbound && text_message.user.treatment_group == 'ebp-liking-messages' %>
-      <i class="show-like-options icon-add hidden-xs"></i>
-      <div class="like-options hidden">
-        <% APP_CONFIG['like_text'].each do |text| %>
-          <div><%= text %></div>
-        <% end %>
-      </div>
-    <% end %>
   </div>
   <p class="message--label <%= text_message.twilio_status %>">
   <% if text_message.twilio_status == 'undelivered' %>
