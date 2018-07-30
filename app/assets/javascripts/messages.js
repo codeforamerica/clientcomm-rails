@@ -1,12 +1,21 @@
 //= require channels/messages
 
 $(document).ready(function(){
-
-  $('like-options like-option').click(function(e) {
-    elm  = $(this);
+  function fillLikeOption(elm) {
+    elm  = $(elm);
     text = elm.text();
     $('form#new_message textarea.main-message-input').val(text);
     elm.parent().toggleClass('hidden');
+  }
+
+  $('like-options like-option').click(function(e) {
+    fillLikeOption(this);
+  });
+
+  $('like-options like-option').on('keyup', function(e) {
+    if (e.keyCode == 13) {
+      fillLikeOption(this);
+    }
   });
 
   var $templateButton = $('#template-button');
