@@ -9,6 +9,9 @@ $(window).on('blur', function() {
   window.hasFocus = false;
   $(window).trigger('focuschange');
 });
+$(window).on('focuschange', function() {
+  window.localStorage.setItem('any_window_has_focus', window.hasFocus);
+});
 
 function mixpanelTrack(event, params) {
   $.post({
