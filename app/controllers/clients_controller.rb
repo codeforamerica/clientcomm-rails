@@ -98,7 +98,7 @@ class ClientsController < ApplicationController
 
     @client.assign_attributes(client_params)
 
-    @client.valid?
+    @client.normalize_next_court_date_at
     @client.next_court_date_set_by_user = client_params[:next_court_date_at].present? if @client.next_court_date_at_changed? || client_params[:next_court_date_at].blank?
 
     if @client.save
