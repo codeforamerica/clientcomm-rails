@@ -97,6 +97,8 @@ class ClientsController < ApplicationController
     @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
 
     @client.assign_attributes(client_params)
+
+    @client.normalize_next_court_date_at
     @client.next_court_date_set_by_user = client_params[:next_court_date_at].present? if @client.next_court_date_at_changed? || client_params[:next_court_date_at].blank?
 
     if @client.save
@@ -212,7 +214,6 @@ class ClientsController < ApplicationController
                   ]).tap do |p|
       p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
       p[:surveys_attributes]['0'][:user_id] = current_user.id if p.dig(:surveys_attributes, '0')
-      p[:next_court_date_at] = Date.strptime(p[:next_court_date_at], '%m/%d/%Y').strftime('%d/%m/%Y') if p[:next_court_date_at].present?
     end
   end
 end

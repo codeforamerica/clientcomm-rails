@@ -88,7 +88,7 @@ en:
               blank: You need to pick someone to transfer this client to.
             client:
               existing_dept_relationship: 'This client already exists and belongs to %{user_full_name}. Contact your ClientComm administrator and request that they be transferred to you.'
-              existing_user_relationship: "Your client <a href='%{href}'>%{client_full_name}</a> is already using this number."
+              existing_user_relationship: 'Your client <a href="%{href}">%{client_full_name}</a> is already using this number.'
         user:
           attributes:
             phone_number:
@@ -104,13 +104,15 @@ en:
               invalid: This is not a valid phone number.
               taken: Phone number is already in use. If you need help, you can click the chat button at the bottom of your screen.
               inactive_taken: This client has been deactivated. Please use the Add Client button to recover them.
+            next_court_date_at:
+              invalid: Please enter a valid date, or leave the field blank.
         message:
           attributes:
             like_message:
-              different_reporting_relationship: 'Cannot like a message in a different reporting relationship'
+              different_reporting_relationship: Cannot like a message in a different reporting relationship
             send_at:
-              on_or_after: "You can't schedule a message in the past."
-              before: "You can't schedule a message more than a year in the future."
+              on_or_after: You can't schedule a message in the past.
+              before: You can't schedule a message more than a year in the future.
             body:
               blank: You need to add a message.
         template:
