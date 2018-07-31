@@ -45,6 +45,24 @@ describe 'Messages requests', type: :request, active_job: true do
       end
     end
 
+    describe 'GET#show' do
+      context 'a user has sent messages' do
+        let(:rr) { user.reporting_relationships.find_by(client: client) }
+
+        before do
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: nil
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'sent'
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'sending'
+        end
+
+        it 'marks sent, nil, and sending as Sending' do
+          get reporting_relationship_path(rr)
+
+          expect(response.body.scan(I18n.t('message.status.sent')).size).to eq(3)
+        end
+      end
+    end
+
     describe 'GET#edit' do
       it 'renders the requested message template' do
         message = create :text_message, reporting_relationship: rr, inbound: true, send_at: Time.zone.local(2018, 07, 11, 20, 30, 0)

@@ -9,6 +9,7 @@ EVENT_TYPES = {
     favicon.attr('href', new_favicon_href);
   },
   message: function (message) {
+    console.log(message);
     has_focus = window.localStorage.getItem('any_window_has_focus') == 'true'
     favicon = $('link[rel="shortcut icon"]')[0];
     if (message.inbound && !has_focus) {
