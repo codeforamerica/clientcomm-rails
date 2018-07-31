@@ -43,15 +43,6 @@ feature 'sending messages', active_job: true do
       end
     end
 
-    step 'when user sends a message' do
-      fill_in 'Send a text message', with: message_body
-
-      perform_enqueued_jobs do
-        click_on 'send_message'
-        expect(page).to have_css '.message--outbound div', text: message_body
-      end
-    end
-
     step 'when the client responds' do
       # post a message to the twilio endpoint from the user
       perform_enqueued_jobs do
