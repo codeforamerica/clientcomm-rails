@@ -26,6 +26,7 @@ $color-white:         #fff;
 $color-white-offset:  #d8d8d8;
 $color-header:        #fafaf9;
 $color-teal:          #019c86;
+$color-light-teal:     tint($color-teal, 30%);
 $color-dark-teal:     shade($color-teal, 20%);
 $color-magenta:       #a6005e;
 $color-tan:           #deded1;

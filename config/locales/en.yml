@@ -54,6 +54,7 @@ en:
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
       blacklisted: Message could not be delivered. This phone number does not accept text messages from ClientComm.
+      sent: Sending
     transcript:
       status:
         accepted: accepted
