@@ -97,8 +97,11 @@
         &.undelivered, &.blacklisted {
           color: $color-red;
         }
-      }
 
+        .sent, .sending {
+          background-color: $color-light-teal;
+        }
+      }
     }
 
     .message--inbound {
