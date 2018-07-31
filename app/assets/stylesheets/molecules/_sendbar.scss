@@ -51,7 +51,7 @@
   display: table-cell;
   width: 100%;
   border: 2px solid $color-grey;
-  padding: .5em 2em .5em .7em;
+  padding: .5em 1em .5em .1em;
   margin: 0;
   outline: 0;
   resize: none;
@@ -74,14 +74,13 @@
   vertical-align: top;
   min-width: 5em;
   text-align: center;
-  margin-top: 0.5em;
   float: right;
-
-  @include media($site-max-up) {
-    margin-top: 0;
+  @include media($tablet-up){
+    margin: 0;
     float: left;
   }
-
+  @include media($site-max-up){
+  }
   &:hover {
     color: #FFFFFF;
     background-color: tint($color-teal, 30%);
