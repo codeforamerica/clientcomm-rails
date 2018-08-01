@@ -23,6 +23,9 @@ class Client < ApplicationRecord
   validates :phone_number, uniqueness: true
   validates :id_number, format: { with: /\A\d*\z/ }
 
+  before_validation :normalize_next_court_date_at
+  validate :next_court_date_at_is_a_date
+
   def analytics_tracker_data
     {
       client_id: self.id,
@@ -80,6 +83,14 @@ class Client < ApplicationRecord
     users.joins(:reporting_relationships).where(reporting_relationships: { active: true }).distinct
   end
 
+  def normalize_next_court_date_at
+    return unless self.next_court_date_at_before_type_cast.present? && self.next_court_date_at_before_type_cast.class == String
+
+    self.next_court_date_at = Date.strptime(self.next_court_date_at_before_type_cast, '%m/%d/%Y')
+  rescue ArgumentError
+    @bad_next_court_date_at = true
+  end
+
   private
 
   def normalize_phone_number
@@ -92,5 +103,9 @@ class Client < ApplicationRecord
 
   def service_accepts_phone_number
     errors.add(:phone_number, :invalid) if @bad_number
+  end
+
+  def next_court_date_at_is_a_date
+    errors.add(:next_court_date_at, :invalid) if @bad_next_court_date_at
   end
 end

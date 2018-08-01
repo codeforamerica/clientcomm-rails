@@ -1,10 +1,8 @@
 <div class="message--<%= message_inbound_or_outbound(text_message) %> <%= text_message.read ? 'read' : 'unread' %>" id="message_<%= text_message.id %>">
   <div class="message-row-container">
-    <div class="message--<%= text_message.any_image_attachments? ? 'image' : 'content' %> <%= text_message.twilio_status %>">
+    <div class="message--<%= text_message.any_image_attachments? ? 'image' : 'content' %> <%= text_message.twilio_status || 'sending' %>">
       <% text_message.body.each_line do |body_line| %>
-      <div>
-        <%= body_line %>
-      </div>
+        <%= body_line %><br/>
       <% end %>
       <%= render text_message.attachments %>
     </div>
@@ -14,6 +12,8 @@
     <%= t('message.status.undelivered') %>
   <% elsif text_message.twilio_status == 'blacklisted' %>
     <%= t('message.status.blacklisted') %>
+  <% elsif [nil, 'sent', 'sending'].include? text_message.twilio_status %>
+    <%= t('message.status.sent') %><loading-dots><dot></dot><dot></dot><dot></dot></loading-dots>
   <% else %>
     <%= text_message.twilio_status %> <%= text_message.send_at.to_s(:message_timestamp) %>
   <% end %>

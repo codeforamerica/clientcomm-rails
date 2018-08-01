@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180724180654) do
+ActiveRecord::Schema.define(version: 20180730232332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,7 @@ ActiveRecord::Schema.define(version: 20180724180654) do
     t.index ["like_message_id"], name: "index_messages_on_like_message_id"
     t.index ["original_reporting_relationship_id"], name: "index_messages_on_original_reporting_relationship_id"
     t.index ["reporting_relationship_id"], name: "index_messages_on_reporting_relationship_id"
+    t.index ["send_at"], name: "index_messages_on_send_at"
     t.index ["twilio_sid"], name: "index_messages_on_twilio_sid"
     t.index ["type"], name: "index_messages_on_type"
   end

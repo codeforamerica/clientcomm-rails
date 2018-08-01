@@ -77,6 +77,10 @@
           border: solid 2px $color-red;
           color: $color-dark-grey;
         }
+
+        &.sent, &.sending {
+          background-color: $color-light-teal;
+        }
       }
 
       .message--label {
@@ -98,7 +102,6 @@
           color: $color-red;
         }
       }
-
     }
 
     .message--inbound {
@@ -234,7 +237,7 @@
           width: 24.5%;
           @include media($site-max-up) {
             width: 22.8%;
-          }
+         }
         }
         like-option:hover {
           background: $color-tan;

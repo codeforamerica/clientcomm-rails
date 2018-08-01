@@ -28,7 +28,7 @@ markAsRead = _.throttle(function() {
 
 messagesToBottom = function() {
   window.scrollTo(0,document.body.scrollHeight);
-}
+};
 
 var Messages = {
   init: function() {
@@ -70,7 +70,7 @@ function generateLikeBindings(i, msg) {
   msg = $(msg);
   client_id = $('div#message-list').data('client-id');
   message_id = msg.attr('id').slice(8);
-};
+}
 
 $(document).ready(function() {
   $(window).on('resize scroll visibilitychange focuschange', markAsRead);
