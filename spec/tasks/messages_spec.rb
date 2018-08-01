@@ -37,8 +37,7 @@ describe 'messages rake tasks' do
     end
 
     it 'updates the status of transient messages' do
-      transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted])
-                                  .where('send_at > ?', Time.current - 7.days)
+      transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted maybe_undelivered])
       undelivered_messages = Message.where(twilio_status: 'undelivered')
       received_messages = Message.where(twilio_status: 'received')
 
@@ -77,7 +76,7 @@ describe 'messages rake tasks' do
         .with(message: sending_message.reload)
         .and_return(true)
 
-      expect(transient_messages.count).to eq 3
+      expect(transient_messages.count).to eq 4
       expect(undelivered_messages.count).to eq 1
       expect(received_messages.count).to eq 1
 
@@ -85,6 +84,7 @@ describe 'messages rake tasks' do
         Rake::Task['messages:update_twilio_statuses'].invoke
       end
 
+      expect(old_message.reload.twilio_status).to eq('maybe_undelivered')
       expect(transient_messages.count).to eq 2
       expect(undelivered_messages.count).to eq 1
       expect(received_messages.count).to eq 1

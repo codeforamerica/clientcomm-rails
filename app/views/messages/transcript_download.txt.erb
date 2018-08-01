@@ -2,9 +2,8 @@ Viewing messages between client <%= "#{@client.first_name} #{@client.last_name}"
 Retrieved at: <%= Time.zone.now %>
 --------------------------
 <% @messages.each_with_index do |message, i| %>
-  <% message_status = message.twilio_status.blank? ? 'failed' : message.twilio_status %>
+  <% message_status = message.twilio_status.blank? ? 'sending' : message.twilio_status %>
   <% message_error = ['undelivered', 'failed', 'blacklisted'].include?(message_status) %>
-
   <% unless message.marker? %>
     <%= i %>. <%= 'UNDELIVERED: ' if message_error %><%= message.inbound ? "#{@client.first_name} #{@client.last_name}" : current_user.full_name %>: <%= message.body %>
 -- <%= message.inbound ? "#{t(message_status, scope: 'message.transcript.status')} from cell (#{message.number_from})" : "#{t(message_status, scope: 'message.transcript.status')} to cell (#{message.number_to})" %>

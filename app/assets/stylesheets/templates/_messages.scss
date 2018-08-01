@@ -72,7 +72,7 @@
         }
         float: right;
 
-        &.undelivered, &.blacklisted {
+        &.undelivered, &.blacklisted, &.maybe_undelivered {
           background-color: $color-background;
           border: solid 2px $color-red;
           color: $color-dark-grey;
@@ -98,7 +98,7 @@
         display: block;
         float: right;
 
-        &.undelivered, &.blacklisted {
+        &.undelivered, &.blacklisted, &.maybe_undelivered {
           color: $color-red;
         }
       }
