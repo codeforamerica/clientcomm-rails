@@ -10,6 +10,57 @@ describe 'User', type: :request, active_job: true do
     login_as admin_user
   end
 
+  describe '#create' do
+    let(:user_full_name) { 'Carlton Lassiter' }
+    let(:user_email) { 'classiter@sbpd.gov' }
+    let(:user_password) { 'thisismypassword' }
+    let(:user_params) do
+      {
+        full_name: user_full_name,
+        email: user_email,
+        password: user_password,
+        password_confirmation: user_password
+      }
+    end
+
+    subject do
+      post admin_users_path, params: {
+        user: user_params
+      }
+    end
+
+    it 'creates a new user' do
+      subject
+
+      new_user = User.last
+      expect(new_user.full_name).to eq(user_full_name)
+      expect(new_user.email).to eq(user_email)
+    end
+
+    context 'other params' do
+      let(:user_params) do
+        {
+          full_name: user_full_name,
+          email: user_email,
+          password: user_password,
+          password_confirmation: user_password,
+          message_notification_emails: false,
+          treatment_group: 'ebp-liking-cats',
+          admin: true
+        }
+      end
+
+      it 'sets the relevant flags' do
+        subject
+
+        new_user = User.last
+        expect(new_user.message_notification_emails).to eq(false)
+        expect(new_user.treatment_group).to eq('ebp-liking-cats')
+        expect(new_user.admin).to eq(true)
+      end
+    end
+  end
+
   describe '#disable' do
     it 'shows all currently active reporting relationships' do
       get disable_admin_user_path(user)
