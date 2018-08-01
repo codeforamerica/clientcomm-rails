@@ -163,7 +163,7 @@ ActiveAdmin.register ReportingRelationship do
       analytics_track(
         label: :client_transfer,
         data: {
-          admin_id: current_admin_user.id,
+          admin_id: current_user.id,
           clients_transferred_count: 1,
           transferred_by: 'admin',
           has_transfer_note: transfer_note.present?,

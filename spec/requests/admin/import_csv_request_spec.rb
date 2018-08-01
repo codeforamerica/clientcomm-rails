@@ -4,8 +4,8 @@ describe 'import csv', type: :request do
   include ActionDispatch::TestProcess::FixtureFile
 
   before do
-    admin_user = create :admin_user
-    login_as admin_user, scope: :admin_user
+    admin_user = create :user, admin: true
+    login_as admin_user
   end
 
   describe 'GET#index' do

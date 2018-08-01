@@ -469,12 +469,14 @@ RSpec.describe Message, type: :model do
     let(:editing_rr) { ReportingRelationship.find_by(user: editing_user, client: client) }
     let(:other_rr) { create :reporting_relationship, user: other_user, client: client }
     let(:new_phone_number) { '(415) 555-1234' }
+    let(:as_admin) { false }
 
     subject do
       Message.create_client_edit_markers(
         user: editing_user,
         phone_number: new_phone_number,
-        reporting_relationships: [editing_rr, other_rr]
+        reporting_relationships: [editing_rr, other_rr],
+        as_admin: as_admin
       )
     end
 

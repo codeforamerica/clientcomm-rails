@@ -3,10 +3,10 @@ require 'rails_helper'
 describe CourtRemindersImporter do
   describe 'self.generate_reminders', active_job: true do
     subject { described_class.generate_reminders(court_dates, court_locs, csv) }
-    let(:admin_user) { create :admin_user }
+    let(:admin_user) { create :user }
     let(:ctracks) { %w[111 112 113] }
     let(:time_zone_offset) { '-0600' }
-    let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), admin_user: admin_user) }
+    let(:csv) { CourtDateCSV.create!(file: File.new('./spec/fixtures/court_dates.csv'), user: admin_user) }
     let(:court_dates) do
       [
         { 'ofndr_num' => ctracks[0], '(expression)' => '1337D', 'lname' => 'HANES',  'crt_dt' => '5/8/2018', 'crt_tm' => '8:30', 'crt_rm' => '1' },

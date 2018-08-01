@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 describe 'User', type: :request, active_job: true do
-  let(:admin_user) { create :admin_user }
+  let(:admin_user) { create :user, admin: true }
   let(:department) { create :department }
   let(:user) { create :user, department: department }
   let!(:client1) { create :client, first_name: 'test', last_name: 'user', user: user, active: true }
 
   before do
-    login_as admin_user, scope: :admin_user
+    login_as admin_user
   end
 
   describe '#disable' do

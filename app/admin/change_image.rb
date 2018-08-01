@@ -22,7 +22,7 @@ ActiveAdmin.register ChangeImage do
         row :file_content_type
         row :file_file_size
         row :file_updated_at
-        row :admin_user
+        row :user
       end
     end
   end
@@ -33,7 +33,7 @@ ActiveAdmin.register ChangeImage do
 
   controller do
     def create
-      @change_image = ChangeImage.create(file: permitted_params[:change_image][:file], admin_user: current_admin_user)
+      @change_image = ChangeImage.create(file: permitted_params[:change_image][:file], user: current_user)
       if @change_image.valid?
         redirect_to :admin_change_images, notice: 'Image uploaded.'
       else

@@ -3,10 +3,10 @@ require 'rails_helper'
 describe 'upload change image', type: :request do
   include ActionDispatch::TestProcess::FixtureFile
 
-  let(:admin_user) { create :admin_user }
+  let(:admin_user) { create :user, admin: true }
 
   before do
-    login_as admin_user, scope: :admin_user
+    login_as admin_user
   end
 
   describe 'GET#new' do
@@ -43,7 +43,7 @@ describe 'upload change image', type: :request do
 
   describe 'GET#show' do
     let(:filename) { 'fluffy_cat.jpg' }
-    let(:change_image) { ChangeImage.create!(file: File.new("./spec/fixtures/#{filename}"), admin_user: admin_user) }
+    let(:change_image) { ChangeImage.create!(file: File.new("./spec/fixtures/#{filename}"), user: admin_user) }
     before { get admin_change_image_path change_image }
 
     it 'renders the show page with a download link' do

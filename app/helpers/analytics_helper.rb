@@ -56,8 +56,6 @@ module AnalyticsHelper
   def distinct_id
     if current_user
       "#{deploy_prefix}-#{current_user.id}"
-    elsif current_admin_user
-      "#{deploy_prefix}-admin_#{current_admin_user.id}"
     else
       "#{deploy_prefix}-#{visitor_id}"
     end

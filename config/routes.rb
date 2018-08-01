@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
   mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
-  devise_for :admin_users, { class_name: 'User' }.merge(ActiveAdmin::Devise.config)
-  ActiveAdmin.routes(self)
   # For details on the DSL available within this file,
   # see http://guides.rubyonrails.org/routing.html
+
+  # ACTIVEADMIN ROUTES
+  ActiveAdmin.routes(self)
 
   # USERS / DEVISE
   devise_for :users, controllers: {

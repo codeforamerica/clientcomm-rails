@@ -10,8 +10,8 @@ describe 'ReportingRelationships', type: :request, active_job: true do
   let(:user4) { create :user, department: department3 }
 
   before do
-    @admin_user = create :admin_user
-    login_as @admin_user, scope: :admin_user
+    @admin_user = create :user
+    login_as @admin_user
   end
 
   describe 'POST#create' do

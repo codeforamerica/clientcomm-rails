@@ -160,7 +160,8 @@ class ClientsController < ApplicationController
       Message.create_client_edit_markers(
         user: current_user,
         phone_number: @client.phone_number,
-        reporting_relationships: @client.reporting_relationships.active
+        reporting_relationships: @client.reporting_relationships.active,
+        as_admin: false
       )
     end
 

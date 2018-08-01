@@ -25,7 +25,7 @@ describe AnalyticsService do
     end
 
     context 'the actor is an admin user' do
-      let(:actor) { create :admin_user }
+      let(:actor) { create :user }
       let(:distinct_id) { "zak_clientcomm-admin-#{actor.id}" }
 
       it 'sends an event to mixpanel with a local' do

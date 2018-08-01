@@ -36,10 +36,11 @@ class Message < ApplicationRecord
   UNREAD = 'unread'.freeze
   ERROR = 'error'.freeze
 
-  def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:)
-    user_full_name = I18n.t('messages.admin_user_description')
-    user_id = nil
-    if user.class.name.demodulize == 'User'
+  def self.create_client_edit_markers(user:, phone_number:, reporting_relationships:, as_admin:)
+    if as_admin && user.admin
+      user_full_name = I18n.t('messages.admin_user_description')
+      user_id = nil
+    else
       user_full_name = user.full_name
       user_id = user.id
     end

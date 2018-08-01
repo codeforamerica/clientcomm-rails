@@ -144,9 +144,10 @@ ActiveAdmin.register Client do
       super do |_format|
         if @client.phone_number_previously_changed?
           Message.create_client_edit_markers(
-            user: current_admin_user,
+            user: current_user,
             phone_number: @client.phone_number,
-            reporting_relationships: @client.reporting_relationships.active
+            reporting_relationships: @client.reporting_relationships.active,
+            as_admin: true
           )
         end
       end
