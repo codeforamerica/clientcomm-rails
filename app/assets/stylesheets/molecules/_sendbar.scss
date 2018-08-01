@@ -51,7 +51,7 @@
   display: table-cell;
   width: 100%;
   border: 2px solid $color-grey;
-  padding: .5em 1em .5em .1em;
+  padding: .5em 2em .5em .7em;
   margin: 0;
   outline: 0;
   resize: none;
@@ -61,7 +61,12 @@
     border-color: $color-teal;
   }
 }
-
+#send_later{
+  margin-right: .3em;
+  @include media($tablet-up) {
+    margin-right: 0;
+  }
+}
 .sendbar__button {
   @include transition(all $animation-fast);
   @include user-select(none);
@@ -76,7 +81,6 @@
   text-align: center;
   float: right;
   @include media($tablet-up){
-    margin: 0;
     float: left;
   }
   @include media($site-max-up){
