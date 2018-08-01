@@ -16,7 +16,9 @@
                     <p><b><%= "#{@client.first_name} #{@client.last_name}" %></b> sent you a text message on <%= @message.created_at.strftime("%-m/%d") %>, at <%= @message.created_at.strftime("%-I:%M%p") %>:</p>
                     <p class="message-well">
                       <% if @message.body.present? %>
-                      "<%= @message.body %>"
+                        <% @message.body.each_line do |body_line| %>
+                          <%= body_line %><br/>
+                        <% end %>
                       <% end %>
                       <% @message.attachments.each do |a| %>
                         <%= render partial: 'attachments/inline_attachment', locals: { attachment: a } %>

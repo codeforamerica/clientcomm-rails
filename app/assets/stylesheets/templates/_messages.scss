@@ -77,6 +77,10 @@
           border: solid 2px $color-red;
           color: $color-dark-grey;
         }
+
+        &.sent, &.sending {
+          background-color: $color-light-teal;
+        }
       }
 
       .message--label {
@@ -96,10 +100,6 @@
 
         &.undelivered, &.blacklisted {
           color: $color-red;
-        }
-
-        .sent, .sending {
-          background-color: $color-light-teal;
         }
       }
     }
