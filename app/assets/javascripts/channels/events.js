@@ -1,7 +1,3 @@
-$(window).on('focuschange', function() {
-  window.localStorage.setItem('any_window_has_focus', window.hasFocus);
-});
-
 EVENT_TYPES = {
   user: function(user) {
     favicon = $($('link[rel="shortcut icon"]')[0]);
@@ -48,7 +44,7 @@ jQuery.fn.shuffle = function () {
 };
 
 function shuffleArray(array) {
-  for (i = array.length - 1; i > 0; i--) {
+ for (i = array.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
     swap = array[i]
     array[i] = array[j]

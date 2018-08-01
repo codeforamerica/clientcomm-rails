@@ -61,7 +61,12 @@
     border-color: $color-teal;
   }
 }
-
+#send_later{
+  margin-right: .3em;
+  @include media($tablet-up) {
+    margin-right: 0;
+  }
+}
 .sendbar__button {
   @include transition(all $animation-fast);
   @include user-select(none);
@@ -74,14 +79,12 @@
   vertical-align: top;
   min-width: 5em;
   text-align: center;
-  margin-top: 0.5em;
   float: right;
-
-  @include media($site-max-up) {
-    margin-top: 0;
+  @include media($tablet-up){
     float: left;
   }
-
+  @include media($site-max-up){
+  }
   &:hover {
     color: #FFFFFF;
     background-color: tint($color-teal, 30%);
