@@ -55,6 +55,7 @@ en:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
       blacklisted: Message could not be delivered. This phone number does not accept text messages from ClientComm.
       sent: Sending
+      maybe_undelivered: Message may be undelivered.
     transcript:
       status:
         accepted: accepted
@@ -62,10 +63,12 @@ en:
         delivered: delivered
         failed: NOT DELIVERED
         queued: queued
+        receiving: receiving
         received: received
-        sending: sending
-        sent: sent
+        sending: MAY BE UNDELIVERED
+        sent: MAY BE UNDELIVERED
         undelivered: NOT DELIVERED
+        maybe_undelivered: MAY BE UNDELIVERED
   report_mailer:
     subject: '[ClientComm] Usage report for %{start_date} - %{end_date}'
     summary: 'Usage statistics for the week of %{start_date} to %{end_date}'

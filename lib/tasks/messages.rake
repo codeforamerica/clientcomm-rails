@@ -1,19 +1,17 @@
 namespace :messages do
   task update_twilio_statuses: :environment do
-    transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted])
-                                .where('send_at > ?', Time.current - 7.days)
+    transient_messages = Message.where.not(inbound: true, twilio_status: %w[failed delivered undelivered blacklisted maybe_undelivered])
     Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating #{transient_messages.count} transient messages" }
 
     transient_messages.each do |m|
-      Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating transient message #{m.id}" }
-      twilio_status = SMSService.instance.status_lookup(message: m)
-      begin
-        m.update(twilio_status: twilio_status)
-      rescue ActiveRecord::StaleObjectError
-        Rails.logger.tagged('update twilio statuses') { Rails.logger.warn('StaleObjectError on update_twilio_statuses task') }
-        next
+      if m.send_at < Time.zone.now - 5.days
+        m.update!(twilio_status: 'maybe_undelivered')
+      else
+        Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating transient message #{m.id}" }
+        twilio_status = SMSService.instance.status_lookup(message: m)
+        m.update!(twilio_status: twilio_status)
+        MessageRedactionJob.perform_later(message: m)
       end
-      MessageRedactionJob.perform_later(message: m)
     end
   end
 
