@@ -61,18 +61,21 @@
     border-color: $color-teal;
   }
 }
-#send_later{
+
+#send_later {
   margin-right: .3em;
   @include media($tablet-up) {
     margin-right: 0;
   }
 }
+
 .sendbar__button {
   @include transition(all $animation-fast);
   @include user-select(none);
   button {
     display: none;
   }
+
   @extend .button;
   display: table-cell;
   appearance: none;
@@ -80,11 +83,11 @@
   min-width: 5em;
   text-align: center;
   float: right;
-  @include media($tablet-up){
+
+  @include media($tablet-up) {
     float: left;
   }
-  @include media($site-max-up){
-  }
+
   &:hover {
     color: #FFFFFF;
     background-color: tint($color-teal, 30%);

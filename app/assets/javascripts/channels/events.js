@@ -1,3 +1,7 @@
+$(window).on('focuschange', function() {
+  window.localStorage.setItem('any_window_has_focus', window.hasFocus);
+});
+
 EVENT_TYPES = {
   user: function(user) {
     favicon = $($('link[rel="shortcut icon"]')[0]);
