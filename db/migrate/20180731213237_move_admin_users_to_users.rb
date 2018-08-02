@@ -1,3 +1,8 @@
+class AdminUser < ApplicationRecord
+  devise :database_authenticatable,
+         :recoverable, :rememberable, :trackable, :validatable
+end
+
 class CourtDateCSV < ApplicationRecord
   belongs_to :admin_user
   belongs_to :user
