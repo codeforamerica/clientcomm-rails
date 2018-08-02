@@ -230,6 +230,9 @@
       border-top: 2px solid $color-light-grey;
 
       like-options {
+        float: right;
+        width: 100%;
+
         like-option {
           cursor: pointer;
           display: inline-block;
