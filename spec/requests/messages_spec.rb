@@ -6,8 +6,7 @@ describe 'Messages requests', type: :request, active_job: true do
       user = create :user
       client = create :client, user: user
 
-      rr = user.reporting_relationships.find_by(client: client)
-      get reporting_relationship_path(rr)
+      get reporting_relationship_path(user.reporting_relationships.find_by(client: client))
 
       expect(response.code).to eq '302'
       expect(response).to redirect_to new_user_session_path
@@ -33,10 +32,8 @@ describe 'Messages requests', type: :request, active_job: true do
           delete message_path(message)
 
           expect(response.code).to eq '302'
-          rr = user.reporting_relationships.find_by(client: client)
           expect(response).to redirect_to reporting_relationship_path(rr)
 
-          rr = user.reporting_relationships.find_by(client: client)
           get reporting_relationship_path(rr)
           expect(response.body).to_not include('1 message scheduled')
 
@@ -233,6 +230,8 @@ describe 'Messages requests', type: :request, active_job: true do
       }
       let(:new_body) { 'Some new body' }
 
+      subject { put message_path(message), params: post_params }
+
       context 'valid update' do
         let(:message_send_at) { { date: 'some_date', time: 'some_time' } }
 
@@ -244,7 +243,7 @@ describe 'Messages requests', type: :request, active_job: true do
 
           old_message_id = Message.find_by(body: body).id
 
-          put message_path(message), params: post_params
+          subject
 
           expect(ScheduledMessageJob).to have_been_enqueued.at(new_time_to_send)
 
@@ -268,7 +267,8 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(nil)
 
-          put message_path(message), params: post_params
+          subject
+
           expect(ScheduledMessageJob).to_not have_been_enqueued
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "That date didn't look right."
@@ -280,7 +280,8 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(time_in_past)
 
-          put message_path(message), params: post_params
+          subject
+
           expect(ScheduledMessageJob).to_not have_been_enqueued
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "You can't schedule a message in the past."
@@ -291,11 +292,12 @@ describe 'Messages requests', type: :request, active_job: true do
     end
 
     describe 'GET#download' do
+      subject { get reporting_relationship_messages_download_path(rr) }
+
       it 'downloads messages as a text file' do
         messages = create_list :text_message, 10, reporting_relationship: rr
 
-        rr = user.reporting_relationships.find_by(client: client)
-        get reporting_relationship_messages_download_path(rr)
+        subject
 
         messages.each do |message|
           expect(response.body).to include(message.number_from) if message.inbound
@@ -305,7 +307,33 @@ describe 'Messages requests', type: :request, active_job: true do
           expect(response.body).to include(client.first_name)
           expect(response.body).to include(user.full_name)
         end
-        expect(response.body).to include('MAY BE UNDELIVERED', 'NOT DELIVERED')
+      end
+
+      context 'some messages may not have been delivered' do
+        it 'shows the correct error status' do
+          ['maybe_undelivered', 'sending', 'sent', nil].each do |status|
+            create :text_message, reporting_relationship: rr, twilio_status: status
+          end
+
+          subject
+
+          expect(response.body.scan('MAY BE UNDELIVERED').size).to eq 4
+          expect(response.body).to_not include 'NOT DELIVERED'
+        end
+      end
+
+      context 'some messages were not delivered' do
+        it 'shows the correct error status' do
+          ['blacklisted', 'failed', 'undelivered'].each do |status|
+            create :text_message, reporting_relationship: rr, twilio_status: status
+          end
+
+          subject
+
+          expect(response.body.scan('NOT DELIVERED').size).to eq 3
+          expect(response.body.scan('UNDELIVERED: ').size).to eq 3
+          expect(response.body).to_not include 'MAY BE UNDELIVERED'
+        end
       end
 
       it 'orders downloaded messages by send_at' do
@@ -317,8 +345,9 @@ describe 'Messages requests', type: :request, active_job: true do
             send_at: message.send_at - i.hours
           )
         end
-        rr = user.reporting_relationships.find_by(client: client)
-        get reporting_relationship_messages_download_path(rr)
+
+        subject
+
         messages.each_with_index do |message, i|
           if i < msgs_count - 1
             expect(response.body.index(message.body)).to be > response.body.index(messages[i + 1].body)
@@ -329,8 +358,8 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'the user has transfer markers' do
         it 'displays the transfer marker' do
           marker = create :transfer_marker, reporting_relationship: rr
-          rr = user.reporting_relationships.find_by(client: client)
-          get reporting_relationship_messages_download_path(rr)
+
+          subject
 
           expect(response.body).to include("-- #{marker.body} --")
         end
@@ -339,59 +368,10 @@ describe 'Messages requests', type: :request, active_job: true do
       context 'the user has client edit markers' do
         it 'displays the client edit marker' do
           marker = create :client_edit_marker, reporting_relationship: rr
-          rr = user.reporting_relationships.find_by(client: client)
-          get reporting_relationship_messages_download_path(rr)
+
+          subject
 
           expect(response.body).to include("-- #{marker.body} --")
-        end
-      end
-
-      context 'a message has an undelivered error' do
-        let(:rr) { user.reporting_relationships.find_by(client: client) }
-
-        before do
-          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'undelivered'
-        end
-
-        it 'displays the issue prominently' do
-          get reporting_relationship_messages_download_path(rr)
-
-          expect(response.body).to include('UNDELIVERED')
-          expect(response.body).to include('NOT DELIVERED to cell')
-          error_text = I18n.t('message.status.undelivered')
-          expect(response.body).to include("ERROR: #{error_text}")
-        end
-      end
-
-      context 'a message has an blacklisted error' do
-        let(:rr) { user.reporting_relationships.find_by(client: client) }
-
-        before do
-          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'blacklisted'
-        end
-
-        it 'displays the issue prominently' do
-          get reporting_relationship_messages_download_path(rr)
-
-          expect(response.body).to include('UNDELIVERED')
-          expect(response.body).to include('NOT DELIVERED to cell')
-          error_text = I18n.t('message.status.blacklisted')
-          expect(response.body).to include("ERROR: #{error_text}")
-        end
-      end
-
-      context 'a message has a nil status' do
-        let(:rr) { user.reporting_relationships.find_by(client: client) }
-
-        before do
-          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: nil
-        end
-
-        it 'displays the issue prominently' do
-          get reporting_relationship_messages_download_path(rr)
-
-          expect(response.body).to include('UNDELIVERED')
-          expect(response.body).to include('MAY BE UNDELIVERED to cell')
         end
       end
     end
