@@ -50,6 +50,10 @@
       max-width: 100%;
     }
 
+    &:after {
+      padding-bottom: 40px;
+    }
+
     .message--outbound {
       margin-left: auto;
 
