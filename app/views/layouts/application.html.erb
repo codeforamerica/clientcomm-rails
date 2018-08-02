@@ -44,6 +44,7 @@
               <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
               <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
               <% if ENV['HELP_LINK'].present? %><li><%= link_to "Help", help_index_path, class: ['no-underline'] %></li><% end %>
+              <% if current_user.admin? %><li><%= link_to "Admin", admin_root_path, class: ['no-underline'] %></li><% end %>
               <li class="dropdown <%= 'active' if controller_name == 'registrations'%>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -57,6 +58,7 @@
               <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
               <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
               <% if ENV['HELP_LINK'].present? %><li><%= link_to "Help", help_index_path, class: ['no-underline'] %></li><% end %>
+              <% if current_user.admin? %><li><%= link_to "Admin", admin_root_path, class: ['no-underline'] %></li><% end %>
               <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
               <hr>
               <li><%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>

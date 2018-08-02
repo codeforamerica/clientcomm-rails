@@ -20,7 +20,7 @@ ActiveAdmin.register CourtDateCSV do
         row :file_content_type
         row :file_file_size
         row :file_updated_at
-        row :admin_user
+        row :user
       end
     end
   end
@@ -31,11 +31,11 @@ ActiveAdmin.register CourtDateCSV do
 
   controller do
     def create
-      @court_date_csv = CourtDateCSV.create(file: permitted_params[:court_date_csv][:file], admin_user: current_admin_user)
-      CreateCourtRemindersJob.perform_later(@court_date_csv, current_admin_user)
+      @court_date_csv = CourtDateCSV.create(file: permitted_params[:court_date_csv][:file], user: current_user)
+      CreateCourtRemindersJob.perform_later(@court_date_csv, current_user)
       analytics_track(
         label: 'court_reminder_upload',
-        data: { admin_id: current_admin_user.id }
+        data: { admin_id: current_user.id }
       )
       redirect_to :admin_court_date_csvs, notice: 'Uploading in process. You will receive an email shortly.'
     end

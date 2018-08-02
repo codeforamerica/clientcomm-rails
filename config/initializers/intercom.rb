@@ -23,7 +23,7 @@ IntercomRails.config do |config|
   # If it is `current_user` or `@user`, then you can ignore this
   #
   # config.user.current = Proc.new { current_user }
-  config.user.current = [proc { current_user }, proc { current_admin_user }]
+  config.user.current = [proc { current_user }]
 
   # == Include for logged out Users
   # If set to true, include the Intercom messenger on all pages, regardless of whether

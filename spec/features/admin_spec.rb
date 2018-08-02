@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 feature 'Admin Panel' do
-  let(:admin_user) { create :admin_user }
+  let(:admin_user) { create :user, admin: true }
 
   before do
-    login_as(admin_user, scope: :admin_user)
+    login_as(admin_user)
   end
 
   describe 'User View' do
@@ -30,6 +30,7 @@ feature 'Admin Panel' do
   end
 
   describe 'User Edit' do
+    let(:admin_user) { create :user, admin: true, department: department_from }
     let(:department_from) { create :department }
     let(:department_to) { create :department }
     let(:user_no_clients) { create :user, department: department_from, full_name: 'Gabriel Robel' }
@@ -191,6 +192,7 @@ feature 'Admin Panel' do
   end
 
   describe 'Client Edit' do
+    let(:admin_user) { create :user, admin: true, department: department1 }
     let(:transfer_note) { 'Welcome your new client.' }
     let!(:department1) { create :department, name: 'Department One' }
     let!(:department2) { create :department, name: 'Department Two' }
@@ -294,6 +296,8 @@ feature 'Admin Panel' do
     end
 
     context 'deactivate links' do
+      let(:admin_user) { create :user, admin: true, department: department2 }
+
       before do
         ReportingRelationship.create(client: client1, user: user2, active: false)
       end
@@ -322,45 +326,50 @@ feature 'Admin Panel' do
       end
     end
 
-    scenario 'transferring a client to a new user' do
-      step 'visits the edit client page' do
-        visit edit_admin_client_path(client1)
+    context 'transferring client' do
+      let(:admin_user) { create :user, admin: true, department: department2 }
 
-        expect(page).to have_content(department1.name.capitalize)
-        expect(page).to have_content(user1.full_name)
-        expect(page).to have_content(department2.name.capitalize)
-        expect(page).to have_content('Assign user')
-      end
+      scenario 'transferring a client to a new user' do
+        step 'visits the edit client page' do
+          visit edit_admin_client_path(client1)
 
-      step 'clicks the change link next to a user' do
-        click_on('Change')
+          expect(page).to have_content(department1.name.capitalize)
+          expect(page).to have_content(user1.full_name)
+          expect(page).to have_content(department2.name.capitalize)
+          expect(page).to have_content('Assign user')
+        end
 
-        expect(page).to have_content('Transfer Client')
-        expect(page).to have_content('Change user')
-        expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name, department2.unclaimed_user.full_name])
-        expect(page).to have_content('Include a message for the new user')
-      end
+        step 'clicks the change link next to a user' do
+          click_on('Change')
 
-      step 'it completes the form and submits it' do
-        select user2.full_name, from: 'Transfer to'
-        fill_in 'transfer_note', with: 'Notes notes notes.'
+          expect(page).to have_content('Transfer Client')
+          expect(page).to have_content('Change user')
+          expect(page).to have_select("user_in_dept_#{department1.id}", options: ['', user1.full_name, user2.full_name, department2.unclaimed_user.full_name])
+          expect(page).to have_content('Include a message for the new user')
+        end
 
-        click_on 'Transfer Client'
+        step 'it completes the form and submits it' do
+          select user2.full_name, from: 'Transfer to'
+          fill_in 'transfer_note', with: 'Notes notes notes.'
 
-        expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
-        expect(page.current_path).to eq(admin_client_path(client1))
-        expect_most_recent_analytics_event(
-          'client_transfer' => {
-            'clients_transferred_count' => 1,
-            'transferred_by' => 'admin',
-            'has_transfer_note' => true,
-            'unread_messages' => false
-          }
-        )
+          click_on 'Transfer Client'
+
+          expect(page).to have_content("#{client1.full_name} has been assigned to #{user2.full_name} in #{department1.name}")
+          expect(page.current_path).to eq(admin_client_path(client1))
+          expect_most_recent_analytics_event(
+            'client_transfer' => {
+              'clients_transferred_count' => 1,
+              'transferred_by' => 'admin',
+              'has_transfer_note' => true,
+              'unread_messages' => false
+            }
+          )
+        end
       end
     end
 
     context 'unread messages' do
+      let(:admin_user) { create :user, admin: true, department: department2 }
       let(:rr) { ReportingRelationship.find_by(user: user1, client: client1) }
 
       scenario 'transferring a client to a new user' do
@@ -469,7 +478,7 @@ feature 'Admin Panel' do
   describe 'Court Reminder CSV Download' do
     let(:filename) { 'court_dates.csv' }
     let(:court_dates_path) { Rails.root.join('spec', 'fixtures', filename) }
-    let!(:court_date_csv) { CourtDateCSV.create(file: File.new(court_dates_path), admin_user: admin_user) }
+    let!(:court_date_csv) { CourtDateCSV.create(file: File.new(court_dates_path), user: admin_user) }
 
     scenario 'Admin wants to download a court reminder CSV file' do
       step 'visits court reminder csv index' do

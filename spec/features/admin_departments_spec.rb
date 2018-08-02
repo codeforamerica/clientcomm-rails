@@ -6,11 +6,11 @@ feature 'creating and editing departments' do
   let(:user_full_name) { 'Jenny Smith' }
   let(:user_email) { 'jenny@example.com' }
   let(:user_password) { 'password' }
-  let(:admin_user) { create :admin_user }
+  let(:admin_user) { create :user, admin: true }
 
   scenario 'admin user creates and edits a department' do
     step 'when user logs in' do
-      login_as(admin_user, scope: :admin_user)
+      login_as(admin_user)
     end
 
     step 'when user visits the departments page' do
@@ -46,7 +46,9 @@ feature 'creating and editing departments' do
 
     step 'when user clicks on edit department button' do
       visit admin_departments_path
-      click_on 'Edit'
+      within "#department_#{Department.last.id}" do
+        click_on 'Edit'
+      end
       expect(page.find('#page_title')).to have_content('Edit Department')
     end
 
@@ -65,13 +67,17 @@ feature 'creating and editing departments' do
     step 'when user disables the only user for the department' do
       click_on 'Users'
       expect(page.find('#page_title')).to have_content('Users')
-      click_on 'Disable'
+      within "#user_#{User.last.id}" do
+        click_on 'Disable'
+      end
       click_on 'Disable account'
     end
 
     step 'when user deletes the department' do
       click_on 'Departments'
-      click_link 'Delete'
+      within "#department_#{Department.last.id}" do
+        click_link 'Delete'
+      end
       expect(page).to have_content('Department was successfully destroyed.')
     end
   end

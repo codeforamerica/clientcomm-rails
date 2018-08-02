@@ -1,7 +1,7 @@
 ActiveAdmin.register User do
   menu priority: 3
 
-  permit_params :department_id, :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails, :treatment_group
+  permit_params :department_id, :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails, :treatment_group, :admin
   index do
     column :full_name
     column :email
@@ -54,6 +54,7 @@ ActiveAdmin.register User do
         row :email
         row :phone_number
         row :active
+        row :admin
         row :message_notification_emails
         row :treatment_group
         row :current_sign_in_at
@@ -80,6 +81,7 @@ ActiveAdmin.register User do
       f.input :phone_number, label: 'Desk phone number'
       f.input :message_notification_emails, as: :radio unless f.object.new_record?
       f.input :treatment_group
+      f.input :admin, as: :radio
 
       if f.object.new_record?
         f.input :password

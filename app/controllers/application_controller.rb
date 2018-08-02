@@ -6,6 +6,10 @@ class ApplicationController < ActionController::Base
   before_action :set_phone_number
   before_action :enable_intercom_launcher
 
+  def access_denied(exception)
+    redirect_to root_path, alert: exception.message
+  end
+
   private
 
   def enable_intercom_launcher

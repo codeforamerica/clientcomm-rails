@@ -10,8 +10,8 @@ describe 'Clients', type: :request, active_job: true do
   let(:user4) { create :user, department: department3, full_name: 'Michael Newberry' }
 
   before do
-    @admin_user = create :admin_user
-    login_as @admin_user, scope: :admin_user
+    @admin_user = create :user, admin: true
+    login_as @admin_user
   end
 
   describe 'GET#index' do

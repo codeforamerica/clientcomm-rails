@@ -9,7 +9,6 @@
 # pass passwords to db:reset, db:setup, or db:seed like so:
 # `upw=myuserpassword apw=myadminpassword rails db:seed`
 user_password = ENV['upw'] || ENV['UPW'] || ENV['USER_PASSWORD'] || SecureRandom.hex(14)
-admin_password = ENV['apw'] || ENV['APW'] || ENV['ADMIN_PASSWORD'] || user_password
 
 puts 'Populating Feature Flags'
 FeatureFlag.find_or_create_by(flag: 'scheduled_message_count').update!(enabled: true)
@@ -21,12 +20,9 @@ FeatureFlag.find_or_create_by(flag: 'client_status').update!(enabled: false)
 FeatureFlag.find_or_create_by(flag: 'templates').update!(enabled: false)
 FeatureFlag.find_or_create_by(flag: 'mass_messages').update!(enabled: true)
 
-puts "Creating Admin User with password #{admin_password}"
-AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: admin_password, password_confirmation: admin_password) if Rails.env.development?
-
 puts "Creating Test User with password #{user_password}"
 test_user = User.find_or_create_by(email: 'test@example.com')
-test_user.update!(full_name: 'Test Example', password: user_password, department: nil, treatment_group: 'ebp-liking-messages')
+test_user.update!(full_name: 'Test Example', password: user_password, department: nil, admin: true, treatment_group: 'ebp-liking-messages')
 
 puts 'Deleting Old Records'
 Attachment.delete_all
