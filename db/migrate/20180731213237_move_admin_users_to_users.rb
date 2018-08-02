@@ -22,12 +22,12 @@ class MoveAdminUsersToUsers < ActiveRecord::Migration[5.1]
         AdminUser.all.each do |admin_user|
           user = User.find_by(email: admin_user.email)
           unless user.nil?
-            user.update(admin: true)
+            user.update!(admin: true)
             next
           end
 
           temporary_password = SecureRandom.hex(4)
-          user = User.create(
+          user = User.create!(
             full_name: admin_user.email.split('@')[0],
             email: admin_user.email,
             password: temporary_password,
@@ -56,7 +56,7 @@ class MoveAdminUsersToUsers < ActiveRecord::Migration[5.1]
           next unless admin_user.nil?
 
           temporary_password = SecureRandom.hex(4)
-          admin_user = AdminUser.create(
+          admin_user = AdminUser.create!(
             email: user.email,
             password: temporary_password,
             password_confirmation: temporary_password
