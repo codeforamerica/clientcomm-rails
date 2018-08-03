@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    if current_user.admin? && current_user.clients.empty?
+    if current_user.admin? && current_user.clients.active.empty?
       redirect_to admin_root_path
       return
     end

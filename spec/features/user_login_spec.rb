@@ -55,7 +55,11 @@ feature 'user wants to log in, check clients, and log out, so they', :js do
       end
     end
 
-    context 'the user has no clients' do
+    context 'the user has no active clients' do
+      before do
+        create :client, user: existing_user, active: false
+      end
+
       scenario 'the user can log in' do
         step 'log in and get redirected to admin root' do
           visit root_path
