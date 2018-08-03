@@ -73,11 +73,13 @@ $(document).ready(function(){
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
     $('#message_body').val('');
+    $('like-options').addClass('hidden');
   });
 
   $('#send_later').click(function(){
     var sendLaterMessage = $('textarea#message_body.main-message-input').val();
     $('textarea#scheduled_message_body.send-later-input').val(sendLaterMessage);
+    $('like-options').addClass('hidden');
   });
 
   function initializeModal(modalSelector) {
