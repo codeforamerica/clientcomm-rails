@@ -5,13 +5,8 @@ class DeadManSwitchJob < ApplicationJob
   queue_as :dead_man_switch
 
   def perform
-    cw = Aws::CloudWatch::Client.new(
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      region: 'us-east-1'
-    )
-    cw.put_metric_data(
-      namespace: ENV['HEROKU_APP_NAME'],
+    CLOUD_WATCH.put_metric_data(
+      namespace: ENV['DEPLOYMENT'],
       metric_data: [
         {
           metric_name: 'DeadManSwitchRan',
