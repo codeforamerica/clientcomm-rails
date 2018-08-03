@@ -71,7 +71,7 @@ Client.all.sample(15).each do |client|
   client_user = client.users.first
   client_dept = client_user.department
   client_rr = ReportingRelationship.find_by(user: client_user, client: client)
-  new_user = User.where(department: client_dept).where.not(id: client_user.id).order('RANDOM()').first
+  new_user = User.where(department: client_dept).where.not(id: client_user.id).where.not('email LIKE ?', 'unclaimed%').order('RANDOM()').first
   new_rr = ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id)
   client_rr.transfer_to(new_rr)
 end
@@ -82,7 +82,7 @@ FactoryBot.create_list :client, 15, user: test_user
 puts 'Fuzzing Clients'
 Client.all.sample(15).each do |client|
   existing_users = client.users
-  client.users << User.where.not(department: existing_users.map(&:department)).sample
+  client.users << User.where.not(department: existing_users.map(&:department)).where.not('email LIKE ?', 'unclaimed%').sample
 end
 
 puts 'Creating Messages'
@@ -101,8 +101,9 @@ end
 
 puts 'Creating Court Reminders'
 third = (ReportingRelationship.all.count * 0.33).to_i
+cdcsv = FactoryBot.create :court_date_csv, user: test_user
 ReportingRelationship.all.sample(third).each do |rr|
-  FactoryBot.create :court_reminder, reporting_relationship: rr
+  FactoryBot.create :court_reminder, reporting_relationship: rr, court_date_csv: cdcsv
 end
 
 puts 'Creating Client Edit Markers'
