@@ -20,12 +20,6 @@ $(document).ready(function(){
     fillLikeOption(this);
   });
 
-  $('like-options like-option').on('keyup', function(e) {
-    if (e.keyCode == 13) {
-      fillLikeOption(this);
-    }
-  });
-
   $('form#new_message textarea.main-message-input').on('input keydown keyup focus paste', function(e) {
     if ($(this).val() == '') {
       $('form#new_message input.positive-template-type').val('');
