@@ -1,5 +1,12 @@
 //= require channels/messages
 
+$(window).on('message-event', function toggleLikeOptions(e, message) {
+  if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
+    $('like-options').removeClass('hidden');
+    $('like-options like-option').shuffle();
+  }
+});
+
 $(document).ready(function(){
   function fillLikeOption(elm) {
     elm  = $(elm);
@@ -20,9 +27,7 @@ $(document).ready(function(){
   });
 
   $('form#new_message textarea.main-message-input').on('input keydown keyup focus paste', function(e) {
-    console.log('Input is: ' + $(this).val());
     if ($(this).val() == '') {
-      console.log('attempting to empty template type');
       $('form#new_message input.positive-template-type').val('');
     }
   });
