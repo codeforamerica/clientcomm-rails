@@ -76,6 +76,8 @@ resource "heroku_app" "clientcomm" {
     SECRET_KEY_BASE = "${var.devise_secret_key_base}"
     SENTRY_ENDPOINT = "${var.sentry_endpoint}"
     SKYLIGHT_AUTHENTICATION = "${var.skylight_authentication}"
+    SKYLIGHT_ENABLED = "true"
+    SKYLIGHT_REPORT_RAILS_ENV = "true"
     TIME_ZONE = "${var.time_zone}"
     TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
     TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"

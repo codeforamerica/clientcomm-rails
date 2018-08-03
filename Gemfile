@@ -27,7 +27,7 @@ gem 'neat', '~> 1.8.0'
 gem 'premailer-rails'
 gem 'sass-rails', '~> 5.0'
 gem 'sentry-raven'
-gem 'skylight'
+gem 'skylight', '3.0.0.beta'
 
 gem 'aws-sdk', '~> 2'
 gem 'paperclip'

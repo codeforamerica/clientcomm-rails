@@ -371,8 +371,10 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.3)
       tilt (~> 2.0)
-    skylight (1.4.4)
-      activesupport (>= 3.0.0)
+    skylight (3.0.0.beta)
+      skylight-core (= 3.0.0.beta)
+    skylight-core (3.0.0.beta)
+      activesupport (>= 4.2.0)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
@@ -473,7 +475,7 @@ DEPENDENCIES
   sentry-raven
   shoulda-matchers
   simplecov
-  skylight
+  skylight (= 3.0.0.beta)
   spring
   spring-commands-rspec
   spring-watcher-listen
