@@ -69,6 +69,11 @@ feature 'user wants to log in, check clients, and log out, so they', :js do
           expect(page).to have_text 'Users'
           expect(page).to have_current_path(admin_root_path)
         end
+
+        step 'The user can go to the empty clients list' do
+          click_on 'Clientcomm'
+          expect(page).to have_text 'Add a client to get started.'
+        end
       end
     end
   end

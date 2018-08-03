@@ -10,6 +10,16 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, alert: exception.message
   end
 
+  protected
+
+  def after_sign_in_path_for(resource)
+    if resource.is_a?(User) && resource.clients.active.empty?
+      admin_root_path
+    else
+      super
+    end
+  end
+
   private
 
   def enable_intercom_launcher
