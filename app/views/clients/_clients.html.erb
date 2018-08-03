@@ -13,7 +13,7 @@
   <table class="data-table data-table--selectable">
     <thead>
     <tr>
-      <% if FeatureFlag.enabled?('categories') %>
+      <% if feature_flag_for('categories') %>
       <th class="sort hidden-xs category-order" data-sort="category-order">
         <span class="icon-sort-arrows" aria-hidden="true"></span>
       </th>
@@ -32,19 +32,19 @@
         Status
       </th>
       <% end %>
-      <% if FeatureFlag.enabled?('court_dates') %>
+      <% if feature_flag_for('court_dates') %>
       <th class="sort hidden-xs" data-sort="next-court-date-at">
         <span class="icon-sort-arrows" aria-hidden="true"></span>
         Court date
       </th>
       <% end %>
-      <% if FeatureFlag.enabled?('scheduled_message_count') %>
+      <% if feature_flag_for('scheduled_message_count') %>
       <th class="sort hidden-xs scheduled-messages" data-sort="scheduled-message-count">
         <span class="icon-sort-arrows" aria-hidden="true"></span>
         <div>Scheduled messages</div>
       </th>
       <% end %>
-      <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>
+      <% unless feature_flag_for('court_dates') || feature_flag_for('scheduled_message_count') || current_user.department.client_statuses? %>
       <th class="sort hidden-xs">
         Action
       </th>
@@ -55,7 +55,7 @@
       <% @reporting_relationships.each do |rr| %>
         <% client = rr.client %>
         <tr id="<%= dom_id(client) %>" data-reporting-relationship-id="<%= rr.id %>" class="<%= client_messages_status(rr) %>">
-          <% if FeatureFlag.enabled?('categories') %>
+          <% if feature_flag_for('categories') %>
           <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
             <i data-category-name="<%= rr.category %>" class="cell-content category-symbol icon-<%= rr.category_info['icon'] %>"></i>
           </td>
@@ -85,14 +85,14 @@
             </a>
           </td>
           <% end %>
-          <% if FeatureFlag.enabled?('court_dates') %>
+          <% if feature_flag_for('court_dates') %>
           <td class="hidden-xs next-court-date-at" data-next-court-date-at="<%= client.next_court_date_at&.to_time&.to_i || 99999999999 %>">
             <a class="cell-content" href="<%= edit_client_path(client.id) %>">
               <%= client.next_court_date_at&.strftime('%m/%d/%Y') || '--' %>
             </a>
           </td>
           <% end %>
-          <% if FeatureFlag.enabled?('scheduled_message_count') %>
+          <% if feature_flag_for('scheduled_message_count') %>
           <% scheduled_messages_count = rr.messages.scheduled.count %>
           <td class="hidden-xs scheduled-message-count" data-scheduled-message-count="<%= scheduled_messages_count %>.<%= rr.timestamp %>">
             <% if scheduled_messages_count >= 9 %>
@@ -104,7 +104,7 @@
             <% end %>
           </td>
           <% end %>
-          <% unless FeatureFlag.enabled?('court_dates') || FeatureFlag.enabled?('scheduled_message_count') || current_user.department.client_statuses? %>
+          <% unless feature_flag_for('court_dates') || feature_flag_for('scheduled_message_count') || current_user.department.client_statuses? %>
           <td class="hidden-xs">
             <a class="cell-content" href="<%= edit_client_path(client.id) %>">
               Manage

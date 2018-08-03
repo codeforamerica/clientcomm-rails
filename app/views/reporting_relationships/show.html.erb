@@ -18,7 +18,7 @@
         <%= phone_number_display(@client.phone_number) %>
       </span>
 
-      <% unless FeatureFlag.enabled?('hide_notes') %>
+      <% unless feature_flag_for('hide_notes') %>
         <span id="truncated_note" class="header--paragraph hidden-xs">
           <% unless @client.notes(user: current_user).blank? %> &#8226; <% end %>
           <%= truncate(@client.notes(user: current_user), length: 40, separator: ' ', omission: '... ') { link_to 'More', '#0', { id: 'show_note' } } %>

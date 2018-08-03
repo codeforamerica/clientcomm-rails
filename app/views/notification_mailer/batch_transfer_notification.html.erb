@@ -15,7 +15,7 @@
                     <p class="header-appname">ClientComm</p>
                     <p>Hi <%= @current_user.full_name %>,</p>
                     <p>An administrator has transferred <%= @transferred_clients.count %> new clients to your client list. Be sure to introduce yourself!</p>
-                    <% if FeatureFlag.enabled?("mass_messages") %>
+                    <% if feature_flag_for("mass_messages") %>
                       <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                         <tbody>
                           <tr>

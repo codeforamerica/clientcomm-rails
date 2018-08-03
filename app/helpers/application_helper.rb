@@ -11,6 +11,12 @@ module ApplicationHelper
     Message::OUTBOUND
   end
 
+  def feature_flag_for(flag)
+    @flags ||= {}
+    @flags[flag] = FeatureFlag.enabled?(flag) if @flags[flag].nil?
+    @flags[flag]
+  end
+
   def client_messages_status(rr)
     if rr.has_message_error
       Message::ERROR

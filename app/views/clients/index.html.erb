@@ -42,7 +42,7 @@
               <%= link_to new_client_path, class: "button button--small" do %>
                 <i class="button__icon--left icon-add"></i> New client
               <% end %>
-              <% if FeatureFlag.enabled?("mass_messages") %>
+              <% if feature_flag_for("mass_messages") %>
                 <%= link_to new_mass_message_path, class: "button button--small button--primary button--mass-message" do %>
                   Mass message
                 <% end %>

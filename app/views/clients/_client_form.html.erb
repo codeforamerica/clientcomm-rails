@@ -28,11 +28,11 @@
       <%= f.gcf_input_field :last_name, "Last name", classes: ['form-width--name'], icon: ('link' if has_other_users) %>
 
       <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => phone_number_display(@client.phone_number) } %>
-      <% if FeatureFlag.enabled?('client_id_number') %>
+      <% if feature_flag_for('client_id_number') %>
         <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
       <% end %>
 
-      <% if FeatureFlag.enabled?('court_dates') %>
+      <% if feature_flag_for('court_dates') %>
       <div class="grid">
         <div class="grid__item width-one-half">
           <% date_picker_id = 'next_court_date_at' %>
@@ -56,7 +56,7 @@
           <%= rr.gcf_radio_set :client_status_id, "Client status", current_user.department.client_statuses.map {|status| {value: status.id, label: status.name, notes: status.followup_date}} %>
         <% end %>
 
-        <% unless FeatureFlag.enabled?('hide_notes') %>
+        <% unless feature_flag_for('hide_notes') %>
           <%= rr.gcf_input_field :notes, 'Notes', notes: "Add a private note that will appear in this client's profile", classes: ['form-width--long'] %>
         <% else %>
           <%= rr.hidden_field :notes %>

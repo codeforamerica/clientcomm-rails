@@ -37,7 +37,7 @@
                   <tr>
                     <th class="check-column">
                     </th>
-                    <% if FeatureFlag.enabled?('categories') %>
+                    <% if feature_flag_for('categories') %>
                     <th class="sort hidden-xs category-order after-checkbox" data-sort="category-order">
                       <span class="icon-sort-arrows" aria-hidden="true"></span>
                     </th>
@@ -68,7 +68,7 @@
                           <%= b.check_box %>
                         <% end %>
                       </td>
-                      <% if FeatureFlag.enabled?('categories') %>
+                      <% if feature_flag_for('categories') %>
                       <td class="hidden-xs category-order" data-category-order="<%= rr.category_info['order'] %>">
                         <%= b.label(class: ['cell-content']) do %>
                           <i data-category-name="<%= rr.category %>" class="category-symbol icon-<%= rr.category_info['icon'] %>"></i>
