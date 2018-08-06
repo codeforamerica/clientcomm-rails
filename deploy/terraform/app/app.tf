@@ -82,6 +82,7 @@ resource "heroku_app" "clientcomm" {
     TWILIO_ACCOUNT_SID = "${var.twilio_account_sid}"
     TWILIO_AUTH_TOKEN = "${var.twilio_auth_token}"
     TWILIO_PHONE_NUMBER = "${var.twilio_phone_number}"
+    UNCLAIMED_EMAIL = "${var.unclaimed_email}"
   }
 }
 

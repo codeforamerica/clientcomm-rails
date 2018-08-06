@@ -1,6 +1,6 @@
 namespace :setup do
   task :admin_account, [:admin_email, :password] => :environment do |_, args|
-    user = AdminUser.find_or_initialize_by(email: args.admin_email)
+    user = User.find_or_initialize_by(email: args.admin_email)
     user.update!(password: args.password, password_confirmation: args.password)
   end
 
