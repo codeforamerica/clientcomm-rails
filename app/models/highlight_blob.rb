@@ -1,0 +1,2 @@
+class HighlightBlob < ApplicationRecord
+end

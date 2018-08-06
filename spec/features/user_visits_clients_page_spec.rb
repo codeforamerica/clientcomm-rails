@@ -154,19 +154,11 @@ feature 'logged-in user interacts with texts of change' do
 
   before do
     login_as user
+    HighlightBlob.create(text: '<p class="test">hi, how are you</p>')
   end
 
   scenario 'successfully', js: true do
     visit clients_path
-    expect(page).to_not have_content I18n.t('views.change_text.more_body')
-    find('div#change-alert-reveal a', text: I18n.t('views.change_text.more_link_text')).click
-    wait_for_ajax
-    expect_analytics_events_with_keys('texts_of_change_expand' => ['visitor_id'])
-    expect(page).to have_content I18n.t('views.change_text.more_body')
-
-    find('div#change-alert-reveal a', text: I18n.t('views.change_text.more_link_text')).click
-    wait_for_ajax
-    expect_analytics_events_with_keys('texts_of_change_collapse' => ['visitor_id'])
-    expect(page).to_not have_content I18n.t('views.change_text.more_body')
+    expect(page).to have_css('p.test', text: 'hi, how are you')
   end
 end

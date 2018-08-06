@@ -13,26 +13,8 @@
             <div class="media-body"><%= t('views.tips.positive_reinforcement_html') %></div>
           </div>
           <% end %>
-          <% if @change_image.present? %>
-            <table class="change-alert hidden-xs">
-              <tr>
-                <td class="change-alert--text">
-                  <h2><%= t('views.change_text.title') %></h2>
-                  <div class="change-alert--body text--small"><p><%= t('views.change_text.body') %></p></div>
-                  <div id="change-alert-reveal" class="reveal is-hidden">
-                    <p><a href="#" class="reveal__link text--small"><%= t('views.change_text.more_link_text') %></a></p>
-                    <div class="reveal__content text--left">
-                      <div class="notice text--small">
-                        <%= t('views.change_text.more_body') %>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="change-alert--image">
-                  <img class="change-alert--image-preview" src="<%= @change_image.file.expiring_url(10) %>" />
-                </td>
-              </tr>
-            </table>
+          <% if @highlight_blob.present? %>
+            <%= @highlight_blob.text.html_safe %>
           <% end %>
           <div class="toolbar-responsive with-padding-med">
             <div class="toolbar__left-responsive">
