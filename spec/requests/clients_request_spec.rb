@@ -646,23 +646,14 @@ describe 'Clients requests', type: :request do
         expect(response.body).to_not include(I18n.t('views.change_text.title'))
       end
 
-      context 'has change image' do
-        let!(:image) { create :change_image }
-        it 'does show the change text if there is one' do
-          subject
-          expect(response.body).to include(I18n.t('views.change_text.title'))
-          expect(response.body).to include(image.file.url)
+      context 'has highlights blob' do
+        before do
+          HighlightBlob.create(text: '<p class="test">hi, how are you</p>')
         end
 
-        context 'has multiple change images' do
-          it 'only shows the most recently created image' do
-            travel_to 1.day.ago do
-              create_list :change_image, 10
-            end
-
-            subject
-            expect(response.body).to include(image.file.url)
-          end
+        it 'shows the highlights blob' do
+          subject
+          expect(response.body).to include('<p class="test">hi, how are you</p>')
         end
       end
 

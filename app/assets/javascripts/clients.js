@@ -10,12 +10,6 @@ var revealer = (function() {
         $(self).find('.reveal__link').click(function(e) {
           e.preventDefault();
           $(self).toggleClass('is-hidden');
-
-          if ($(self).attr('id') === 'change-alert-reveal') {
-            var label = $(self).hasClass('is-hidden') ? 'texts_of_change_collapse' : 'texts_of_change_expand';
-            mixpanelTrack(label, {});
-          }
-
         });
       });
     }
