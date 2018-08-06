@@ -44,7 +44,7 @@ after 2 minutes down; and the Slack webhook integration should be checked.
 
 ## Setup Alerts Topic
 
-Metric Alarms need an SNS topic to send events to.  Create a SNS topic called cc-alerts and add the Alets email to it as a subscriber.
+Metric Alarms need an SNS topic to send events to. Create a SNS topic called `cc-alerts` if it doesn't already exist, and add the Alerts email to it as a subscriber.
 
 ## Managing a ClientComm deployment
 
