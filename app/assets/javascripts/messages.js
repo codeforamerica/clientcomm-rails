@@ -1,5 +1,12 @@
 //= require channels/messages
 
+$(window).on('message-event', function toggleLikeOptions(e, message) {
+  if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
+    $('like-options').removeClass('hidden');
+    $('like-options like-option').shuffle();
+  }
+});
+
 $(document).ready(function(){
   function fillLikeOption(elm) {
     elm  = $(elm);
@@ -20,9 +27,7 @@ $(document).ready(function(){
   });
 
   $('form#new_message textarea.main-message-input').on('input keydown keyup focus paste', function(e) {
-    console.log('Input is: ' + $(this).val());
     if ($(this).val() == '') {
-      console.log('attempting to empty template type');
       $('form#new_message input.positive-template-type').val('');
     }
   });
@@ -68,11 +73,13 @@ $(document).ready(function(){
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field
     $('#message_body').val('');
+    $('like-options').addClass('hidden');
   });
 
   $('#send_later').click(function(){
     var sendLaterMessage = $('textarea#message_body.main-message-input').val();
     $('textarea#scheduled_message_body.send-later-input').val(sendLaterMessage);
+    $('like-options').addClass('hidden');
   });
 
   function initializeModal(modalSelector) {
