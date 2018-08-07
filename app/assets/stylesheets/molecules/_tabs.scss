@@ -15,14 +15,14 @@
   border: 2px solid $color-tan;
   background-color: rgba($color-tan, .25);
   padding: .5em 1.5em;
-  color: $color-dark-grey;
+  color: $color-grey;
   text-decoration: none;
   min-width: 8em;
   text-align: center;
 
   &:hover {
     background-color: rgba($color-teal, .1);
-    color: $color-dark-grey;
+    color: $color-grey;
   }
 
   &.is-selected {
