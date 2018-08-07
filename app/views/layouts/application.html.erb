@@ -23,7 +23,7 @@
     <%= render partial: "layouts/flash", locals: {classes: ['flash', 'flash--error'], body: alert} %>
     <% end %>
 
-    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <nav id="main-nav" class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
         <div class="navbar-header main-header__title">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-nav-dropdown" aria-expanded="false">
@@ -71,5 +71,10 @@
     <div class="page-wrapper">
       <%= content_for?(:content) ? yield(:content) : yield %>
     </div>
+
+    <footer>
+      <p>ClientComm is brought to you by <%= link_to 'Code for America', 'https://codeforamerica.org' %></p>
+      <%= image_tag 'logo' %>
+    </footer>
   </body>
 </html>

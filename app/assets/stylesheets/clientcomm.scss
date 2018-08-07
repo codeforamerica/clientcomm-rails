@@ -1,4 +1,12 @@
 /* Reusable CSS Classes */
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
 
 .center-align {
   text-align: center;
@@ -72,4 +80,34 @@ loading-dots dot:nth-child(3) {
    * would animate at the same time
    */
   animation-delay: .4s;
+}
+
+#main-nav {
+  flex: 1 0 auto;
+}
+
+.page-wrapper {
+  flex: 1 0 auto;
+}
+
+.template--messages footer {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  font-size: $font-size-small;
+  background-color: $color-darkest-grey;
+  padding-top: 30px;
+  padding-bottom: 40px;
+  flex-shrink: 0;
+
+  p {
+    color: $color-grey;
+    margin-bottom: 20px;
+
+    a {
+      color: $color-grey;
+    }
+  }
 }
