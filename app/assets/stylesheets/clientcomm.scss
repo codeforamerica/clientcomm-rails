@@ -83,7 +83,7 @@ loading-dots dot:nth-child(3) {
 }
 
 #main-nav {
-  flex: 1 0 auto;
+  flex: none;
 }
 
 .page-wrapper {
@@ -103,11 +103,11 @@ footer {
   flex-shrink: 0;
 
   p {
-    color: $color-grey;
+    color: #aaa;
     margin-bottom: 20px;
 
     a {
-      color: $color-grey;
+      color: #aaa;
     }
   }
 }
