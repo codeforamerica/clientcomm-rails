@@ -8,6 +8,7 @@ variable "heroku_app_name" {}
 variable "heroku_pipeline_id" {}
 variable "heroku_team" {}
 variable "heroku_database_plan" {}
+variable "slack_webhook_endpoint" {}
 
 variable "environment" {}
 
@@ -212,6 +213,16 @@ resource "heroku_addon" "scheduler" {
   app  = "${heroku_app.clientcomm.name}"
   plan = "scheduler:standard"
 }
+
+resource "heroku_addon" "slack_webhook" {
+  app  = "${heroku_app.clientcomm.name}"
+  plan = "deployhooks:http"
+
+  config {
+    url = "${var.slack_webhook_endpoint}"
+  }
+}
+
 
 resource "aws_s3_bucket" "logging_bucket" {
   count = "${var.enable_papertrail ? 1 : 0}"
