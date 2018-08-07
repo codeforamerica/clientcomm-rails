@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def after_sign_in_path_for(resource)
-    if resource.is_a?(User) && resource.clients.active.empty?
+    if resource.is_a?(User) && resource.admin? && resource.clients.active.empty?
       admin_root_path
     else
       super
