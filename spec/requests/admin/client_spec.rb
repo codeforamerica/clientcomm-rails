@@ -127,6 +127,9 @@ describe 'Clients', type: :request, active_job: true do
       expect(response_html.css("#attributes_table_reporting_relationship_#{rr1.id}")).to be_present
       response_html.css("#attributes_table_reporting_relationship_#{rr1.id}").each do |table|
         expect(table.content).to include(created_at.strftime('%B %d, %Y %l:%M %Z'))
+        expect(table.css('.row-conversation_link')).to be_present
+        expect(table.css('.row-conversation_link a').text).to eq reporting_relationship_url(rr1)
+        expect(table.css('.row-conversation_link a').attr('href').text).to eq reporting_relationship_url(rr1)
         expect(table.content).to include(notes)
         expect(table.content).to include(last_contacted_at.strftime('%B %d, %Y %l:%M %Z'))
         expect(table.css('.row-has_unread_messages')).to be_present

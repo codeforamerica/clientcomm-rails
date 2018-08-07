@@ -28,6 +28,7 @@ ActiveAdmin.register Client do
       panel "#{user.department.name}: #{user.full_name}" do
         attributes_table_for client.reporting_relationship(user: user) do
           row :active, &:active
+          row(:conversation_link) { |rr| link_to reporting_relationship_url(rr), reporting_relationship_url(rr) }
           row :notes
           row(:created_at) { |rr| rr.created_at&.strftime('%B %d, %Y %l:%M %Z') }
           row(:last_contacted_at) { |rr| rr.last_contacted_at&.strftime('%B %d, %Y %l:%M %Z') }
