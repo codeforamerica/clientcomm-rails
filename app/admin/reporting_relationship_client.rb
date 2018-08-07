@@ -1,5 +1,5 @@
 ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
-  menu priority: 4, label: 'Clients'
+  menu priority: 3, label: 'Clients'
 
   permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
 

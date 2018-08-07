@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  menu priority: 3
+  menu priority: 4
 
   permit_params :department_id, :full_name, :email, :phone_number, :password, :password_confirmation, :message_notification_emails, :treatment_group, :admin
   index do
