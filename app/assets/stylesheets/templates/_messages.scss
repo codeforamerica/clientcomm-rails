@@ -79,7 +79,7 @@
         &.undelivered, &.blacklisted, &.maybe_undelivered {
           background-color: $color-background;
           border: solid 2px $color-red;
-          color: $color-dark-grey;
+          color: $color-grey;
         }
 
         &.sent, &.sending {

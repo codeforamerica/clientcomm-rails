@@ -41,7 +41,7 @@ body {
 }
 
 .main-footer .select:before {
-  color: $color-dark-grey;
+  color: $color-grey;
 }
 
 .main-footer .select__element {
@@ -49,5 +49,5 @@ body {
 }
 
 .main-footer .select__element:focus {
-  border-color: $color-dark-grey;
+  border-color: $color-grey;
 }
