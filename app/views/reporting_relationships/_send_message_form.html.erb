@@ -36,6 +36,7 @@
         <div id="sendbar-buttons" class="grid__item width-one-third">
           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
           <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
+          <button><%= image_tag "send_arrow.svg" %> </button>
         </div>
       <% end %>
     <% if current_user.treatment_group == 'ebp-liking-messages' %>

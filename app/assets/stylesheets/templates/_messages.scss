@@ -18,9 +18,15 @@
   }
 
   .slab--header {
+     @include media($mobile-up){
+       padding: {
+        bottom: .2em;
+        top: .6em;
+      }
+     }
     padding: {
       bottom: .2em;
-      top: .6em;
+      top: .2em;
     }
 
     h2,
@@ -95,7 +101,10 @@
         line-height: 1.4em;
         margin-left: .2em;
         margin-top: -.5em;
-        padding: .5em 0;
+        @include media($tablet-up){
+          padding: .5em 0;
+        }
+        padding: 3px;
         text-align: right;
         top: -.1em;
         width: 100%;
@@ -167,7 +176,13 @@
         line-height: 1.4em;
         margin-left: .2em;
         margin-top: -.5em;
-        padding: .5em 0;
+        padding: 3px;
+        margin-bottom: .685em;
+        @include media($tablet-up){
+          padding: .5em 0;
+          margin-bottom: 1em;
+        }
+
         top: -.1em;
       }
    }
@@ -286,6 +301,9 @@ div#flexbox--container {
   }
 
   div.client-name {
+    @media all and (max-width: $mobile-up){
+      padding-top: 10px;
+    }
     overflow: hidden;
     flex: 1 auto;
     margin: 5px 10px 5px 10px;
