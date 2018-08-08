@@ -59,4 +59,22 @@ feature 'user deactivates client', :js do
       expect(page).to have_content "#{client.first_name} #{client.last_name}"
     end
   end
+
+  context 'client has a court date set' do
+    before do
+      FeatureFlag.create!(flag: 'court_dates', enabled: true)
+      client.update!(next_court_date_at: Time.zone.now + 1.month)
+      visit edit_client_path(client)
+    end
+
+    scenario 'client is deactivated successfully' do
+      click_on "Deactivate #{client.first_name} #{client.last_name}"
+      check response_text1
+      check response_text3
+      click_on "Deactivate #{client.first_name} #{client.last_name}"
+      expect(page).to have_current_path(clients_path)
+      expect(page).to_not have_css '#client-list', text: "#{client.first_name} #{client.last_name}"
+      expect(page).to have_css '.flash p', text: I18n.t('flash.notices.client.deactivated', client_full_name: client.full_name)
+    end
+  end
 end
