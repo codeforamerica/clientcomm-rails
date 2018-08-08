@@ -68,7 +68,9 @@
     margin-right: 0;
   }
 }
-
+.text-mobile {
+  float: left;
+}
 .sendbar__button {
   @include transition(all $animation-fast);
   @include user-select(none);

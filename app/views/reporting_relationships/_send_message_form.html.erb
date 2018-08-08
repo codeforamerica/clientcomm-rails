@@ -14,29 +14,33 @@
 
         <div class="grid__item width-two-thirds">
           <div class="inner-addon right-addon">
-            <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
-            <% if feature_flag_for('templates') %>
-            <a tabindex="0"
-              id="template-button"
-              class="no-underline"
-              role="button"
-              data-trigger="focus"
-              data-toggle="popover"
-              data-html="true"
-              data-placement="top"
-              title="<strong>My templates</strong>"
-              data-template-count="<%= @templates.count %>"
-              data-client-id="<%= @client.id %>"
-              data-content='<%= render 'reporting_relationships/templates' %>'
-            >
-              <i class="icon-insert_comment"></i></a>
-            <% end %>
+            <div class="text-mobile">
+              <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+              <% if feature_flag_for('templates') %>
+                <a tabindex="0"
+                   id="template-button"
+                   class="no-underline"
+                   role="button"
+                   data-trigger="focus"
+                   data-toggle="popover"
+                   data-html="true"
+                   data-placement="top"
+                   title="<strong>My templates</strong>"
+                   data-template-count="<%= @templates.count %>"
+                   data-client-id="<%= @client.id %>"
+                   data-content='<%= render 'reporting_relationships/templates' %>'
+                   >
+                   <i class="icon-insert_comment"></i></a>
+              <% end %>
+            </div>
+            <div id="send_mobile">
+              <%= image_tag "send_arrow.svg" %>
+            </div>
           </div>
         </div>
         <div id="sendbar-buttons" class="grid__item width-one-third">
-          <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
-          <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
-          <button><%= image_tag "send_arrow.svg" %> </button>
+          <button id="send_message" class="sendbar__button button--primary hidden-xs" type="submit">Send</button>
+          <button id="send_later" class="sendbar__button hidden-xs" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
         </div>
       <% end %>
     <% if current_user.treatment_group == 'ebp-liking-messages' %>
