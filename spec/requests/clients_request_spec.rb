@@ -300,7 +300,7 @@ describe 'Clients requests', type: :request do
       let(:notes) { Faker::Lorem.sentence }
       let(:future_date) { Time.zone.now.change(min: 0, day: 3) + 1.month }
       let(:future_date_formatted) { future_date.strftime('%m/%d/%Y') }
-      let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago }
+      let!(:existing_client) { create :client, first_name: 'Laszlo', last_name: 'Robledo', user: user, created_at: 10.days.ago, next_court_date_at: future_date, next_court_date_set_by_user: true }
       let(:existing_rr) { existing_client.reporting_relationships.find_by(user: user) }
 
       subject do
@@ -450,11 +450,12 @@ describe 'Clients requests', type: :request do
         expect(client.reporting_relationships.find_by(user: user).notes).to eq notes
         expect(client.id_number).to eq id_number
         expect(client.next_court_date_at).to eq future_date.to_date
+        expect(client.next_court_date_set_by_user).to eq true
       end
 
       context 'user sets next court date' do
         before do
-          existing_client.update!(next_court_date_set_by_user: false)
+          existing_client.update!(next_court_date_at: nil, next_court_date_set_by_user: false)
         end
 
         it 'marks court date set by client to true' do
@@ -475,7 +476,7 @@ describe 'Clients requests', type: :request do
 
       context 'a court date was already set' do
         before do
-          existing_client.update(next_court_date_at: future_date)
+          existing_client.update(next_court_date_at: future_date, next_court_date_set_by_user: false)
         end
 
         it 'does not set the flag' do
@@ -489,7 +490,7 @@ describe 'Clients requests', type: :request do
         let(:future_date_formatted) { '' }
 
         before do
-          existing_client.update!(next_court_date_set_by_user: true)
+          existing_client.update!(next_court_date_set_by_user: true, next_court_date_at: Time.zone.now + 1.day)
         end
 
         it 'marks court date set by client to false' do
