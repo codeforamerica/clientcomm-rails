@@ -29,8 +29,7 @@
       top: .2em;
     }
 
-    h2,
-    p {
+    h2, p {
       margin-bottom: 0;
     }
   }
@@ -301,8 +300,9 @@ div#flexbox--container {
   }
 
   div.client-name {
-    @media all and (max-width: $mobile-up) {
-      padding-top: 10px;
+    padding-top: 10px;
+    @include media($mobile-up) {
+      padding-top: 0px;
     }
     overflow: hidden;
     flex: 1 auto;
