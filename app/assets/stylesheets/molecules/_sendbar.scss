@@ -112,12 +112,6 @@
     display: none;
   }
 
-  @media(max-width:760px) and (min-width: $tablet-up) {
-    padding-left: 7px;
-    padding-right: 7px;
-    min-width: 0px;
-  }
-
   @extend .button;
   display: table-cell;
   appearance: none;
