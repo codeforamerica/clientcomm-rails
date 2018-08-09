@@ -18,13 +18,18 @@
   }
 
   .slab--header {
+     @include media($mobile-up) {
+       padding: {
+        bottom: .2em;
+        top: .6em;
+      }
+     }
     padding: {
       bottom: .2em;
-      top: .6em;
+      top: .2em;
     }
 
-    h2,
-    p {
+    h2, p {
       margin-bottom: 0;
     }
   }
@@ -71,7 +76,7 @@
         }
         display: inline-block;
         @include break-words();
-        @include media($mobile-up){
+        @include media($mobile-up) {
           max-width: 60%;
         }
         float: right;
@@ -95,7 +100,10 @@
         line-height: 1.4em;
         margin-left: .2em;
         margin-top: -.5em;
-        padding: .5em 0;
+        @include media($tablet-up) {
+          padding: .5em 0;
+        }
+        padding: 3px;
         text-align: right;
         top: -.1em;
         width: 100%;
@@ -129,7 +137,7 @@
           top: $padding-small;
         }
         @include break-words();
-        @include media($mobile-up){
+        @include media($mobile-up) {
           max-width: 60%;
         }
       }
@@ -166,7 +174,13 @@
         line-height: 1.4em;
         margin-left: .2em;
         margin-top: -.5em;
-        padding: .5em 0;
+        padding: 3px;
+        margin-bottom: .685em;
+        @include media($tablet-up) {
+          padding: .5em 0;
+          margin-bottom: 1em;
+        }
+
         top: -.1em;
       }
    }
@@ -275,7 +289,7 @@ div#flexbox--container {
   .button__icon--left {
     margin-right: 0;
 
-    @include media($site-max-up){
+    @include media($site-max-up) {
       margin-right: .5em;
     }
   }
@@ -285,6 +299,10 @@ div#flexbox--container {
   }
 
   div.client-name {
+    padding-top: 10px;
+    @include media($mobile-up) {
+      padding-top: 0px;
+    }
     overflow: hidden;
     flex: 1 auto;
     margin: 5px 10px 5px 10px;
