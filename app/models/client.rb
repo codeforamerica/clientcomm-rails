@@ -83,14 +83,6 @@ class Client < ApplicationRecord
     users.joins(:reporting_relationships).where(reporting_relationships: { active: true }).distinct
   end
 
-  def normalize_next_court_date_at
-    return unless self.next_court_date_at_before_type_cast.present? && self.next_court_date_at_before_type_cast.class == String
-
-    self.next_court_date_at = Date.strptime(self.next_court_date_at_before_type_cast, '%m/%d/%Y')
-  rescue ArgumentError
-    @bad_next_court_date_at = true
-  end
-
   private
 
   def normalize_phone_number
@@ -103,6 +95,16 @@ class Client < ApplicationRecord
 
   def service_accepts_phone_number
     errors.add(:phone_number, :invalid) if @bad_number
+  end
+
+  def normalize_next_court_date_at
+    bad_input = self.next_court_date_at.nil? && self.next_court_date_at_before_type_cast.class == String && !self.next_court_date_at_before_type_cast.empty?
+    raw_input = self.next_court_date_at_before_type_cast.class == String && %r(\d{2}\/\d{2}\/\d{4}).match?(self.next_court_date_at_before_type_cast)
+    return unless bad_input || raw_input
+
+    self.next_court_date_at = Date.strptime(self.next_court_date_at_before_type_cast, '%m/%d/%Y')
+  rescue ArgumentError
+    @bad_next_court_date_at = true
   end
 
   def next_court_date_at_is_a_date

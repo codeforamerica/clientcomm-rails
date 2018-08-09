@@ -98,12 +98,10 @@ class ClientsController < ApplicationController
 
     @client.assign_attributes(client_params)
 
-    @client.normalize_next_court_date_at
-    @client.next_court_date_set_by_user = client_params[:next_court_date_at].present? if @client.next_court_date_at_changed? || client_params[:next_court_date_at].blank?
-
     if @client.save
       if @reporting_relationship.reload.active
         notify_users_of_changes
+        @client.update(next_court_date_set_by_user: @client.next_court_date_at_previous_change.last.present?) if @client.previous_changes.keys.include?('next_court_date_at')
         analytics_track(
           label: 'client_edit_success',
           data: @client.analytics_tracker_data
