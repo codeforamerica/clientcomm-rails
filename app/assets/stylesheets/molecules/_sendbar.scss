@@ -79,7 +79,7 @@
 }
 
 .pull-bottom {
-  @include media($tablet-up){
+  @include media($tablet-up) {
   position: absolute;
   bottom: 0;
   }
