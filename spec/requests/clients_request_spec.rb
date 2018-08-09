@@ -330,6 +330,7 @@ describe 'Clients requests', type: :request do
         before do
           create_list :text_message, 5, reporting_relationship: existing_rr
           existing_client.reporting_relationship(user: user).update(created_at: 10.days.ago)
+          existing_rr.update(has_unread_messages: true)
         end
 
         subject do
@@ -351,7 +352,6 @@ describe 'Clients requests', type: :request do
         end
 
         it 'deactivates the rr and marks messages as read' do
-          existing_rr.update(has_unread_messages: true)
           subject
           expect(existing_client.active(user: user))
             .to eq(false)
@@ -380,6 +380,19 @@ describe 'Clients requests', type: :request do
               'client_duration' => 10
             }
           )
+        end
+
+        context 'has a next_court_date_at set' do
+          before do
+            existing_client.update(next_court_date_at: '08/10/2020')
+          end
+
+          it 'deactivates the rr and marks messages as read' do
+            existing_rr.update(has_unread_messages: true)
+            subject
+            expect(existing_client.active(user: user))
+              .to eq(false)
+          end
         end
 
         context 'has scheduled messages' do
@@ -448,6 +461,15 @@ describe 'Clients requests', type: :request do
           subject
 
           expect(existing_client.reload.next_court_date_set_by_user).to be true
+        end
+
+        context 'user sets a bad court date' do
+          let(:future_date_formatted) { '111' }
+
+          it 'does not save' do
+            subject
+            expect(response.body).to include('Edit client')
+          end
         end
       end
 
