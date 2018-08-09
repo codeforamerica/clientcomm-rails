@@ -21,8 +21,10 @@
     #send_icon {
       display: block;
       position: absolute;
+      background-color: transparent;
       border: none;
-      bottom: 30px;
+      bottom: 14px;
+      right: 12px;
       font-size: 30px;
       color: $color-teal;
       &:focus {
