@@ -3,9 +3,47 @@
   width: 100%;
   border-collapse: separate;
 
-  #sendbar-buttons {
+  .sendbar-inner {
+    height: auto;
+    overflow: hidden;
+  }
 
-    @include media($site-max-up){
+  #sendbar-textarea {
+    float: none;
+    width: auto;
+    overflow: hidden;
+  }
+
+  #sendbar-buttons {
+    width: 20px;
+    float: right;
+    margin: 10px 20px;
+    #send_icon {
+      display: block;
+      position: absolute;
+      border: none;
+      bottom: 30px;
+      font-size: 30px;
+      color: $color-teal;
+      &:focus {
+        outline: 0;
+      }
+    }
+    #send_message, #send_later {
+      display: none;
+    }
+    @include media($tablet-up) {
+      width: 250px;
+      margin: 0px 10px;
+      #send_icon {
+        display: none;
+      }
+      #send_message, #send_later {
+        display: block;
+      }
+    }
+
+    @include media($site-max-up) {
       &.warning-visible {
         margin-top: 17px;
       }
@@ -30,9 +68,6 @@
     }
   }
 }
-.send_mobile {
-
-}
 .character-count {
   font-size: 12px;
   line-height: 1em;
@@ -44,20 +79,21 @@
 }
 
 .pull-bottom {
+  @include media($tablet-up){
   position: absolute;
   bottom: 0;
+  }
   right: 0;
 }
 
 .sendbar__input {
-  display: table-cell;
-  width: 100%;
   border: 2px solid $color-grey;
-  padding: .5em 2em .5em .7em;
+  padding: .5em 1.2em .5em .7em;
   margin: 0;
   outline: 0;
   resize: none;
   max-height: 115px;
+  width: 100%;
 
   &:focus {
     border-color: $color-teal;
@@ -68,9 +104,6 @@
   @include media($tablet-up) {
     margin-right: 0;
   }
-}
-.text-mobile {
-  float: left;
 }
 .sendbar__button {
   @include transition(all $animation-fast);
