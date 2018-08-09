@@ -30,7 +30,9 @@
     }
   }
 }
+.send_mobile {
 
+}
 .character-count {
   font-size: 12px;
   line-height: 1em;
@@ -61,7 +63,6 @@
     border-color: $color-teal;
   }
 }
-
 #send_later {
   margin-right: .3em;
   @include media($tablet-up) {
