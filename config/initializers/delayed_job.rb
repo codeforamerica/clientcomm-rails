@@ -48,7 +48,7 @@ class CloudWatchPlugin < Delayed::Plugin
               {
                 metric_name: 'JobRunTime',
                 timestamp: Time.zone.now,
-                value: 1.0,
+                value: time_delta,
                 unit: 'Milliseconds',
                 storage_resolution: 1
               }
