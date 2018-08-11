@@ -156,6 +156,22 @@ feature 'Admin Panel' do
         expect(page).to_not have_content(client4.full_name)
       end
     end
+
+    context 'filtering by name' do
+      it 'shows clients with names containing string' do
+        visit admin_client_relationships_path
+
+        search_for = "#{client3.first_name[-2..-1]} #{client3.last_name}"
+        fill_in 'Client full name', with: search_for
+
+        click_on 'Filter'
+
+        expect(page).to_not have_content(client1.full_name)
+        expect(page).to_not have_content(client2.full_name)
+        expect(page).to have_content(client3.full_name)
+        expect(page).to_not have_content(client4.full_name)
+      end
+    end
   end
 
   describe 'Client View' do
