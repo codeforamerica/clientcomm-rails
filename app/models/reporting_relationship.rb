@@ -9,7 +9,7 @@ class ReportingRelationship < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  scope :full_name_contains, -> (str) { joins(:client).where("clients.first_name || ' ' || clients.last_name ILIKE CONCAT('%', ?, '%')", str) }
+  scope :full_name_contains, ->(str) { joins(:client).where("clients.first_name || ' ' || clients.last_name ILIKE CONCAT('%', ?, '%')", str) }
 
   validates :client, uniqueness: { scope: :user }
   validates :client, :user, presence: true
@@ -21,7 +21,7 @@ class ReportingRelationship < ApplicationRecord
 
   attr_reader :matching_record
 
-  def self.ransackable_scopes(auth_object = nil)
+  def self.ransackable_scopes(_auth_object = nil)
     [:full_name_contains]
   end
 
