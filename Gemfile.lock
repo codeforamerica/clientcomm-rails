@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/activeadmin-plugins/active_admin_sidebar.git
   revision: ff3e1e4f35c1d59de4e3788a237fe0bed6f41271
+  ref: ff3e1e4
   specs:
     active_admin_sidebar (1.0.0)
       activeadmin
