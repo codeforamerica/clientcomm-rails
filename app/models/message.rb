@@ -201,9 +201,11 @@ class Message < ApplicationRecord
   end
 
   def send_message
+    return if sent
     sent = Time.zone.now >= send_at
     MessageBroadcastJob.perform_now(message: self) if sent
-    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, send_at: send_at.to_i, callback_url: incoming_sms_status_url)
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, callback_url: incoming_sms_status_url)
+    update!(sent: true)
   end
 
   private

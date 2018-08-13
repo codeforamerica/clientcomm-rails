@@ -4,12 +4,7 @@ class ScheduledMessageJob < ApplicationJob
   retry_on Twilio::REST::TwilioError
 
   queue_as :high_priority
-
-  # rubocop:disable Metrics/PerceivedComplexity
-  def perform(message:, send_at:, callback_url:)
-    return if message.sent
-    return unless message.send_at.to_i == send_at
-
+  def perform(message:, callback_url:)
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
     begin
@@ -25,7 +20,6 @@ class ScheduledMessageJob < ApplicationJob
     end
 
     message.update!(
-      sent: true,
       twilio_sid: message_info.sid,
       twilio_status: message_info.status
     )
