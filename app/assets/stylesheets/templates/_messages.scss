@@ -43,7 +43,7 @@
 
   .message--container {
     justify-content: space-between;
-    margin-bottom: 7em;
+    margin-bottom: 40px;
     max-width: 750px;
 
     @include media($site-max-up) {
