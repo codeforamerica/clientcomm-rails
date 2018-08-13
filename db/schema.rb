@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180806183847) do
+ActiveRecord::Schema.define(version: 20180813181128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,13 +189,6 @@ ActiveRecord::Schema.define(version: 20180806183847) do
     t.index ["user_id"], name: "index_surveys_on_user_id"
   end
 
-  create_table "templates", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_templates_on_user_id"
-  end
-
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -241,6 +234,5 @@ ActiveRecord::Schema.define(version: 20180806183847) do
   add_foreign_key "survey_responses", "survey_questions"
   add_foreign_key "surveys", "clients"
   add_foreign_key "surveys", "users"
-  add_foreign_key "templates", "users"
   add_foreign_key "users", "departments"
 end

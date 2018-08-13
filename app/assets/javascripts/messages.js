@@ -35,40 +35,6 @@ $(document).ready(function(){
   var $templateButton = $('#template-button');
 
   var sendInput = $('textarea.autosize');
-  // Enable the popover for templates
-  $templateButton.popover({
-    container: '.sendbar'
-  });
-
-  $templateButton.click(function(){
-    mixpanelTrack(
-      "template_popover_view", {
-        templates_count: $(this).data('template-count'),
-        client_id: $(this).data('client-id')
-      }
-    );
-  });
-
-  $templateButton.on('shown.bs.popover', function () {
-    $templateButton.addClass('template-popover-active');
-
-    $('.template-row').click(selectTemplate);
-  });
-
-  function selectTemplate() {
-    mixpanelTrack(
-      "template_insert", {
-        client_id: $templateButton.data('client-id')
-      }
-    );
-
-    populateTextarea(this);
-  }
-
-  function populateTextarea(context) {
-    $('#message_body').val($(context).data('template-body'));
-    autosize.update(sendInput);
-  }
 
   $(document).on('submit', '#new_message', function(e) {
     // clear the message body text field

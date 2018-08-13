@@ -25,7 +25,6 @@
 //= require errors
 //= require mass_messages
 //= require scheduled_messages
-//= require templates
 //= require twemoji
 //= require twemoji-init
 //= require clientcomm

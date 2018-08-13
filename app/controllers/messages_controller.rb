@@ -24,7 +24,6 @@ class MessagesController < ApplicationController
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
-    @templates = current_user.templates
 
     message = TextMessage.new(
       reporting_relationship: rr,
@@ -75,7 +74,6 @@ class MessagesController < ApplicationController
 
   def edit
     @message = current_user.messages.find(params[:id])
-    @templates = current_user.templates
 
     @client = @message.client
 
@@ -93,7 +91,6 @@ class MessagesController < ApplicationController
   def update
     param_body = message_params[:body]
     param_send_at = DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time])
-    @templates = current_user.templates
 
     @message = Message.find(params[:id])
     @message.body = param_body

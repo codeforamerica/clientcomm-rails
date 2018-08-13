@@ -16,8 +16,6 @@ class ReportingRelationshipsController < ApplicationController
       data: @client.analytics_tracker_data.merge(@rr.analytics_tracker_data)
     )
 
-    @templates = current_user.templates
-
     # the list of past messages
     @messages = past_messages
 

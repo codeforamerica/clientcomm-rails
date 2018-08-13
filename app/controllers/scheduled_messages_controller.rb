@@ -5,7 +5,6 @@ class ScheduledMessagesController < ApplicationController
   def index
     rr = current_user.reporting_relationships.find params[:reporting_relationship_id]
     @client = rr.client
-    @templates = current_user.templates
 
     reporting_relationship = @client.reporting_relationship(user: current_user)
 
