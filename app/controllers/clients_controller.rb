@@ -25,7 +25,6 @@ class ClientsController < ApplicationController
     )
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
   def create
     @client = Client.new(client_params)
     if @client.save
@@ -36,45 +35,10 @@ class ClientsController < ApplicationController
 
       rr = current_user.reporting_relationships.find_by(client: @client)
       redirect_to reporting_relationship_path(rr)
-      return
+    else
+      check_client_errors
     end
-
-    if @client.errors.added?(:phone_number, :taken)
-      @existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = @existing_client.users.active_rr.where.not(id: current_user.id)
-                                         .find_by(department: current_user.department)
-      if conflicting_user
-        @client.errors.delete(:phone_number)
-        @client.errors.add(
-          :phone_number,
-          t(
-            'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
-            user_full_name: conflicting_user.full_name
-          )
-        )
-      elsif current_user.clients.include? @existing_client
-        existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
-        flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
-        existing_relationship.update(active: true)
-        redirect_to reporting_relationship_path(existing_relationship)
-        return
-      else
-        rr_params = client_params[:reporting_relationships_attributes]['0']
-        @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
-        if params[:user_confirmed] == 'true'
-          @reporting_relationship.save!
-          redirect_to reporting_relationship_path(@reporting_relationship)
-          return
-        end
-        render :confirm
-        return
-      end
-    end
-    track_errors('create')
-    flash.now[:alert] = t('flash.errors.client.invalid')
-    render :new
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @client = current_user.clients.find(params[:id])
@@ -194,6 +158,62 @@ class ClientsController < ApplicationController
     end
 
     error_text
+  end
+
+  def check_client_errors
+    if @client.errors.added?(:phone_number, :taken)
+      @existing_client = Client.find_by(phone_number: @client.phone_number)
+      @conflicting_user = @existing_client.users.active_rr.where.not(id: current_user.id)
+                                          .find_by(department: current_user.department)
+
+      check_conflicting_user
+      check_existing_relationship
+      check_new_relationship_existing_client
+    else
+      track_errors('create')
+      flash.now[:alert] = t('flash.errors.client.invalid')
+      render :new
+    end
+  end
+
+  def check_conflicting_user
+    return unless @conflicting_user
+
+    @client.errors.delete(:phone_number)
+    @client.errors.add(
+      :phone_number,
+      t(
+        'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+        user_full_name: @conflicting_user.full_name
+      )
+    )
+    track_errors('create')
+    flash.now[:alert] = t('flash.errors.client.invalid')
+    render :new
+  end
+
+  def check_existing_relationship
+    return if @conflicting_user
+
+    existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
+    return unless existing_relationship
+    flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
+    existing_relationship.update(active: true)
+    redirect_to reporting_relationship_path(existing_relationship)
+  end
+
+  def check_new_relationship_existing_client
+    return if @conflicting_user
+    return if current_user.clients.include?(@existing_client)
+
+    rr_params = client_params[:reporting_relationships_attributes]['0']
+    @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
+    if params[:user_confirmed] == 'true'
+      @reporting_relationship.save!
+      redirect_to reporting_relationship_path(@reporting_relationship)
+    else
+      render :confirm
+    end
   end
 
   def client_params
