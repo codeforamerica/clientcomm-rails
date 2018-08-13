@@ -30,11 +30,9 @@
       right: 15px;
       font-size: 30px;
       color: $color-teal;
-
-      @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-        right: -10px;
+      @supports (-webkit-overflow-scrolling: touch) {
+          right: -10px;
       }
-
       &:focus {
         outline: 0;
       }
