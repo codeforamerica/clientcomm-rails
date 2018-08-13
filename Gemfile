@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 ruby File.read(File.join(File.dirname(__FILE__), '.ruby-version')).strip
 
+gem 'active_admin_sidebar', git: 'https://github.com/activeadmin-plugins/active_admin_sidebar.git'
 gem 'activeadmin'
-gem 'active_admin_sidebar'
 gem 'bootsnap'
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'

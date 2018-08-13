@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/activeadmin-plugins/active_admin_sidebar.git
+  revision: ff3e1e4f35c1d59de4e3788a237fe0bed6f41271
+  specs:
+    active_admin_sidebar (1.0.0)
+      activeadmin
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -26,8 +33,6 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_admin_sidebar (0.0.5)
-      activeadmin
     activeadmin (1.2.0)
       arbre (>= 1.1.1)
       coffee-rails
@@ -430,7 +435,7 @@ PLATFORMS
 
 DEPENDENCIES
   action-cable-testing
-  active_admin_sidebar
+  active_admin_sidebar!
   activeadmin
   addressable
   autosize
@@ -497,4 +502,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
