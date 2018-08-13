@@ -16,6 +16,7 @@
     overflow: hidden;
   }
 
+
   #sendbar-buttons {
     width: 20px;
     float: right;
@@ -26,9 +27,14 @@
       background-color: transparent;
       border: none;
       bottom: 15px;
-      right: 0px;
+      right: 15px;
       font-size: 30px;
       color: $color-teal;
+
+      @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+        right: -10px;
+      }
+
       &:focus {
         outline: 0;
       }
