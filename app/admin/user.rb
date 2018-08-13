@@ -41,6 +41,7 @@ ActiveAdmin.register User do
   filter :email
   filter :full_name
   filter :department
+  filter :admin
 
   show do
     panel 'View Clients' do
