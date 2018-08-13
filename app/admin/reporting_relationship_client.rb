@@ -34,7 +34,7 @@ ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
          collection: proc { User.all.order(full_name: :asc) },
          label: 'User'
   filter :full_name_contains, label: 'Client full name'
-  filter :client_phone_number_cont, label: 'Phone Number'
+  filter :client_stripped_phone_number_cont, label: 'Phone Number'
   filter :active
   filter :user_department_id_eq,
          label: 'Department',

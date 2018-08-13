@@ -26,6 +26,10 @@ class Client < ApplicationRecord
   before_validation :normalize_next_court_date_at
   validate :next_court_date_at_is_a_date
 
+  ransacker :stripped_phone_number, formatter: proc { |v| v.gsub(/\D/, '') } do |parent|
+    parent.table[:phone_number]
+  end
+
   def analytics_tracker_data
     {
       client_id: self.id,
