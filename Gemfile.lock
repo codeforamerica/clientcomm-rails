@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/codeforamerica/clientcomm_active_admin_sidebar.git
+  revision: ff3e1e4f35c1d59de4e3788a237fe0bed6f41271
+  ref: ff3e1e4
+  specs:
+    active_admin_sidebar (1.0.0)
+      activeadmin
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -428,6 +436,7 @@ PLATFORMS
 
 DEPENDENCIES
   action-cable-testing
+  active_admin_sidebar!
   activeadmin
   addressable
   autosize
@@ -494,4 +503,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
