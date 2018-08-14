@@ -25,7 +25,6 @@ class ClientsController < ApplicationController
     )
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
   def create
     @client = Client.new(client_params)
     if @client.save
@@ -36,45 +35,19 @@ class ClientsController < ApplicationController
 
       rr = current_user.reporting_relationships.find_by(client: @client)
       redirect_to reporting_relationship_path(rr)
-      return
-    end
-
-    if @client.errors.added?(:phone_number, :taken)
+    else
       @existing_client = Client.find_by(phone_number: @client.phone_number)
-      conflicting_user = @existing_client.users.active_rr.where.not(id: current_user.id)
-                                         .find_by(department: current_user.department)
-      if conflicting_user
-        @client.errors.delete(:phone_number)
-        @client.errors.add(
-          :phone_number,
-          t(
-            'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
-            user_full_name: conflicting_user.full_name
-          )
-        )
-      elsif current_user.clients.include? @existing_client
-        existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
-        flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
-        existing_relationship.update(active: true)
-        redirect_to reporting_relationship_path(existing_relationship)
-        return
-      else
-        rr_params = client_params[:reporting_relationships_attributes]['0']
-        @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
-        if params[:user_confirmed] == 'true'
-          @reporting_relationship.save!
-          redirect_to reporting_relationship_path(@reporting_relationship)
-          return
-        end
-        render :confirm
-        return
+      @conflicting_user = @existing_client&.users&.active_rr&.where&.not(id: current_user.id)
+                                          &.find_by(department: current_user.department)
+
+      catch(:handled) do
+        handle_new_relationship_with_existing_client
+        handle_conflicting_user
+        handle_existing_relationship
+        handle_errors_other_than_phone_number_taken
       end
     end
-    track_errors('create')
-    flash.now[:alert] = t('flash.errors.client.invalid')
-    render :new
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @client = current_user.clients.find(params[:id])
@@ -89,7 +62,6 @@ class ClientsController < ApplicationController
     )
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
   def update
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationship(user: current_user)
@@ -99,26 +71,9 @@ class ClientsController < ApplicationController
     @client.assign_attributes(client_params)
 
     if @client.save
-      if @reporting_relationship.reload.active
-        notify_users_of_changes
-        @client.update(next_court_date_set_by_user: @client.next_court_date_at_previous_change.last.present?) if @client.previous_changes.keys.include?('next_court_date_at')
-        analytics_track(
-          label: 'client_edit_success',
-          data: @client.analytics_tracker_data
-                  .merge(@reporting_relationship.analytics_tracker_data)
-        )
-        redirect_to reporting_relationship_path(@reporting_relationship)
-      else
-        @reporting_relationship.deactivate
-        analytics_track(
-          label: 'client_deactivate_success',
-          data: {
-            client_id: @client.id,
-            client_duration: (Date.current - @client.relationship_started(user: current_user).to_date).to_i
-          }
-        )
-
-        redirect_to clients_path, notice: t('flash.notices.client.deactivated', client_full_name: @client.full_name)
+      catch(:handled) do
+        handle_active_client
+        handle_deactivated_client
       end
       return
     elsif @client.errors.added?(:phone_number, :taken)
@@ -135,7 +90,6 @@ class ClientsController < ApplicationController
     flash.now[:alert] = t('flash.errors.client.invalid')
     render :edit
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   private
 
@@ -194,6 +148,92 @@ class ClientsController < ApplicationController
     end
 
     error_text
+  end
+
+  def handle_active_client
+    return unless @reporting_relationship.reload.active
+
+    notify_users_of_changes
+    @client.update(next_court_date_set_by_user: @client.next_court_date_at_previous_change.last.present?) if @client.previous_changes.keys.include?('next_court_date_at')
+    analytics_track(
+      label: 'client_edit_success',
+      data: @client.analytics_tracker_data
+              .merge(@reporting_relationship.analytics_tracker_data)
+    )
+    redirect_to reporting_relationship_path(@reporting_relationship)
+    throw :handled
+  end
+
+  def handle_deactivated_client
+    return if @reporting_relationship.reload.active
+
+    @reporting_relationship.deactivate
+    analytics_track(
+      label: 'client_deactivate_success',
+      data: {
+        client_id: @client.id,
+        client_duration: (Date.current - @client.relationship_started(user: current_user).to_date).to_i
+      }
+    )
+
+    redirect_to clients_path, notice: t('flash.notices.client.deactivated', client_full_name: @client.full_name)
+    throw :handled
+  end
+
+  def handle_errors_other_than_phone_number_taken
+    return if @client.errors.added?(:phone_number, :taken)
+
+    track_errors('create')
+    flash.now[:alert] = t('flash.errors.client.invalid')
+    render :new
+    throw :handled
+  end
+
+  def handle_conflicting_user
+    return unless @client.errors.added?(:phone_number, :taken)
+    return unless @conflicting_user
+
+    @client.errors.delete(:phone_number)
+    @client.errors.add(
+      :phone_number,
+      t(
+        'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
+        user_full_name: @conflicting_user.full_name
+      )
+    )
+    track_errors('create')
+    flash.now[:alert] = t('flash.errors.client.invalid')
+    render :new
+    throw :handled
+  end
+
+  def handle_existing_relationship
+    return unless @client.errors.added?(:phone_number, :taken)
+    return if @conflicting_user
+
+    existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
+    return unless existing_relationship
+
+    flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
+    existing_relationship.update(active: true)
+    redirect_to reporting_relationship_path(existing_relationship)
+    throw :handled
+  end
+
+  def handle_new_relationship_with_existing_client
+    return unless @client.errors.added?(:phone_number, :taken)
+    return if @conflicting_user
+    return if current_user.clients.include?(@existing_client)
+
+    rr_params = client_params[:reporting_relationships_attributes]['0']
+    @reporting_relationship = @existing_client.reporting_relationships.new(rr_params)
+    if params[:user_confirmed] == 'true'
+      @reporting_relationship.save!
+      redirect_to reporting_relationship_path(@reporting_relationship)
+    else
+      render :confirm
+    end
+    throw :handled
   end
 
   def client_params
