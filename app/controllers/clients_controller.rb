@@ -40,11 +40,11 @@ class ClientsController < ApplicationController
       @conflicting_user = @existing_client&.users&.active_rr&.where&.not(id: current_user.id)
                                           &.find_by(department: current_user.department)
 
-      catch(:checked) do
-        check_new_relationship_existing_client
-        check_conflicting_user
-        check_existing_relationship
-        check_generic_errors
+      catch(:handled) do
+        handle_new_relationship_with_existing_client
+        handle_conflicting_user
+        handle_existing_relationship
+        handle_errors_other_than_phone_number_taken
       end
     end
   end
@@ -71,9 +71,9 @@ class ClientsController < ApplicationController
     @client.assign_attributes(client_params)
 
     if @client.save
-      catch(:checked) do
-        check_active_client
-        check_deactivated_client
+      catch(:handled) do
+        handle_active_client
+        handle_deactivated_client
       end
       return
     elsif @client.errors.added?(:phone_number, :taken)
@@ -150,7 +150,7 @@ class ClientsController < ApplicationController
     error_text
   end
 
-  def check_active_client
+  def handle_active_client
     return unless @reporting_relationship.reload.active
 
     notify_users_of_changes
@@ -161,10 +161,10 @@ class ClientsController < ApplicationController
               .merge(@reporting_relationship.analytics_tracker_data)
     )
     redirect_to reporting_relationship_path(@reporting_relationship)
-    throw :checked
+    throw :handled
   end
 
-  def check_deactivated_client
+  def handle_deactivated_client
     return if @reporting_relationship.reload.active
 
     @reporting_relationship.deactivate
@@ -177,19 +177,19 @@ class ClientsController < ApplicationController
     )
 
     redirect_to clients_path, notice: t('flash.notices.client.deactivated', client_full_name: @client.full_name)
-    throw :checked
+    throw :handled
   end
 
-  def check_generic_errors
+  def handle_errors_other_than_phone_number_taken
     return if @client.errors.added?(:phone_number, :taken)
 
     track_errors('create')
     flash.now[:alert] = t('flash.errors.client.invalid')
     render :new
-    throw :checked
+    throw :handled
   end
 
-  def check_conflicting_user
+  def handle_conflicting_user
     return unless @client.errors.added?(:phone_number, :taken)
     return unless @conflicting_user
 
@@ -204,22 +204,23 @@ class ClientsController < ApplicationController
     track_errors('create')
     flash.now[:alert] = t('flash.errors.client.invalid')
     render :new
-    throw :checked
+    throw :handled
   end
 
-  def check_existing_relationship
+  def handle_existing_relationship
     return unless @client.errors.added?(:phone_number, :taken)
     return if @conflicting_user
 
     existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
     return unless existing_relationship
+
     flash[:notice] = t('flash.notices.client.taken') if existing_relationship.active?
     existing_relationship.update(active: true)
     redirect_to reporting_relationship_path(existing_relationship)
-    throw :checked
+    throw :handled
   end
 
-  def check_new_relationship_existing_client
+  def handle_new_relationship_with_existing_client
     return unless @client.errors.added?(:phone_number, :taken)
     return if @conflicting_user
     return if current_user.clients.include?(@existing_client)
@@ -232,7 +233,7 @@ class ClientsController < ApplicationController
     else
       render :confirm
     end
-    throw :checked
+    throw :handled
   end
 
   def client_params
