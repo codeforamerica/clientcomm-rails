@@ -15,7 +15,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
   subject do
     perform_enqueued_jobs do
-      ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com')
+      ScheduledMessageJob.perform_later(message: message)
     end
   end
 
@@ -25,7 +25,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
         to: message.client.phone_number,
         from: message.number_from,
         body: message.body,
-        callback_url: 'whocares.com'
+        callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url
       ).and_return(message_info)
 
     allow(MessageBroadcastJob).to receive(:perform_now).and_return(nil)

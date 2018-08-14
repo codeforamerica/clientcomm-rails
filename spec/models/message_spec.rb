@@ -454,7 +454,7 @@ RSpec.describe Message, type: :model do
       ).and_return(message)
 
       expect(ScheduledMessageJob).to receive(:perform_later)
-        .with(message: message, send_at: now.to_i, callback_url: callback_url)
+        .with(message: message)
 
       travel_to now do
         subject
@@ -601,22 +601,24 @@ RSpec.describe Message, type: :model do
 
   describe '#send_message', active_job: true do
     let(:rr) { create :reporting_relationship }
-    let!(:message) { create :text_message, reporting_relationship: rr }
+    let!(:message) { create :text_message, reporting_relationship: rr, sent: false, send_at: Time.zone.now }
 
     subject { message.send_message }
 
     it 'sends message' do
+      expect(MessageBroadcastJob).to receive(:perform_now).with(
+        message: message
+      )
       subject
-      expect(ScheduledMessageJob).to have_been_enqueued.with(message: message, send_at: message.send_at.to_i, callback_url: incoming_sms_status_url).at(message.send_at)
+      expect(ScheduledMessageJob).to have_been_enqueued.with(message: message).at(message.send_at)
     end
 
-    context 'send_at before now' do
+    context 'send_at after now' do
+      let!(:message) { create :text_message, reporting_relationship: rr, sent: false, send_at: Time.zone.now + 1.day }
       it 'runs MessageBroadcastJob' do
-        expect(MessageBroadcastJob).to receive(:perform_now).with(
-          message: message
-        )
-
         subject
+        expect(ScheduledMessageJob).to_not have_been_enqueued
+        expect(MessageBroadcastJob).to_not have_been_enqueued
       end
     end
   end

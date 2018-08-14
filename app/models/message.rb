@@ -197,15 +197,13 @@ class Message < ApplicationRecord
       reporting_relationship: rr,
       send_at: now
     )
-    ScheduledMessageJob.perform_later(message: message, send_at: now.to_i, callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url)
+    ScheduledMessageJob.perform_later(message: message)
   end
 
   def send_message
-    return if sent
-    sent = Time.zone.now >= send_at
-    MessageBroadcastJob.perform_now(message: self) if sent
-    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self, callback_url: incoming_sms_status_url)
-    update!(sent: true)
+    return if sent || Time.zone.now >= send_at
+    MessageBroadcastJob.perform_now(message: self)
+    ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self)
   end
 
   private
