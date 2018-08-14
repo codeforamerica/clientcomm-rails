@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/codeforamerica/clientcomm_active_admin_sidebar.git
-  revision: ff3e1e4f35c1d59de4e3788a237fe0bed6f41271
-  ref: ff3e1e4
-  specs:
-    active_admin_sidebar (1.0.0)
-      activeadmin
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -34,6 +26,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_admin_sidebar (1.0.0)
+      activeadmin
     activeadmin (1.2.0)
       arbre (>= 1.1.1)
       coffee-rails
@@ -436,7 +430,7 @@ PLATFORMS
 
 DEPENDENCIES
   action-cable-testing
-  active_admin_sidebar!
+  active_admin_sidebar
   activeadmin
   addressable
   autosize
