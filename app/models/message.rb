@@ -201,7 +201,7 @@ class Message < ApplicationRecord
   end
 
   def send_message
-    return if sent || send_at > (Time.zone.now + 15.minutes)
+    return if sent || send_at > (Time.zone.now + APP_CONFIG['scheduled_message_rate'].minutes)
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self)
   end
 

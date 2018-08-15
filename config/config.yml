@@ -1,4 +1,5 @@
 production: &default
+  scheduled_message_rate = 15 # 1-30 in minutes
   client_categories:
     no_cat:
       icon: 'star-empty'
