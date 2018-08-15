@@ -434,7 +434,7 @@ RSpec.describe Message, type: :model do
     end
   end
 
-  describe 'send_unclaimed_autoreply', active_job: true do
+  describe 'send_unclaimed_autoreply' do
     let(:user) { create :user }
     let(:client) { create :client, users: [user] }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
@@ -453,8 +453,7 @@ RSpec.describe Message, type: :model do
         send_at: now
       ).and_return(message)
 
-      expect(ScheduledMessageJob).to receive(:perform_later)
-        .with(message: message)
+      expect(message).to receive(:send_message)
 
       travel_to now do
         subject
