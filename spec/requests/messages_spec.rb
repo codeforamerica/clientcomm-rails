@@ -309,6 +309,18 @@ describe 'Messages requests', type: :request, active_job: true do
         end
       end
 
+      context 'user has recieved image' do
+        let(:attachment) { build :attachment, media: File.new('spec/fixtures/fluffy_cat.jpg') }
+        before do
+          create :text_message, reporting_relationship: rr, attachments: [attachment], inbound: true
+        end
+
+        it 'transcript has image indicator' do
+          subject
+          expect(response.body).to include('Image attachment. See ClientComm conversation for image.')
+        end
+      end
+
       context 'some messages may not have been delivered' do
         it 'shows the correct error status' do
           ['maybe_undelivered', 'sending', 'sent', nil].each do |status|
