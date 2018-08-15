@@ -108,8 +108,6 @@ class MessagesController < ApplicationController
 
     @message.save!
 
-    ScheduledMessageJob.set(wait_until: @message.send_at).perform_later(message: @message, send_at: @message.send_at.to_i, callback_url: incoming_sms_status_url)
-
     flash[:notice] = 'Your message has been updated'
 
     rr = current_user.reporting_relationships.find_by(client: @message.client)

@@ -197,12 +197,11 @@ class Message < ApplicationRecord
       reporting_relationship: rr,
       send_at: now
     )
-    ScheduledMessageJob.perform_later(message: message)
+    message.send_message
   end
 
   def send_message
-    return if sent || Time.zone.now >= send_at
-    MessageBroadcastJob.perform_now(message: self)
+    return if sent || send_at > (Time.zone.now + 15.minutes)
     ScheduledMessageJob.set(wait_until: send_at).perform_later(message: self)
   end
 

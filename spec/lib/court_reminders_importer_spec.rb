@@ -58,9 +58,6 @@ describe CourtRemindersImporter do
       expect(message1.body).to eq body1
       expect(message1.send_at).to eq time1
       expect(message1.court_date_csv).to eq(csv)
-      expect(ScheduledMessageJob).to have_been_enqueued
-        .at(time1)
-        .with(message: message1, send_at: Integer, callback_url: String)
 
       expect(rr2.messages.scheduled).to_not be_empty
       body2 = I18n.t(
@@ -75,9 +72,6 @@ describe CourtRemindersImporter do
       expect(rr2.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 12))
       expect(message2.body).to eq body2
       expect(message2.send_at).to eq time2
-      expect(ScheduledMessageJob).to have_been_enqueued
-        .at(time2)
-        .with(message: message2, send_at: Integer, callback_url: String)
 
       expect(rr3.messages.scheduled).to_not be_empty
       body3 = I18n.t(
@@ -92,9 +86,6 @@ describe CourtRemindersImporter do
       expect(rr3.client.reload.next_court_date_at).to eq(Date.new(2018, 5, 10))
       expect(message3.body).to eq body3
       expect(message3.send_at).to eq time3
-      expect(ScheduledMessageJob).to have_been_enqueued
-        .at(time3)
-        .with(message: message3, send_at: Integer, callback_url: String)
 
       expect(rr_irrelevant.messages.scheduled).to be_empty
     end
@@ -210,9 +201,6 @@ describe CourtRemindersImporter do
         message = rr4.messages.scheduled.last
         expect(message.body).to eq body
         expect(message.send_at).to eq time
-        expect(ScheduledMessageJob).to have_been_enqueued
-          .at(time)
-          .with(message: message, send_at: Integer, callback_url: String)
       end
 
       context 'two rrs have both been contacted' do
@@ -238,9 +226,6 @@ describe CourtRemindersImporter do
           message = rr4.messages.scheduled.last
           expect(message.body).to eq body
           expect(message.send_at).to eq time
-          expect(ScheduledMessageJob).to have_been_enqueued
-            .at(time)
-            .with(message: message, send_at: Integer, callback_url: String)
         end
       end
     end

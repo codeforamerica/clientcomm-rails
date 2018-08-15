@@ -4,10 +4,9 @@ class ScheduledMessageJob < ApplicationJob
   retry_on Twilio::REST::TwilioError
 
   queue_as :high_priority
-  # rubocop:disable Metrics/PerceivedComplexity
   def perform(message:)
     callback_url = Rails.application.routes.url_helpers.incoming_sms_status_url
-    return if (message.send_at < Time.zone.now) || message.sent
+    return if message.sent || (message.send_at > Time.zone.now)
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
 
     begin
@@ -29,8 +28,7 @@ class ScheduledMessageJob < ApplicationJob
     )
     MessageBroadcastJob.perform_now(message: message)
     MessageRedactionJob.perform_later(message: message) unless message_info.sid.nil?
-
-    if message.user == message.user.department.unclaimed_user && ((message.send_at - message.created_at) > 30.minutes)
+    if message.user == message.user.department.unclaimed_user
       Rails.logger.warn "Unclaimed user id: #{message.user.id} sent message id: #{message.id}"
     end
 

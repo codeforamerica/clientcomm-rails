@@ -24,7 +24,6 @@ RSpec.describe SendMassMessageJob, active_job: true, type: :job do
 
     it 'sends message to multiple rrs' do
       subject
-
       expect(ScheduledMessageJob).to have_been_enqueued.twice
       expect(user.messages.count).to eq 2
       expect(client_1.messages.count).to eq 1
@@ -56,7 +55,6 @@ RSpec.describe SendMassMessageJob, active_job: true, type: :job do
       it 'sends message to multiple rrs at the right time' do
         subject
 
-        expect(ScheduledMessageJob).to have_been_enqueued.at(send_at).twice
         expect(client_1.messages.first.send_at).to eq send_at
         expect(client_3.messages.first.send_at).to eq send_at
       end

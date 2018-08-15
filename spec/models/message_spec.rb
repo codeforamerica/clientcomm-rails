@@ -606,19 +606,29 @@ RSpec.describe Message, type: :model do
     subject { message.send_message }
 
     it 'sends message' do
-      expect(MessageBroadcastJob).to receive(:perform_now).with(
-        message: message
-      )
       subject
       expect(ScheduledMessageJob).to have_been_enqueued.with(message: message).at(message.send_at)
+    end
+
+    context 'sent is ture' do
+      let!(:message) { create :text_message, reporting_relationship: rr, sent: true, send_at: Time.zone.now }
+      it 'runs MessageBroadcastJob' do
+        expect(MessageBroadcastJob).to_not receive(:perform_now).with(
+          message: message
+        )
+        subject
+        expect(ScheduledMessageJob).to_not have_been_enqueued
+      end
     end
 
     context 'send_at after now' do
       let!(:message) { create :text_message, reporting_relationship: rr, sent: false, send_at: Time.zone.now + 1.day }
       it 'runs MessageBroadcastJob' do
+        expect(MessageBroadcastJob).to_not receive(:perform_now).with(
+          message: message
+        )
         subject
         expect(ScheduledMessageJob).to_not have_been_enqueued
-        expect(MessageBroadcastJob).to_not have_been_enqueued
       end
     end
   end
