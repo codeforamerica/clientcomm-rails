@@ -145,9 +145,7 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
-  config.before_action do
-    left_sidebar!(collapsed: true) if respond_to?(:left_sidebar!)
-  end
+  # config.before_action :do_something_awesome
 
   # == Localize Date/Time Format
   #
