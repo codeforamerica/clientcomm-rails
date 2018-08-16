@@ -156,6 +156,7 @@
   width: 100%;
 }
 
-section.message--create {
+section.message--create #sendbar-container{
+  width: 100%;
   border-top: 2px solid $color-light-grey;
 }
