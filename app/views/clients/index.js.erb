@@ -1,2 +1,4 @@
+$('#client-list').removeClass('hidden');
 $('#client-list').replaceWith('<%= j render 'clients/clients' %>');
+$('#client-empty-dialog').addClass('hidden');
 clientListInit();
