@@ -50,7 +50,8 @@ provider "aws" {
 }
 
 resource "heroku_app" "clientcomm" {
-  name   = "${var.heroku_app_name}"
+  name = "${var.heroku_app_name}"
+  acm = "true"
   region = "us"
   organization = {
     name = "${var.heroku_team}"
@@ -200,7 +201,7 @@ resource "aws_cloudwatch_metric_alarm" "scheduled-message-alarm" {
   evaluation_periods        = "1"
   metric_name               = "MessagesScheduled"
   namespace                 = "${heroku_app.clientcomm.name}"
-  period                    = "30"
+  period                    = "1800"
   statistic                 = "SampleCount"
   threshold                 = "1"
   datapoints_to_alarm       = "1"
