@@ -25,6 +25,10 @@ class MessagesController < ApplicationController
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
 
+    attachments = message_params[:attachments]&.map do |attachment|
+      Attachment.new(attachment)
+    end
+
     message = TextMessage.new(
       reporting_relationship: rr,
       body: message_params[:body],
@@ -32,7 +36,8 @@ class MessagesController < ApplicationController
       number_to: client.phone_number,
       send_at: send_at,
       like_message_id: params[:like_message_id],
-      read: true
+      read: true,
+      attachments: attachments || []
     )
 
     if message.invalid? || message.past_message?
@@ -130,7 +135,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:body, send_at: [:date, :time])
+    params.require(:message).permit(:body, send_at: [:date, :time], attachments: [:media])
   end
 
   private

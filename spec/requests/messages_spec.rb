@@ -106,6 +106,28 @@ describe 'Messages requests', type: :request, active_job: true do
             }
           )
         end
+
+        context 'an image is attached' do
+          let(:image) { fixture_file_upload('spec/fixtures/fluffy_cat.jpg', 'image/jpg') }
+          let(:post_params) do
+            {
+              message: {
+                body: body,
+                send_at: message_send_at,
+                attachments: [{ media: image }]
+              },
+              client_id: client.id
+            }
+          end
+
+          it 'creates a new message on submit' do
+            post messages_path, params: post_params
+
+            message = Message.find_by(body: body)
+            expect(message.attachments.count).to eq(1)
+            # some expectation about name of file - fluffy_cat
+          end
+        end
       end
 
       context 'had positive_template_type' do

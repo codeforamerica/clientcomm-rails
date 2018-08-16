@@ -85,6 +85,9 @@ describe ScheduledMessageJob, active_job: true, type: :job do
     end
   end
 
+  context 'the message has an image attached' do
+  end
+
   context 'When rescheduled' do
     let(:message) { create :text_message, send_at: Time.zone.now.tomorrow }
 

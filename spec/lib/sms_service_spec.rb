@@ -40,6 +40,33 @@ describe SMSService do
     it 'returns the twilio sid and status' do
       expect(subject).to eq(MessageInfo.new(message_sid, message_status))
     end
+
+    context 'there is a media url' do
+      before do
+        create :attachment, message: message
+      end
+
+      subject do
+        sms_service.send_message(
+          to: message.client.phone_number,
+          from: message.number_from,
+          body: message.body,
+          media_url: message.reload.attachments.first.media.url,
+          callback_url: callback_url
+        )
+      end
+
+      it 'returns the twilio sid and status' do
+        expect(twilio_client).to receive(:create).with(
+          to: message.client.phone_number,
+          from: message.number_from,
+          body: message.body,
+          media_url: message.reload.attachments.first.media.url,
+          status_callback: callback_url
+        )
+        expect(subject).to eq(MessageInfo.new(message_sid, message_status))
+      end
+    end
   end
 
   describe '#status_lookup' do

@@ -58,7 +58,7 @@ class FakeTwilioClient
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
-  def create(from:, to:, body:, status_callback:)
+  def create(from:, to:, body:, media_url:, status_callback:)
     FakeResponse.new(SecureRandom.hex(17), 'delivered')
   end
   # rubocop:enable Lint/UnusedMethodArgument
