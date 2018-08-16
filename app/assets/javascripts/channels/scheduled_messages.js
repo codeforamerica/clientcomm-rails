@@ -17,12 +17,14 @@ $(document).ready(function() {
     return;
   }
 
-  App.scheduledMessages = App.cable.subscriptions.create(
-    { channel: 'ScheduledMessagesChannel', client_id: clientId },
-    {
-      received: function(data) {
-        ScheduledMessages.updateLink(data.link_html, data.count);
+  if ($("meta[name='current-user']").length > 0) {
+    App.scheduledMessages = App.cable.subscriptions.create(
+      { channel: 'ScheduledMessagesChannel', client_id: clientId },
+      {
+        received: function(data) {
+          ScheduledMessages.updateLink(data.link_html, data.count);
+        }
       }
-    }
-  );
+    );
+  }
 });

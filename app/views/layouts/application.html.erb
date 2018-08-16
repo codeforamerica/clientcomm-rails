@@ -9,6 +9,9 @@
     <%= action_cable_meta_tag %>
     <meta name="visitor_id" content="<%= visitor_id %>">
     <meta name="deploy" content="<%= deploy_prefix %>">
+    <% if current_user %>
+      <%= tag :meta, name: "current-user", data: {id: current_user.id} %>
+    <% end %>
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
     <%= content_for(:js) if content_for?(:js) %>
