@@ -23,30 +23,31 @@ var Notifications = {
 $(document).ready(function() {
   Notifications.init('#message-list');
 
-
-  App.notifications = App.cable.subscriptions.create(
-    { channel: 'NotificationsChannel' },
-    {
-      received: function(data) {
-        if(data.properties && data.properties.client_id) {
-          // only update if the client id doesn't match
-          // (meaning we're not on that client's messages page)
-          if (data.properties.client_id === Notifications.clientId) {
-            return;
-          }
-          // the page we're on contains an element with id client-list
-          if ($("#client-list").length) {
-            Notifications.refreshClientList();
-          }
-          if ($(".unread-warning").length) {
-            clientId = $('#reporting_relationship_client_id').attr('value');
-            if (data.properties.client_id == clientId) {
-              $('.unread-warning').removeClass('hidden')
+  if ($("meta[name='current-user']").length > 0) {
+    App.notifications = App.cable.subscriptions.create(
+      { channel: 'NotificationsChannel' },
+      {
+        received: function(data) {
+          if(data.properties && data.properties.client_id) {
+            // only update if the client id doesn't match
+            // (meaning we're not on that client's messages page)
+            if (data.properties.client_id === Notifications.clientId) {
+              return;
+            }
+            // the page we're on contains an element with id client-list
+            if ($("#client-list").length) {
+              Notifications.refreshClientList();
+            }
+            if ($(".unread-warning").length) {
+              clientId = $('#reporting_relationship_client_id').attr('value');
+              if (data.properties.client_id == clientId) {
+                $('.unread-warning').removeClass('hidden')
+              }
             }
           }
+          Notifications.updateNotification(data.notification_html);
         }
-        Notifications.updateNotification(data.notification_html);
       }
-    }
-  );
+    );
+  }
 });

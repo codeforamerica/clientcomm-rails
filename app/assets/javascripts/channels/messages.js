@@ -84,12 +84,15 @@ $(document).ready(function() {
   if (!clientId) {
     return;
   }
-  App.messages = App.cable.subscriptions.create(
-    { channel: 'MessagesChannel', client_id: clientId },
-    {
-      received: function(data) {
-        Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
+
+  if ($("meta[name='current-user']").length > 0) {
+    App.messages = App.cable.subscriptions.create(
+      { channel: 'MessagesChannel', client_id: clientId },
+      {
+        received: function(data) {
+          Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
+        }
       }
-    }
-  );
+    );
+  }
 });

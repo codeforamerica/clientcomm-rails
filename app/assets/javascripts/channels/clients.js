@@ -18,13 +18,14 @@ $(document).ready(function () {
     return;
   }
 
-  App.messages = App.cable.subscriptions.create(
-    { channel: 'ClientsChannel' },
-    {
-      received: function() {
-        Clients.refreshClientList();
+  if ($("meta[name='current-user']").length > 0) {
+    App.messages = App.cable.subscriptions.create(
+      { channel: 'ClientsChannel' },
+      {
+        received: function() {
+          Clients.refreshClientList();
+        }
       }
-    }
-  );
-
+    );
+  }
 });
