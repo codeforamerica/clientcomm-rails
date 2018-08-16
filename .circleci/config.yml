@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.4.1-node-browsers
         environment:
+          DEPLOYMENT: circleci
           PGHOST: 127.0.0.1
           PGUSER: clientcomm
           RAILS_ENV: test

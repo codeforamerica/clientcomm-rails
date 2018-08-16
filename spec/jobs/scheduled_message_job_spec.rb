@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe ScheduledMessageJob, active_job: true, type: :job do
-  let(:count) { 1 }
+  let(:count) { 0 }
   let(:link_html) { 'scheduled_messages_link_partial' }
   let(:scheduled_messages) { double('scheduled_messages', count: count) }
-  let(:send_at_time) { Time.zone.now.tomorrow }
+  let(:send_at_time) { Time.zone.now }
   let(:user) { create :user }
   let(:client) { create :client, users: [user] }
   let(:rr) { ReportingRelationship.find_by(client: client, user: user) }
@@ -15,7 +15,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
 
   subject do
     perform_enqueued_jobs do
-      ScheduledMessageJob.perform_later(message: message, send_at: send_at_time.to_i, callback_url: 'whocares.com')
+      ScheduledMessageJob.perform_later(message: message)
     end
   end
 
@@ -25,7 +25,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
         to: message.client.phone_number,
         from: message.number_from,
         body: message.body,
-        callback_url: 'whocares.com'
+        callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url
       ).and_return(message_info)
 
     allow(MessageBroadcastJob).to receive(:perform_now).and_return(nil)
@@ -39,7 +39,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
       .and_return(link_html)
 
     expect(ActionCable.server).to receive(:broadcast)
-      .with("scheduled_messages_#{message.user.id}_#{message.client.id}", link_html: link_html, count: count)
+      .with("scheduled_messages_#{message.user.id}_#{message.client.id}", link_html: link_html, count: 0)
 
     subject
 
@@ -86,7 +86,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   end
 
   context 'When rescheduled' do
-    let(:message) { create :text_message, send_at: Time.zone.now }
+    let(:message) { create :text_message, send_at: Time.zone.now.tomorrow }
 
     it_behaves_like 'does not send'
   end

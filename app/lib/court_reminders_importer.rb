@@ -42,10 +42,7 @@ module CourtRemindersImporter
               send_at: send_at
             )
 
-            unless options[:dry_run]
-              message.save!
-              message.send_message
-            end
+            message.save! unless options[:dry_run]
           end
         end
       end

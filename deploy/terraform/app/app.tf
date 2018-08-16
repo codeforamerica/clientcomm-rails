@@ -50,7 +50,8 @@ provider "aws" {
 }
 
 resource "heroku_app" "clientcomm" {
-  name   = "${var.heroku_app_name}"
+  name = "${var.heroku_app_name}"
+  acm = "true"
   region = "us"
   organization = {
     name = "${var.heroku_team}"
@@ -189,6 +190,22 @@ resource "aws_cloudwatch_metric_alarm" "queue-busy-or-down-alarm" {
   threshold                 = "1"
   datapoints_to_alarm       = "1"
   alarm_description         = "This metric alerts if the queue is not flowing"
+  ok_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
+  alarm_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
+  treat_missing_data = "breaching"
+}
+
+resource "aws_cloudwatch_metric_alarm" "scheduled-message-alarm" {
+  alarm_name                = "${heroku_app.clientcomm.name}-scheduled-message-alarm"
+  comparison_operator       = "LessThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "MessagesScheduled"
+  namespace                 = "${heroku_app.clientcomm.name}"
+  period                    = "1800"
+  statistic                 = "SampleCount"
+  threshold                 = "1"
+  datapoints_to_alarm       = "1"
+  alarm_description         = "This metric alerts if the scheduled messages are not queueing"
   ok_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
   alarm_actions = ["${data.aws_sns_topic.email_alerts.arn}"]
   treat_missing_data = "breaching"
