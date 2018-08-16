@@ -25,11 +25,13 @@ production: &default
 
 development:
   <<: *default
+  scheduled_message_rate: 1 # 1-30 in minutes
 
 staging:
   <<: *default
 
 test:
+  <<: *default
   client_categories:
     no_cat:
       icon: 'iconX'

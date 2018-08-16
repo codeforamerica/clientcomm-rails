@@ -88,7 +88,7 @@ end
 puts 'Creating Messages'
 ReportingRelationship.all.each do |rr|
   rr.update!(client_status_id: ClientStatus.all.sample.id)
-  FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true
+  FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true, sent: true
 end
 
 puts 'Creating Attachments'
