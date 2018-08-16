@@ -1,5 +1,5 @@
 class RemoveScheduledMessageJobs < ActiveRecord::Migration[5.1]
-  def change
+  def up
     Delayed::Job.where('handler ilike ?', '%ScheduledMessageJob%').destroy_all
   end
 end
