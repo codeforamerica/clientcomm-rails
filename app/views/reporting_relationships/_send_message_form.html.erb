@@ -8,7 +8,7 @@
 
   <div id="sendbar-container">
     <div class="sendbar">
-      <%= form_for Message.new, remote: true do |f| %>
+      <%= form_for Message.new, authenticity_token: true, html: { :multipart => true }, remote: true do |f| %>
         <input name="client_id" type="hidden" value="<%= @client.id %>">
         <input name="positive_template_type" class='positive-template-type' type="hidden" value="">
         <div class="sendbar-inner">
@@ -23,9 +23,9 @@
             </div>
           </div>
           <div id="image_icon">
-            <label for="file-input" id="image-upload" accept="image/*">
+            <label for="message_attachments_0_media" id="image-upload" accept="image/*">
               <i class="icon-photo"></i>
-              <input id="file-input" type="file" />
+              <input id="message_attachments_0_media" name="message[attachments][0][media]" type="file" />
             </label>
           </div>
         </div>
