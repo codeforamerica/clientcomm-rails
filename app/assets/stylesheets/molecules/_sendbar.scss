@@ -11,11 +11,10 @@
   }
 
   #sendbar-textarea {
-    float: none;
-    width: auto;
+    float: right;
+    width: 63%;
     overflow: hidden;
   }
-
 
   #sendbar-buttons {
     width: 20px;
@@ -159,4 +158,25 @@
 section.message--create #sendbar-container{
   width: 100%;
   border-top: 2px solid $color-light-grey;
+}
+
+#image-upload {
+  input {
+    display: none;
+  }
+  float: right;
+  width: auto;
+  button {
+    background-color: transparent;
+    border-color: transparent;
+  }
+  overflow: hidden;
+}
+
+#image_icon {
+  width: 7%;
+}
+
+.icon-photo {
+  font-size: 45px;
 }
