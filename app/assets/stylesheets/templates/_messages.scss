@@ -62,6 +62,11 @@
     .message--outbound {
       margin-left: auto;
 
+      .message--image {
+        background: $color-teal;
+        float: right;
+        color: $color-background;
+      }
       .message--content {
         max-width: 100%;
         background: $color-teal;
@@ -115,55 +120,59 @@
       }
     }
 
+    .message--image {
+      @extend %message--shared;
+      width: 60%;
+      display: inline-block;
+
+      .image-container {
+        height: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    %message--shared {
+      max-width: 100%;
+      border-radius: 10px 10px 10px 0px;
+      margin-bottom: 10px;
+      padding: {
+        bottom: .5em;
+        left: $padding-small;
+        right: $padding-small;
+        top: $padding-small;
+      }
+      @include break-words();
+      @include media($mobile-up) {
+        max-width: 60%;
+      }
+    }
+
+
     .message--inbound {
       width: 100%;
       display: inline-block;
+
+      .message--image {
+        background: $color-light-grey;
+      }
 
       .message-row-container {
         position: relative;
       }
 
-
-      %message--shared {
-        max-width: 100%;
-        background: $color-light-grey;
-        border-radius: 10px 10px 10px 0px;
-        margin-bottom: 10px;
-        padding: {
-          bottom: .5em;
-          left: $padding-small;
-          right: $padding-small;
-          top: $padding-small;
-        }
-        @include break-words();
-        @include media($mobile-up) {
-          max-width: 60%;
-        }
-      }
-
       .message--content {
         @extend %message--shared;
+        background: $color-light-grey;
         display: inline-block;
-      }
-
-      .message--image {
-        @extend %message--shared;
-        width: 60%;
-        display: inline-block;
-
-        .image-container {
-          height: 0;
-          overflow: hidden;
-          position: relative;
-        }
-
-        img {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 100%;
-        }
       }
 
       .message--label {
