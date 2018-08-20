@@ -30,7 +30,15 @@ describe SMSService do
     let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
 
-    subject { sms_service.send_message(to: message.client.phone_number, from: message.number_from, body: message.body, callback_url: callback_url) }
+    subject do
+      sms_service.send_message(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        callback_url: callback_url,
+        media_url: nil
+      )
+    end
 
     before do
       allow(MessageBroadcastJob).to receive(:perform_now)

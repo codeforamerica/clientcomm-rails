@@ -9,17 +9,18 @@ class ScheduledMessageJob < ApplicationJob
     return if message.sent || (message.send_at > Time.zone.now)
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
     media_url = message.attachments.first&.media&.expiring_url(10)
-    if Rails.env.development?
+    if media_url && Rails.env.development?
       media_url = URI.join(ENV['DEPLOY_BASE_URL'], media_url).to_s
     end
+    message_kwarg = {
+      to: message.client.phone_number,
+      from: message.number_from,
+      body: message.body,
+      status_callback: callback_url,
+    }
+    message_kwarg[:media_url] = media_url if media_url
     begin
-      message_info = SMSService.instance.send_message(
-        to: message.client.phone_number,
-        from: message.number_from,
-        body: message.body,
-        callback_url: callback_url,
-        media_url: media_url
-      )
+      message_info = SMSService.instance.send_message(**message_kwarg)
     rescue Twilio::REST::RestError => e
       raise e unless e.code == 21610
       message_info = MessageInfo.new(nil, 'blacklisted')

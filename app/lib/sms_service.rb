@@ -20,15 +20,9 @@ class SMSService
     twilio_message.status
   end
 
-  def send_message(to:, from:, body:, media_url:, callback_url:)
+  def send_message(**kwargs)
     # send the message via Twilio
-    response = @client.api.account.messages.create(
-      from: from,
-      to: to,
-      body: body,
-      media_url: media_url,
-      status_callback: callback_url
-    )
+    response = @client.api.account.messages.create(**kwargs)
 
     MessageInfo.new(response.sid, response.status)
   end
