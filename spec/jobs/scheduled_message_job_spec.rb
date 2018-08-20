@@ -12,7 +12,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   let(:message_sid) { 'some sid' }
   let(:message_status) { 'some status' }
   let(:message_info) { MessageInfo.new(message_sid, message_status) }
-
+  let(:attachment) { nil }
   subject do
     perform_enqueued_jobs do
       ScheduledMessageJob.perform_later(message: message)
@@ -25,6 +25,7 @@ describe ScheduledMessageJob, active_job: true, type: :job do
         to: message.client.phone_number,
         from: message.number_from,
         body: message.body,
+        media_url: attachment&.media&.expiring_url,
         callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url
       ).and_return(message_info)
 
@@ -86,6 +87,15 @@ describe ScheduledMessageJob, active_job: true, type: :job do
   end
 
   context 'the message has an image attached' do
+    let(:attachment) { create :attachment }
+    before do
+      message.attachments << attachment
+    end
+    it 'send image to twilio' do
+      expect(SMSService.instance).to receive(:send_message).with(hash_including(media_url: attachment.media.expiring_url))
+      subject
+    end
+
   end
 
   context 'When rescheduled' do

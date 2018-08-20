@@ -8,7 +8,7 @@ class ScheduledMessageJob < ApplicationJob
     callback_url = Rails.application.routes.url_helpers.incoming_sms_status_url
     return if message.sent || (message.send_at > Time.zone.now)
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
-    media_url = message.attachments.first&.media.expiring_url(10)
+    media_url = message.attachments.first&.media&.expiring_url(10)
     if Rails.env.development?
       media_url = URI.join(ENV['DEPLOY_BASE_URL'], media_url).to_s
     end

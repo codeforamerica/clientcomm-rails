@@ -25,10 +25,10 @@ class MessagesController < ApplicationController
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
     # message_params[:attachments]['0']['media']
-    attachments = [Attachment.new(message_params[:attachments]['0'])]
-    # attachments = message_params[:attachments]&.map do |attachment|
-    #   Attachment.new(attachment)
-    # end
+    #attachments = [Attachment.new(message_params[:attachments][0])]
+    attachments = message_params[:attachments]&.map do |attachment|
+      Attachment.new(attachment)
+    end
 
     message = TextMessage.new(
       reporting_relationship: rr,
