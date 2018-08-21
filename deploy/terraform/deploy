@@ -1,0 +1,43 @@
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-try) -backend-config 'key=clientcomm-try' --input=false
+terraform apply -var-file <(lpass show --notes try-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-migration-test) -backend-config 'key=clientcomm-migration-test' --input=false
+terraform apply -var-file <(lpass show --notes migration-test-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-demo' --input=false
+erraform apply -var-file <(lpass show --notes demo-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-slco' --input=false
+erraform apply -var-file <(lpass show --notes slco-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-georgiadcs' --input=false
+terraform apply -var-file <(lpass show --notes georgiadcs-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-multco' --input=false
+terraform apply -var-file <(lpass show --notes multco-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-danecrc' --input=false
+terraform apply -var-file <(lpass show --notes danecrc-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-cccounty' --input=false
+terraform apply -var-file <(lpass show --notes cccounty-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-5cbc' --input=false
+terraform apply -var-file <(lpass show --notes 5cbc-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-pima' --input=false
+terraform apply -var-file <(lpass show --notes pima-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+
+rm -r .terraform
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=clientcomm-baltimore' --input=false
+terraform apply -var-file <(lpass show --notes baltimore-clientcomm-terraform) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)

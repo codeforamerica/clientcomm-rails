@@ -1,0 +1,6 @@
+command="echo '$1' |rails c"
+deploys=('try' 'demo' 'slco' '5cbc' 'danecrc' 'pima' 'baltimore' 'cccounty' 'georgiadcs' 'multco')
+for deploy in "${deploys[@]}"
+do
+heroku run $command  --app clientcomm-$deploy
+done
