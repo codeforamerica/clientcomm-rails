@@ -1,5 +1,5 @@
 class ScheduledMessageCronJob < ApplicationJob
-  queue_as :high_priority
+  queue_as :scheduled_message_cron_job
 
   def perform
     send_messages = TextMessage.where(sent: false).where(inbound: false).where('send_at < ?', Time.zone.now + APP_CONFIG['scheduled_message_rate'].minutes)

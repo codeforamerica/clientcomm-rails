@@ -66,6 +66,7 @@ Delayed::Worker.sleep_delay = 2
 Delayed::Worker.max_attempts = 1
 Delayed::Worker.queue_attributes = {
   high_priority: { priority: -10 },
+  scheduled_message_cron_job: { priority: -5 },
   low_priority: { priority: 10 },
   dead_man_switch: { priority: 20 }
 }
