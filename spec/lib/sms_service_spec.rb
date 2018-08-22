@@ -25,7 +25,7 @@ describe SMSService do
   end
 
   describe '#send_message' do
-    let(:callback_url) { 'whocares.com' }
+    let(:status_callback) { 'whocares.com' }
     let(:message) { create :text_message, twilio_sid: nil, twilio_status: nil, inbound: false }
     let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
@@ -35,7 +35,7 @@ describe SMSService do
         to: message.client.phone_number,
         from: message.number_from,
         body: message.body,
-        callback_url: callback_url,
+        status_callback: status_callback,
         media_url: nil
       )
     end
@@ -60,7 +60,7 @@ describe SMSService do
           from: message.number_from,
           body: message.body,
           media_url: message.reload.attachments.first.media.url,
-          callback_url: callback_url
+          status_callback: status_callback
         )
       end
 
@@ -70,7 +70,7 @@ describe SMSService do
           from: message.number_from,
           body: message.body,
           media_url: message.reload.attachments.first.media.url,
-          status_callback: callback_url
+          status_callback: status_callback
         )
         expect(subject).to eq(MessageInfo.new(message_sid, message_status))
       end

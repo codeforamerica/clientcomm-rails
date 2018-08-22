@@ -5,22 +5,26 @@ class ScheduledMessageJob < ApplicationJob
 
   queue_as :high_priority
   def perform(message:)
-    callback_url = Rails.application.routes.url_helpers.incoming_sms_status_url
+    status_callback = Rails.application.routes.url_helpers.incoming_sms_status_url
     return if message.sent || (message.send_at > Time.zone.now)
+
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
     media_url = message.attachments.first&.media&.expiring_url(10)
+
     if media_url && Rails.env.development?
       media_url = URI.join(ENV['DEPLOY_BASE_URL'], media_url).to_s
     end
-    message_kwarg = {
+
+    message_options = {
       to: message.client.phone_number,
       from: message.number_from,
       body: message.body,
-      status_callback: callback_url,
+      status_callback: status_callback,
     }
-    message_kwarg[:media_url] = media_url if media_url
+    message_options[:media_url] = media_url if media_url
+
     begin
-      message_info = SMSService.instance.send_message(**message_kwarg)
+      message_info = SMSService.instance.send_message(message_options)
     rescue Twilio::REST::RestError => e
       raise e unless e.code == 21610
       message_info = MessageInfo.new(nil, 'blacklisted')

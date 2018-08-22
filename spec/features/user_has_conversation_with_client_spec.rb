@@ -23,7 +23,7 @@ feature 'sending messages', active_job: true do
 
       expect(page).to have_content('This message is more than 1600 characters and is too long to send.')
       expect(page).to have_button('Send', disabled: true)
-      expect(page).to have_button('Send later', disabled: true)
+      expect(page).to have_button('Send later', disabled: false)
     end
 
     step 'when user sends a message' do
@@ -90,7 +90,7 @@ feature 'sending messages', active_job: true do
       )
     end
 
-    step 'postiive reinforcements do not show up if the last message was outbound' do
+    step 'postive reinforcements do not show up if the last message was outbound' do
       visit reporting_relationship_path(rr)
       expect(page).to have_css('like-options', visible: :hidden)
     end

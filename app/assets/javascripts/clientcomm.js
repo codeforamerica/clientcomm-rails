@@ -75,9 +75,11 @@ function characterCount(element) {
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
-    counter = $('<span class="character-count pull-right hidden"></span>');
+    counter = $('<span class="character-count pull-right hidden"></span>'),
+    imageInput = $('#message_attachments_0_media');
 
   var modalVisible = label.length > 0;
+  setCounter(counter, element, modalVisible);
 
   if (label.length > 0) {
     counter.addClass('pull-bottom');
@@ -92,7 +94,13 @@ function characterCount(element) {
     setCounter(counter, element);
   });
 
-  element.on('keydown keyup focus paste', function(e){
+  imageInput.on('change', function(e) {
+    setTimeout(function(){
+      setCounter(counter, element, modalVisible);
+    });
+  });
+
+  element.on('keydown keyup focus paste input', function(e){
     setTimeout(function(){
       setCounter(counter, element, modalVisible);
     });
@@ -111,9 +119,6 @@ function setCounter(counter, textField, modalVisible) {
 
   $('#send_message').prop('disabled', cantSend);
   $('#send_message').toggleClass('button--disabled', cantSend);
-
-  $('#send_later').prop('disabled', cantSend || !file_empty);
-  $('#send_later').toggleClass('button--disabled', cantSend || !file_empty);
 
   $('#schedule_message').prop('disabled', cantSend);
   $('#schedule_message').toggleClass('button--disabled', cantSend);

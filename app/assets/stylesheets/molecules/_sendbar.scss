@@ -177,6 +177,14 @@ section.message--create #sendbar-container{
   width: 7%;
 }
 
+#image-cancel {
+  background-color: transparent;
+  border-color: transparent;
+  .hidden {
+    display: none;
+  }
+}
+
 .icon-photo {
   font-size: 45px;
 }

@@ -26,7 +26,15 @@ describe ScheduledMessageJob, active_job: true, type: :job do
         from: message.number_from,
         body: message.body,
         media_url: attachment&.media&.expiring_url,
-        callback_url: Rails.application.routes.url_helpers.incoming_sms_status_url
+        status_callback: Rails.application.routes.url_helpers.incoming_sms_status_url
+      ).and_return(message_info)
+
+    allow(SMSService.instance).to receive(:send_message)
+      .with(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        status_callback: Rails.application.routes.url_helpers.incoming_sms_status_url
       ).and_return(message_info)
 
     allow(MessageBroadcastJob).to receive(:perform_now).and_return(nil)

@@ -12,6 +12,7 @@ $(document).ready(function(){
     elm  = $(elm);
     text = elm.text();
     $('form#new_message textarea.main-message-input').val(text);
+    $('form#new_message textarea.main-message-input').trigger('input');
     $('form#new_message input.positive-template-type').val(text);
     elm.parent().toggleClass('hidden');
   }
@@ -32,7 +33,18 @@ $(document).ready(function(){
     }
   });
 
-  var $templateButton = $('#template-button');
+  $('#message_attachments_0_media').on('change', function() {
+    console.log(this);
+    if (this.files.length > 0) {
+      fileName = this.files[0].name;
+      $('#file-name-preview').removeClass('hidden');
+      $('#file-name-preview').text(fileName);
+      $('#file-name-preview').text(fileName);
+    } else {
+      $('#file-name-preview').addClass('hidden');
+      $('#image-cancel').addClass('hidden');
+    };
+  });
 
   var sendInput = $('textarea.autosize');
 

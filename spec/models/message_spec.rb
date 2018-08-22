@@ -439,7 +439,7 @@ RSpec.describe Message, type: :model do
     let(:client) { create :client, users: [user] }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
     let(:message) { instance_double(Message) }
-    let(:callback_url) { Rails.application.routes.url_helpers.incoming_sms_status_url }
+    let(:status_callback) { Rails.application.routes.url_helpers.incoming_sms_status_url }
     let(:now) { Time.zone.now.change(usec: 0) }
 
     subject { Message.send_unclaimed_autoreply(rr: rr) }
