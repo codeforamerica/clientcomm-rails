@@ -85,9 +85,9 @@ Client.all.sample(15).each do |client|
   client.users << User.where.not(department: existing_users.map(&:department)).where.not('email LIKE ?', 'unclaimed%').sample
 end
 
-puts 'Creating Messages'
+puts 'Assigning Client Statuses and Creating Messages'
 ReportingRelationship.all.each do |rr|
-  rr.update!(client_status_id: ClientStatus.all.sample.id)
+  rr.update!(client_status_id: rr.user.department.client_statuses.sample.id)
   FactoryBot.create_list :text_message, 10, reporting_relationship: rr, read: true, sent: true
 end
 
