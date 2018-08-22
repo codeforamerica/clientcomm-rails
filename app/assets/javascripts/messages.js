@@ -39,10 +39,8 @@ $(document).ready(function(){
       fileName = this.files[0].name;
       $('#file-name-preview').removeClass('hidden');
       $('#file-name-preview').text(fileName);
-      $('#file-name-preview').text(fileName);
     } else {
       $('#file-name-preview').addClass('hidden');
-      $('#image-cancel').addClass('hidden');
     };
   });
 
