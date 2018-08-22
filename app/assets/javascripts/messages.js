@@ -1,5 +1,19 @@
 //= require channels/messages
 
+function initializeModal(modalSelector) {
+  var $modal = $(modalSelector);
+  $modal.modal();
+  $modal.on('shown.bs.modal', function () {
+    $('textarea#scheduled_message_body.send-later-input.textarea').focus();
+    setCounter(counter, element);
+  });
+  $modal.on('hidden.bs.modal', function () {
+    element = $('.main-message-input');
+    counter = $('<span class="character-count pull-right hidden"></span>');
+    setCounter(counter, element);
+  });
+}
+
 $(window).on('message-event', function toggleLikeOptions(e, message) {
   if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
     $('like-options').removeClass('hidden');
@@ -34,7 +48,6 @@ $(document).ready(function(){
   });
 
   $('#message_attachments_0_media').on('change', function() {
-    console.log(this);
     if (this.files.length > 0) {
       fileName = this.files[0].name;
       $('#file-name-preview').removeClass('hidden');
@@ -51,19 +64,6 @@ $(document).ready(function(){
     $('textarea#scheduled_message_body.send-later-input').val(sendLaterMessage);
     $('like-options').addClass('hidden');
   });
-
-  function initializeModal(modalSelector) {
-    var $modal = $(modalSelector);
-    $modal.modal();
-    $modal.on('shown.bs.modal', function () {
-      $('textarea#scheduled_message_body.send-later-input.textarea').focus();
-    });
-    $modal.on('hidden.bs.modal', function () {
-      element = $('.main-message-input');
-      counter = $('<span class="character-count pull-right hidden"></span>');
-      setCounter(counter, element);
-    });
-  }
 
   initializeModal('#new-message-modal');
   initializeModal('#edit-message-modal');
