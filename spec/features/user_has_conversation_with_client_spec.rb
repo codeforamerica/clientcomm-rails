@@ -23,7 +23,7 @@ feature 'sending messages', active_job: true do
 
       expect(page).to have_content('This message is more than 1600 characters and is too long to send.')
       expect(page).to have_button('Send', disabled: true)
-      expect(page).to have_button('Send later', disabled: false)
+      expect(page).to have_button('Send later', disabled: true)
     end
 
     step 'when user sends a message' do

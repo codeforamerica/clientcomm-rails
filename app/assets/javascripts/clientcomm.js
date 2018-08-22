@@ -123,8 +123,8 @@ function setCounter(counter, textField, modalVisible) {
   $('#schedule_message').prop('disabled', cantSend);
   $('#schedule_message').toggleClass('button--disabled', cantSend);
 
-  $('#send_later').prop('disabled', tooLongToSend || !file_empy);
-  $('#send_later').toggleClass('button--disabled', tooLongToSend || !file_empty);
+  $('#send_later').prop('disabled', tooLongToSend || !file_empty);
+  $('#send_later').toggleClass('button--disabled', tooLongToSend ||!file_empty);
 
   if (!modalVisible) {
     $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
