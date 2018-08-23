@@ -4,6 +4,8 @@ class ScheduledMessageJob < ApplicationJob
   retry_on Twilio::REST::TwilioError
 
   queue_as :high_priority
+
+  # rubocop:disable Metrics/PerceivedComplexity
   def perform(message:)
     status_callback = Rails.application.routes.url_helpers.incoming_sms_status_url
     return if message.sent || (message.send_at > Time.zone.now)
@@ -19,7 +21,7 @@ class ScheduledMessageJob < ApplicationJob
       to: message.client.phone_number,
       from: message.number_from,
       body: message.body,
-      status_callback: status_callback,
+      status_callback: status_callback
     }
     message_options[:media_url] = media_url if media_url
 

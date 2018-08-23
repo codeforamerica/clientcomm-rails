@@ -103,7 +103,6 @@ describe ScheduledMessageJob, active_job: true, type: :job do
       expect(SMSService.instance).to receive(:send_message).with(hash_including(media_url: attachment.media.expiring_url))
       subject
     end
-
   end
 
   context 'When rescheduled' do
