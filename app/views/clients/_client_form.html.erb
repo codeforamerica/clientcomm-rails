@@ -4,8 +4,8 @@
   </div>
   <div class="form-card__content">
 
-    <% other_users = @client.active_users.where.not(id: current_user.id) %>
-    <% if other_users.any? %>
+    <% has_other_users = @client_form.other_users.any? %>
+    <% if has_other_users %>
       <div class="notice">
         <div class="media">
           <div class="media-left media-middle">
@@ -14,7 +14,7 @@
           <div class="media-body">
             <p>
               This client is also assigned to
-              <strong><%= other_users.pluck(:full_name).to_sentence %></strong>.
+              <strong><%= @client_form.other_users.pluck(:full_name).to_sentence %></strong>.
               Changing the client's name or phone number will change it for everyone.
             </p>
           </div>
@@ -22,14 +22,13 @@
       </div>
     <% end %>
 
-    <% has_other_users = other_users.any? %>
-    <%= form_for @client, builder: GcfFormBuilder do |f| %>
+    <%= form_for @client_form, url: clients_path, builder: GcfFormBuilder do |f| %>
       <%= f.gcf_input_field :first_name, "First name", classes: ['form-width--name'], icon: ('link' if has_other_users) %>
       <%= f.gcf_input_field :last_name, "Last name", classes: ['form-width--name'], icon: ('link' if has_other_users) %>
 
-      <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => phone_number_display(@client.phone_number) } %>
+      <%= f.gcf_input_field :phone_number, "Phone number", notes: ['example: 2435551212'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => phone_number_display(@client_form.phone_number) } %>
       <% if feature_flag_for('client_id_number') %>
-        <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client.id_number } %>
+        <%= f.gcf_input_field :id_number, "ID number", notes: ['Opts your client into automatic court reminders, if information is available'], classes: ['form-width--med'], icon: ('link' if has_other_users), :options => { :value => @client_form.id_number } %>
       <% end %>
 
       <% if feature_flag_for('court_dates') %>
@@ -39,28 +38,26 @@
           <label for="<%= date_picker_id %>" class="form-question">Court date (optional)</label>
           <%
               next_court_date_at = ''
-              if @client.next_court_date_at.present?
-                next_court_date_at = @client.next_court_date_at.strftime('%m/%d/%Y')
+              if @client_form.next_court_date_at.present?
+                next_court_date_at = @client_form.next_court_date_at.strftime('%m/%d/%Y')
               end
           %>
           <input type="text" class="form-width--date text-input" name="client[next_court_date_at]" id="<%= date_picker_id %>" value="<%= next_court_date_at %>" />
-          <% if @client.errors[:next_court_date_at].any? %>
-            <p class="text--error"><%= @client.errors[:next_court_date_at].first %></p>
+          <% if @client_form.errors[:next_court_date_at].any? %>
+            <p class="text--error"><%= @client_form.errors[:next_court_date_at].first %></p>
           <% end %>
         </div>
       </div>
       <% end %>
 
-      <%= f.fields_for :reporting_relationships, @reporting_relationship, builder: GcfFormBuilder do |rr| %>
-        <% if current_user.department.client_statuses? %>
-          <%= rr.gcf_radio_set :client_status_id, "Client status", current_user.department.client_statuses.map {|status| {value: status.id, label: status.name, notes: status.followup_date}} %>
-        <% end %>
+      <% if current_user.department.client_statuses? %>
+        <%= f.gcf_radio_set :client_status_id, "Client status", current_user.department.client_statuses.map {|status| {value: status.id, label: status.name, notes: status.followup_date}} %>
+      <% end %>
 
-        <% unless feature_flag_for('hide_notes') %>
-          <%= rr.gcf_input_field :notes, 'Notes', notes: "Add a private note that will appear in this client's profile", classes: ['form-width--long'] %>
-        <% else %>
-          <%= rr.hidden_field :notes %>
-        <% end %>
+      <% unless feature_flag_for('hide_notes') %>
+        <%= f.gcf_input_field :notes, 'Notes', notes: "Add a private note that will appear in this client's profile", classes: ['form-width--long'] %>
+      <% else %>
+        <%= f.hidden_field :notes %>
       <% end %>
 
       <div class="form-card__footer">

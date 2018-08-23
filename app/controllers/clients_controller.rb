@@ -17,8 +17,7 @@ class ClientsController < ApplicationController
   end
 
   def new
-    @client = Client.new
-    @reporting_relationship = @client.reporting_relationships.build(user: current_user)
+    @client_form = ClientForm.new
 
     analytics_track(
       label: 'client_create_view'
