@@ -109,22 +109,24 @@ function characterCount(element) {
 
 function setCounter(counter, textField, modalVisible) {
   var length = $(textField).val().length;
-  var file_empty = $('#message_attachments_0_media').val() == '';
-  isBlank = (length == 0) && (file_empty);
+  var fileEmpty = [undefined, ''].includes($('#message_attachments_0_media').val());
+  isBlank = (length == 0) && (fileEmpty);
   var tooLongForSingleText = length > 160;
   var tooLongToSend = length >= 1600;
   var cantSend = tooLongToSend || isBlank;
+
   counter.toggleClass('text--error', tooLongForSingleText);
   counter.toggleClass('hidden', !tooLongForSingleText);
-
   $('#send_message').prop('disabled', cantSend);
   $('#send_message').toggleClass('button--disabled', cantSend);
 
+  $('#schedule_messages').prop('disabled', cantSend);
+  $('#schedule_messages').toggleClass('button--disabled', cantSend);
   $('#schedule_message').prop('disabled', cantSend);
   $('#schedule_message').toggleClass('button--disabled', cantSend);
 
-  $('#send_later').prop('disabled', tooLongToSend || !file_empty);
-  $('#send_later').toggleClass('button--disabled', tooLongToSend ||!file_empty);
+  $('#send_later').prop('disabled', tooLongToSend || !fileEmpty);
+  $('#send_later').toggleClass('button--disabled', tooLongToSend || !fileEmpty);
 
   if (!modalVisible) {
     $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
