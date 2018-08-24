@@ -12,6 +12,15 @@ function initializeModal(modalSelector) {
   });
 }
 
+var file_types = [
+  'image/jpeg',
+  'image/gif',
+  'image/png'
+]
+
+function validFileType(file) {
+  return file_types.includes(file.type);
+ }
 
 $(window).on('message-event', function toggleLikeOptions(e, message) {
   if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
@@ -50,7 +59,13 @@ $(document).ready(function(){
     if (this.files.length > 0) {
       fileName = this.files[0].name;
       $('#file-name-preview').removeClass('hidden');
-      $('#file-name-preview').text(fileName);
+      if (!validFileType(this.files[0])) {
+        $('#file-name-preview').text('You can only send .png and .jpg files');
+			  $('#message_attachments_0_media').val('');
+    } else {
+        $('#file-name-preview').text(fileName);
+      }
+
     } else {
       $('#file-name-preview').addClass('hidden');
     };
