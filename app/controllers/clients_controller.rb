@@ -25,15 +25,14 @@ class ClientsController < ApplicationController
   end
 
   def create
-    @client = Client.new(client_params)
-    if @client.save
+    @client_form = ClientForm.new(client_params.merge!(user: current_user))
+    if @client_form.save
       analytics_track(
         label: 'client_create_success',
-        data: @client.reload.analytics_tracker_data
+        data: @client_form.client.analytics_tracker_data
       )
 
-      rr = current_user.reporting_relationships.find_by(client: @client)
-      redirect_to reporting_relationship_path(rr)
+      redirect_to reporting_relationship_path(@client_form.reporting_relationship)
     else
       @existing_client = Client.find_by(phone_number: @client.phone_number)
       @conflicting_user = @existing_client&.users&.active_rr&.where&.not(id: current_user.id)
@@ -236,22 +235,8 @@ class ClientsController < ApplicationController
   end
 
   def client_params
-    params.fetch(:client)
-          .permit(:first_name,
-                  :last_name,
-                  :client_status_id,
-                  :id_number,
-                  :phone_number,
-                  :next_court_date_at,
-                  :notes,
-                  reporting_relationships_attributes: %i[
-                    id notes client_status_id active
-                  ],
-                  surveys_attributes: [
-                    survey_response_ids: []
-                  ]).tap do |p|
-      p[:reporting_relationships_attributes]['0'][:user_id] = current_user.id
-      p[:surveys_attributes]['0'][:user_id] = current_user.id if p.dig(:surveys_attributes, '0')
-    end
+    params.fetch(:client_form)
+          .permit(:first_name, :last_name, :phone_number, :id_number,
+                  :next_court_date_at, :client_status_id, :notes)
   end
 end

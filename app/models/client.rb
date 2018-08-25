@@ -16,15 +16,7 @@ class Client < ApplicationRecord
   validates_associated :reporting_relationships
   accepts_nested_attributes_for :reporting_relationships
 
-  before_validation :normalize_phone_number, if: :phone_number_changed?
-  validate :service_accepts_phone_number, if: :phone_number_changed?
-
-  validates :last_name, :phone_number, presence: true
   validates :phone_number, uniqueness: true
-  validates :id_number, format: { with: /\A\d*\z/ }
-
-  before_validation :normalize_next_court_date_at
-  validate :next_court_date_at_is_a_date
 
   ransacker :stripped_phone_number, formatter: proc { |v| v.gsub(/\D/, '') } do |parent|
     parent.table[:phone_number]
@@ -85,33 +77,5 @@ class Client < ApplicationRecord
 
   def active_users
     users.joins(:reporting_relationships).where(reporting_relationships: { active: true }).distinct
-  end
-
-  private
-
-  def normalize_phone_number
-    return unless self.phone_number
-
-    self.phone_number = SMSService.instance.number_lookup(phone_number: self.phone_number)
-  rescue SMSService::NumberNotFound
-    @bad_number = true
-  end
-
-  def service_accepts_phone_number
-    errors.add(:phone_number, :invalid) if @bad_number
-  end
-
-  def normalize_next_court_date_at
-    bad_input = self.next_court_date_at.nil? && self.next_court_date_at_before_type_cast.class == String && !self.next_court_date_at_before_type_cast.empty?
-    raw_input = self.next_court_date_at_before_type_cast.class == String && %r(\d{2}\/\d{2}\/\d{4}).match?(self.next_court_date_at_before_type_cast)
-    return unless bad_input || raw_input
-
-    self.next_court_date_at = Date.strptime(self.next_court_date_at_before_type_cast, '%m/%d/%Y')
-  rescue ArgumentError
-    @bad_next_court_date_at = true
-  end
-
-  def next_court_date_at_is_a_date
-    errors.add(:next_court_date_at, :invalid) if @bad_next_court_date_at
   end
 end
