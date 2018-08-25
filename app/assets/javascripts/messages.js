@@ -60,10 +60,10 @@ $(document).ready(function(){
       fileName = this.files[0].name;
       $('#file-name-preview').removeClass('hidden');
       if (!validFileType(this.files[0])) {
-        $('#file-name-preview').text('You can only send .png and .jpg files');
-			  $('#message_attachments_0_media').val('');
+        $('span.image-help-text').text('You can only send .png and .jpg files');
+	$('#message_attachments_0_media').val('');
     } else {
-        $('#file-name-preview').text(fileName);
+        $('span.image-help-text').text(fileName);
       }
 
     } else {
@@ -71,7 +71,11 @@ $(document).ready(function(){
     };
   });
 
-  var sendInput = $('textarea.autosize');
+  $('#image-cancel').on('click', function() {
+    $('#message_attachments_0_media').val('');
+  });
+
+  var sendInput = $('t''extarea.autosize');
 
   $('#send_later').click(function(){
     var sendLaterMessage = $('textarea#message_body.main-message-input').val();

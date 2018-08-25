@@ -16,6 +16,14 @@ feature 'user sends images', active_job: true do
       visit reporting_relationship_path(rr)
     end
 
+    step 'uploads csv file' do
+      attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/court_dates.csv', make_visible: true)
+			results = page.evaluate_script('$("#message_attachments_0_media").val()==""')
+			expect(page.evaluate_script(results)).to equal true
+      expect(page).to have_css '#file-name-preview', text: 'You can only send .png and .jpg files'
+      expect(page).to have_css('#send_message:disabled')
+    end
+
     step 'uploads image' do
 
       attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/fluffy_cat.jpg', make_visible: true)
@@ -24,23 +32,33 @@ feature 'user sends images', active_job: true do
 
     end
 
-    step 'user sends image' do
+    step 'user clears image' do
 
       perform_enqueued_jobs do
-        click_on 'send_message'
-        expect(page).to have_css '.message--outbound img'
+        click_on 'image-cancel'
+        results = page.evaluate_script('$("#message_attachments_0_media").val()==""')
+        expect(page.evaluate_script(results)).to equal true
+        expect(page).to_not have_css '#file-name-preview', text: 'fluffy_cat.jpg'
+        expect(page).to have_css('#send_message:disabled')
       end
 
     end
 
-    step 'uploads csv file' do
+    step 'user sends image' do
 
-      attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/court_dates.csv', make_visible: true)
-			results = page.evaluate_script('$("#message_attachments_0_media").val()')
-			expect(page.evaluate_script(results)).to equal 'true'
-      expect(page).to have_css '#file-name-preview', text: 'You can only send .png and .jpg files'
+      attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/fluffy_cat.jpg', make_visible: true)
+
+      expect(page).to have_button('Send later', disabled: true)
+
+      perform_enqueued_jobs do
+        click_on 'send_message'
+        expect(page).to have_css '.message--outbound img'
+        expect(page).to have_css '#file-name-preview', text: 'fluffy_cat.jpg'
+      end
 
     end
+
+
 
     end
   end
