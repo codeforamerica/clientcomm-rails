@@ -27,7 +27,7 @@ $(document).ready(function() {
     $datepicker.datepicker("option", "showAnim", "");
   }
 
-  initializeDatepicker("#next_court_date_at");
+  initializeDatepicker("#client_form_next_court_date_at");
 
   $("#transfer-button").click(function() {
     Intercom('showNewMessage', 'Hi, I would like to request a transfer of ' + $(this).data('client-name') + '.');

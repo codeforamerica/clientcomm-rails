@@ -32,22 +32,13 @@
       <% end %>
 
       <% if feature_flag_for('court_dates') %>
-      <div class="grid">
-        <div class="grid__item width-one-half">
-          <% date_picker_id = 'next_court_date_at' %>
-          <label for="<%= date_picker_id %>" class="form-question">Court date (optional)</label>
-          <%
-              next_court_date_at = ''
-              if @client_form.next_court_date_at.present?
-                next_court_date_at = @client_form.next_court_date_at.strftime('%m/%d/%Y')
-              end
-          %>
-          <input type="text" class="form-width--date text-input" name="client[next_court_date_at]" id="<%= date_picker_id %>" value="<%= next_court_date_at %>" />
-          <% if @client_form.errors[:next_court_date_at].any? %>
-            <p class="text--error"><%= @client_form.errors[:next_court_date_at].first %></p>
-          <% end %>
-        </div>
-      </div>
+        <%
+           next_court_date_at = ''
+           if @client_form.next_court_date_at.present?
+             next_court_date_at = @client_form.next_court_date_at.strftime('%m/%d/%Y')
+           end
+        %>
+        <%= f.gcf_input_field :next_court_date_at, "Court date (optional)", classes: ['form-width--date'], options: { value: next_court_date_at } %>
       <% end %>
 
       <% if current_user.department.client_statuses? %>
