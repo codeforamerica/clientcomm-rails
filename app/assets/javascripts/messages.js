@@ -60,10 +60,14 @@ $(document).ready(function(){
       fileName = this.files[0].name;
       $('#file-name-preview').removeClass('hidden');
       if (!validFileType(this.files[0])) {
-        $('span.image-help-text').text('You can only send .png and .jpg files');
+        $('span.image-help-text').text('You can only send .gif, .png, and .jpg files');
+        $('#file-name-preview').addClass('warning');
+        $('#image-cancel i').removeClass('icon-close').addClass('icon-warning');
 	$('#message_attachments_0_media').val('');
     } else {
-        $('span.image-help-text').text(fileName);
+        $('span.image-help-text').html(fileName+'<added></added>');
+        $('#file-name-preview').removeClass('warning');
+        $('#image-cancel i').removeClass('icon-warning').addClass('icon-close');
       }
 
     } else {
@@ -72,6 +76,7 @@ $(document).ready(function(){
   });
 
   $('#image-cancel').click(function() {
+    $('#image-cancel i').removeClass('icon-warning').addClass('icon-close');
     $('#message_attachments_0_media').trigger('change');
     $('span.image-help-text').text('');
     $('#file-name-preview').addClass('hidden');
@@ -102,6 +107,7 @@ $(document).ready(function(){
 
   $('form#new_message').on('ajax:success', function(e) {
     $('#message_body').val('');
+    $('#file-name-preview').addClass('hidden');
     $('like-options').addClass('hidden');
     autosize.update(sendInput);
   });

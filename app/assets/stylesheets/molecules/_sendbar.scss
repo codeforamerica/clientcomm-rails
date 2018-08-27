@@ -4,16 +4,18 @@
   max-width: 960px;
   margin: auto;
   border-collapse: separate;
-
   .sendbar-inner {
     height: auto;
     overflow: hidden;
   }
 
   #sendbar-textarea {
-    float: right;
-    width: 63%;
+    float: none;
+    width: auto;
     overflow: hidden;
+    .icon-photo {
+      font-size: 45px;
+    }
   }
 
   #sendbar-buttons {
@@ -94,17 +96,13 @@
 }
 
 .sendbar__input {
-  border: 2px solid $color-grey;
+  border: 2px solid $color-teal;
   padding: .5em 1.2em .5em .7em;
   margin: 0;
   outline: 0;
   resize: none;
   max-height: 115px;
   width: 100%;
-
-  &:focus {
-    border-color: $color-teal;
-  }
 }
 #send_later {
   margin-right: .3em;
@@ -161,16 +159,25 @@ section.message--create #sendbar-container{
 }
 
 #image-upload {
+  float: left;
+  height: 51px;
+  width: 60px;
+  margin-right: -2px;
+  border: 2px solid $color-teal;
+  text-align: center;
+
   input {
     display: none;
   }
-  float: right;
-  width: auto;
+
   button {
     background-color: transparent;
     border-color: transparent;
   }
-  overflow: hidden;
+}
+
+#file-name-preview {
+  margin-left: 60px;
 }
 
 #image-cancel {
@@ -179,8 +186,28 @@ section.message--create #sendbar-container{
   .hidden {
     display: none;
   }
+  i {
+    font-size: 25px;
+  }
 }
 
-.icon-photo {
-  font-size: 45px;
+.right-fluid {
+  overflow: hidden;
 }
+
+.warning {
+  color: $color-red;
+}
+
+added {
+  background-color: $color-green;
+  color: $color-white;
+  border-radius: .1em;
+  font-size: .6em;
+  margin: 10px;
+  padding: 0px 6px 0px 6px;
+  &:before {
+    content: 'ADDED';
+  }
+}
+
