@@ -29,7 +29,6 @@ class MessagesController < ApplicationController
     attachments = message_params[:attachments]&.map do |attachment|
       Attachment.new(attachment)
     end
-
     message = TextMessage.new(
       reporting_relationship: rr,
       body: message_params[:body],
@@ -41,7 +40,9 @@ class MessagesController < ApplicationController
       attachments: attachments || []
     )
 
-    if message.invalid? || message.past_message?
+    valid_attachment = ['image/png', 'image/gif', 'image/jpeg'].include? attachments.first.media_content_type
+
+    if message.invalid? || message.past_message? || !valid_attachment
       @message = message
       @client = client
       @messages = past_messages(client: @client)
