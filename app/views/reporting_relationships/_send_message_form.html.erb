@@ -21,8 +21,6 @@
             <div class="inner-addon right-addon">
               <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
             </div>
-          </div>
-          <div id="image_icon">
             <label for="message_attachments_0_media" id="image-upload" >
               <i class="icon-photo"></i>
               <input id="message_attachments_0_media" name="message[attachments][][media]" type="file" accept="image/jpeg,image/png" />
@@ -37,7 +35,7 @@
           <% end %>
         </like-options>
       <% end %>
-      <div id="file-name-preview">
+      <div id="file-name-preview" class="hidden">
         <button id="image-cancel"> &#10006; </button>
         <span class="image-help-text"></span>
       </div>

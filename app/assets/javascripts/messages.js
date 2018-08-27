@@ -71,11 +71,14 @@ $(document).ready(function(){
     };
   });
 
-  $('#image-cancel').on('click', function() {
+  $('#image-cancel').click(function() {
+    $('#message_attachments_0_media').trigger('change');
+    $('span.image-help-text').text('');
+    $('#file-name-preview').addClass('hidden');
     $('#message_attachments_0_media').val('');
   });
 
-  var sendInput = $('t''extarea.autosize');
+  var sendInput = $('textarea.autosize');
 
   $('#send_later').click(function(){
     var sendLaterMessage = $('textarea#message_body.main-message-input').val();

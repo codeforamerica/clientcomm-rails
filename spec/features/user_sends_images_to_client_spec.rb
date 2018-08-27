@@ -14,6 +14,7 @@ feature 'user sends images', active_job: true do
   scenario 'user sends images to client', :js, active_job: true do
     step 'when user goes to messages page' do
       visit reporting_relationship_path(rr)
+      expect(page).not_to have_css('#file-name-preview');
     end
 
     step 'uploads csv file' do
@@ -29,7 +30,7 @@ feature 'user sends images', active_job: true do
       attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/fluffy_cat.jpg', make_visible: true)
 
       expect(page).to have_button('Send later', disabled: true)
-
+      expect(page).to have_css '#file-name-preview span.image-help-text', text: 'fluffy_cat.jpg'
     end
 
     step 'user clears image' do
