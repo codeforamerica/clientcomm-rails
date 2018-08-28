@@ -13,9 +13,12 @@
     float: none;
     width: auto;
     overflow: hidden;
+    border: 2px solid $color-teal;
+    border-radius: .2em;
     .icon-photo {
-      font-size: 45px;
+      font-size: 34px;
     }
+
   }
 
   #sendbar-buttons {
@@ -24,16 +27,10 @@
     margin: 10px 20px;
     #send_icon {
       display: block;
-      position: absolute;
       background-color: transparent;
       border: none;
-      bottom: 15px;
-      right: 15px;
       font-size: 30px;
       color: $color-teal;
-      @supports (-webkit-overflow-scrolling: touch) {
-          right: -10px;
-      }
       &:focus {
         outline: 0;
       }
@@ -77,6 +74,7 @@
     }
   }
 }
+
 .character-count {
   font-size: 12px;
   line-height: 1em;
@@ -89,14 +87,17 @@
 
 .pull-bottom {
   @include media($tablet-up) {
-  position: absolute;
-  bottom: 0;
+    position: absolute;
+    bottom: 0;
   }
   right: 0;
 }
 
 .sendbar__input {
-  border: 2px solid $color-teal;
+  border-left: 2px solid $color-teal;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
   padding: .5em 1.2em .5em .7em;
   margin: 0;
   outline: 0;
@@ -160,10 +161,10 @@ section.message--create #sendbar-container{
 
 #image-upload {
   float: left;
-  height: 51px;
   width: 60px;
+  margin-top: 4px;
+  margin-bottom: -4px;
   margin-right: -2px;
-  border: 2px solid $color-teal;
   text-align: center;
 
   input {
@@ -177,8 +178,6 @@ section.message--create #sendbar-container{
 }
 
 #file-name-preview {
-  margin-left: 60px;
-
   .image-help-text {
     .file-name {
       max-width: 200px;
@@ -205,6 +204,8 @@ section.message--create #sendbar-container{
 
 .right-fluid {
   overflow: hidden;
+  margin-top: -2px;
+  margin-bottom: -9px;
 }
 
 .warning {
