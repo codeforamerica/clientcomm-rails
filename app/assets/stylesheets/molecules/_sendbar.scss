@@ -178,26 +178,32 @@ section.message--create #sendbar-container{
 }
 
 #file-name-preview {
+
   .image-help-text {
+    vertical-align: middle;
+    display: inline-block;
     .file-name {
       max-width: 200px;
+      font-size: 15px;
       overflow: hidden;
       white-space:nowrap;
       text-overflow:ellipsis;
       display: inline-block;
+      vertical-align: middle;
     }
-    display: inline-block;
-    vertical-align: bottom;
   }
 }
 
 #image-cancel {
   background-color: transparent;
   border-color: transparent;
+  vertical-align: middle;
+
   .hidden {
     display: none;
   }
   i {
+    vertical-align: middle;
     font-size: 25px;
   }
 }
@@ -219,6 +225,8 @@ added {
   font-size: .6em;
   margin: 10px;
   padding: 0px 6px 0px 6px;
+  vertical-align: middle;
+
   &:before {
     content: 'ADDED';
   }
