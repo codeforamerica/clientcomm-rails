@@ -20,6 +20,7 @@ class MessagesController < ApplicationController
     send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def create
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
@@ -78,6 +79,7 @@ class MessagesController < ApplicationController
       format.js { head :no_content }
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @message = current_user.messages.find(params[:id])

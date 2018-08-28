@@ -33,7 +33,6 @@ feature 'user sends images', active_job: true do
       expect(page).to have_css('#send_message:disabled')
     end
 
-
     step 'uploads image' do
       attach_file('message[attachments][][media]', Rails.root + 'spec/fixtures/fluffy_cat.jpg', make_visible: true)
 
@@ -60,7 +59,7 @@ feature 'user sends images', active_job: true do
       perform_enqueued_jobs do
         click_on 'send_message'
         expect(page).to have_css '.message--outbound img'
-      expect(page).to_not have_css '#file-name-preview span.image-help-text', text: 'fluffy_cat.jpg'
+        expect(page).to_not have_css '#file-name-preview span.image-help-text', text: 'fluffy_cat.jpg'
       end
     end
   end
