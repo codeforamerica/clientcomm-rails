@@ -44,3 +44,6 @@ tags
 
 # VIM
 *.swp
+
+# Node.js
+node_modules
