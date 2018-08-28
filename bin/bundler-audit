@@ -9,4 +9,4 @@ set -e
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 gem install --no-rdoc --no-ri bundler-audit
-bundle-audit check --update
+bundle-audit check --update --ignore CVE-2018-1000544
