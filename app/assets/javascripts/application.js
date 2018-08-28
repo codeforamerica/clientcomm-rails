@@ -16,7 +16,8 @@
 //= require jquery-ui/widgets/datepicker
 //= require lodash
 //= require bootstrap-sprockets
-//= require jquery_ujs
+//= require rails-ujs
+//= require jquery.remotipart
 //= require push.min
 //= require autosize
 //= require lib/list.min

@@ -25,12 +25,20 @@ describe SMSService do
   end
 
   describe '#send_message' do
-    let(:callback_url) { 'whocares.com' }
+    let(:status_callback) { 'whocares.com' }
     let(:message) { create :text_message, twilio_sid: nil, twilio_status: nil, inbound: false }
     let(:message_status) { ['accepted', 'queued', 'sending', 'sent', 'receiving', 'received', 'delivered'].sample }
     let(:response) { double('response', sid: message_sid, status: message_status) }
 
-    subject { sms_service.send_message(to: message.client.phone_number, from: message.number_from, body: message.body, callback_url: callback_url) }
+    subject do
+      sms_service.send_message(
+        to: message.client.phone_number,
+        from: message.number_from,
+        body: message.body,
+        status_callback: status_callback,
+        media_url: nil
+      )
+    end
 
     before do
       allow(MessageBroadcastJob).to receive(:perform_now)
@@ -39,6 +47,33 @@ describe SMSService do
 
     it 'returns the twilio sid and status' do
       expect(subject).to eq(MessageInfo.new(message_sid, message_status))
+    end
+
+    context 'there is a media url' do
+      before do
+        create :attachment, message: message
+      end
+
+      subject do
+        sms_service.send_message(
+          to: message.client.phone_number,
+          from: message.number_from,
+          body: message.body,
+          media_url: message.reload.attachments.first.media.url,
+          status_callback: status_callback
+        )
+      end
+
+      it 'returns the twilio sid and status' do
+        expect(twilio_client).to receive(:create).with(
+          to: message.client.phone_number,
+          from: message.number_from,
+          body: message.body,
+          media_url: message.reload.attachments.first.media.url,
+          status_callback: status_callback
+        )
+        expect(subject).to eq(MessageInfo.new(message_sid, message_status))
+      end
     end
   end
 

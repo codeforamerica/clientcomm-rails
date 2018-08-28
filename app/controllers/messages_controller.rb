@@ -20,11 +20,18 @@ class MessagesController < ApplicationController
     send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def create
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
-
+    valid_attachments = true
+    attachments = message_params[:attachments]&.map do |attachment|
+      file = Attachment.new(attachment)
+      valid_attachments = false if file.media_file_size > 5000000
+      valid_attachments = false unless ['image/jpeg', 'image/png', 'image/gif'].include? file.media_content_type
+      file
+    end
     message = TextMessage.new(
       reporting_relationship: rr,
       body: message_params[:body],
@@ -32,10 +39,11 @@ class MessagesController < ApplicationController
       number_to: client.phone_number,
       send_at: send_at,
       like_message_id: params[:like_message_id],
-      read: true
+      read: true,
+      attachments: attachments || []
     )
 
-    if message.invalid? || message.past_message?
+    if message.invalid? || message.past_message? || !valid_attachments
       @message = message
       @client = client
       @messages = past_messages(client: @client)
@@ -71,6 +79,7 @@ class MessagesController < ApplicationController
       format.js { head :no_content }
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @message = current_user.messages.find(params[:id])
@@ -130,7 +139,7 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:body, send_at: [:date, :time])
+    params.require(:message).permit(:body, send_at: [:date, :time], attachments: [:media])
   end
 
   private

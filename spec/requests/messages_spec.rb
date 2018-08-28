@@ -106,8 +106,51 @@ describe 'Messages requests', type: :request, active_job: true do
             }
           )
         end
-      end
 
+        context 'an image is attached' do
+          let(:image) { fixture_file_upload('spec/fixtures/fluffy_cat.jpg', 'image/jpg') }
+          let(:post_params) do
+            {
+              message: {
+                body: body,
+                send_at: message_send_at,
+                attachments: [{ media: image }]
+              },
+              client_id: client.id
+            }
+          end
+          subject do
+            post messages_path, params: post_params
+          end
+          it 'creates a new message on submit' do
+            subject
+            message = Message.find_by(body: body)
+            expect(message.attachments.count).to eq(1)
+            # some expectation about name of file - fluffy_cat
+          end
+
+          context 'image is too large' do
+            let(:image) { fixture_file_upload('spec/fixtures/large_image.jpg', 'image/jpg') }
+
+            it 'not to create message' do
+              perform_enqueued_jobs do
+                subject
+              end
+              expect(Message.all).to be_empty
+            end
+          end
+          context 'is not an image' do
+            let(:image) { fixture_file_upload('spec/fixtures/cat_contact.vcf', 'image/jpg') }
+
+            it 'not to create message' do
+              perform_enqueued_jobs do
+                subject
+              end
+              expect(Message.all).to be_empty
+            end
+          end
+        end
+      end
       context 'had positive_template_type' do
         let(:positive_template) { 'some positive template' }
         let(:post_params) do

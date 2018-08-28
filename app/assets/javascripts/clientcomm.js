@@ -75,9 +75,11 @@ function characterCount(element) {
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
-    counter = $('<span class="character-count pull-right hidden"></span>');
+    counter = $('<span class="character-count pull-right hidden"></span>'),
+    imageInput = $('#message_attachments_0_media');
 
   var modalVisible = label.length > 0;
+  setCounter(counter, element, modalVisible);
 
   if (label.length > 0) {
     counter.addClass('pull-bottom');
@@ -92,7 +94,13 @@ function characterCount(element) {
     setCounter(counter, element);
   });
 
-  element.on('keydown keyup focus paste', function(e){
+  imageInput.on('change', function(e) {
+    setTimeout(function(){
+      setCounter(counter, element, modalVisible);
+    });
+  });
+
+  element.on('keydown keyup focus paste input', function(e){
     setTimeout(function(){
       setCounter(counter, element, modalVisible);
     });
@@ -101,26 +109,27 @@ function characterCount(element) {
 
 function setCounter(counter, textField, modalVisible) {
   var length = $(textField).val().length;
+  var fileEmpty = [undefined, ''].includes($('#message_attachments_0_media').val());
+  isBlank = (length == 0) && (fileEmpty);
   var tooLongForSingleText = length > 160;
   var tooLongToSend = length >= 1600;
+  var cantSend = tooLongToSend || isBlank;
+
   counter.toggleClass('text--error', tooLongForSingleText);
   counter.toggleClass('hidden', !tooLongForSingleText);
+  $('#send_message').prop('disabled', cantSend);
+  $('#send_message').toggleClass('button--disabled', cantSend);
 
-  $('#send_message').prop('disabled', tooLongToSend);
-  $('#send_message').toggleClass('button--disabled', tooLongToSend);
+  $('#schedule_messages').prop('disabled', cantSend);
+  $('#schedule_messages').toggleClass('button--disabled', cantSend);
+  $('#schedule_message').prop('disabled', cantSend);
+  $('#schedule_message').toggleClass('button--disabled', cantSend);
 
-  $('#send_later').prop('disabled', tooLongToSend);
-  $('#send_later').toggleClass('button--disabled', tooLongToSend);
-
-  $('#schedule_message').prop('disabled', tooLongToSend);
-  $('#schedule_message').toggleClass('button--disabled', tooLongToSend);
-
-  $('#schedule_messages').prop('disabled', tooLongToSend);
-  $('#schedule_messages').toggleClass('button--disabled', tooLongToSend);
+  $('#send_later').prop('disabled', tooLongToSend || !fileEmpty);
+  $('#send_later').toggleClass('button--disabled', tooLongToSend || !fileEmpty);
 
   if (!modalVisible) {
     $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
-    $('#template-button').toggleClass('warning-visible', tooLongForSingleText);
   }
 
   if (tooLongToSend) {

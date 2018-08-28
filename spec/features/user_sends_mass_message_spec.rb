@@ -60,11 +60,6 @@ feature 'sending mass messages', active_job: true do
       end
     end
 
-    step 'user tries to submit invalid message' do
-      click_on 'Send'
-      expect(page).to have_content 'You need to add a message.'
-    end
-
     step 'when user enters a message that is too long' do
       fill_in 'Your message', with: too_long_message_body
 

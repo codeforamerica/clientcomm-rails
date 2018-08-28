@@ -2,6 +2,7 @@ require 'rails_helper'
 
 feature 'sending messages', active_job: true do
   let(:message_body) { 'You have an appointment tomorrow at 10am' }
+  let(:another_message_body) { 'Actually your appointment is rescheduled to 10:30am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:too_long_message_body) { 'abcd' * 401 }
   let(:client_1) { create :client, users: [myuser] }
@@ -79,9 +80,13 @@ feature 'sending messages', active_job: true do
       expect(page.find('textarea#message_body').value).to eq(option_text)
       expect(page).to have_css('like-options', visible: :hidden)
 
-      click_on 'send_message'
+      perform_enqueued_jobs do
+        click_on 'send_message'
+        expect(page).to have_css '.message--outbound div', text: option_text
+      end
 
       wait_for_ajax
+
       expect_most_recent_analytics_event(
         'message_send' => {
           'positive_template' => true,
@@ -90,7 +95,7 @@ feature 'sending messages', active_job: true do
       )
     end
 
-    step 'postiive reinforcements do not show up if the last message was outbound' do
+    step 'postive reinforcements do not show up if the last message was outbound' do
       visit reporting_relationship_path(rr)
       expect(page).to have_css('like-options', visible: :hidden)
     end
@@ -107,16 +112,18 @@ feature 'sending messages', active_job: true do
     end
 
     step 'user clicks positive reinforcement but deletes whole body' do
-      perform_enqueued_jobs do
-        find('like-options like-option:first-child').click
-      end
+      find('like-options like-option:first-child').click
 
       fill_in 'Send a text message', with: ''
-      fill_in 'Send a text message', with: message_body
+      fill_in 'Send a text message', with: another_message_body
 
-      click_on 'send_message'
+      perform_enqueued_jobs do
+        click_on 'send_message'
+        expect(page).to have_css '.message--outbound div', text: another_message_body
+      end
 
       wait_for_ajax
+
       expect_most_recent_analytics_event(
         'message_send' => {
           'positive_template' => false,
