@@ -223,7 +223,7 @@ feature 'user edits client', :js do
 
     step 'submits badly formatted next court date' do
       fill_in 'Court date (optional)', with: '111'
-      find('input#next_court_date_at').send_keys(:escape)
+      find('input#client_next_court_date_at').send_keys(:escape)
       click_on 'Save changes'
       expect(page).to have_content 'Edit client'
       expect(page).to have_content I18n.t('activerecord.errors.models.client.attributes.next_court_date_at.invalid')
