@@ -40,9 +40,7 @@ class MessagesController < ApplicationController
       attachments: attachments || []
     )
 
-    valid_attachment = ['image/png', 'image/gif', 'image/jpeg'].include? attachments.first.media_content_type
-
-    if message.invalid? || message.past_message? || !valid_attachment
+    if message.invalid? || message.past_message?
       @message = message
       @client = client
       @messages = past_messages(client: @client)

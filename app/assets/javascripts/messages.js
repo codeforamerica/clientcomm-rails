@@ -63,11 +63,18 @@ $(document).ready(function(){
         $('span.image-help-text').text('You can only send .gif, .png, and .jpg files');
         $('#file-name-preview').addClass('warning');
         $('#image-cancel i').removeClass('icon-close').addClass('icon-warning');
-	$('#message_attachments_0_media').val('');
-    } else {
-        $('span.image-help-text').html(fileName+'<added></added>');
-        $('#file-name-preview').removeClass('warning');
-        $('#image-cancel i').removeClass('icon-warning').addClass('icon-close');
+        $('#message_attachments_0_media').val('');
+      } else {
+        if(this.files[0].size > 5000000) {
+          $('span.image-help-text').text('You can only send files <5MB in size');
+          $('#file-name-preview').addClass('warning');
+          $('#image-cancel i').removeClass('icon-close').addClass('icon-warning');
+          $('#message_attachments_0_media').val('');
+        } else {
+          $('span.image-help-text').html('<span class="file-name">'+fileName+'</span><added></added>');
+          $('#file-name-preview').removeClass('warning');
+          $('#image-cancel i').removeClass('icon-warning').addClass('icon-close');
+        }
       }
 
     } else {

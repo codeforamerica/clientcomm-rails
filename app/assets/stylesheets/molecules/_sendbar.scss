@@ -178,6 +178,18 @@ section.message--create #sendbar-container{
 
 #file-name-preview {
   margin-left: 60px;
+
+  .image-help-text {
+    .file-name {
+      max-width: 200px;
+      overflow: hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      display: inline-block;
+    }
+    display: inline-block;
+    vertical-align: bottom;
+  }
 }
 
 #image-cancel {
