@@ -7,33 +7,33 @@
     <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
       <p>
-      Transfer <%= @client.full_name %> to another user. Your conversation history with <%= @client.first_name %> will not be transferred.
+      Transfer <%= @client_form.client.full_name %> to another user. Your conversation history with <%= @client_form.client.first_name %> will not be transferred.
       </p>
       <%= transfer_form.gcf_select_fk(:user_id, 'Transfer to', @transfer_users, prompt: 'Pick user') %>
       <fieldset class="form-group">
         <label for="transfer_note"><p class="form-question">Include a note to be emailed to the new user <i>(optional)</i></p></label>
         <%= text_area_tag(:transfer_note, nil, class: 'textarea') %>
       </fieldset>
-      <%= transfer_form.hidden_field :client_id, value: @client.id %>
-      <%= transfer_form.submit "Transfer #{@client.first_name} #{@client.last_name}", id: :transfer_client, class: :button %>
-      <div class="notice unread-warning transfer <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
+      <%= transfer_form.hidden_field :client_id, value: @client_form.client.id %>
+      <%= transfer_form.submit "Transfer #{@client_form.client.full_name}", id: :transfer_client, class: :button %>
+      <div class="notice unread-warning transfer <%= "hidden" unless @client_form.reporting_relationship.messages.unread.any? %>">
         <div class="icon-warning-container"><i class="icon-warning"></i></div>
         <div>
-          <%= t('views.clients.edit.manage.unread_transfer', href: reporting_relationship_path(@reporting_relationship)).html_safe %>
+          <%= t('views.clients.edit.manage.unread_transfer', href: reporting_relationship_path(@client_form.reporting_relationship)).html_safe %>
         </div>
       </div>
     <% end %>
-    <%= form_for @client do |client_form| %>
+    <%= form_for @client_form.client do |client_form| %>
       <h4>Deactivate client</h4>
       <p>
         When a client leaves your caseload you can deactivate them from your contact list.
         If they send you a message later they will automatically return to your contact list.
       </p>
       <div id='survey' class='notice'>
-        <%= client_form.fields_for :reporting_relationships, @reporting_relationship do |rr_fields| %>
+        <%= client_form.fields_for :reporting_relationships, @client_form.reporting_relationship do |rr_fields| %>
           <%= rr_fields.hidden_field :active, value: false %>
         <% end %>
-        <%= client_form.fields_for :surveys, @client.surveys.new do |survey_fields| %>
+        <%= client_form.fields_for :surveys, @client_form.client.surveys.new do |survey_fields| %>
           <% SurveyQuestion.all.each do |sq| %>
             <p class='question-text'><%= sq.text %></p>
             <%=
@@ -55,17 +55,17 @@
           <% end %>
         <% end %>
       </div>
-      <%= client_form.submit "Deactivate #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
-      <div class="notice unread-warning deactivate <%= "hidden" unless @reporting_relationship.messages.unread.any? %>">
+      <%= client_form.submit "Deactivate #{@client_form.client.full_name}", id: :deactivate_client, class: :button %>
+      <div class="notice unread-warning deactivate <%= "hidden" unless @client_form.reporting_relationship.messages.unread.any? %>">
         <div class="icon-warning-container"><i class="icon-warning"></i></div>
         <div>
-          <%= t('views.clients.edit.manage.unread_deactivate', href: reporting_relationship_path(@reporting_relationship)).html_safe %>
+          <%= t('views.clients.edit.manage.unread_deactivate', href: reporting_relationship_path(@client_form.reporting_relationship)).html_safe %>
         </div>
       </div>
     <% end %>
       <h4>Download transcript</h4>
-      <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
-      <% rr = @client.reporting_relationship(user: current_user) %>
+      <p>You can download a text file with a transcript of your message history with <%= @client_form.client.full_name %>.</p>
+      <% rr = @client_form.client.reporting_relationship(user: current_user) %>
       <a href="<%= reporting_relationship_messages_download_path(rr) %>">
         <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
       </a>

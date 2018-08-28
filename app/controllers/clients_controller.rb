@@ -34,7 +34,7 @@ class ClientsController < ApplicationController
 
       redirect_to reporting_relationship_path(@client_form.reporting_relationship)
     else
-      @existing_client = Client.find_by(phone_number: @client.phone_number)
+      @existing_client = Client.find_by(phone_number: @client_form.phone_number)
       @conflicting_user = @existing_client&.users&.active_rr&.where&.not(id: current_user.id)
                                           &.find_by(department: current_user.department)
 
@@ -48,15 +48,16 @@ class ClientsController < ApplicationController
   end
 
   def edit
-    @client = current_user.clients.find(params[:id])
-    @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
+    client = current_user.clients.find(params[:id])
+    reporting_relationship = client.reporting_relationships.find_by(user: current_user)
+    @client_form = ClientForm.new(client: client, reporting_relationship: reporting_relationship)
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = current_user.department.eligible_users.active
                                   .where.not(id: current_user.id)
                                   .order(:full_name).pluck(:full_name, :id)
     analytics_track(
       label: 'client_edit_view',
-      data: @client.analytics_tracker_data.merge(source: request.referer)
+      data: client.analytics_tracker_data.merge(source: request.referer)
     )
   end
 
@@ -92,16 +93,18 @@ class ClientsController < ApplicationController
   private
 
   def track_errors(method)
-    error_types = []
-    @client.errors.details.each do |column, errors|
+    data = { error_types: [] }
+    @client_form.errors.details.each do |column, errors|
       errors.each do |item|
-        error_types << "#{column}_#{item[:error]}"
+        data[:error_types] << "#{column}_#{item[:error]}"
       end
     end
 
+    data.merge(@client.analytics_tracker_data) if @client.present?
+
     analytics_track(
       label: "client_#{method}_error",
-      data: @client.analytics_tracker_data.merge(error_types: error_types)
+      data: data
     )
   end
 
@@ -179,7 +182,7 @@ class ClientsController < ApplicationController
   end
 
   def handle_errors_other_than_phone_number_taken
-    return if @client.errors.added?(:phone_number, :taken)
+    return if @client_form.errors.added?(:phone_number, :taken)
 
     track_errors('create')
     flash.now[:alert] = t('flash.errors.client.invalid')
@@ -188,11 +191,11 @@ class ClientsController < ApplicationController
   end
 
   def handle_conflicting_user
-    return unless @client.errors.added?(:phone_number, :taken)
+    return unless @client_form.errors.added?(:phone_number, :taken)
     return unless @conflicting_user
 
-    @client.errors.delete(:phone_number)
-    @client.errors.add(
+    @client_form.errors.delete(:phone_number)
+    @client_form.errors.add(
       :phone_number,
       t(
         'activerecord.errors.models.reporting_relationship.attributes.client.existing_dept_relationship',
@@ -206,7 +209,7 @@ class ClientsController < ApplicationController
   end
 
   def handle_existing_relationship
-    return unless @client.errors.added?(:phone_number, :taken)
+    return unless @client_form.errors.added?(:phone_number, :taken)
     return if @conflicting_user
 
     existing_relationship = current_user.reporting_relationships.find_by(client: @existing_client)
@@ -219,7 +222,7 @@ class ClientsController < ApplicationController
   end
 
   def handle_new_relationship_with_existing_client
-    return unless @client.errors.added?(:phone_number, :taken)
+    return unless @client_form.errors.added?(:phone_number, :taken)
     return if @conflicting_user
     return if current_user.clients.include?(@existing_client)
 
