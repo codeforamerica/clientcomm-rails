@@ -77,7 +77,7 @@ feature 'user edits client', :js do
         )
     end
 
-    step 'navigates to edit client form' do
+    step 'navigates to edit client form and edits the client' do
       click_on 'Manage client'
       expect(find_field('Notes').value).to eq new_note
       expect(page).to have_field('First name', with: new_first_name)

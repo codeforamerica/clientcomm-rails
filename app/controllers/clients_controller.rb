@@ -57,10 +57,11 @@ class ClientsController < ApplicationController
   def edit
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
+    @merge_reporting_relationship = ReportingRelationship.new
     @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = current_user.department.eligible_users.active
-                                  .where.not(id: current_user.id)
-                                  .order(:full_name).pluck(:full_name, :id)
+    @transfer_users = transfer_users
+    @merge_clients = merge_clients
+
     analytics_track(
       label: 'client_edit_view',
       data: @client.analytics_tracker_data.merge(source: request.referer)
@@ -71,7 +72,8 @@ class ClientsController < ApplicationController
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationship(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
+    @transfer_users = transfer_users
+    @merge_clients = merge_clients
 
     @client.assign_attributes(client_params)
 
@@ -239,6 +241,16 @@ class ClientsController < ApplicationController
       render :confirm
     end
     throw :handled
+  end
+
+  def transfer_users
+    current_user.department.eligible_users.active.where.not(id: current_user.id)
+                .order(:full_name).pluck(:full_name, :id)
+  end
+
+  def merge_clients
+    current_user.clients.active.where.not(id: @client.id).order(:first_name, :last_name)
+                .map { |c| ["#{c.first_name.strip} #{c.last_name.strip}", c.id] }
   end
 
   def client_params

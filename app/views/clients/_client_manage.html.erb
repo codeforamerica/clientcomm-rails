@@ -4,6 +4,12 @@
   </div>
   <div class="form-card__content">
     <div>
+    <% unless @merge_clients.empty? %>
+      <%= form_for @merge_reporting_relationship, builder: GcfFormBuilder do |merge_form| %>
+        <h4>Merge duplicate clients</h4>
+        <%= merge_form.gcf_select_fk(:client_id, 'You can combine this client with another client record.', @merge_clients, prompt: 'Pick client') %>
+      <% end %>
+    <% end %>
     <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
       <p>
