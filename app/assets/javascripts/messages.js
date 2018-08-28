@@ -71,7 +71,8 @@ $(document).ready(function(){
           $('#image-cancel i').removeClass('icon-close').addClass('icon-warning');
           $('#message_attachments_0_media').val('');
         } else {
-          $('span.image-help-text').html('<span class="file-name">'+fileName+'</span><added></added>');
+          $('span.image-help-text').html('<span class="file-name"></span><added></added>');
+          $('span.image-help-text span.file-name').text(fileName);
           $('#file-name-preview').removeClass('warning');
           $('#image-cancel i').removeClass('icon-warning').addClass('icon-close');
         }

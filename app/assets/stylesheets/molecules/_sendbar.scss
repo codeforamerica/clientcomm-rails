@@ -182,14 +182,23 @@ section.message--create #sendbar-container{
   .image-help-text {
     vertical-align: middle;
     display: inline-block;
+
     .file-name {
-      max-width: 200px;
+      max-width: 180px;
       font-size: 15px;
       overflow: hidden;
       white-space:nowrap;
       text-overflow:ellipsis;
       display: inline-block;
       vertical-align: middle;
+
+      @include media($mobile-up) {
+        max-width: 320px;
+      }
+
+      @include media($tablet-up) {
+        max-width: 480px;
+      }
     }
   }
 }
