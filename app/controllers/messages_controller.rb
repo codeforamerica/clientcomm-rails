@@ -24,10 +24,12 @@ class MessagesController < ApplicationController
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
     send_at = message_params[:send_at].present? ? DateParser.parse(message_params[:send_at][:date], message_params[:send_at][:time]) : Time.zone.now
-    # message_params[:attachments]['0']['media']
-    # attachments = [Attachment.new(message_params[:attachments][0])]
+    valid_attachments = true
     attachments = message_params[:attachments]&.map do |attachment|
-      Attachment.new(attachment)
+      file = Attachment.new(attachment)
+      valid_attachments = false if file.media_file_size > 5000000
+      valid_attachments = false unless ['image/jpeg', 'image/png', 'image/gif'].include? file.media_content_type
+      file
     end
     message = TextMessage.new(
       reporting_relationship: rr,
@@ -40,7 +42,7 @@ class MessagesController < ApplicationController
       attachments: attachments || []
     )
 
-    if message.invalid? || message.past_message?
+    if message.invalid? || message.past_message? || !valid_attachments
       @message = message
       @client = client
       @messages = past_messages(client: @client)
