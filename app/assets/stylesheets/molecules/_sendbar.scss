@@ -34,6 +34,9 @@
       &:focus {
         outline: 0;
       }
+      @supports(-webkit-overflow-scrolling: touch) {
+        margin-left: -30px;
+      }
     }
     #send_message, #send_later {
       display: none;
@@ -98,6 +101,7 @@
   border-right: none;
   border-top: none;
   border-bottom: none;
+  border-radius: 0;
   padding: .5em 1.2em .5em .7em;
   margin: 0;
   outline: 0;
@@ -162,7 +166,7 @@ section.message--create #sendbar-container{
 #image-upload {
   float: left;
   width: 60px;
-  margin-top: 4px;
+  margin-top: 5px;
   margin-bottom: -4px;
   margin-right: -2px;
   text-align: center;
