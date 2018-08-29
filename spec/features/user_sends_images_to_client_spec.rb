@@ -60,6 +60,8 @@ feature 'user sends images', active_job: true do
         click_on 'send_message'
         expect(page).to have_css '.message--outbound img'
         expect(page).to_not have_css '#file-name-preview span.image-help-text', text: 'fluffy_cat.jpg'
+        results = page.evaluate_script('$("#message_attachments_0_media").val()==""')
+        expect(page.evaluate_script(results)).to equal true
       end
     end
   end

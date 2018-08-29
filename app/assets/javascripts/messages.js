@@ -115,6 +115,7 @@ $(document).ready(function(){
 
   $('form#new_message').on('ajax:success', function(e) {
     $('#message_body').val('');
+    $('#message_attachments_0_media').val('');
     $('#file-name-preview').addClass('hidden');
     $('like-options').addClass('hidden');
     autosize.update(sendInput);
