@@ -115,10 +115,9 @@ feature 'sending mass messages', active_job: true do
     step 'then user sends message' do
       perform_enqueued_jobs do
         click_on 'Send'
+        expect(page).to have_current_path(clients_path)
+        expect(page).to have_content I18n.t('flash.notices.mass_message.sent')
       end
-
-      expect(page).to have_current_path(clients_path)
-      expect(page).to have_content I18n.t('flash.notices.mass_message.sent')
     end
 
     step 'then messages were sent to client 1 and 3' do
