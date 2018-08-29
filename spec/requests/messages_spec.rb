@@ -139,7 +139,6 @@ describe 'Messages requests', type: :request, active_job: true do
                 'attachment' => true
               }
             )
-
           end
 
           context 'image is too large' do

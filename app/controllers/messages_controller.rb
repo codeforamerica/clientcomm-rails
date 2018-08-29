@@ -21,6 +21,7 @@ class MessagesController < ApplicationController
   end
 
   # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength
   def create
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
@@ -32,7 +33,7 @@ class MessagesController < ApplicationController
       valid_attachments = false unless ['image/jpeg', 'image/png', 'image/gif'].include? file.media_content_type
       file
     end
-    attachments = attachments || []
+    attachments ||= []
     message = TextMessage.new(
       reporting_relationship: rr,
       body: message_params[:body],
@@ -81,6 +82,7 @@ class MessagesController < ApplicationController
       format.js { head :no_content }
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
