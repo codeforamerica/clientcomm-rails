@@ -20,8 +20,6 @@ class MessagesController < ApplicationController
     send_data transcript.encode(crlf_newline: true), filename: "#{@client.first_name}_#{@client.last_name}_transcript.txt"
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
-  # rubocop:disable Metrics/MethodLength
   def create
     client = current_user.clients.find params[:client_id]
     rr = ReportingRelationship.find_by(user: current_user, client: client)
@@ -59,31 +57,13 @@ class MessagesController < ApplicationController
 
     message.send_message
 
-    if message_params[:send_at].present?
-      flash[:notice] = 'Your message has been scheduled'
-      analytics_track(
-        label: 'message_scheduled',
-        data: message.analytics_tracker_data.merge(mass_message: false)
-      )
-    else
-      tracking_data = { mass_message: false }
-      tracking_data[:positive_template] = params[:positive_template_type].present?
-      tracking_data[:positive_template_type] = params[:positive_template_type]
-      tracking_data[:attachment] = attachments.any?
-
-      analytics_track(
-        label: 'message_send',
-        data: message.analytics_tracker_data.merge(tracking_data)
-      )
-    end
+    track_create(message: message, send_at: message_params[:send_at], has_attachment: attachments.any?)
 
     respond_to do |format|
       format.html { redirect_to reporting_relationship_path(current_user.reporting_relationships.find_by(client: client)) }
       format.js { head :no_content }
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def edit
     @message = current_user.messages.find(params[:id])
@@ -157,5 +137,25 @@ class MessagesController < ApplicationController
     rr.messages
       .where('send_at < ?', Time.zone.now)
       .order(send_at: :asc)
+  end
+
+  def track_create(message:, send_at:, has_attachment:)
+    if send_at.present?
+      flash[:notice] = 'Your message has been scheduled'
+      analytics_track(
+        label: 'message_scheduled',
+        data: message.analytics_tracker_data.merge(mass_message: false)
+      )
+    else
+      tracking_data = { mass_message: false }
+      tracking_data[:positive_template] = params[:positive_template_type].present?
+      tracking_data[:positive_template_type] = params[:positive_template_type]
+      tracking_data[:attachment] = has_attachment
+
+      analytics_track(
+        label: 'message_send',
+        data: message.analytics_tracker_data.merge(tracking_data)
+      )
+    end
   end
 end
