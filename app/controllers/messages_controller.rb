@@ -32,6 +32,7 @@ class MessagesController < ApplicationController
       valid_attachments = false unless ['image/jpeg', 'image/png', 'image/gif'].include? file.media_content_type
       file
     end
+    attachments = attachments || []
     message = TextMessage.new(
       reporting_relationship: rr,
       body: message_params[:body],
@@ -40,7 +41,7 @@ class MessagesController < ApplicationController
       send_at: send_at,
       like_message_id: params[:like_message_id],
       read: true,
-      attachments: attachments || []
+      attachments: attachments
     )
 
     if message.invalid? || message.past_message? || !valid_attachments
@@ -67,6 +68,7 @@ class MessagesController < ApplicationController
       tracking_data = { mass_message: false }
       tracking_data[:positive_template] = params[:positive_template_type].present?
       tracking_data[:positive_template_type] = params[:positive_template_type]
+      tracking_data[:attachment] = attachments.any?
 
       analytics_track(
         label: 'message_send',

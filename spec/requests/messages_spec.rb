@@ -102,7 +102,8 @@ describe 'Messages requests', type: :request, active_job: true do
               'message_id' => message.id,
               'message_length' => body.length,
               'positive_template' => false,
-              'positive_template_type' => nil
+              'positive_template_type' => nil,
+              'attachment' => false
             }
           )
         end
@@ -126,7 +127,19 @@ describe 'Messages requests', type: :request, active_job: true do
             subject
             message = Message.find_by(body: body)
             expect(message.attachments.count).to eq(1)
-            # some expectation about name of file - fluffy_cat
+            expect(message.attachments.first.media_file_name).to eq('fluffy_cat.jpg')
+            expect(message.attachments.first.media_content_type).to eq('image/jpeg')
+            expect_most_recent_analytics_event(
+              'message_send' => {
+                'client_id' => client.id,
+                'message_id' => message.id,
+                'message_length' => body.length,
+                'positive_template' => false,
+                'positive_template_type' => nil,
+                'attachment' => true
+              }
+            )
+
           end
 
           context 'image is too large' do
