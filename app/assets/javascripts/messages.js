@@ -114,7 +114,6 @@ $(document).ready(function(){
   autosize(sendInput);
 
   $('form#new_message').submit(function(e) {
-    console.log('test');
     $('#send_message').prop('disabled', true);
     $('#send_message').addClass('button--disabled');
 
