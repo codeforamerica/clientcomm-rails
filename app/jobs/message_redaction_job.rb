@@ -4,7 +4,7 @@ class MessageRedactionJob < ApplicationJob
 
   queue_as :low_priority
 
-  retry_on Twilio::REST::RestError, wait: :exponentially_longer
+  retry_on Twilio::REST::RestError, wait: ->(executions) { 240 * executions * executions }
   retry_on Faraday::ConnectionFailed, wait: :exponentially_longer
 
   def perform(message:)
