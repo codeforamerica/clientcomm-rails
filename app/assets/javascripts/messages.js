@@ -113,6 +113,15 @@ $(document).ready(function(){
 
   autosize(sendInput);
 
+  $('form#new_message').submit(function(e) {
+    console.log('test');
+    $('#send_message').prop('disabled', true);
+    $('#send_message').addClass('button--disabled');
+
+    $('#send_icon').prop('disabled', true);
+    $('#send_icon').addClass('button--disabled');
+  });
+
   $('form#new_message').on('ajax:success', function(e) {
     $('#message_body').val('');
     $('#message_attachments_0_media').val('');
