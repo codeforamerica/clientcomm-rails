@@ -1,7 +1,7 @@
 <% if attachment.image? %>
   <div class="image-container" style="padding-top: <%= (100 * (attachment.dimensions[1].to_f / attachment.dimensions[0].to_f)).to_i %>%;">
-    <img src="<%= attachment.media.expiring_url(10) %>" />
+    <img src="<%= attachment.media.expiring_url(600) %>" />
   </div>
 <% else %>
-  <a href="<%= attachment.media.expiring_url(10) %>">View Attachment</a>
+  <a href="<%= attachment.media.expiring_url(600) %>">View Attachment</a>
 <% end %>
