@@ -24,10 +24,11 @@ namespace :messages do
               }
             ]
           )
-          Rails.logger.warn { "404 getting message status from Twilio sid: #{m.twilio_sid}" }
+          Rails.logger.warn "404 getting message status from Twilio sid: #{m.twilio_sid}"
+        else
+          m.update!(twilio_status: twilio_status)
+          MessageRedactionJob.perform_later(message: m)
         end
-        m.update!(twilio_status: twilio_status)
-        MessageRedactionJob.perform_later(message: m)
       end
     end
   end
