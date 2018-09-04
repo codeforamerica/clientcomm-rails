@@ -72,15 +72,12 @@
       <div class="modal-footer">
         <div class="toolbar__left-responsive">
           <%= f.submit submit_text, id: 'schedule_message', class: 'button button--primary toolbar__item', role: 'button' %>
-        <% if modal_id == 'edit-message-modal' %>
-          <%= link_to 'Delete message', message_path(@message), class: 'button button--danger toolbar__item', method: :delete %>
-        <% end %>
-        </div>
-        <div class="toolbar__right-responsive">
-          <button type="button" class="button toolbar__item" data-dismiss="modal">Cancel</button>
+          <% if modal_id == 'edit-message-modal' %>
+            <%= link_to 'Delete message', message_path(@message), class: 'button button--danger toolbar__item', method: :delete %>
+          <% end %>
         </div>
       </div>
-      <% end %>
+    <% end %>
 
     </div>
   </div>
