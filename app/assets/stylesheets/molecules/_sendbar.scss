@@ -1,6 +1,6 @@
 .sendbar {
   border-collapse: separate;
-  display: table;
+  display: flex;
   margin: auto;
   max-width: 960px;
   padding: $padding-small;
@@ -18,11 +18,9 @@
     .icon-photo {
       font-size: 34px;
     }
-
   }
   #sendbar-buttons {
     width: 20px;
-    float: right;
     margin: 10px 20px;
     #send_icon {
       display: block;
