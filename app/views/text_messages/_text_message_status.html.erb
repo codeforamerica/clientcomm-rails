@@ -1,0 +1,13 @@
+<p class="message--label <%= text_message.twilio_status %>">
+<% if text_message.twilio_status == 'undelivered' %>
+  <%= t('message.status.undelivered') %>
+<% elsif text_message.twilio_status == 'blacklisted' %>
+  <%= t('message.status.blacklisted') %>
+<% elsif [nil, 'sent', 'sending'].include? text_message.twilio_status %>
+  <%= t('message.status.sent') %><loading-dots><dot></dot><dot></dot><dot></dot></loading-dots>
+<% elsif text_message.twilio_status == 'maybe_undelivered' %>
+  <%= t('message.status.maybe_undelivered') %>
+<% else %>
+  <%= text_message.twilio_status %> <%= text_message.send_at.to_s(:message_timestamp) %>
+<% end %>
+</p>

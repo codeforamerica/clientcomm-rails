@@ -4,11 +4,14 @@ class MessageBroadcastJob < ApplicationJob
 
   def perform(message:)
     channel = "messages_#{message.user.id}_#{message.client.id}"
-    content = render_message_partial(message)
+    message_html = render_message_partial(message)
+    status_html = render_message_status_partial(message)
     message_dom_id = "message_#{message.id}"
     ActionCable.server.broadcast(
       channel,
-      message_html: content,
+      message_html: message_html,
+      message_status_html: status_html,
+      message_status: message.twilio_status,
       message_dom_id: message_dom_id,
       message_id: message.id
     )
@@ -21,6 +24,13 @@ class MessageBroadcastJob < ApplicationJob
     MessagesController.render(
       partial: "#{message.class.to_s.tableize}/#{message.class.to_s.tableize.singularize}",
       locals: { "#{message.class.to_s.tableize.singularize}": message }
+    )
+  end
+
+  def render_message_status_partial(message)
+    return nil unless message.class.to_s == 'TextMessage'
+    MessagesController.render(
+      partial: 'text_messages/text_message_status', locals: { text_message: message }
     )
   end
 end

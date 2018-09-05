@@ -29,12 +29,19 @@ RSpec.describe MessageBroadcastJob, active_job: true, type: :job do
       # validate the data that was sent to our mock server
       message_partial = MessagesController.render(
         partial: 'text_messages/text_message',
-        locals: { 'text_message': message }
+        locals: { text_message: message }
+      )
+
+      status_partial = MessagesController.render(
+        partial: 'text_messages/text_message_status',
+        locals: { text_message: message }
       )
 
       expect(mock_server).to have_received(:broadcast).once.with(
         "messages_#{user.id}_#{message.client.id}",
         message_html: message_partial,
+        message_status_html: status_partial,
+        message_status: message.twilio_status,
         message_dom_id: "message_#{message.id}",
         message_id: message.id
       )

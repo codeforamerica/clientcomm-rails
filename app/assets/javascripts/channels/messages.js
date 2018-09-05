@@ -45,11 +45,17 @@ var Messages = {
 
     replaceEmoji(message_html);
   },
-  updateMessage: function(dom_id, message_id, message_html) {
+  updateMessage: function(dom_id, message_id, message_html, status_html, status) {
     // update the message in place, if it's on the page
     var msgElement = $("#" + dom_id);
     if (msgElement.length) {
+      var statusElement = msgElement.find(".message--label");
+      if (statusElement.length && status_html) {
+        statusElement.replaceWith(status_html);
+        msgElement.find(".message--content").attr("class", "message--content " + status);
+      } else {
         msgElement.replaceWith(message_html);
+      }
     } else {
       this.appendMessage(message_html);
     }
@@ -90,7 +96,7 @@ $(document).ready(function() {
       { channel: 'MessagesChannel', client_id: clientId },
       {
         received: function(data) {
-          Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html);
+          Messages.updateMessage(data.message_dom_id, data.message_id, data.message_html, data.message_status_html, data.message_status);
         }
       }
     );
