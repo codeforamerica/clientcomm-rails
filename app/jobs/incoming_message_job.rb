@@ -22,10 +22,8 @@ class IncomingMessageJob < ApplicationJob
 
     MessageRedactionJob.perform_later(message: new_message)
 
-    # queue message and notification broadcasts
     MessageBroadcastJob.perform_later(message: new_message)
 
-    # construct and queue an alert
     message_alert = MessageAlertBuilder.build_alert(
       reporting_relationship: rr,
       reporting_relationship_path: reporting_relationship_path(rr),

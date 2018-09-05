@@ -20,7 +20,6 @@ class TwilioController < ApplicationController
         message.update!(twilio_status: params[:SmsStatus], last_twilio_update: request_start)
       end
 
-      # put the message broadcast in the queue
       MessageBroadcastJob.perform_later(message: message)
 
       if params[:SmsStatus] == 'delivered'

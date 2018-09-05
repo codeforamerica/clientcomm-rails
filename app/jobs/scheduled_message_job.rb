@@ -9,7 +9,6 @@ class ScheduledMessageJob < ApplicationJob
   def perform(message:)
     status_callback = Rails.application.routes.url_helpers.incoming_sms_status_url
     return if message.sent || (message.send_at > Time.zone.now)
-    MessageBroadcastJob.perform_now(message: message)
 
     message.reporting_relationship.update!(last_contacted_at: message.send_at)
     media_url = message.attachments.first&.media&.expiring_url(10)
