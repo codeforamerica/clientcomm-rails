@@ -19,7 +19,7 @@ var file_types = [
 ]
 
 function validFileType(file) {
-  return file_types.includes(file.type);
+  return file_types.indexOf(file.type) != -1;
  }
 
 $(window).on('message-event', function toggleLikeOptions(e, message) {

@@ -75,7 +75,7 @@ function characterCount(element) {
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
-    counter = $('<span class="character-count pull-right hidden"></span>'),
+    counter = $('<span class="character-count hidden"></span>'),
     imageInput = $('#message_attachments_0_media');
 
   var modalVisible = label.length > 0;
@@ -85,7 +85,7 @@ function characterCount(element) {
     counter.addClass('pull-bottom');
     label.wrap('<div class="relative-container"></div>').after(counter);
   } else {
-    element.before(counter);
+    element.parents('.sendbar-inner').before(counter);
   }
 
   var form = element.prop('form');
@@ -109,7 +109,7 @@ function characterCount(element) {
 
 function setCounter(counter, textField, modalVisible) {
   var length = $(textField).val().length;
-  var fileEmpty = [undefined, ''].includes($('#message_attachments_0_media').val());
+  var fileEmpty = [undefined, ''].indexOf($('#message_attachments_0_media').val()) != -1;
   isBlank = (length == 0) && (fileEmpty);
   var tooLongForSingleText = length > 160;
   var tooLongToSend = length >= 1600;
@@ -132,7 +132,7 @@ function setCounter(counter, textField, modalVisible) {
   $('#send_later').toggleClass('button--disabled', tooLongToSend || !fileEmpty);
 
   if (!modalVisible) {
-    $('#sendbar-buttons').toggleClass('warning-visible', tooLongForSingleText);
+    $('#sendbar-buttons').toggleClass(tooLongForSingleText);
   }
 
   if (tooLongToSend) {
