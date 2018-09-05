@@ -1,10 +1,10 @@
 <section class="message--create">
+  <% if @messages_scheduled.count > 0 %>
+    <% rr = @client.reporting_relationship(user: current_user) %>
   <div class="grid">
-    <% if @messages_scheduled.count > 0 %>
-      <% rr = @client.reporting_relationship(user: current_user) %>
-      <%= render "reporting_relationships/scheduled_messages_link", count: @messages_scheduled.count, rr: rr %>
-    <% end %>
+    <%= render "reporting_relationships/scheduled_messages_link", count: @messages_scheduled.count, rr: rr %>
   </div>
+  <% end %>
 
   <div id="sendbar-container">
     <div class="sendbar">

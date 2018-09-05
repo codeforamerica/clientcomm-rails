@@ -1,14 +1,14 @@
 .sendbar {
-  display: table;
-  width: 100%;
-  max-width: 960px;
-  margin: auto;
   border-collapse: separate;
+  display: table;
+  margin: auto;
+  max-width: 960px;
+  padding: $padding-small;
+  width: 100%;
   .sendbar-inner {
     height: auto;
     overflow: hidden;
   }
-
   #sendbar-textarea {
     float: none;
     width: auto;
@@ -20,7 +20,6 @@
     }
 
   }
-
   #sendbar-buttons {
     width: 20px;
     float: right;
@@ -58,7 +57,6 @@
       }
     }
   }
-
   #template-button {
     position: absolute;
     padding: 13px;
@@ -78,6 +76,10 @@
   }
 }
 
+.sendbar-showing-count {
+  padding: 0 $padding-small $padding-small $padding-small;
+}
+
 .character-count {
   font-size: 12px;
   line-height: 1em;
@@ -93,7 +95,7 @@
     position: absolute;
     bottom: 0;
   }
-  right: 0;
+  left: 0;
 }
 
 .sendbar__input {

@@ -117,6 +117,7 @@ function setCounter(counter, textField, modalVisible) {
 
   counter.toggleClass('text--error', tooLongForSingleText);
   counter.toggleClass('hidden', !tooLongForSingleText);
+  counter.parents('.sendbar').toggleClass('sendbar-showing-count', tooLongForSingleText);
   $('#send_message').prop('disabled', cantSend);
   $('#send_message').toggleClass('button--disabled', cantSend);
 
