@@ -5,16 +5,22 @@
   max-width: 960px;
   padding: $padding-small;
   width: 100%;
+
   .sendbar-inner {
     height: auto;
     overflow: hidden;
   }
+  #sendbar-image-upload {
+    border-color: #018470;
+    border-style: solid;
+    border-width: 2px 0px 2px 2px;
+    flex: 0 0 60px;
+    text-align: center;
+  }
   #sendbar-textarea {
-    float: none;
-    width: auto;
-    overflow: hidden;
-    border: 2px solid $color-teal;
-    border-radius: .2em;
+    border: 2px solid #018470;
+    flex-grow: 1;
+    width: 100%;
   }
   #sendbar-buttons {
     flex: 0 0 20px;
@@ -53,21 +59,44 @@
       }
     }
   }
-  #template-button {
-    position: absolute;
-    padding: 13px;
-    font-size: 24px;
-    color: $color-grey;
-    right: 0px;
-    top: 0px;
-    outline: 0;
+}
 
-    &:hover {
-      color: #a6005e;
+#sendbar-like-options {
+  border-collapse: separate;
+  display: flex;
+  margin: auto;
+  max-width: 960px;
+  padding-bottom: 1rem;
+  width: 100%;
+
+  like-options {
+    float: right;
+    width: 100%;
+
+    like-option {
+      cursor: pointer;
+      display: inline-block;
+      background: white;
+      border: 1px #c1c1c1 solid;
+      border-radius: 5px;
+      margin: 7px 0px 2px 0px;
+      padding: 7px;
+      text-align: center;
+      width: 24.5%;
+      @include media($site-max-up) {
+        width: 22.8%;
+      }
     }
-
-    &.warning-visible {
-      margin-top: 16px;
+    like-option:hover {
+      background: $color-tan;
+    }
+    like-option:nth-child(n+5) {
+      display: none;
+    }
+    like-option:focus {
+      border: 2px $color-teal solid;
+      margin: 6px 0px 1px 0px;
+      outline: none;
     }
   }
 }
