@@ -85,7 +85,7 @@ function characterCount(element) {
     counter.addClass('pull-bottom');
     label.wrap('<div class="relative-container"></div>').after(counter);
   } else {
-    element.parents('.sendbar-inner').before(counter);
+    element.parents('#new_message').before(counter);
   }
 
   var form = element.prop('form');

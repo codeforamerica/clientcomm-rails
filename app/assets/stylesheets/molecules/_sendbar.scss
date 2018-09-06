@@ -2,7 +2,7 @@
   border-collapse: separate;
   display: flex;
   margin: auto;
-  max-width: 960px;
+  max-width: $site-max-width;
   padding: $padding-small;
   width: 100%;
 
@@ -65,7 +65,7 @@
   border-collapse: separate;
   display: flex;
   margin: auto;
-  max-width: 960px;
+  max-width: $site-max-width;
   padding-bottom: 1rem;
   width: 100%;
 
@@ -106,9 +106,12 @@
 }
 
 .character-count {
+  display: flex;
   font-size: 12px;
   line-height: 1em;
-  margin-bottom: 5px;
+  margin: auto;
+  max-width: $site-max-width;
+  padding: 1rem 1rem 0 1rem;
 }
 
 .relative-container {

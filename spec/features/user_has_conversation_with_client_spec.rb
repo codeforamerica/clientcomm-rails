@@ -31,7 +31,7 @@ feature 'sending messages', active_job: true do
       fill_in 'Send a text message', with: long_message_body
 
       expect(page).to have_content('Because of its length, this message may be sent as 2 texts.')
-      expect(page.find('.sendbar')).to have_css('.character-count.text--error')
+      expect(page.find('#sendbar-container')).to have_css('.character-count.text--error')
       expect(page).to have_button('Send', disabled: false)
       expect(page).to have_button('Send later', disabled: false)
 
