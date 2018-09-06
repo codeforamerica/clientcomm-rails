@@ -11,6 +11,7 @@
   padding: .5em .7em .5em .7em;
   margin: 0;
   outline: 0;
+
   &:focus {
     border-color: $color-teal;
   }
@@ -60,26 +61,30 @@
 }
 
 .inner-addon {
-    position: relative;
+  position: relative;
+
+  .glyphicon {
+    position: absolute;
+    padding: 15px;
+    pointer-events: none;
+    color: $color-grey;
+  }
 }
 
-.inner-addon .glyphicon {
-  position: absolute;
-  padding: 15px;
-  pointer-events: none;
-  color: $color-grey;
+.left-addon {
+  .glyphicon  {
+    left: 0px;
+  }
+
+  input  {
+    padding-left:  45px;
+  }
 }
 
-.left-addon .glyphicon  {
-  left:  0px;
-}
-
-.right-addon .glyphicon  {
-  right:  0px;
-}
-
-.left-addon input  {
-  padding-left:  45px;
+.right-addon {
+  .glyphicon  {
+    right: 0px;
+  }
 }
 
 .input-group-btn {
