@@ -18,13 +18,13 @@
 
       </div>
 
-      <div id="temp-text-field" style="width: 100%; background-color: #00ff99;">
+      <div id="temp-text-field" style="flex-grow: 1; width: 100%; background-color: #00ff99;">
 
         <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
 
       </div>
 
-      <div id="sendbar-buttons" class="right-fluid" style="min-width: 235px; background-color: #9900ff;">
+      <div id="sendbar-buttons" class="right-fluid" style="background-color: #9900ff;">
 
         <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
         <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>

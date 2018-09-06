@@ -15,12 +15,9 @@
     overflow: hidden;
     border: 2px solid $color-teal;
     border-radius: .2em;
-    .icon-photo {
-      font-size: 34px;
-    }
   }
   #sendbar-buttons {
-    width: 20px;
+    flex: 0 0 20px;
     margin: 10px 20px;
     #send_icon {
       display: block;
@@ -39,7 +36,7 @@
       display: none;
     }
     @include media($tablet-up) {
-      width: 250px;
+      flex: 0 0 250px;
       margin: 0px 10px;
       #send_icon {
         display: none;
@@ -170,6 +167,10 @@ section.message--create #sendbar-container{
   margin-bottom: -4px;
   margin-right: -2px;
   text-align: center;
+
+  .icon-photo {
+    font-size: 34px;
+  }
 
   input {
     display: none;
