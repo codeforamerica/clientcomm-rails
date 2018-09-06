@@ -9,7 +9,7 @@
   <div id="sendbar-container">
     <%= form_for Message.new, authenticity_token: true, html: { :class => 'sendbar', :multipart => true }, remote: true do |f| %>
 
-      <div id="temp-image-upload" style="width: 90px; min-width: 90px; background-color: #ff9900;">
+      <div id="temp-image-upload" style="border-width: 2px 0px 2px 2px; border-style: solid; border-color: #018470; text-align: center; flex: 0 0 60px;">
 
         <label for="message_attachments_0_media" id="image-upload" >
           <i class="icon-photo"></i>
@@ -18,13 +18,13 @@
 
       </div>
 
-      <div id="temp-text-field" style="flex-grow: 1; width: 100%; background-color: #00ff99;">
+      <div id="temp-text-field" style="border: 2px solid #018470; flex-grow: 1; width: 100%;">
 
         <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
 
       </div>
 
-      <div id="sendbar-buttons" class="right-fluid" style="background-color: #9900ff;">
+      <div id="sendbar-buttons" class="right-fluid">
 
         <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
         <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
