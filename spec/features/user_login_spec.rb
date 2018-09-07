@@ -18,6 +18,7 @@ feature 'user wants to log in, check clients, and log out, so they', :js do
       click_on "Log out #{existing_user.full_name}"
       expect(page).to have_text 'Log in'
       expect(page).to have_current_path(root_path)
+      expect(page).to_not have_css('button.navbar-toggle', text: 'Menu', visible: :hidden)
     end
 
     step 'log in and are redirected to client list' do
