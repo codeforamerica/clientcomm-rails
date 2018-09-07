@@ -29,10 +29,12 @@
     <nav id="main-nav" class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
         <div class="navbar-header main-header__title">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-nav-dropdown" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            Menu
-          </button>
+          <% if current_user %>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-nav-dropdown" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              Menu
+            </button>
+          <%end%>
           <div class="toolbar__left">
             <a class="navbar-brand main-header__site-title" href="/">
               ClientComm
