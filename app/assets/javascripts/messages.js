@@ -1,4 +1,24 @@
 //= require channels/messages
+
+// iOS 11.3 Safari / macOS Safari 11.1 empty <input type="file"> XHR bug workaround.
+// https://gist.github.com/ypresto/cabce63b1f4ab57247e1f836668a00a5
+document.addEventListener('ajax:before', function(e) {
+  var inputs = e.target.querySelectorAll('input[type="file"]:not([disabled])')
+  inputs.forEach(function(input) {
+    if (input.files.length > 0) return
+    input.setAttribute('data-safari-temp-disabled', 'true')
+    input.setAttribute('disabled', '')
+  })
+})
+
+document.addEventListener('ajax:beforeSend', function(e) {
+  var inputs = e.target.querySelectorAll('input[type="file"][data-safari-temp-disabled]')
+  inputs.forEach(function(input) {
+    input.removeAttribute('data-safari-temp-disabled')
+    input.removeAttribute('disabled')
+  })
+})
+
 function initializeModal(modalSelector) {
   var $modal = $(modalSelector);
   $modal.modal();
