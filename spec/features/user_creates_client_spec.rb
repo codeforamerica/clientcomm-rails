@@ -95,7 +95,14 @@ feature 'User creates client' do
       myuser.update(treatment_group: 'baltimore-welcome-message')
     end
 
-    scenario 'welcome message page is shown after client is created' do
+    scenario 'welcome message page is shown after client is created', :js, active_job: true do
+      welcome_body = I18n.t(
+        'message.welcome',
+        salutation: 'Good morning',
+        client_full_name: "#{client_first_name} #{client_last_name}",
+        user_last_name: user_last_name
+      )
+
       step 'fills in and submits new client info and sees the welcome message page' do
         travel_to Time.zone.now.noon - 1.hour do
           visit new_client_path
@@ -109,15 +116,31 @@ feature 'User creates client' do
 
           expect(page).to have_current_path(new_reporting_relationship_welcome_path(rr))
           expect(page).to have_content("Introduce yourself to #{client_first_name} #{client_last_name}")
-          welcome_body = I18n.t(
-            'message.welcome',
-            salutation: 'Good morning',
-            client_full_name: "#{client_first_name} #{client_last_name}",
-            user_last_name: user_last_name
-          )
           expect(page).to have_css('#message_body', text: welcome_body)
         end
       end
+
+      step 'clicks the reveal widget' do
+        expect(page).to_not have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
+        click_on 'reveal-button'
+        expect(page).to have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
+      end
+
+      # enters long message and sees character count warning
+      # enters too-long message and the send button is disabled
+      # clicks skip button and is redirected to the conversation
+
+      step 'submits welcome message form and sees the outgoing message in the conversation' do
+        rr = myuser.reload.reporting_relationships.last
+        perform_enqueued_jobs do
+          click_on 'Send'
+          expect(page).to have_current_path(reporting_relationship_path(rr))
+          expect(page).to have_css '.message--outbound div', text: welcome_body
+        end
+      end
+
+      # can return to the welcome message form?
+      # edits message and sees that edited message in the conversation
     end
   end
 

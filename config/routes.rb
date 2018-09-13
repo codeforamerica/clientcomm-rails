@@ -48,7 +48,7 @@ Rails.application.routes.draw do
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
     scope module: :reporting_relationships do
-      resource :welcome, only: [:create, :new]
+      resource :welcome, only: :new
     end
   end
 
