@@ -1,10 +1,53 @@
-# usage: rake utils:get_alerts[app_name,days_past]
-#   args:
-#      app_name: the app name of the heroku deploy
-#     days_past: the number of days in the past to look for alerts (defaults to 3)
-
 namespace :utils do
+  task get_carrier: :environment do |_, args|
+    # usage: rake utils:get_carrier[app_name,phone_number_01,phone_number_02,...]
+    #   args:
+    #        app_name: the app name of the heroku deploy
+    # phone_number_xx: phone numbers in the format +14155551212
+
+    if args.extras.empty? || args.extras.first.blank?
+      puts 'no app name passed; usage: rake utils:get_carrier[app-name-here,+13035551212,+13035551213,...]'
+    end
+
+    app_name = args.extras.first
+    phone_numbers = args.extras[1..-1]
+
+    account_sid = Bundler.with_clean_env { `heroku config:get TWILIO_ACCOUNT_SID -a #{app_name}`.strip }
+    auth_token = Bundler.with_clean_env { `heroku config:get TWILIO_AUTH_TOKEN -a #{app_name}`.strip }
+
+    @client = Twilio::REST::Client.new account_sid, auth_token
+
+    start_message = "getting carriers for #{phone_numbers.count} phone numbers"
+    puts start_message
+    puts '=' * start_message.length
+
+    phone_numbers.each do |phone_number|
+      begin
+        response = @client.lookups.phone_numbers(phone_number).fetch(type: 'carrier')
+      rescue Twilio::REST::RestError
+        error_message = "#{phone_number} IS NOT VALID"
+        puts Paint['!' * error_message.length, :black, :yellow]
+        puts Paint[error_message, :black, :red]
+        puts Paint['!' * error_message.length, :black, :yellow]
+        puts '----------'
+      else
+        puts response.phone_number
+        puts response.carrier['name']
+        fore = :black
+        back = :green
+        back = :red if response.carrier['type'] == 'landline'
+        puts Paint[response.carrier['type'].upcase, fore, back]
+        puts '----------'
+      end
+    end
+  end
+
   task :get_alerts, %i[app_name days_past] => :environment do |_, args|
+    # usage: rake utils:get_alerts[app_name,days_past]
+    #   args:
+    #      app_name: the app name of the heroku deploy
+    #     days_past: the number of days in the past to look for alerts (defaults to 3)
+
     if args.app_name.blank?
       puts 'no app name passed; usage: rake utils:get_alerts[app-name-here]'
       next
