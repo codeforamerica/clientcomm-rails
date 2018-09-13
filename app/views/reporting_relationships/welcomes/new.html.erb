@@ -1,0 +1,9 @@
+
+
+Introduce yourself to <%= @client.full_name %>
+
+<%= form_for Message.new, authenticity_token: true, html: { :class => 'new_message' } do |f| %>
+  <fieldset class="form-group">
+    <%= f.text_area(:body, { autofocus: false, type: 'text', class: 'textarea', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', placeholder: 'Send a text message', :value => @welcome_body }) %>
+  </fieldset>
+<% end %>

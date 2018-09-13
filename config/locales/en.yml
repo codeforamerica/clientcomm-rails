@@ -51,6 +51,7 @@ en:
   message:
     unclaimed_response: 'AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them.'
     auto_court_reminder: 'Automated alert: Your next court date is at %{location} on %{date}, %{time} in Rm %{room}. Please text with any questions.'
+    welcome: '%{salutation} %{client_full_name}, this is Agent %{user_last_name} from Pretrial. This is a text number where you can reach me. Please reply to confirm you received this message.'
     status:
       undelivered: Message could not be delivered. Please check this is a working cell phone number and try again.
       blacklisted: Message could not be delivered. This phone number does not accept text messages from ClientComm.

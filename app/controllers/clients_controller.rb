@@ -34,7 +34,12 @@ class ClientsController < ApplicationController
       )
 
       rr = current_user.reporting_relationships.find_by(client: @client)
-      redirect_to reporting_relationship_path(rr)
+
+      if current_user.treatment_group == 'baltimore-welcome-message'
+        redirect_to new_reporting_relationship_welcome_path rr
+      else
+        redirect_to reporting_relationship_path rr
+      end
     else
       @existing_client = Client.find_by(phone_number: @client.phone_number)
       @conflicting_user = @existing_client&.users&.active_rr&.where&.not(id: current_user.id)
