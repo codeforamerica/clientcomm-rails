@@ -1,0 +1,31 @@
+.template--welcome-form {
+
+  b {
+    color: $color-teal;
+  }
+
+  .textarea {
+    height: 6em;
+    padding: .5em 1em 1em 1em; 
+
+  }
+
+  .welcome-form {
+    max-width: 690px;
+    margin-top: 2rem;
+
+    @include media($mobile-up) {
+      margin-top: 10rem;
+    }
+  }
+
+  .media-box {
+    .media--small {
+      margin-right: 0.8em;
+    }
+  }
+
+  .reveal__content, .reveal__link {
+    margin-bottom: 0.5em;
+  }
+}

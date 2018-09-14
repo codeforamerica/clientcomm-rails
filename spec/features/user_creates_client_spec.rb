@@ -91,6 +91,9 @@ feature 'User creates client' do
   end
 
   context 'user is in welcome message treatment group' do
+    let(:long_message_body) { 'hi ' * 54 }
+    let(:too_long_message_body) { 'bye ' * 401 }
+
     before do
       myuser.update(treatment_group: 'baltimore-welcome-message')
     end
@@ -112,13 +115,13 @@ feature 'User creates client' do
           fill_in 'Phone number', with: phone_number
           click_on 'Save new client'
 
-          rr = myuser.reload.reporting_relationships.last
-
-          expect(page).to have_current_path(new_reporting_relationship_welcome_path(rr))
+          expect(page).to have_current_path(new_reporting_relationship_welcome_path(myuser.reload.reporting_relationships.last))
           expect(page).to have_content("Introduce yourself to #{client_first_name} #{client_last_name}")
           expect(page).to have_css('#message_body', text: welcome_body)
         end
       end
+
+      rr = myuser.reload.reporting_relationships.last
 
       step 'clicks the reveal widget' do
         expect(page).to_not have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
@@ -126,21 +129,37 @@ feature 'User creates client' do
         expect(page).to have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
       end
 
-      # enters long message and sees character count warning
-      # enters too-long message and the send button is disabled
-      # clicks skip button and is redirected to the conversation
+      step 'enters a long message and sees character count warning' do
+        fill_in 'message_body', with: long_message_body
+        expect(page).to have_content('this message may be sent as 2 texts.')
+        expect(page).to have_button('Send', disabled: false)
+      end
+
+      step 'enters a too-long message and the send button is disabled' do
+        fill_in 'Send a text message', with: too_long_message_body
+
+        expect(page).to have_content('This message is more than 1600 characters')
+        expect(page).to have_button('Send', disabled: true)
+      end
+
+      step 'clicks skip button and is redirected to the conversation' do
+        click_on 'Skip'
+        expect(page).to have_current_path(reporting_relationship_path(rr))
+        expect(page).to_not have_css '.message--outbound'
+        expect(page).to_not have_css '.message--inbound'
+      end
 
       step 'submits welcome message form and sees the outgoing message in the conversation' do
-        rr = myuser.reload.reporting_relationships.last
+        travel_to Time.zone.now.noon - 1.hour do
+          visit new_reporting_relationship_welcome_path rr
+          expect(page).to have_css('#message_body', text: welcome_body)
+        end
         perform_enqueued_jobs do
           click_on 'Send'
           expect(page).to have_current_path(reporting_relationship_path(rr))
           expect(page).to have_css '.message--outbound div', text: welcome_body
         end
       end
-
-      # can return to the welcome message form?
-      # edits message and sees that edited message in the conversation
     end
   end
 

@@ -75,7 +75,7 @@ function characterCount(element) {
 
   var
     label = $("label[for='" + element.attr('id') + "']"),
-    counter = $('<span class="character-count hidden"></span>'),
+    counter = $('<span class="character-count text--error"></span>'),
     imageInput = $('#message_attachments_0_media');
 
   var modalVisible = label.length > 0;
@@ -115,9 +115,9 @@ function setCounter(counter, textField, modalVisible) {
   var tooLongToSend = length >= 1600;
   var cantSend = tooLongToSend || isBlank;
 
-  counter.toggleClass('text--error', tooLongForSingleText);
-  counter.toggleClass('hidden', !tooLongForSingleText);
-  counter.parents('.sendbar').toggleClass('sendbar-showing-count', tooLongForSingleText);
+  if (!tooLongForSingleText) {
+    counter.html("&nbsp;");
+  }
   $('#send_message').prop('disabled', cantSend);
   $('#send_message').toggleClass('button--disabled', cantSend);
 
