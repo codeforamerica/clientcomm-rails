@@ -47,6 +47,9 @@ Rails.application.routes.draw do
   resources :reporting_relationships, only: [:create, :update, :show], path: 'conversations' do
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
+    scope module: :reporting_relationships do
+      resource :welcome, only: :new
+    end
   end
 
   resources :help, only: [:index]

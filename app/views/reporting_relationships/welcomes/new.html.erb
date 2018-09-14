@@ -1,0 +1,49 @@
+<% content_for(:template_name) { "welcome-form" }  %>
+
+<% content_for(:js) do %>
+  <%= javascript_include_tag params[:controller] %>
+<% end %>
+
+<div class="container welcome-form">
+  <div class="media-box">
+    <div class="media-box__media media--small">
+      <%= image_tag "open-mailbox-with-raised-flag.svg" %>
+    </div>
+    <div class="media-box__content">
+      <h2>Introduce yourself to <%= @reporting_relationship.client.full_name %></h2>
+    </div>
+  </div>
+
+  <p>A message like this is <b>34% more likely to get a response</b> from clients than a generic first message.</p>
+
+  <div class="reveal is-hidden">
+    <a href="#" class="reveal__link" id="reveal-button">What contributes to this response rate?</a>
+    <div class="reveal__content text--left">
+      <div class="notice">
+        <p>ClientComm data shows that some factors contribute positively to a message's rate of response. These factors are:</p>
+        <ul class="list--bulleted with-padding-med">
+          <li>Including the client's name</li>
+          <li>Including the agent's name</li>
+          <li>Starting with a greeting</li>
+          <li>Requesting a response, and</li>
+          <li>Describing the purpose of the message</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <%= form_for Message.new, authenticity_token: true, html: { :class => 'new_message' } do |f| %>
+    <input name="client_id" type="hidden" value="<%= @reporting_relationship.client.id %>">
+    <fieldset class="form-group">
+      <%= f.text_area(:body, { autofocus: false, type: 'text', class: 'textarea main-message-input', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', placeholder: 'Send a text message', :value => @welcome_body }) %>
+    </fieldset>
+    <div class="toolbar">
+      <div class="toolbar__left">
+        <%= link_to 'Skip', reporting_relationship_path(@reporting_relationship), class: 'button toolbar__item' %>
+      </div>
+      <div class="toolbar__right">
+        <%= f.submit 'Send', id: 'schedule_message', class: 'button button--primary toolbar__item', role: 'button' %>
+      </div>
+    </div>
+  <% end %>
+</div>

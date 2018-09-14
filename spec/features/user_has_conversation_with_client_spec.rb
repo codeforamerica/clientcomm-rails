@@ -15,7 +15,7 @@ feature 'sending messages', active_job: true do
   end
 
   scenario 'user sends message to client', :js, active_job: true do
-    step 'when user goes to messages page' do
+    step 'when user goes to conversation page' do
       visit reporting_relationship_path(rr)
     end
 
