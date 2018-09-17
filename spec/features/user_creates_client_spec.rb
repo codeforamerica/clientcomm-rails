@@ -91,7 +91,6 @@ feature 'User creates client' do
   end
 
   context 'user is in welcome message treatment group' do
-    let(:long_message_body) { 'hi ' * 54 }
     let(:too_long_message_body) { 'bye ' * 401 }
 
     before do
@@ -118,6 +117,7 @@ feature 'User creates client' do
           expect(page).to have_current_path(new_reporting_relationship_welcome_path(myuser.reload.reporting_relationships.last))
           expect(page).to have_content("Introduce yourself to #{client_first_name} #{client_last_name}")
           expect(page).to have_css('#message_body', text: welcome_body)
+          expect(page).to have_button('Send', disabled: false)
         end
       end
 
@@ -129,16 +129,13 @@ feature 'User creates client' do
         expect(page).to have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
       end
 
-      step 'enters a long message and sees character count warning' do
-        fill_in 'message_body', with: long_message_body
-        expect(page).to have_content('this message may be sent as 2 texts.')
-        expect(page).to have_button('Send', disabled: false)
+      step 'enters an empty message and the send button is disabled' do
+        fill_in 'message_body', with: ''
+        expect(page).to have_button('Send', disabled: true)
       end
 
       step 'enters a too-long message and the send button is disabled' do
         fill_in 'Send a text message', with: too_long_message_body
-
-        expect(page).to have_content('This message is more than 1600 characters')
         expect(page).to have_button('Send', disabled: true)
       end
 

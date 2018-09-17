@@ -6,13 +6,14 @@
 
   .textarea {
     height: 6em;
-    padding: .5em 1em 1em 1em; 
-
+    margin-top: 1em;
+    padding: .5em 1em 1em 1em;
   }
 
   .welcome-form {
     max-width: 690px;
     margin-top: 2rem;
+    margin-bottom: 2em;
 
     @include media($mobile-up) {
       margin-top: 10rem;
@@ -22,6 +23,10 @@
   .media-box {
     .media--small {
       margin-right: 0.8em;
+
+      img {
+        max-height: $width-image-small;
+      }
     }
   }
 
