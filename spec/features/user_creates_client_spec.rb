@@ -125,7 +125,14 @@ feature 'User creates client' do
 
       step 'clicks the reveal widget' do
         expect(page).to_not have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
+
         click_on 'reveal-button'
+        wait_for_ajax
+        expect_analytics_events(
+          'welcome_prompt_expand' => {
+            'client_id' => rr.client.id
+          }
+        )
         expect(page).to have_content("ClientComm data shows that some factors contribute positively to a message's rate of response.")
       end
 

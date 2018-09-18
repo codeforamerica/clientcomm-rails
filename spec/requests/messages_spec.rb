@@ -81,11 +81,13 @@ describe 'Messages requests', type: :request, active_job: true do
         }
       end
 
+      subject { post messages_path, params: post_params }
+
       context 'no date' do
         let(:message_send_at) { nil }
 
         it 'creates a new message on submit' do
-          post messages_path, params: post_params
+          subject
 
           message = Message.find_by(body: body)
 
@@ -103,9 +105,76 @@ describe 'Messages requests', type: :request, active_job: true do
               'message_length' => body.length,
               'positive_template' => false,
               'positive_template_type' => nil,
-              'attachment' => false
+              'attachment' => false,
+              'welcome_template' => false
             }
           )
+        end
+
+        context 'message is submitted from the welcome form' do
+          let(:user_full_name) { 'Stanley Magnus' }
+          let(:user_last_name) { user_full_name.split(' ').last }
+          let(:client_first_name) { 'Helle' }
+          let(:client_full_name) { "#{client_first_name} Berg" }
+          let(:welcome_body) { I18n.t('message.welcome', salutation: 'Good morning', client_full_name: client_full_name, user_last_name: user_last_name) }
+          let(:post_params) do
+            {
+              message: { body: body, send_at: message_send_at },
+              client_id: client.id,
+              welcome_message_original: welcome_body
+            }
+          end
+
+          context 'message is submitted unedited' do
+            let(:body) { welcome_body }
+
+            it 'tracks a welcome template submission' do
+              subject
+
+              expect_analytics_events(
+                'message_send' => {
+                  'welcome_template' => true
+                },
+                'welcome_prompt_send' => {
+                  'welcome_template' => true
+                }
+              )
+            end
+          end
+
+          context 'message is submitted with minor edits' do
+            let(:body) { I18n.t('message.welcome', salutation: 'Good morning', client_full_name: client_first_name, user_last_name: user_full_name) }
+
+            it 'tracks a welcome template submission' do
+              subject
+
+              expect_analytics_events(
+                'message_send' => {
+                  'welcome_template' => true
+                },
+                'welcome_prompt_send' => {
+                  'welcome_template' => true
+                }
+              )
+            end
+          end
+
+          context 'message is submitted with major edits' do
+            let(:body) { 'This is your PO, you can text me here.' }
+
+            it 'does not track a welcome template submission' do
+              subject
+
+              expect_analytics_events(
+                'message_send' => {
+                  'welcome_template' => false
+                },
+                'welcome_prompt_send' => {
+                  'welcome_template' => false
+                }
+              )
+            end
+          end
         end
 
         context 'an image is attached' do
@@ -120,11 +189,10 @@ describe 'Messages requests', type: :request, active_job: true do
               client_id: client.id
             }
           end
-          subject do
-            post messages_path, params: post_params
-          end
+
           it 'creates a new message on submit' do
             subject
+
             message = Message.find_by(body: body)
             expect(message.attachments.count).to eq(1)
             expect(message.attachments.first.media_file_name).to eq('fluffy_cat.jpg')
@@ -136,7 +204,8 @@ describe 'Messages requests', type: :request, active_job: true do
                 'message_length' => body.length,
                 'positive_template' => false,
                 'positive_template_type' => nil,
-                'attachment' => true
+                'attachment' => true,
+                'welcome_template' => false
               }
             )
           end
@@ -148,9 +217,11 @@ describe 'Messages requests', type: :request, active_job: true do
               perform_enqueued_jobs do
                 subject
               end
+
               expect(Message.all).to be_empty
             end
           end
+
           context 'is not an image' do
             let(:image) { fixture_file_upload('spec/fixtures/cat_contact.vcf', 'image/jpg') }
 
@@ -158,11 +229,13 @@ describe 'Messages requests', type: :request, active_job: true do
               perform_enqueued_jobs do
                 subject
               end
+
               expect(Message.all).to be_empty
             end
           end
         end
       end
+
       context 'had positive_template_type' do
         let(:positive_template) { 'some positive template' }
         let(:post_params) do
@@ -177,7 +250,7 @@ describe 'Messages requests', type: :request, active_job: true do
         let(:message_send_at) { nil }
 
         it 'creates a new message on submit' do
-          post messages_path, params: post_params
+          subject
 
           message = Message.find_by(body: body)
 
@@ -188,7 +261,8 @@ describe 'Messages requests', type: :request, active_job: true do
               'message_id' => message.id,
               'message_length' => body.length,
               'positive_template' => true,
-              'positive_template_type' => positive_template
+              'positive_template_type' => positive_template,
+              'welcome_template' => false
             }
           )
         end
@@ -207,7 +281,7 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(nil)
 
-          post messages_path, params: post_params
+          subject
 
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "That date didn't look right."
@@ -229,7 +303,7 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(time_in_past)
 
-          post messages_path, params: post_params
+          subject
 
           response_body = Nokogiri::HTML(response.body).to_s
           expect(response_body).to include "You can't schedule a message in the past."
@@ -252,7 +326,7 @@ describe 'Messages requests', type: :request, active_job: true do
             .with(message_send_at[:date], message_send_at[:time])
             .and_return(time_to_send)
 
-          post messages_path, params: post_params
+          subject
 
           message = Message.find_by(body: body)
 
