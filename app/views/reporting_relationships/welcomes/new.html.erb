@@ -33,13 +33,14 @@
   </div>
 
   <%= form_for Message.new, authenticity_token: true, html: { :class => 'new_message' } do |f| %>
-    <input name="client_id" type="hidden" value="<%= @reporting_relationship.client.id %>">
+    <%= hidden_field_tag :client_id, @reporting_relationship.client.id %>
+    <%= hidden_field_tag :welcome_message_original, @welcome_body %>
     <fieldset class="form-group">
       <%= f.text_area(:body, { autofocus: false, type: 'text', class: 'textarea main-message-input', autocomplete: 'off', autocorrect: 'on', spellcheck: 'true', autocapitalize: 'off', placeholder: 'Send a text message', :value => @welcome_body }) %>
     </fieldset>
     <div class="toolbar">
       <div class="toolbar__left">
-        <%= link_to 'Skip', reporting_relationship_path(@reporting_relationship), class: 'button toolbar__item' %>
+        <%= link_to 'Skip', reporting_relationship_path(@reporting_relationship), id: 'skip-welcome', class: 'button toolbar__item' %>
       </div>
       <div class="toolbar__right">
         <%= f.submit 'Send', id: 'send_message', class: 'button button--primary toolbar__item', role: 'button' %>

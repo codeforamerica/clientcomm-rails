@@ -16,4 +16,23 @@ $(document).ready(function(){
       });
     });
   }
+
+  $('.reveal').find('.reveal__link').click(function(e) {
+    e.preventDefault();
+    if (!$('.reveal').hasClass('is-hidden')) {
+      mixpanelTrack(
+        "welcome_prompt_expand", {
+          client_id: Number($('#client_id').attr('value'))
+        }
+      );
+    }
+  });
+
+  $('#skip-welcome').click(function(e) {
+    mixpanelTrack(
+      "welcome_prompt_skip", {
+        client_id: Number($('#client_id').attr('value'))
+      }
+    );
+  });
 });

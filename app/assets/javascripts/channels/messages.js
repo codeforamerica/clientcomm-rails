@@ -63,21 +63,6 @@ var Messages = {
   },
 };
 
-function postLikeExpandEvent(msg_id, client_id) {
-  mixpanelTrack(
-    "positive_template_expand", {
-      like_message_id: msg_id,
-      client_id: client_id
-    }
-  );
-}
-
-function generateLikeBindings(i, msg) {
-  msg = $(msg);
-  client_id = $('div#message-list').data('client-id');
-  message_id = msg.attr('id').slice(8);
-}
-
 $(document).ready(function() {
   $(window).on('resize scroll visibilitychange focuschange', markAsRead);
   markAsRead();

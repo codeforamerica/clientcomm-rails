@@ -12,6 +12,11 @@ module ReportingRelationships
         client_full_name: @reporting_relationship.client.full_name,
         user_last_name: @reporting_relationship.user.full_name.split(' ').last
       )
+
+      analytics_track(
+        label: 'welcome_prompt_view',
+        data: @reporting_relationship.client.analytics_tracker_data
+      )
     end
   end
 end
