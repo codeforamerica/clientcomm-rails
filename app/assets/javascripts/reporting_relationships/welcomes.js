@@ -22,9 +22,17 @@ $(document).ready(function(){
     if (!$('.reveal').hasClass('is-hidden')) {
       mixpanelTrack(
         "welcome_prompt_expand", {
-          client_id: $('#client_id').attr('value')
+          client_id: Number($('#client_id').attr('value'))
         }
       );
     }
+  });
+
+  $('#skip-welcome').click(function(e) {
+    mixpanelTrack(
+      "welcome_prompt_skip", {
+        client_id: Number($('#client_id').attr('value'))
+      }
+    );
   });
 });

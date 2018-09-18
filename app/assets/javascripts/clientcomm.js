@@ -64,9 +64,11 @@ function shuffleArray(array) {
 }
 
 function mixpanelTrack(event, params) {
-  $.post({
-    url: '/tracking_events',
-    data: { label: event, data: params }
+  $.ajax({
+    type : "POST",
+    url: "/tracking_events",
+    contentType: "application/json",
+    data : JSON.stringify({ label: event, data: params })
   });
 }
 

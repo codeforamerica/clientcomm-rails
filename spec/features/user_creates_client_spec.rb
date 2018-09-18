@@ -128,6 +128,7 @@ feature 'User creates client' do
 
         click_on 'reveal-button'
         wait_for_ajax
+
         expect_analytics_events(
           'welcome_prompt_expand' => {
             'client_id' => rr.client.id
@@ -148,6 +149,13 @@ feature 'User creates client' do
 
       step 'clicks skip button and is redirected to the conversation' do
         click_on 'Skip'
+        wait_for_ajax
+
+        expect_analytics_events(
+          'welcome_prompt_skip' => {
+            'client_id' => rr.client.id
+          }
+        )
         expect(page).to have_current_path(reporting_relationship_path(rr))
         expect(page).to_not have_css '.message--outbound'
         expect(page).to_not have_css '.message--inbound'

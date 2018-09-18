@@ -40,7 +40,7 @@
     </fieldset>
     <div class="toolbar">
       <div class="toolbar__left">
-        <%= link_to 'Skip', reporting_relationship_path(@reporting_relationship), class: 'button toolbar__item' %>
+        <%= link_to 'Skip', reporting_relationship_path(@reporting_relationship), id: 'skip-welcome', class: 'button toolbar__item' %>
       </div>
       <div class="toolbar__right">
         <%= f.submit 'Send', id: 'send_message', class: 'button button--primary toolbar__item', role: 'button' %>
