@@ -6,6 +6,7 @@ namespace :messages do
     transient_messages.each do |m|
       if m.send_at < Time.zone.now - 5.days
         m.update!(twilio_status: 'maybe_undelivered')
+        MessageBroadcastJob.perform_later(message: m)
       else
         Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating transient message #{m.id}" }
         begin
@@ -28,6 +29,7 @@ namespace :messages do
         else
           m.update!(twilio_status: twilio_status)
           MessageRedactionJob.perform_later(message: m)
+          MessageBroadcastJob.perform_later(message: m)
         end
       end
     end
