@@ -3,7 +3,7 @@
   <%= t('message.status.undelivered') %>
 <% elsif text_message.twilio_status == 'blacklisted' %>
   <%= t('message.status.blacklisted') %>
-<% elsif [nil, 'sent', 'sending'].include? text_message.twilio_status %>
+<% elsif [nil, 'queued', 'sent', 'sending'].include? text_message.twilio_status %>
   <%= t('message.status.sent') %><loading-dots><dot></dot><dot></dot><dot></dot></loading-dots>
 <% elsif text_message.twilio_status == 'maybe_undelivered' %>
   <%= t('message.status.maybe_undelivered') %>

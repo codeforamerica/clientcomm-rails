@@ -48,14 +48,17 @@ describe 'Messages requests', type: :request, active_job: true do
 
         before do
           create :text_message, inbound: false, reporting_relationship: rr, twilio_status: nil
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'queued'
           create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'sent'
           create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'sending'
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'delivered'
+          create :text_message, inbound: false, reporting_relationship: rr, twilio_status: 'undelivered'
         end
 
-        it 'marks sent, nil, and sending as Sending' do
+        it 'marks nil, queued, sent, and sending as Sending...' do
           get reporting_relationship_path(rr)
 
-          expect(response.body.scan(I18n.t('message.status.sent')).size).to eq(3)
+          expect(response.body.scan(I18n.t('message.status.sent')).size).to eq(4)
         end
       end
     end
