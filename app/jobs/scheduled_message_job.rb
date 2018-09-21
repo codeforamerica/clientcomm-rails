@@ -32,6 +32,8 @@ class ScheduledMessageJob < ApplicationJob
       message_info = MessageInfo.new(nil, 'blacklisted')
     end
 
+    Rails.logger.tagged('sms_status_update') { Rails.logger.warn "#{message_info.sid} ... #{message_info.status}" }
+
     message.update!(
       twilio_sid: message_info.sid,
       twilio_status: message_info.status,

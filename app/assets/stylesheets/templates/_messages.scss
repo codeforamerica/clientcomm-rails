@@ -92,7 +92,7 @@
           color: $color-grey;
         }
 
-        &.sent, &.sending {
+        &.sent, &.sending, &.queued {
           background-color: $color-light-teal;
         }
       }

@@ -5,10 +5,11 @@ namespace :messages do
 
     transient_messages.each do |m|
       if m.send_at < Time.zone.now - 5.days
+        Rails.logger.tagged('sms_status_update') { Rails.logger.warn "#{m.twilio_sid} - update_twilio_statuses ... maybe_undelivered" }
         m.update!(twilio_status: 'maybe_undelivered')
         MessageBroadcastJob.perform_later(message: m)
       else
-        Rails.logger.tagged('update twilio statuses') { Rails.logger.warn "updating transient message #{m.id}" }
+        Rails.logger.tagged('update_twilio_statuses') { Rails.logger.warn "updating transient message #{m.id}" }
         begin
           twilio_status = SMSService.instance.status_lookup(message: m)
         rescue Twilio::REST::RestError => e
@@ -27,6 +28,7 @@ namespace :messages do
           )
           Rails.logger.warn "404 getting message status from Twilio sid: #{m.twilio_sid}"
         else
+          Rails.logger.tagged('sms_status_update') { Rails.logger.warn "#{m.twilio_sid} - update_twilio_statuses ... #{twilio_status}" }
           m.update!(twilio_status: twilio_status)
           MessageRedactionJob.perform_later(message: m)
           MessageBroadcastJob.perform_later(message: m)

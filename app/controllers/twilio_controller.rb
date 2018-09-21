@@ -24,7 +24,7 @@ class TwilioController < ApplicationController
       if !message.last_twilio_update || heroku_request_start > message.last_twilio_update
         message_incoming_status = params[:SmsStatus]
         message.update!(twilio_status: message_incoming_status, last_twilio_update: heroku_request_start)
-        Rails.logger.tagged('incoming_sms_status') { Rails.logger.warn "#{params[:SmsSid]} - #{heroku_request_start} ... #{message_incoming_status}" }
+        Rails.logger.tagged('sms_status_update') { Rails.logger.warn "#{params[:SmsSid]} - #{heroku_request_start} ... #{message_incoming_status}" }
 
         if [TWILIO_STATUS_DELIVERED, TWILIO_STATUS_SENT].include?(message_incoming_status)
           message.reporting_relationship.update!(has_message_error: false)
