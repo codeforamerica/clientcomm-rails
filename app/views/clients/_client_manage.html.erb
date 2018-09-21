@@ -39,7 +39,7 @@
             <%=
               survey_fields.collection_check_boxes(
                 :survey_response_ids,
-                SurveyResponse.all,
+                SurveyResponse.all.active,
                 :id,
                 :text
               ) do |b|
