@@ -5,10 +5,12 @@ feature 'user deactivates client', :js do
   let(:response_text1) { 'Successful closeout' }
   let(:response_text2) { 'FTA' }
   let(:response_text3) { 'Supervision rescinded' }
+  let(:response_text4) { 'Failure To Appear' }
   let(:survey_question) { create :survey_question, text: question_text }
   let!(:survey_response1) { create :survey_response, survey_question: survey_question, text: response_text1 }
   let!(:survey_response2) { create :survey_response, survey_question: survey_question, text: response_text2 }
   let!(:survey_response3) { create :survey_response, survey_question: survey_question, text: response_text3 }
+  let!(:survey_response4) { create :survey_response, survey_question: survey_question, active: false, text: response_text4 }
   let(:department) { create :department, phone_number: twilio_new_message_params['To'] }
   let(:user) { create :user, department: department }
   let(:client_active) { true }
@@ -37,6 +39,7 @@ feature 'user deactivates client', :js do
     expect(page).to have_content response_text1
     expect(page).to have_content response_text2
     expect(page).to have_content response_text3
+    expect(page).to_not have_content response_text4
 
     expect(page).to have_button("Deactivate #{client.first_name} #{client.last_name}", disabled: true)
 

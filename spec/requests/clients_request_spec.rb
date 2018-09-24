@@ -803,10 +803,12 @@ describe 'Clients requests', type: :request do
       let(:client) { create :client, user: user, first_name: 'Fred', last_name: 'Flintstone' }
       let(:survey_question_text) { 'What was the outcome for this client?' }
       let(:survey_response_text) { 'FTA' }
+      let(:inactive_survey_response_text) { 'Failed To Appear' }
 
       before do
         q = create :survey_question, text: survey_question_text
         create :survey_response, survey_question: q, text: survey_response_text
+        create :survey_response, survey_question: q, active: false, text: inactive_survey_response_text
       end
 
       subject { get edit_client_path(client) }
@@ -847,6 +849,7 @@ describe 'Clients requests', type: :request do
         expect(response.code).to eq '200'
         expect(response.body).to include(survey_question_text)
         expect(response.body).to include(survey_response_text)
+        expect(response.body).to_not include(inactive_survey_response_text)
       end
 
       context 'has client statuses' do

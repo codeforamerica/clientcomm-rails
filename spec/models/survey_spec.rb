@@ -21,7 +21,4 @@ RSpec.describe Survey, type: :model do
       expect(survey.questions).to contain_exactly(SurveyQuestion.first, SurveyQuestion.last)
     end
   end
-
-  describe 'Nested Object Creation' do
-  end
 end
