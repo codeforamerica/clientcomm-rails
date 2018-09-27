@@ -4,8 +4,11 @@
   </div>
   <div class="form-card__content">
     <div>
+
+
+
     <% unless @merge_clients.empty? %>
-      <%= form_for @merge_reporting_relationship, builder: GcfFormBuilder do |merge_form| %>
+      <%= form_for ReportingRelationship.new, url: reporting_relationship_merge_path(@reporting_relationship), html: { id: 'merge_reporting_relationship' }, builder: GcfFormBuilder do |merge_form| %>
         <h4>Merge duplicate clients</h4>
         <%= merge_form.gcf_select(:client_id, 'You can combine this client with another client record.', @merge_clients, prompt: 'Pick client') %>
         <%= merge_form.fields_for :clients, current_user.clients.first do |client_form| %>
@@ -17,6 +20,9 @@
         <%= merge_form.submit 'Merge', id: :merge_client, class: :button %>
       <% end %>
     <% end %>
+
+
+
     <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
       <p>
@@ -36,6 +42,7 @@
         </div>
       </div>
     <% end %>
+
     <%= form_for @client do |client_form| %>
       <h4>Deactivate client</h4>
       <p>
@@ -76,6 +83,7 @@
         </div>
       </div>
     <% end %>
+
       <h4>Download transcript</h4>
       <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
       <% rr = @client.reporting_relationship(user: current_user) %>

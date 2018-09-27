@@ -50,8 +50,6 @@ feature 'user edits client', :js do
       fill_in 'Notes', with: new_note
       fill_in 'Phone number', with: new_phone_number
 
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Court date (optional)', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')

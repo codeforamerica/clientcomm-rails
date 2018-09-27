@@ -1,4 +1,9 @@
 <% content_for(:template_name) { "clients" } %>
+
+<% content_for(:js) do %>
+  <%= javascript_include_tag 'clients/edit' %>
+<% end %>
+
 <div class="slab">
   <div class="grid">
     <div class="grid__item width-two-thirds shift-one-sixth">

@@ -49,6 +49,7 @@ Rails.application.routes.draw do
     get 'messages/download', to: 'messages#download'
     scope module: :reporting_relationships do
       resource :welcome, only: :new
+      resource :merge, only: :create
     end
   end
 
