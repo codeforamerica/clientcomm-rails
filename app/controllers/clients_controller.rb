@@ -57,9 +57,9 @@ class ClientsController < ApplicationController
   def edit
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
-    @merge_reporting_relationship = ReportingRelationship.new
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = transfer_users
+    @merge_reporting_relationship = MergeReportingRelationship.new
     @merge_clients = merge_clients
 
     analytics_track(
@@ -73,7 +73,6 @@ class ClientsController < ApplicationController
     @reporting_relationship = @client.reporting_relationship(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
     @transfer_users = transfer_users
-    @merge_clients = merge_clients
 
     @client.assign_attributes(client_params)
 

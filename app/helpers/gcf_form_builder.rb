@@ -22,11 +22,11 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     HTML
   end
 
-  def gcf_radio_set(method, label_text, collection, notes: [], layout: 'block', variant: '', classes: [])
+  def gcf_radio_set(method, label_text, collection, notes: [], layout: 'block', variant: '', classes: [], id: nil)
     <<-HTML.html_safe
       <fieldset class="form-group#{error_state(object, method)}#{(' ' + classes.join(' ')).strip}">
         #{label_contents(label_text, notes)}
-        #{radio_buttons(method, collection, layout, variant)}
+        #{radio_buttons(method, collection, layout, variant, id: id)}
         #{errors_for(object, method)}
       </fieldset>
     HTML
@@ -191,17 +191,18 @@ class GcfFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
-  def radio_buttons(method, collection, layout, variant)
+  def radio_buttons(method, collection, layout, variant, id: nil)
     variant_class = " #{variant}" if variant.present?
+    radiogroup_id = " id=\"#{id}\"" unless id.nil?
     radio_html = <<-HTML
-      <radiogroup class="input-group--#{layout}#{variant_class}">
+      <radiogroup class="input-group--#{layout}#{variant_class}"#{radiogroup_id}>
     HTML
     collection.map do |item|
       input_html = item.fetch(:input_html, {})
       radio_html << <<-HTML.html_safe
         <label class="radio-button">
           #{radio_button(method, item[:value], input_html)}
-          #{item[:label]}
+          <span>#{item[:label]}</span>
         </label>
       HTML
 

@@ -41,6 +41,10 @@ class Client < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def display_phone_number
+    PhoneNumberParser.format_for_display(phone_number)
+  end
+
   def timestamp(user:)
     (last_contacted_at(user: user) || relationship_started(user: user)).to_time.to_i
   end

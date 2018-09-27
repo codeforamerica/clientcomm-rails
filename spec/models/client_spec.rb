@@ -28,11 +28,19 @@ RSpec.describe Client, type: :model do
   end
 
   describe 'accessors' do
-    let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins' }
+    let(:phone_number) { '+14155551111' }
+    let(:phone_number_display) { '(415) 555-1111' }
+    let(:client) { create :client, first_name: 'Lorraine', last_name: 'Collins', phone_number: phone_number }
 
     describe '#full_name' do
       it 'formats full name' do
         expect(client.full_name).to eq('Lorraine Collins')
+      end
+    end
+
+    describe '#display_phone_number' do
+      it 'returns display phone number' do
+        expect(client.display_phone_number).to eq(phone_number_display)
       end
     end
 

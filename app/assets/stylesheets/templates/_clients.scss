@@ -107,6 +107,10 @@ div#unread-warning {
   }
 }
 
+#merge {
+  display: none;
+}
+
 // Put label for transfer client user select on top
 label[for=reporting_relationship_user_id] {
   width: 100%;

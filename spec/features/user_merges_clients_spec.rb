@@ -46,7 +46,7 @@ feature 'User merges clients', :js do
       end
 
       step 'selects source client' do
-        find('#reporting_relationship_client_id').find(:option, client_source.full_name).select_option
+        find('#merge_reporting_relationship_selected_client_id').find(:option, client_source.full_name).select_option
         expect(page).to have_content('Choose a name')
         expect(page).to have_content(client_target.full_name)
         expect(page).to have_content(client_source.full_name)
@@ -56,8 +56,8 @@ feature 'User merges clients', :js do
       end
 
       step 'chooses preferred phone number and name and submits the form' do
-        check client_source.full_name
-        check phone_number_target_display
+        choose client_source.full_name
+        choose phone_number_target_display
       end
     end
   end

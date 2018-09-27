@@ -44,12 +44,12 @@ Rails.application.routes.draw do
   # GET reporting_relationships_path(rr) => /conversations/:id
 
   resources :mass_messages, only: [:new, :create]
+  resources :merge_reporting_relationships, only: :create
   resources :reporting_relationships, only: [:create, :update, :show], path: 'conversations' do
     get 'scheduled_messages/index'
     get 'messages/download', to: 'messages#download'
     scope module: :reporting_relationships do
       resource :welcome, only: :new
-      resource :merge, only: :create
     end
   end
 

@@ -8,16 +8,18 @@
 
 
     <% unless @merge_clients.empty? %>
-      <%= form_for ReportingRelationship.new, url: reporting_relationship_merge_path(@reporting_relationship), html: { id: 'merge_reporting_relationship' }, builder: GcfFormBuilder do |merge_form| %>
+      <%= form_for @merge_reporting_relationship, builder: GcfFormBuilder do |merge_form| %>
         <h4>Merge duplicate clients</h4>
-        <%= merge_form.gcf_select(:client_id, 'You can combine this client with another client record.', @merge_clients, prompt: 'Pick client') %>
-        <%= merge_form.fields_for :clients, current_user.clients.first do |client_form| %>
-          <%= client_form.gcf_radio_set :first_name, "Choose a name", [{ value: 20, label: 'FirstName LastName20' }, { value: 4, label: 'FirstName LastName4' }] %>
-        <% end %>
-        <%= merge_form.fields_for :clients, current_user.clients.first do |client_form| %>
-          <%= client_form.gcf_radio_set :phone_number, "Choose a phone number", [{ value: 20, label: '(760) 555-9206' }, { value: 4, label: '(760) 555-3642' }] %>
-        <% end %>
-        <%= merge_form.submit 'Merge', id: :merge_client, class: :button %>
+        <%= merge_form.gcf_select(:selected_client_id, 'You can combine this client with another client record.', @merge_clients, prompt: 'Pick client') %>
+        <div id="merge">
+          <%= merge_form.fields_for :clients, Client.new do |client_form| %>
+            <%= client_form.gcf_radio_set :first_name, "Choose a name", [{ value: @client.id, label: @client.full_name }, { value: 'selected_client_id', label: 'selected_client_full_name' }], id: 'merge_full_names' %>
+          <% end %>
+          <%= merge_form.fields_for :clients, Client.new do |client_form| %>
+            <%= client_form.gcf_radio_set :phone_number, "Choose a phone number", [{ value: @client.id, label: @client.display_phone_number }, { value: 'selected_client_id', label: 'selected_client_phone_number' }], id: 'merge_phone_numbers' %>
+          <% end %>
+          <%= merge_form.submit 'Merge', id: :merge_client, class: :button %>
+        </div>
       <% end %>
     <% end %>
 
