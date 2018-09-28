@@ -25,9 +25,10 @@ $(document).ready(function() {
   }
 
   $('#merge_reporting_relationship_selected_client_id').change(function() {
-    var selected_client_id = $('#merge_reporting_relationship_selected_client_id option:selected').val();
-    var selected_client_name = $('#merge_reporting_relationship_selected_client_id option:selected').text();
-    var selected_client_phone_number = $('#merge_reporting_relationship_selected_client_id option:selected').data('phone-number');
+    var merge_select = $('#merge_reporting_relationship_selected_client_id option:selected');
+    var selected_client_id = merge_select.val();
+    var selected_client_name = merge_select.text();
+    var selected_client_phone_number = merge_select.data('phone-number');
 
     $('#merge_full_names label:nth-child(2) input').val(selected_client_id)
     $('#merge_full_names label:nth-child(2) span').text(selected_client_name)
