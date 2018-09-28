@@ -58,9 +58,9 @@ class ClientsController < ApplicationController
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = transfer_users
+    @transfer_users = ListMaker.transfer_users user: current_user
     @merge_reporting_relationship = MergeReportingRelationship.new
-    @merge_clients = merge_clients
+    @merge_clients = ListMaker.merge_clients user: current_user, client: @client
 
     analytics_track(
       label: 'client_edit_view',
@@ -70,11 +70,8 @@ class ClientsController < ApplicationController
 
   def update
     @client = current_user.clients.find(params[:id])
-    @reporting_relationship = @client.reporting_relationship(user: current_user)
-    @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = transfer_users
-
     @client.assign_attributes(client_params)
+    @reporting_relationship = @client.reporting_relationship(user: current_user)
 
     if @client.save
       catch(:handled) do
@@ -94,6 +91,12 @@ class ClientsController < ApplicationController
 
     track_errors('edit')
     flash.now[:alert] = t('flash.errors.client.invalid')
+
+    @transfer_reporting_relationship = ReportingRelationship.new
+    @transfer_users = ListMaker.transfer_users user: current_user
+    @merge_reporting_relationship = MergeReportingRelationship.new
+    @merge_clients = ListMaker.merge_clients user: current_user, client: @client
+
     render :edit
   end
 
@@ -240,22 +243,6 @@ class ClientsController < ApplicationController
       render :confirm
     end
     throw :handled
-  end
-
-  def transfer_users
-    current_user.department.eligible_users.active.where.not(id: current_user.id)
-                .order(:full_name).pluck(:full_name, :id)
-  end
-
-  def merge_clients
-    current_user.clients.active.where.not(id: @client.id).order(:first_name, :last_name)
-                .map do |c|
-                  [
-                    "#{c.first_name.strip} #{c.last_name.strip}",
-                    c.id,
-                    { 'data-phone-number' => PhoneNumberParser.format_for_display(c.phone_number) }
-                  ]
-                end
   end
 
   def client_params
