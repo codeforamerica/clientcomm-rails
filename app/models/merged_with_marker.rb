@@ -1,0 +1,2 @@
+class MergedWithMarker < Marker
+end

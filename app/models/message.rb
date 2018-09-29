@@ -89,6 +89,28 @@ class Message < ApplicationRecord
     true
   end
 
+  def self.create_conversation_ends_marker(reporting_relationship:, full_name:, phone_number:)
+    message_body = I18n.t(
+      'messages.conversation_ends',
+      full_name: full_name,
+      phone_number: phone_number
+    )
+    # TODO
+    [reporting_relationship, message_body]
+  end
+
+  def self.create_merged_with_marker(reporting_relationship:, from_full_name:, to_full_name:, from_phone_number:, to_phone_number:)
+    message_body = I18n.t(
+      'messages.merged_with',
+      from_full_name: from_full_name,
+      from_phone_number: from_phone_number,
+      to_full_name: to_full_name,
+      to_phone_number: to_phone_number
+    )
+    # TODO
+    [reporting_relationship, message_body]
+  end
+
   def self.create_from_twilio!(twilio_params)
     from_phone_number = twilio_params[:From]
     to_phone_number = twilio_params[:To]

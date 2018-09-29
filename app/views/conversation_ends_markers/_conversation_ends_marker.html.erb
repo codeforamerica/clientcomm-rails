@@ -1,0 +1,10 @@
+<div class="message--event" id="message_<%= conversation_ends_marker %>">
+  <div class="event--line">
+    <p class="message--label">
+    <%= conversation_ends_marker.body %>
+    </p>
+  </div>
+  <p class="message--label">
+  <%= conversation_ends_marker.send_at.strftime('%-m/%-d/%y, %-l:%M%P') %>
+  </p>
+</div>

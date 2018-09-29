@@ -116,28 +116,6 @@ class ClientsController < ApplicationController
     )
   end
 
-  def notify_users_of_changes
-    if @client.phone_number_previously_changed?
-      Message.create_client_edit_markers(
-        user: current_user,
-        phone_number: @client.phone_number,
-        reporting_relationships: @client.reporting_relationships.active,
-        as_admin: false
-      )
-    end
-
-    other_active_relationships = @client.reporting_relationships
-                                        .active.where.not(user: current_user)
-    other_active_relationships.each do |rr|
-      NotificationMailer.client_edit_notification(
-        notified_user: rr.user,
-        editing_user: current_user,
-        client: @client,
-        previous_changes: @client.previous_changes.except(:updated_at, :next_court_date_at)
-      ).deliver_later
-    end
-  end
-
   def phone_number_conflict_error_text
     active_current_rr = ReportingRelationship.find_by(user: current_user, client: @existing_client, active: true)
     conflicting_user = @existing_client.users.where.not(id: current_user.id).find_by(department: current_user.department)
@@ -162,7 +140,7 @@ class ClientsController < ApplicationController
   def handle_active_client
     return unless @reporting_relationship.reload.active
 
-    notify_users_of_changes
+    NotificationSender.notify_users_of_changes(user: current_user, client: @client)
     @client.update(next_court_date_set_by_user: @client.next_court_date_at_previous_change.last.present?) if @client.previous_changes.keys.include?('next_court_date_at')
     analytics_track(
       label: 'client_edit_success',

@@ -1,0 +1,10 @@
+<div class="message--event" id="message_<%= merged_with_marker %>">
+  <div class="event--line">
+    <p class="message--label">
+    <%= merged_with_marker.body %>
+    </p>
+  </div>
+  <p class="message--label">
+  <%= merged_with_marker.send_at.strftime('%-m/%-d/%y, %-l:%M%P') %>
+  </p>
+</div>

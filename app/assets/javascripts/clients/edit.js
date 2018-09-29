@@ -24,6 +24,21 @@ $(document).ready(function() {
     $('#new_merge_reporting_relationship input:radio').each(function() { $(this).prop('checked', false); })
   }
 
+  function setMergeSubmitButtonEnabled(enabled) {
+    $('#merge_client').prop('disabled', !enabled);
+    $('#merge_client').toggleClass('button--disabled', !enabled);
+  }
+
+  function getMergeFormFilled() {
+    var num_clicked = 0;
+    $('#new_merge_reporting_relationship input:radio').each(function() {
+      if ($(this).prop('checked')) {
+        num_clicked++;
+      }
+    });
+    return num_clicked === 2;
+  }
+
   $('#merge_reporting_relationship_selected_client_id').change(function() {
     var merge_select = $('#merge_reporting_relationship_selected_client_id option:selected');
     var selected_client_id = merge_select.val();
@@ -37,13 +52,12 @@ $(document).ready(function() {
     $('#merge_phone_numbers label:nth-child(2) span').text(selected_client_phone_number)
 
     uncheckMergeRadioButtons();
-
-    // TODO: deactivate the merge submit button
+		setMergeSubmitButtonEnabled(false);
 
     $('#merge').show();
   });
 
-  // TODO: when a radio button choice is made, if a radio button has been chosen in
-  //       both categories, enable the merge submit button.
-
+  $('#merge').click(function() {
+    setMergeSubmitButtonEnabled(getMergeFormFilled());
+  });
 });
