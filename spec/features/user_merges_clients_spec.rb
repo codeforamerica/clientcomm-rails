@@ -37,11 +37,19 @@ feature 'User merges clients', :js do
   context 'the user has more than one client' do
     let!(:client_other) { create :client, user: user_mine, phone_number: phone_number_other, first_name: first_name_other, last_name: last_name_other }
     let!(:client_from) { create :client, user: user_mine, phone_number: phone_number_from, first_name: first_name_from, last_name: last_name_from }
+    let(:rr_other) { ReportingRelationship.find_by(user: user_mine, client: client_other) }
     let(:rr_from) { ReportingRelationship.find_by(user: user_mine, client: client_from) }
+    let(:message_body_to) { 'This is a message on the to realtionship' }
+    let(:message_body_from) { 'This is a message on the from realtionship' }
 
     before do
       create_list :text_message, 5, reporting_relationship: rr_to
       create_list :text_message, 5, reporting_relationship: rr_from
+      rr_other.update!(last_contacted_at: Time.zone.now)
+      rr_to.update!(last_contacted_at: Time.zone.now - 1.day)
+      rr_from.update!(last_contacted_at: Time.zone.now - 2.days)
+      rr_to.messages.first.update!(body: message_body_to)
+      rr_from.messages.first.update!(body: message_body_from)
     end
 
     scenario 'successfully merges two clients' do
@@ -64,6 +72,7 @@ feature 'User merges clients', :js do
         expect(page).to have_content('Choose a phone number')
         expect(page).to have_content(phone_number_to_display)
         expect(page).to have_content(phone_number_other_display)
+        expect(page).to have_css '#merge_phone_numbers label:nth-child(2) span.label', text: 'NEW'
         expect(page).to have_button('Merge', disabled: true)
       end
 
@@ -81,6 +90,8 @@ feature 'User merges clients', :js do
         expect(page).to have_content('Choose a phone number')
         expect(page).to have_content(phone_number_to_display)
         expect(page).to have_content(phone_number_from_display)
+        expect(page).to_not have_css '#merge_phone_numbers label:nth-child(2) span.label'
+        expect(page).to have_css '#merge_phone_numbers label:nth-child(1) span.label', text: 'NEW'
         expect(page).to have_button('Merge', disabled: true)
       end
 
@@ -94,6 +105,8 @@ feature 'User merges clients', :js do
         click_on 'Merge'
         expect(page).to have_current_path(reporting_relationship_path(rr_to))
         expect(page).to have_content client_from.full_name
+        expect(page).to have_css '.message--content', text: message_body_from
+        expect(page).to have_css '.message--content', text: message_body_to
         expect(page).to have_content "\"#{client_from.full_name} #{phone_number_from_display}\" conversation ends"
         expect(page).to have_content "\"#{client_from.full_name} #{phone_number_from_display}\" merged with \"#{client_to.full_name} #{phone_number_to_display}\""
         expect(page).to have_css '.flash__message', text: I18n.t('flash.notices.merge')

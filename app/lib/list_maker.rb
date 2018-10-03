@@ -4,12 +4,13 @@ module ListMaker
   end
 
   def self.merge_clients(user:, client:)
-    user.clients.active.where.not(id: client.id).order(:first_name, :last_name)
-        .map do |c|
+    user.reporting_relationships.includes(:client).active.where.not(client_id: client.id).order('clients.first_name, clients.last_name')
+        .map do |rr|
       [
-        "#{c.first_name.strip} #{c.last_name.strip}",
-        c.id,
-        { 'data-phone-number' => PhoneNumberParser.format_for_display(c.phone_number) }
+        "#{rr.client.first_name.strip} #{rr.client.last_name.strip}",
+        rr.client.id,
+        { 'data-phone-number' => PhoneNumberParser.format_for_display(rr.client.phone_number),
+          'data-timestamp' => rr.timestamp }
       ]
     end
   end

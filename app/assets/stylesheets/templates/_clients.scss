@@ -109,6 +109,10 @@ div#unread-warning {
 
 #merge {
   display: none;
+
+  .label {
+    margin-left: 1em;
+  }
 }
 
 // Put label for transfer client user select on top

@@ -39,6 +39,24 @@ $(document).ready(function() {
     return num_clicked === 2;
   }
 
+  function clearNewestPhoneNumberLabel() {
+    $('#merge span.label').remove()
+  }
+
+  function showNewestPhoneNumberLabel(merge_select) {
+    var source_client_timestamp = parseInt($('#merge').data('reporting-relationship-timestamp'), 10);
+    var selected_client_timestamp = parseInt(merge_select.data('timestamp'), 10);
+    var new_label = '<span class="label label--teal">NEW</span>';
+
+    clearNewestPhoneNumberLabel();
+
+    if (selected_client_timestamp > source_client_timestamp) {
+      $('#merge_phone_numbers label:nth-child(2) span').after(new_label);
+    } else {
+      $('#merge_phone_numbers label:nth-child(1) span').after(new_label);
+    }
+  }
+
   $('#merge_reporting_relationship_selected_client_id').change(function() {
     var merge_select = $('#merge_reporting_relationship_selected_client_id option:selected');
     var selected_client_id = merge_select.val();
@@ -52,7 +70,8 @@ $(document).ready(function() {
     $('#merge_phone_numbers label:nth-child(2) span').text(selected_client_phone_number)
 
     uncheckMergeRadioButtons();
-		setMergeSubmitButtonEnabled(false);
+    setMergeSubmitButtonEnabled(false);
+    showNewestPhoneNumberLabel(merge_select);
 
     $('#merge').show();
   });

@@ -37,10 +37,10 @@ class MergeReportingRelationshipsController < ApplicationController
     rr_from.messages.each do |message|
       message.update!(reporting_relationship: rr_to)
       # TODO: account for like messages!
-      # TODO: set unread on new rr, user to match messages status
     end
 
     # TODO: merge category, status, notes on reporting relationships (prefer values on rr_to in a conflict)
+    # TODO: set unread on new rr, user to match messages status
 
     rr_from.update!(active: false)
 
@@ -52,18 +52,12 @@ class MergeReportingRelationshipsController < ApplicationController
       to_phone_number: rr_to.client.display_phone_number
     )
 
-    # catch errors; if anything doesn't work; redirect to edit form and flash error message
+    # TODO: catch errors; if anything doesn't work; redirect to edit form and flash error message
 
     flash[:notice] = I18n.t('flash.notices.merge')
 
     redirect_to reporting_relationship_path rr_to
   end
-
-  # current_user
-  # Client.find(merge_params[:client_id])
-  # Client.find(merge_params[:selected_client_id])
-  # Client.find(merge_params[:merge_clients][:full_name]).full_name
-  # Client.find(merge_params[:merge_clients][:phone_number]).phone_number
 
   private
 
