@@ -1,5 +1,4 @@
 //= require client_search
-//= require clients/edit
 
 var revealer = (function() {
   var rv = {

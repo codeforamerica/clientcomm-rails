@@ -1,5 +1,4 @@
 require 'rails_helper'
-
 describe GcfFormBuilder, type: :view do
   let(:template) do
     template = OpenStruct.new(output_buffer: '')
@@ -287,10 +286,10 @@ describe GcfFormBuilder, type: :view do
           <p class="form-question">What's your last name?</p>
           <radiogroup class="input-group--block">
             <label class="radio-button">
-              <input type="radio" value="1" name="client[last_name]" id="client_last_name_1" /> Gutierrez
+              <input type="radio" value="1" name="client[last_name]" id="client_last_name_1" /> <span>Gutierrez</span>
             </label>
             <label class="radio-button">
-              <input type="radio" value="2" name="client[last_name]" id="client_last_name_2" /> Livingston
+              <input type="radio" value="2" name="client[last_name]" id="client_last_name_2" /> <span>Livingston</span>
             </label>
           </radiogroup>
         </fieldset>

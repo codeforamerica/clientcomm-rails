@@ -4,6 +4,24 @@
   </div>
   <div class="form-card__content">
     <div>
+
+    <% unless @merge_clients.empty? %>
+      <%= form_for @merge_reporting_relationship, builder: GcfFormBuilder do |merge_form| %>
+        <%= merge_form.hidden_field :client_id, value: @client.id %>
+        <h4>Merge duplicate clients</h4>
+        <%= merge_form.gcf_select(:selected_client_id, 'You can combine this client with another client record.', @merge_clients, prompt: 'Pick client') %>
+        <div id="merge" data-reporting-relationship-timestamp="<%= @reporting_relationship.timestamp %>">
+          <%= merge_form.fields_for :merge_clients, MergeClient.new do |client_form| %>
+            <%= client_form.gcf_radio_set :full_name, "Choose a name", [{ value: @client.id, label: @client.full_name }, { value: 'selected_client_id', label: 'selected_client_full_name' }], id: 'merge_full_names' %>
+          <% end %>
+          <%= merge_form.fields_for :merge_clients, MergeClient.new do |client_form| %>
+            <%= client_form.gcf_radio_set :phone_number, "Choose a phone number", [{ value: @client.id, label: @client.display_phone_number }, { value: 'selected_client_id', label: 'selected_client_phone_number' }], id: 'merge_phone_numbers' %>
+          <% end %>
+          <%= merge_form.submit 'Merge', id: :merge_client, class: ['button', 'button--disabled'], disabled: true %>
+        </div>
+      <% end %>
+    <% end %>
+
     <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
       <p>
@@ -23,19 +41,20 @@
         </div>
       </div>
     <% end %>
+
     <%= form_for @client do |client_form| %>
       <h4>Deactivate client</h4>
       <p>
         When a client leaves your caseload you can deactivate them from your contact list.
         If they send you a message later they will automatically return to your contact list.
       </p>
-      <div id='survey' class='notice'>
+      <div id="survey" class="notice">
         <%= client_form.fields_for :reporting_relationships, @reporting_relationship do |rr_fields| %>
           <%= rr_fields.hidden_field :active, value: false %>
         <% end %>
         <%= client_form.fields_for :surveys, @client.surveys.new do |survey_fields| %>
           <% SurveyQuestion.all.each do |sq| %>
-            <p class='question-text'><%= sq.text %></p>
+            <p class="question-text"><%= sq.text %></p>
             <%=
               survey_fields.collection_check_boxes(
                 :survey_response_ids,
@@ -63,6 +82,7 @@
         </div>
       </div>
     <% end %>
+
       <h4>Download transcript</h4>
       <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
       <% rr = @client.reporting_relationship(user: current_user) %>

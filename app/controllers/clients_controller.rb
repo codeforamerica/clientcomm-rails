@@ -58,9 +58,10 @@ class ClientsController < ApplicationController
     @client = current_user.clients.find(params[:id])
     @reporting_relationship = @client.reporting_relationships.find_by(user: current_user)
     @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = current_user.department.eligible_users.active
-                                  .where.not(id: current_user.id)
-                                  .order(:full_name).pluck(:full_name, :id)
+    @transfer_users = ListMaker.transfer_users user: current_user
+    @merge_reporting_relationship = MergeReportingRelationship.new
+    @merge_clients = ListMaker.merge_clients user: current_user, client: @client
+
     analytics_track(
       label: 'client_edit_view',
       data: @client.analytics_tracker_data.merge(source: request.referer)
@@ -69,11 +70,8 @@ class ClientsController < ApplicationController
 
   def update
     @client = current_user.clients.find(params[:id])
-    @reporting_relationship = @client.reporting_relationship(user: current_user)
-    @transfer_reporting_relationship = ReportingRelationship.new
-    @transfer_users = current_user.department.eligible_users.where.not(id: current_user.id).pluck(:full_name, :id)
-
     @client.assign_attributes(client_params)
+    @reporting_relationship = @client.reporting_relationship(user: current_user)
 
     if @client.save
       catch(:handled) do
@@ -93,6 +91,12 @@ class ClientsController < ApplicationController
 
     track_errors('edit')
     flash.now[:alert] = t('flash.errors.client.invalid')
+
+    @transfer_reporting_relationship = ReportingRelationship.new
+    @transfer_users = ListMaker.transfer_users user: current_user
+    @merge_reporting_relationship = MergeReportingRelationship.new
+    @merge_clients = ListMaker.merge_clients user: current_user, client: @client
+
     render :edit
   end
 
@@ -110,28 +114,6 @@ class ClientsController < ApplicationController
       label: "client_#{method}_error",
       data: @client.analytics_tracker_data.merge(error_types: error_types)
     )
-  end
-
-  def notify_users_of_changes
-    if @client.phone_number_previously_changed?
-      Message.create_client_edit_markers(
-        user: current_user,
-        phone_number: @client.phone_number,
-        reporting_relationships: @client.reporting_relationships.active,
-        as_admin: false
-      )
-    end
-
-    other_active_relationships = @client.reporting_relationships
-                                        .active.where.not(user: current_user)
-    other_active_relationships.each do |rr|
-      NotificationMailer.client_edit_notification(
-        notified_user: rr.user,
-        editing_user: current_user,
-        client: @client,
-        previous_changes: @client.previous_changes.except(:updated_at, :next_court_date_at)
-      ).deliver_later
-    end
   end
 
   def phone_number_conflict_error_text
@@ -158,7 +140,7 @@ class ClientsController < ApplicationController
   def handle_active_client
     return unless @reporting_relationship.reload.active
 
-    notify_users_of_changes
+    NotificationSender.notify_users_of_changes(user: current_user, client: @client)
     @client.update(next_court_date_set_by_user: @client.next_court_date_at_previous_change.last.present?) if @client.previous_changes.keys.include?('next_court_date_at')
     analytics_track(
       label: 'client_edit_success',

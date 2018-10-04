@@ -76,6 +76,43 @@ class ReportingRelationship < ApplicationRecord
     Message.create_transfer_markers(receiving_rr: new_reporting_relationship, sending_rr: self)
   end
 
+  def merge_with(rr_from, copy_name = false)
+    ActiveRecord::Base.transaction do
+      to_full_name = client.full_name
+      from_full_name = rr_from.client.full_name
+
+      if copy_name
+        client.update!(first_name: rr_from.client.first_name, last_name: rr_from.client.last_name)
+        NotificationSender.notify_users_of_changes(user: user, client: client)
+      end
+
+      Message.create_conversation_ends_marker(
+        reporting_relationship: rr_from,
+        full_name: from_full_name,
+        phone_number: rr_from.client.display_phone_number
+      )
+
+      rr_from.messages.each do |message|
+        message.like_message&.update!(reporting_relationship: self)
+        message.update!(reporting_relationship: self)
+      end
+
+      copy_relationship_details(rr_from)
+
+      update!(has_unread_messages: rr_from.has_unread_messages) if rr_from.has_unread_messages
+
+      Message.create_merged_with_marker(
+        reporting_relationship: self,
+        from_full_name: from_full_name,
+        to_full_name: to_full_name,
+        from_phone_number: rr_from.client.display_phone_number,
+        to_phone_number: client.display_phone_number
+      )
+
+      rr_from.update!(active: false)
+    end
+  end
+
   def display_name
     client.full_name
   end
@@ -92,6 +129,12 @@ class ReportingRelationship < ApplicationRecord
   end
 
   private
+
+  def copy_relationship_details(rr_from)
+    update!(category: rr_from.category) if rr_from.category != 'no_cat' && category == 'no_cat'
+    update!(notes: rr_from.notes) if rr_from.notes.present? && notes.blank?
+    update!(client_status: rr_from.client_status) if rr_from.client_status.present? && client_status.blank?
+  end
 
   def attachments
     Attachment.where(message: messages)

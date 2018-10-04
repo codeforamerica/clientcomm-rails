@@ -93,7 +93,190 @@ RSpec.describe ReportingRelationship, type: :model do
     end
   end
 
-  describe '#transter_to' do
+  describe '#merge_with' do
+    let(:department) { create :department }
+    let!(:user) { create :user, department: department }
+    let(:other_user) { user }
+    let(:phone_number) { '+14155555550' }
+    let(:phone_number_display) { '(415) 555-5550' }
+    let(:phone_number_selected) { '+14155555552' }
+    let(:phone_number_selected_display) { '(415) 555-5552' }
+    let(:first_name) { 'Feaven X.' }
+    let(:first_name_selected) { 'Feaven' }
+    let(:last_name) { 'Girma' }
+    let(:last_name_selected) { 'Girma' }
+    let(:client) { create :client, user: user, phone_number: phone_number, first_name: first_name, last_name: last_name }
+    let(:client_selected) { create :client, user: user, phone_number: phone_number_selected, first_name: first_name_selected, last_name: last_name_selected }
+    let(:full_name_client) { client }
+    let(:phone_number_client) { client_selected }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+    let(:rr_selected) { ReportingRelationship.find_by(user: other_user, client: client_selected) }
+    let(:copy_name) { false }
+
+    subject do
+      rr_selected.merge_with(rr, copy_name)
+    end
+
+    before do
+      travel_to(4.days.ago) { create_list :text_message, 2, reporting_relationship: rr, read: true }
+      travel_to(3.days.ago) { create_list :text_message, 3, reporting_relationship: rr, read: true }
+      rr.update!(last_contacted_at: rr.messages.order(:send_at).last.send_at)
+      travel_to(2.days.ago) { create_list :text_message, 3, reporting_relationship: rr_selected, read: true }
+      travel_to(1.day.ago) { create_list :text_message, 2, reporting_relationship: rr_selected, read: true }
+      rr_selected.update!(last_contacted_at: rr_selected.messages.order(:send_at).last.send_at)
+    end
+
+    it 'merges the clients' do
+      subject
+
+      rr_from = rr
+      rr_to = rr_selected
+
+      expect(rr_from.reload.active).to eq false
+      expect(rr_from.messages.count).to eq 0
+      expect(rr_to.reload.active).to eq true
+      expect(rr_to.messages.where(type: TextMessage.to_s).count).to eq 10
+
+      conversation_ends_marker = rr_to.messages.where(type: ConversationEndsMarker.to_s).first
+      expect(conversation_ends_marker).to_not be_nil
+      conversation_ends_marker_body = I18n.t(
+        'messages.conversation_ends',
+        full_name: "#{first_name} #{last_name}",
+        phone_number: phone_number_display
+      )
+      expect(conversation_ends_marker.body).to eq(conversation_ends_marker_body)
+
+      merged_with_marker = rr_to.messages.where(type: MergedWithMarker.to_s).first
+      expect(merged_with_marker).to_not be_nil
+      merged_with_marker_body = I18n.t(
+        'messages.merged_with',
+        from_full_name: "#{first_name} #{last_name}",
+        from_phone_number: phone_number_display,
+        to_full_name: "#{first_name_selected} #{last_name_selected}",
+        to_phone_number: phone_number_selected_display
+      )
+      expect(merged_with_marker.body).to eq(merged_with_marker_body)
+    end
+
+    context 'a RecordInvalid exception is raised during the merge' do
+      before do
+        allow_any_instance_of(ReportingRelationship).to receive(:update!).with(active: false).and_raise ActiveRecord::RecordInvalid
+      end
+
+      it 'rolls back changes' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+
+        rr_from = rr_selected
+        rr_to = rr
+
+        expect(rr_from.reload.active).to eq true
+        expect(rr_from.reload.messages.count).to eq 5
+        expect(rr_to.reload.active).to eq true
+        expect(rr_to.reload.messages.count).to eq 5
+
+        conversation_ends_marker = rr_to.messages.where(type: ConversationEndsMarker.to_s).first
+        expect(conversation_ends_marker).to be_nil
+        merged_with_marker = rr_to.messages.where(type: MergedWithMarker.to_s).first
+        expect(merged_with_marker).to be_nil
+      end
+    end
+
+    context 'there are like messages' do
+      before do
+        m = create :text_message, reporting_relationship: rr, inbound: true, read: true
+        create :text_message, reporting_relationship: rr, inbound: false, read: true, like_message: m
+        ms = create :text_message, reporting_relationship: rr_selected, inbound: true, read: true
+        create :text_message, reporting_relationship: rr_selected, inbound: false, read: true, like_message: ms
+      end
+
+      it 'merges the clients without validation errors' do
+        expect { subject }.to_not raise_error
+
+        rr_from = rr
+        rr_to = rr_selected
+
+        expect(rr_from.reload.active).to eq false
+        expect(rr_from.messages.count).to eq 0
+        expect(rr_to.reload.active).to eq true
+        expect(rr_to.messages.where(type: TextMessage.to_s).count).to eq 14
+      end
+    end
+
+    context 'there are unread messages only on the from relationship' do
+      before do
+        travel_to(3.days.ago) { create_list :text_message, 2, reporting_relationship: rr, read: false }
+        rr.update!(has_unread_messages: true)
+      end
+
+      it 'updates the unread value on the to relationship' do
+        rr_to = rr_selected
+        expect(rr_to.has_unread_messages).to eq false
+
+        subject
+
+        expect(rr_to.reload.has_unread_messages).to eq true
+      end
+    end
+
+    context 'there are unread messages only on the to relationship' do
+      before do
+        travel_to(1.day.ago) { create_list :text_message, 2, reporting_relationship: rr_selected, read: false }
+        rr_selected.update!(has_unread_messages: true)
+      end
+
+      it 'does not overwrite the unread value on the to relationship' do
+        rr_to = rr_selected
+        expect(rr_to.has_unread_messages).to eq true
+
+        subject
+
+        expect(rr_to.reload.has_unread_messages).to eq true
+      end
+    end
+
+    context 'there are values for category, notes, and status on the from relationship' do
+      let(:category_from) { 'cat1' }
+      let(:notes_from) { 'a note on the from relationship' }
+      let(:status_from) { create :client_status, name: 'from status', department: department }
+
+      before do
+        rr_selected.update!(notes: nil)
+        rr.update!(category: category_from, notes: notes_from, client_status: status_from)
+      end
+
+      context 'there are only values on the from relationship' do
+        it 'copies the values to the to relationship' do
+          subject
+
+          rr_to = rr_selected
+          expect(rr_to.reload.category).to eq category_from
+          expect(rr_to.reload.notes).to eq notes_from
+          expect(rr_to.reload.client_status).to eq status_from
+        end
+      end
+
+      context 'there are conflicting values on the to relationship' do
+        let(:category_to) { 'cat2' }
+        let(:notes_to) { 'a note on the to relationship' }
+        let(:status_to) { create :client_status, name: 'to status', department: department }
+
+        before do
+          rr_selected.update!(category: category_to, notes: notes_to, client_status: status_to)
+        end
+
+        it 'preserves the values on the to relationship' do
+          subject
+
+          rr_to = rr_selected
+          expect(rr_to.reload.category).to eq category_to
+          expect(rr_to.reload.notes).to eq notes_to
+          expect(rr_to.reload.client_status).to eq status_to
+        end
+      end
+    end
+  end
+
+  describe '#transfer_to' do
     let(:dept) { create :department }
     let(:old_user) { create :user, department: dept }
     let(:new_user) { create :user, department: dept }
@@ -102,9 +285,11 @@ RSpec.describe ReportingRelationship, type: :model do
     let!(:scheduled_messages) { create_list :text_message, 5, reporting_relationship: rr, send_at: Time.zone.now + 1.day }
     let(:old_reporting_relationship) { ReportingRelationship.find_by(user: old_user, client: client) }
     let(:new_reporting_relationship) { ReportingRelationship.find_or_initialize_by(user_id: new_user.id, client_id: client.id) }
+
     before do
       rr.update!(has_unread_messages: true)
     end
+
     subject do
       old_reporting_relationship.transfer_to(new_reporting_relationship)
     end
@@ -117,7 +302,7 @@ RSpec.describe ReportingRelationship, type: :model do
       expect(old_user.reload.has_unread_messages).to eq(false)
     end
 
-    it 'transfers creates transfer markers' do
+    it 'creates transfer markers' do
       expect(Message).to receive(:create_transfer_markers).with(sending_rr: old_reporting_relationship, receiving_rr: new_reporting_relationship)
       subject
     end
@@ -141,6 +326,7 @@ RSpec.describe ReportingRelationship, type: :model do
         expect(new_user.messages.messages).to include(*messages)
       end
     end
+
     context 'has client statuses' do
       let!(:status) { create :client_status, department: dept }
 

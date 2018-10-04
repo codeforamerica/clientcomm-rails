@@ -445,7 +445,7 @@ RSpec.describe Message, type: :model do
     subject { Message.send_unclaimed_autoreply(rr: rr) }
 
     it 'sends the autoreply message' do
-      expect(TextMessage).to receive(:create!) .with(
+      expect(TextMessage).to receive(:create!).with(
         reporting_relationship: rr,
         inbound: false,
         read: true,
@@ -458,6 +458,119 @@ RSpec.describe Message, type: :model do
       travel_to now do
         subject
       end
+    end
+  end
+
+  describe 'create_conversation_ends_marker' do
+    let(:user) { create :user }
+    let(:client_first_name) { 'Lucille' }
+    let(:client_last_name) { 'Cooper' }
+    let(:client_full_name) { "#{client_first_name} #{client_last_name}" }
+    let(:client_phone_number) { '+14155551111' }
+    let!(:client) {
+      create :client,
+             user: user,
+             first_name: client_first_name,
+             last_name: client_last_name,
+             phone_number: client_phone_number
+    }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+
+    subject do
+      Message.create_conversation_ends_marker(
+        reporting_relationship: rr,
+        full_name: client_full_name,
+        phone_number: client_phone_number
+      )
+    end
+
+    context 'there are messages in the conversation' do
+      before do
+        5.times { |n| create :text_message, reporting_relationship: rr, send_at: Time.zone.now - (1 + n).days }
+      end
+
+      it 'creates a marker with conversation ends marker properties' do
+        subject
+
+        marker_conversation_ends = rr.messages.where(type: ConversationEndsMarker.to_s).first
+        expect(marker_conversation_ends.user).to eq(user)
+        expect(marker_conversation_ends.client).to eq(client)
+        expect(marker_conversation_ends.send_at).to eq(rr.messages.messages.order(send_at: :desc).first.send_at + 1.second)
+        marker_body = I18n.t('messages.conversation_ends', full_name: client_full_name, phone_number: client_phone_number)
+        expect(marker_conversation_ends.body).to eq(marker_body)
+        expect(marker_conversation_ends).to be_conversation_ends_marker
+        expect(marker_conversation_ends).to be_persisted
+        expect(marker_conversation_ends).to be_read
+      end
+    end
+
+    context 'there are no messages in the conversation' do
+      it 'does not create a marker' do
+        subject
+
+        expect(rr.messages.where(type: ConversationEndsMarker.to_s).first).to be_nil
+      end
+    end
+  end
+
+  describe 'create_merged_with_marker' do
+    let(:user) { create :user }
+    let(:from_client_first_name) { 'Lucille' }
+    let(:from_client_last_name) { 'Cooper' }
+    let(:from_client_full_name) { "#{from_client_first_name} #{from_client_last_name}" }
+    let(:from_client_phone_number) { '+14155551111' }
+    let!(:from_client) {
+      create :client,
+             user: user,
+             first_name: from_client_first_name,
+             last_name: from_client_last_name,
+             phone_number: from_client_phone_number
+    }
+    let(:to_client_first_name) { 'Amanda' }
+    let(:to_client_last_name) { 'Aguirre' }
+    let(:to_client_full_name) { "#{to_client_first_name} #{to_client_last_name}" }
+    let(:to_client_phone_number) { '+14155551112' }
+    let!(:to_client) {
+      create :client,
+             user: user,
+             first_name: to_client_first_name,
+             last_name: to_client_last_name,
+             phone_number: to_client_phone_number
+    }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: to_client) }
+
+    subject do
+      Message.create_merged_with_marker(
+        reporting_relationship: rr,
+        from_full_name: from_client_full_name,
+        to_full_name: to_client_full_name,
+        from_phone_number: from_client_phone_number,
+        to_phone_number: to_client_phone_number
+      )
+    end
+
+    it 'creates a message with merged with marker properties' do
+      time = Time.zone.now.change(usec: 0)
+
+      travel_to time do
+        subject
+      end
+
+      marker_merged = rr.messages.where(type: MergedWithMarker.to_s).first
+      expect(marker_merged.user).to eq(user)
+      expect(marker_merged.client).to eq(to_client)
+      expect(marker_merged.send_at).to eq(time)
+      marker_body = I18n.t(
+        'messages.merged_with',
+        from_full_name: from_client_full_name,
+        from_phone_number: from_client_phone_number,
+        to_full_name: to_client_full_name,
+        to_phone_number: to_client_phone_number
+      )
+      expect(marker_merged.body).to eq(marker_body)
+      expect(marker_merged).to be_merged_with_marker
+      expect(marker_merged).to be_persisted
+      expect(marker_merged).to be_read
     end
   end
 

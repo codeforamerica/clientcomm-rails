@@ -50,8 +50,6 @@ feature 'user edits client', :js do
       fill_in 'Notes', with: new_note
       fill_in 'Phone number', with: new_phone_number
 
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Court date (optional)', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')
@@ -77,7 +75,7 @@ feature 'user edits client', :js do
         )
     end
 
-    step 'navigates to edit client form' do
+    step 'navigates to edit client form and edits the client' do
       click_on 'Manage client'
       expect(find_field('Notes').value).to eq new_note
       expect(page).to have_field('First name', with: new_first_name)

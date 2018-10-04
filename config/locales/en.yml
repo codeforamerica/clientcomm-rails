@@ -29,6 +29,8 @@ en:
     errors:
       client:
         invalid: There was a problem saving this client.
+      merge:
+        invalid: There was a problem merging these clients. Please try again, or contact support for assistance.
     notices:
       client:
         taken: You already have a client with this phone number.
@@ -38,6 +40,7 @@ en:
       mass_message:
         sent: Your mass message has been sent.
         scheduled: Your mass message has been scheduled.
+      merge: You have merged these clients
   voice_response: This phone number can only receive text messages. Please hang up and send a text message.
   clients:
     empty: Add a client to get started.
@@ -48,6 +51,8 @@ en:
     phone_number_edited_by_you: 'Updated the phone number to %{new_phone_number}'
     phone_number_edited: '%{user_full_name} updated the phone number to %{new_phone_number}'
     admin_user_description: A ClientComm Admin
+    conversation_ends: '"%{full_name} %{phone_number}" conversation ends'
+    merged_with: '"%{from_full_name} %{from_phone_number}" merged with "%{to_full_name} %{to_phone_number}"'
   message:
     unclaimed_response: 'AUTO REPLY: We don’t recognize this number. Please make sure you include your name and the person you want to reach and we’ll get your message to them.'
     auto_court_reminder: 'Automated alert: Your next court date is at %{location} on %{date}, %{time} in Rm %{room}. Please text with any questions.'

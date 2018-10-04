@@ -89,6 +89,36 @@ class Message < ApplicationRecord
     true
   end
 
+  def self.create_conversation_ends_marker(reporting_relationship:, full_name:, phone_number:)
+    last_message_send_at = reporting_relationship.messages.messages.order(send_at: :desc).first&.send_at
+    return false if last_message_send_at.nil?
+
+    ConversationEndsMarker.create!(
+      reporting_relationship: reporting_relationship,
+      body: I18n.t(
+        'messages.conversation_ends',
+        full_name: full_name,
+        phone_number: phone_number
+      ),
+      send_at: last_message_send_at + 1.second
+    )
+    true
+  end
+
+  def self.create_merged_with_marker(reporting_relationship:, from_full_name:, to_full_name:, from_phone_number:, to_phone_number:)
+    MergedWithMarker.create!(
+      reporting_relationship: reporting_relationship,
+      body: I18n.t(
+        'messages.merged_with',
+        from_full_name: from_full_name,
+        from_phone_number: from_phone_number,
+        to_full_name: to_full_name,
+        to_phone_number: to_phone_number
+      )
+    )
+    true
+  end
+
   def self.create_from_twilio!(twilio_params)
     from_phone_number = twilio_params[:From]
     to_phone_number = twilio_params[:To]
@@ -164,6 +194,14 @@ class Message < ApplicationRecord
 
   def client_edit_marker?
     type == ClientEditMarker.to_s
+  end
+
+  def conversation_ends_marker?
+    type == ConversationEndsMarker.to_s
+  end
+
+  def merged_with_marker?
+    type == MergedWithMarker.to_s
   end
 
   def past_message?
