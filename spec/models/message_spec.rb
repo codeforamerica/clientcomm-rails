@@ -445,7 +445,7 @@ RSpec.describe Message, type: :model do
     subject { Message.send_unclaimed_autoreply(rr: rr) }
 
     it 'sends the autoreply message' do
-      expect(TextMessage).to receive(:create!) .with(
+      expect(TextMessage).to receive(:create!).with(
         reporting_relationship: rr,
         inbound: false,
         read: true,

@@ -111,10 +111,14 @@ feature 'User merges clients', :js do
         expect(page).to have_content "\"#{client_from.full_name} #{phone_number_from_display}\" merged with \"#{client_to.full_name} #{phone_number_to_display}\""
         expect(page).to have_css '.flash__message', text: I18n.t('flash.notices.merge')
       end
-    end
-  end
 
-  context 'Another user has relationships with the clients' do
-    let!(:user_other) { create :user, full_name: 'Joshua Nelson' }
+      step 'navigates to the client list' do
+        click_on 'Home'
+        expect(page).to have_current_path(clients_path)
+        expect(page).to have_css '.data-table td', text: client_to.reload.full_name
+        expect(page).to have_css '.data-table td', text: client_other.reload.full_name
+        expect(page).to_not have_css '.data-table td', text: "#{first_name_to} #{last_name_to}"
+      end
+    end
   end
 end

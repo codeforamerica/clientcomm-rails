@@ -29,6 +29,8 @@ en:
     errors:
       client:
         invalid: There was a problem saving this client.
+      merge:
+        invalid: There was a problem merging these clients. Please try again, or contact support for assistance.
     notices:
       client:
         taken: You already have a client with this phone number.
