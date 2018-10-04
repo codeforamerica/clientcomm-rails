@@ -5,8 +5,6 @@
   <div class="form-card__content">
     <div>
 
-
-
     <% unless @merge_clients.empty? %>
       <%= form_for @merge_reporting_relationship, builder: GcfFormBuilder do |merge_form| %>
         <%= merge_form.hidden_field :client_id, value: @client.id %>
@@ -23,8 +21,6 @@
         </div>
       <% end %>
     <% end %>
-
-
 
     <%= form_for @transfer_reporting_relationship, builder: GcfFormBuilder do |transfer_form| %>
       <h4>Transfer Client</h4>
