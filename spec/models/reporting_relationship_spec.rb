@@ -158,6 +158,58 @@ RSpec.describe ReportingRelationship, type: :model do
       expect(merged_with_marker.body).to eq(merged_with_marker_body)
     end
 
+    context 'the from relationship was contacted more recently than the to relationship' do
+      before do
+        rr_selected.messages.destroy_all
+        travel_to(6.days.ago) { create_list :text_message, 3, reporting_relationship: rr_selected, read: true }
+        travel_to(5.days.ago) { create_list :text_message, 2, reporting_relationship: rr_selected, read: true }
+        rr_selected.update!(last_contacted_at: rr_selected.messages.order(:send_at).last.send_at)
+      end
+
+      it 'updates last_contacted_at' do
+        rr_from = rr
+        rr_to = rr_selected
+
+        expect(rr_to.reload.last_contacted_at).to be < rr_from.last_contacted_at
+
+        subject
+
+        expect(rr_to.reload.last_contacted_at).to eq(rr_from.last_contacted_at)
+      end
+    end
+
+    context 'the to relationship has never been contacted, and the from relationship has been' do
+      before do
+        rr_selected.messages.destroy_all
+        rr_selected.update!(last_contacted_at: nil)
+      end
+
+      it 'updates last_contacted_at' do
+        subject
+
+        rr_from = rr
+        rr_to = rr_selected
+
+        expect(rr_to.reload.last_contacted_at).to eq(rr_from.last_contacted_at)
+      end
+    end
+
+    context 'the from relationship has never been contacted, and the to relationship has been' do
+      before do
+        rr.messages.destroy_all
+        rr.update!(last_contacted_at: nil)
+      end
+
+      it 'leaves last_contacted_at alone' do
+        rr_to = rr_selected
+        last_contacted_at_before = rr_to.last_contacted_at
+
+        subject
+
+        expect(rr_to.reload.last_contacted_at).to eq last_contacted_at_before
+      end
+    end
+
     context 'a RecordInvalid exception is raised during the merge' do
       before do
         allow_any_instance_of(ReportingRelationship).to receive(:update!).with(active: false).and_raise ActiveRecord::RecordInvalid

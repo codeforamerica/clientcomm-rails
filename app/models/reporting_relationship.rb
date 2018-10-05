@@ -131,9 +131,31 @@ class ReportingRelationship < ApplicationRecord
   private
 
   def copy_relationship_details(rr_from)
-    update!(category: rr_from.category) if rr_from.category != 'no_cat' && category == 'no_cat'
-    update!(notes: rr_from.notes) if rr_from.notes.present? && notes.blank?
-    update!(client_status: rr_from.client_status) if rr_from.client_status.present? && client_status.blank?
+    copy_last_contacted_at(rr_from)
+    copy_category(rr_from)
+    copy_notes(rr_from)
+    copy_client_status(rr_from)
+  end
+
+  def copy_last_contacted_at(rr_from)
+    return if rr_from.last_contacted_at.blank?
+    return unless last_contacted_at.nil? || last_contacted_at < rr_from.last_contacted_at
+    update!(last_contacted_at: rr_from.last_contacted_at)
+  end
+
+  def copy_category(rr_from)
+    return unless rr_from.category != 'no_cat' && category == 'no_cat'
+    update!(category: rr_from.category)
+  end
+
+  def copy_notes(rr_from)
+    return unless rr_from.notes.present? && notes.blank?
+    update!(notes: rr_from.notes)
+  end
+
+  def copy_client_status(rr_from)
+    return unless rr_from.client_status.present? && client_status.blank?
+    update!(client_status: rr_from.client_status)
   end
 
   def attachments
