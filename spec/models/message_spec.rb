@@ -32,7 +32,7 @@ RSpec.describe Message, type: :model do
     context 'message is first' do
       let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 1) }
 
-      it 'sends analytics tracking data' do
+      it 'returns true' do
         expect(subject).to eq true
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe Message, type: :model do
     context 'message is not first' do
       let(:send_at) { Time.zone.local(2010, 1, 1, 1, 1, 5) }
 
-      it 'sends analytics tracking data' do
+      it 'returns false' do
         expect(subject).to eq false
       end
     end

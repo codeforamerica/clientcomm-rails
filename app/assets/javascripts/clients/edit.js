@@ -74,6 +74,13 @@ $(document).ready(function() {
     showNewestPhoneNumberLabel(merge_select);
 
     $('#merge').show();
+
+    mixpanelTrack(
+      "client_merge_start", {
+        client_id: Number($('#merge_reporting_relationship_client_id').attr('value')),
+        other_client_id: Number(selected_client_id)
+      }
+    );
   });
 
   $('#merge').click(function() {

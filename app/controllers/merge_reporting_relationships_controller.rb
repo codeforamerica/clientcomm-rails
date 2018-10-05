@@ -30,11 +30,24 @@ class MergeReportingRelationshipsController < ApplicationController
       end
     end
 
+    tracking_data = { other_client_id: rr_selected&.client&.id }
+
     if failed
       flash[:alert] = I18n.t('flash.errors.merge.invalid')
       redirect_to edit_client_path rr_current.client
+
+      analytics_track(
+        label: 'client_merge_error',
+        data: rr_current.client.analytics_tracker_data.merge(tracking_data)
+      )
+
       return
     end
+
+    analytics_track(
+      label: 'client_merge_success',
+      data: rr_current.client.analytics_tracker_data.merge(tracking_data)
+    )
 
     flash[:notice] = I18n.t('flash.notices.merge')
     redirect_to reporting_relationship_path rr_to

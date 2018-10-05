@@ -56,6 +56,13 @@ describe 'Merge Reporting Relationship Requests', type: :request do
       expect(rr_to.reload.active).to eq true
       expect(rr_to.messages.where(type: TextMessage.to_s).count).to eq 10
 
+      expect_most_recent_analytics_event(
+        'client_merge_success' => {
+          'client_id' => rr_from.client.id,
+          'other_client_id' => rr_to.client.id
+        }
+      )
+
       expect(response).to redirect_to reporting_relationship_path rr_to
     end
 
@@ -73,6 +80,13 @@ describe 'Merge Reporting Relationship Requests', type: :request do
         expect(rr_to.reload.active).to eq true
         expect(rr_to.messages.where(type: TextMessage.to_s).count).to eq 10
 
+        expect_most_recent_analytics_event(
+          'client_merge_success' => {
+            'client_id' => rr_to.client.id,
+            'other_client_id' => rr_from.client.id
+          }
+        )
+
         expect(response).to redirect_to reporting_relationship_path rr_to
       end
     end
@@ -83,6 +97,13 @@ describe 'Merge Reporting Relationship Requests', type: :request do
 
       it 're-renders the page with an error message' do
         subject
+
+        expect_most_recent_analytics_event(
+          'client_merge_error' => {
+            'client_id' => rr.client.id,
+            'other_client_id' => nil
+          }
+        )
 
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client
@@ -97,6 +118,13 @@ describe 'Merge Reporting Relationship Requests', type: :request do
 
       it 're-renders the page with an error message' do
         subject
+
+        expect_most_recent_analytics_event(
+          'client_merge_error' => {
+            'client_id' => rr.client.id,
+            'other_client_id' => rr_selected.client.id
+          }
+        )
 
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client

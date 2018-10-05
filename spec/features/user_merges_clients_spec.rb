@@ -74,6 +74,15 @@ feature 'User merges clients', :js do
         expect(page).to have_content(phone_number_other_display)
         expect(page).to have_css '#merge_phone_numbers label:nth-child(2) span.label', text: 'NEW'
         expect(page).to have_button('Merge', disabled: true)
+
+        wait_for_ajax
+
+        expect_most_recent_analytics_event(
+          'client_merge_start' => {
+            'client_id' => client_to.id,
+            'other_client_id' => client_other.id
+          }
+        )
       end
 
       step 'chooses preferred phone number and name' do
@@ -93,6 +102,15 @@ feature 'User merges clients', :js do
         expect(page).to_not have_css '#merge_phone_numbers label:nth-child(2) span.label'
         expect(page).to have_css '#merge_phone_numbers label:nth-child(1) span.label', text: 'NEW'
         expect(page).to have_button('Merge', disabled: true)
+
+        wait_for_ajax
+
+        expect_most_recent_analytics_event(
+          'client_merge_start' => {
+            'client_id' => client_to.id,
+            'other_client_id' => client_from.id
+          }
+        )
       end
 
       step 'chooses preferred phone number and name and submits the form' do
