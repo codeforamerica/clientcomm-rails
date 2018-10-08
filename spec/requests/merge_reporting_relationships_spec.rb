@@ -93,12 +93,40 @@ describe 'Merge Reporting Relationship Requests', type: :request do
       end
     end
 
+    context 'an inactive relationship is submitted' do
+      before do
+        rr_selected.update!(active: false)
+      end
+
+      it 're-renders the page with an error message' do
+        subject
+
+        expect_most_recent_analytics_event(
+          'client_merge_error' => {
+            'client_id' => rr.client.id,
+            'selected_client_id' => rr_selected.client.id
+          }
+        )
+
+        expect(response.code).to eq '302'
+        expect(response).to redirect_to edit_client_path client
+        expect(flash[:alert]).to eq I18n.t('flash.errors.merge.invalid')
+      end
+    end
+
     context 'relationships belonging to different users are submitted' do
       let(:other_user) { create :user, department: department }
       let!(:client_selected) { create :client, user: other_user, phone_number: phone_number_selected, first_name: first_name_selected, last_name: last_name_selected }
 
       it 're-renders the page with an error message' do
         subject
+
+        expect_most_recent_analytics_event(
+          'client_merge_error' => {
+            'client_id' => rr.client.id,
+            'selected_client_id' => nil
+          }
+        )
 
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client
@@ -113,6 +141,13 @@ describe 'Merge Reporting Relationship Requests', type: :request do
 
       it 're-renders the page with an error message' do
         subject
+
+        expect_most_recent_analytics_event(
+          'client_merge_error' => {
+            'client_id' => rr.client.id,
+            'selected_client_id' => rr_selected.client.id
+          }
+        )
 
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client

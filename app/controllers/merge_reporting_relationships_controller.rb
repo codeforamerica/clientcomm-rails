@@ -19,7 +19,7 @@ class MergeReportingRelationshipsController < ApplicationController
                        [rr_selected, rr_current]
                      end
 
-    failed = rr_to.nil? || rr_from.nil?
+    failed = reporting_relationships_invalid?(rr_to, rr_from)
 
     unless failed
       begin
@@ -30,13 +30,21 @@ class MergeReportingRelationshipsController < ApplicationController
       end
     end
 
+    tracking_data = { selected_client_id: rr_selected&.client&.id }
+
     if failed
       flash[:alert] = I18n.t('flash.errors.merge.invalid')
       redirect_to edit_client_path rr_current.client
+
+      analytics_track(
+        label: 'client_merge_error',
+        data: rr_current.client.analytics_tracker_data.merge(tracking_data)
+      )
+
       return
     end
 
-    tracking_data = { selected_client_id: rr_selected&.client&.id, preserved_client_id: rr_to&.client&.id }
+    tracking_data[:preserved_client_id] = rr_to.client.id
 
     analytics_track(
       label: 'client_merge_success',
@@ -48,6 +56,10 @@ class MergeReportingRelationshipsController < ApplicationController
   end
 
   private
+
+  def reporting_relationships_invalid?(rr_to, rr_from)
+    rr_to.nil? || rr_from.nil? || rr_to.active == false || rr_from.active == false
+  end
 
   def merge_params
     params.require(:merge_reporting_relationship)
