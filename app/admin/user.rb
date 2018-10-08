@@ -38,6 +38,11 @@ ActiveAdmin.register User do
     redirect_to admin_users_path
   end
 
+  member_action :mark_messages_read, method: :get do
+    flash[:success] = "I did nothing except show you this flash for #{resource.full_name}"
+    redirect_to admin_user_path(resource)
+  end
+
   filter :email
   filter :full_name
   filter :department
@@ -90,6 +95,18 @@ ActiveAdmin.register User do
       end
 
       f.input :department, as: :select, collection: Department.all, include_blank: false
+    end
+
+    unless f.object.new_record?
+      panel 'Unread messages' do
+        message_count = user.messages.unread.count
+        if message_count.positive?
+          relationship_count = user.messages.unread.map(&:reporting_relationship_id).uniq.count
+          link_to("Mark #{pluralize(message_count, 'message')} on #{pluralize(relationship_count, 'relationship')} read", mark_messages_read_admin_user_path(user))
+        else
+          'No unread messages'
+        end
+      end
     end
 
     unless f.object.new_record?
