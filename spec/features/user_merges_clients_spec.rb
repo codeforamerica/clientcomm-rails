@@ -80,7 +80,7 @@ feature 'User merges clients', :js do
         expect_most_recent_analytics_event(
           'client_merge_start' => {
             'client_id' => client_to.id,
-            'other_client_id' => client_other.id
+            'selected_client_id' => client_other.id
           }
         )
       end
@@ -108,7 +108,7 @@ feature 'User merges clients', :js do
         expect_most_recent_analytics_event(
           'client_merge_start' => {
             'client_id' => client_to.id,
-            'other_client_id' => client_from.id
+            'selected_client_id' => client_from.id
           }
         )
       end

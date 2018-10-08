@@ -59,7 +59,8 @@ describe 'Merge Reporting Relationship Requests', type: :request do
       expect_most_recent_analytics_event(
         'client_merge_success' => {
           'client_id' => rr_from.client.id,
-          'other_client_id' => rr_to.client.id
+          'selected_client_id' => rr_to.client.id,
+          'preserved_client_id' => rr_to.client.id
         }
       )
 
@@ -83,7 +84,8 @@ describe 'Merge Reporting Relationship Requests', type: :request do
         expect_most_recent_analytics_event(
           'client_merge_success' => {
             'client_id' => rr_to.client.id,
-            'other_client_id' => rr_from.client.id
+            'selected_client_id' => rr_from.client.id,
+            'preserved_client_id' => rr_to.client.id
           }
         )
 
@@ -98,13 +100,6 @@ describe 'Merge Reporting Relationship Requests', type: :request do
       it 're-renders the page with an error message' do
         subject
 
-        expect_most_recent_analytics_event(
-          'client_merge_error' => {
-            'client_id' => rr.client.id,
-            'other_client_id' => nil
-          }
-        )
-
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client
         expect(flash[:alert]).to eq I18n.t('flash.errors.merge.invalid')
@@ -118,13 +113,6 @@ describe 'Merge Reporting Relationship Requests', type: :request do
 
       it 're-renders the page with an error message' do
         subject
-
-        expect_most_recent_analytics_event(
-          'client_merge_error' => {
-            'client_id' => rr.client.id,
-            'other_client_id' => rr_selected.client.id
-          }
-        )
 
         expect(response.code).to eq '302'
         expect(response).to redirect_to edit_client_path client
