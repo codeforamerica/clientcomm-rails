@@ -89,6 +89,11 @@ class User < ApplicationRecord
     output
   end
 
+  def mark_messages_read
+    reporting_relationships.each(&:mark_messages_read)
+    self.update!(has_unread_messages: false)
+  end
+
   def set_has_unread_messages
     self.update!(has_unread_messages: false) if reporting_relationships.active.where(has_unread_messages: true).empty?
   end

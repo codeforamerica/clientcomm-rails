@@ -37,12 +37,17 @@ feature 'Admin Panel' do
     let!(:user_inactive_client) { create :user, department: department_from, full_name: 'Nile Hagos' }
     let!(:user_active_client) { create :user, department: department_from, full_name: 'Kinfe Fikru' }
     let!(:user_other_department) { create :user, department: department_to, full_name: 'Nebay Mehari' }
+    let!(:user_unread_messages) { create :user, department: department_from, has_unread_messages: true, full_name: 'Inga Lozano' }
     let!(:client1) { create :client, user: user_inactive_client, first_name: 'Simret', last_name: 'Abaalom' }
     let!(:client2) { create :client, user: user_active_client, first_name: 'Abraham', last_name: 'Haylom' }
+    let!(:client3) { create :client, user: user_unread_messages, first_name: 'Laura', last_name: 'Boyd' }
+    let(:rr_unread) { ReportingRelationship.find_by(user: user_unread_messages, client: client3) }
 
     before do
       ReportingRelationship.create(client: client1, user: user_other_department, active: false)
       ReportingRelationship.create(client: client2, user: user_other_department, active: true)
+      create_list :text_message, 3, reporting_relationship: rr_unread, read: false
+      rr_unread.update!(has_unread_messages: true)
     end
 
     scenario 'Changing user departments' do
@@ -117,6 +122,17 @@ feature 'Admin Panel' do
         expect(page.current_path).to eq(admin_user_path(user_active_client))
         error_message = I18n.t('activerecord.errors.models.user.attributes.reporting_relationships.invalid')
         expect(page).to have_content(error_message)
+      end
+
+      step 'clears unread messages belonging to a user' do
+        visit admin_users_path
+        find("#user_#{user_unread_messages.id} a", text: 'Edit').click
+        expect(page.current_path).to eq(edit_admin_user_path(user_unread_messages))
+        click_on 'Mark messages read'
+        expect(page.current_path).to eq(admin_user_path(user_unread_messages))
+        expect(page).to have_css '.flash', text: "Marked all messages for #{user_unread_messages.full_name} read"
+        click_on 'Edit User'
+        expect(page).to have_content('No unread messages')
       end
     end
   end

@@ -4,7 +4,7 @@ RSpec.describe User, type: :model do
   let(:rr) { create :reporting_relationship, active: true, has_unread_messages: false }
   let!(:user) { rr.user }
   let!(:client) { rr.client }
-  let!(:message) { create :text_message, reporting_relationship: rr }
+  let!(:message) { create :text_message, reporting_relationship: rr, read: true }
 
   it { should belong_to :department }
   it { should have_many(:clients).through(:reporting_relationships) }
@@ -31,7 +31,38 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe 'set_has_unread_messages' do
+  describe '#mark_messages_read' do
+    let!(:client2) { create :client, user: user }
+    let(:rr2) { ReportingRelationship.find_by(user: user, client: client2) }
+
+    subject { user.mark_messages_read }
+
+    before do
+      create_list :text_message, 5, reporting_relationship: rr, inbound: true, read: false, twilio_status: 'received'
+      create_list :text_message, 5, reporting_relationship: rr2, inbound: true, read: false, twilio_status: 'received'
+      rr.update!(has_unread_messages: true)
+      rr2.update!(has_unread_messages: true)
+      user.update!(has_unread_messages: true)
+    end
+
+    it 'marks messages read and updates state on relationships and user' do
+      expect(rr.messages.unread.count).to eq 5
+      expect(rr2.messages.unread.count).to eq 5
+      expect(rr.has_unread_messages).to be true
+      expect(rr2.has_unread_messages).to be true
+      expect(user.has_unread_messages).to be true
+
+      subject
+
+      expect(rr.messages.unread.count).to eq 0
+      expect(rr2.messages.unread.count).to eq 0
+      expect(rr.reload.has_unread_messages).to be false
+      expect(rr2.reload.has_unread_messages).to be false
+      expect(user.reload.has_unread_messages).to be false
+    end
+  end
+
+  describe '#set_has_unread_messages' do
     subject do
       user.set_has_unread_messages
     end
