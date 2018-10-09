@@ -39,7 +39,8 @@ ActiveAdmin.register User do
   end
 
   member_action :mark_messages_read, method: :get do
-    flash[:success] = "I did nothing except show you this flash for #{resource.full_name}"
+    resource.mark_messages_read
+    flash[:success] = "Marked all messages for #{resource.full_name} read"
     redirect_to admin_user_path(resource)
   end
 

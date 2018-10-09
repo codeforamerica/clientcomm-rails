@@ -122,10 +122,15 @@ class ReportingRelationship < ApplicationRecord
   end
 
   def deactivate
-    update!(active: false, has_unread_messages: false)
-    messages.unread.update(read: true)
+    update!(active: false)
     messages.scheduled.destroy_all
-    user.set_has_unread_messages
+    mark_messages_read(update_user: true)
+  end
+
+  def mark_messages_read(update_user: false)
+    update!(has_unread_messages: false)
+    messages.unread.update(read: true)
+    user.set_has_unread_messages if update_user
   end
 
   private

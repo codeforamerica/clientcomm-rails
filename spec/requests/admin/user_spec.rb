@@ -82,4 +82,39 @@ describe 'User', type: :request, active_job: true do
       end.to change { user.reload.active }.from(true).to(false)
     end
   end
+
+  describe '#mark_messages_read' do
+    let!(:client2) { create :client, user: user }
+    let(:rr1) { ReportingRelationship.find_by(user: user, client: client1) }
+    let(:rr2) { ReportingRelationship.find_by(user: user, client: client2) }
+
+    subject { get mark_messages_read_admin_user_path(user) }
+
+    before do
+      create_list :text_message, 3, reporting_relationship: rr1, read: false
+      create_list :text_message, 2, reporting_relationship: rr1, read: true
+      create_list :text_message, 2, reporting_relationship: rr2, read: false
+      create_list :text_message, 3, reporting_relationship: rr2, read: true
+      rr1.update!(has_unread_messages: true)
+      rr2.update!(has_unread_messages: true)
+      user.update!(has_unread_messages: true)
+    end
+
+    it 'marks unread messages as read, and updates related parameters on relationship and user' do
+      expect(rr1.messages.unread.count).to eq 3
+      expect(rr2.messages.unread.count).to eq 2
+      expect(rr1.has_unread_messages).to eq true
+      expect(rr2.has_unread_messages).to eq true
+      expect(user.has_unread_messages).to eq true
+
+      subject
+
+      expect(rr1.reload.messages.unread.count).to eq 0
+      expect(rr2.reload.messages.unread.count).to eq 0
+      expect(rr1.reload.has_unread_messages).to eq false
+      expect(rr2.reload.has_unread_messages).to eq false
+      expect(user.reload.has_unread_messages).to eq false
+      expect(flash[:success]).to eq "Marked all messages for #{user.full_name} read"
+    end
+  end
 end
