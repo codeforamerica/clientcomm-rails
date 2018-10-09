@@ -126,10 +126,9 @@ feature 'Admin Panel' do
 
       step 'clears unread messages belonging to a user' do
         visit admin_users_path
-        # #user_7 > td:nth-child(7) > div:nth-child(1) > a:nth-child(2)
-        find("#user_#{user_unread_messages.id} td:nth-child(7) div:nth-child(1) a:nth-child(2)", text: 'Edit').click
+        find("#user_#{user_unread_messages.id} a", text: 'Edit').click
         expect(page.current_path).to eq(edit_admin_user_path(user_unread_messages))
-        click_on 'Mark 3 messages on 1 relationship read'
+        click_on 'Mark messages read'
         expect(page.current_path).to eq(admin_user_path(user_unread_messages))
         expect(page).to have_css '.flash', text: "Marked all messages for #{user_unread_messages.full_name} read"
         click_on 'Edit User'

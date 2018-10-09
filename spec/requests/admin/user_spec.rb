@@ -88,7 +88,7 @@ describe 'User', type: :request, active_job: true do
     let(:rr1) { ReportingRelationship.find_by(user: user, client: client1) }
     let(:rr2) { ReportingRelationship.find_by(user: user, client: client2) }
 
-    subject { get mark_messages_read_admin_user_path(user) }
+    subject { put mark_messages_read_admin_user_path(user) }
 
     before do
       create_list :text_message, 3, reporting_relationship: rr1, read: false

@@ -93,6 +93,39 @@ RSpec.describe ReportingRelationship, type: :model do
     end
   end
 
+  describe '#mark_messages_read' do
+    let(:rr) { create :reporting_relationship, active: true, has_unread_messages: true }
+
+    before do
+      create_list :text_message, 5, read: false, inbound: true, twilio_status: 'received'
+      rr.user.update!(has_unread_messages: true)
+    end
+
+    context 'do not update user' do
+      subject { rr.mark_messages_read }
+
+      it 'marks messages and rr read, but not user' do
+        subject
+
+        expect(rr.messages.unread.count).to eq 0
+        expect(rr.reload.has_unread_messages).to be false
+        expect(rr.user.reload.has_unread_messages).to be true
+      end
+    end
+
+    context 'update user' do
+      subject { rr.mark_messages_read(update_user: true) }
+
+      it 'marks messages, rr, and user read' do
+        subject
+
+        expect(rr.messages.unread.count).to eq 0
+        expect(rr.reload.has_unread_messages).to be false
+        expect(rr.user.reload.has_unread_messages).to be false
+      end
+    end
+  end
+
   describe '#merge_with' do
     let(:department) { create :department }
     let!(:user) { create :user, department: department }

@@ -38,7 +38,7 @@ ActiveAdmin.register User do
     redirect_to admin_users_path
   end
 
-  member_action :mark_messages_read, method: :get do
+  member_action :mark_messages_read, method: :put do
     resource.mark_messages_read
     flash[:success] = "Marked all messages for #{resource.full_name} read"
     redirect_to admin_user_path(resource)
@@ -100,10 +100,13 @@ ActiveAdmin.register User do
 
     unless f.object.new_record?
       panel 'Unread messages' do
-        message_count = user.messages.unread.count
-        if message_count.positive?
+        unread_message_count = user.messages.unread.count
+        if unread_message_count.positive?
           relationship_count = user.messages.unread.map(&:reporting_relationship_id).uniq.count
-          link_to("Mark #{pluralize(message_count, 'message')} on #{pluralize(relationship_count, 'relationship')} read", mark_messages_read_admin_user_path(user))
+          unread_text = pluralize(unread_message_count, 'message')
+          relationship_text = pluralize(relationship_count, 'relationship')
+          link_text = link_to('Mark messages read', mark_messages_read_admin_user_path(user), method: :put)
+          link_text + " (#{unread_text} on #{relationship_text})"
         else
           'No unread messages'
         end
