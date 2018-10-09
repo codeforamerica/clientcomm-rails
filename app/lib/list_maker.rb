@@ -7,7 +7,7 @@ module ListMaker
     user.reporting_relationships.includes(:client).active.where.not(client_id: client.id).order('clients.first_name, clients.last_name')
         .map do |rr|
       [
-        "#{rr.client.first_name.strip} #{rr.client.last_name.strip}",
+        "#{rr.client.first_name&.strip} #{rr.client.last_name&.strip}",
         rr.client.id,
         { 'data-phone-number' => PhoneNumberParser.format_for_display(rr.client.phone_number),
           'data-timestamp' => rr.timestamp }
