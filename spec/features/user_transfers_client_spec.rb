@@ -5,7 +5,8 @@ feature 'user transfers client', :js, active_job: true do
   let!(:transfer_user) { create :user, department: myuser.department }
   let!(:unclaimed_user) { create :user, department: myuser.department }
   let!(:other_user) { create :user }
-  let!(:clientone) { create :client, user: myuser, first_name: 'User', last_name: 'Test' }
+  let!(:clientone) { create :client, user: myuser, first_name: 'Client', last_name: 'One' }
+  let!(:clienttwo) { create :client, user: myuser, first_name: 'Client', last_name: 'Two' }
 
   let(:note) { 'I am transfering this client to you' }
 
@@ -28,6 +29,13 @@ feature 'user transfers client', :js, active_job: true do
       expect(page).to_not have_css 'select#reporting_relationship_user_id', text: myuser.full_name
       unclaimed_user = User.find(myuser.department.user_id)
       expect(page).to_not have_css 'select#reporting_relationship_user_id', text: unclaimed_user.full_name
+    end
+
+    step 'submitting transfer form without selecting a client' do
+      perform_enqueued_jobs do
+        click_on "Transfer #{clientone.full_name}"
+      end
+      expect(page).to have_content I18n.t('activerecord.errors.models.reporting_relationship.attributes.user.blank')
     end
 
     step 'transferring a client' do

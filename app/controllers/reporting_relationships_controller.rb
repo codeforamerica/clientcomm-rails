@@ -39,6 +39,7 @@ class ReportingRelationshipsController < ApplicationController
       @reporting_relationship.transfer_to(@transfer_reporting_relationship)
     rescue ActiveRecord::RecordInvalid
       @transfer_users = ListMaker.transfer_users user: current_user
+      @merge_reporting_relationship = MergeReportingRelationship.new
       @merge_clients = ListMaker.merge_clients user: current_user, client: @client
 
       render 'clients/edit'
