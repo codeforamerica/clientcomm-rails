@@ -41,12 +41,6 @@ $(document).ready(function() {
     scheduleFormVisible: false,
   };
 
-  function initializeDatepicker(datepickerSelector) {
-    var $datepicker = $(datepickerSelector);
-    $datepicker.datepicker();
-    $datepicker.datepicker("option", "showAnim", "");
-  }
-
   initializeDatepicker("#mass_message_send_at_date");
 
   $('#cancel-mass-message').click(function(e) {

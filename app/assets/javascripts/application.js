@@ -24,7 +24,6 @@
 //= require cable
 //= require clients
 //= require errors
-//= require mass_messages
 //= require scheduled_messages
 //= require twemoji
 //= require twemoji-init
