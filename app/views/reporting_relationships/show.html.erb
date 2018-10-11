@@ -4,10 +4,10 @@
 <% end %>
 
 <section class="slab slab--header chat--header" data-spy="affix" data-offset-top="60">
-    <div id="flexbox--container">
+  <div id="flexbox--container">
     <div id="home-button">
       <%= link_to clients_path, class: 'button button--small pull-left nudge--small' do %>
-          <i class="button__icon--left icon-arrow_back"></i><span class="hidden-sm hidden-xs">Home</span>
+        <i class="button__icon--left icon-arrow_back"></i><span class="hidden-sm hidden-xs">Home</span>
       <% end %>
     </div>
     <div class="client-name">
@@ -35,7 +35,7 @@
     <div class="manage-button hidden-sm hidden-md hidden-lg">
       <%= link_to "Manage", edit_client_path(@client), { class: 'button button--small pull-right nudge--small' } %>
     </div>
-    </div>
+  </div>
 </section>
 
 <section class="slab slab--padded slab--borderless" id="scroller-target">
