@@ -1,4 +1,15 @@
 $(document).ready(function() {
+
+  /////////////////////
+  // NEXT COURT DATE //
+  /////////////////////
+
+  initializeDatepicker("#client_next_court_date_at");
+
+  ///////////////////////
+  // DEACTIVATE CLIENT //
+  ///////////////////////
+
   var formState = {
     surveyResponsesVisible: false,
   };
@@ -19,6 +30,9 @@ $(document).ready(function() {
     $('#deactivate_client').toggleClass('button--disabled', !checked);
   });
 
+  ///////////////////
+  // MERGE CLIENTS //
+  ///////////////////
 
   function uncheckMergeRadioButtons() {
     $('#new_merge_reporting_relationship input:radio').each(function() { $(this).prop('checked', false); })

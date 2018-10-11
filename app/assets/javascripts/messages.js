@@ -119,11 +119,13 @@ $(document).ready(function(){
     $('like-options').addClass('hidden');
   });
 
-  initializeModal('#new-message-modal');
-  initializeModal('#edit-message-modal');
-
-  initializeDatepicker("#edit_message_send_at_date");
-  initializeDatepicker("#new_message_send_at_date");
+  if ($('#new-message-modal').length) {
+    initializeModal('#new-message-modal');
+    initializeDatepicker("#new_message_send_at_date");
+  } else if ($('#edit-message-modal').length) {
+    initializeModal('#edit-message-modal');
+    initializeDatepicker("#edit_message_send_at_date");
+  }
 
   autosize(sendInput);
 

@@ -19,11 +19,5 @@ var revealer = (function() {
 })();
 
 $(document).ready(function() {
-  initializeDatepicker("#client_next_court_date_at");
-
-  $("#transfer-button").click(function() {
-    Intercom('showNewMessage', 'Hi, I would like to request a transfer of ' + $(this).data('client-name') + '.');
-  });
-
   revealer.init();
 });
