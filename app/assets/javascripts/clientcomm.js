@@ -13,7 +13,6 @@ $(window).on('focuschange', function setAnyWindowHasFocus() {
   window.localStorage.setItem('any_window_has_focus', window.hasFocus);
 });
 
-
 $(window).on('user-event', function toggleFaviconReadState(e, user) {
   favicon = $($('link[rel="shortcut icon"]')[0]);
   new_favicon_href = user.has_unread_messages ? favicon.data('unread-href') : favicon.data('read-href');
@@ -143,4 +142,13 @@ function setCounter(counter, textField, modalVisible) {
   } else if (tooLongForSingleText) {
     counter.html("Because of its length, this message may be sent as " + Math.ceil(length/160) + " texts.");
   }
+}
+
+function initializeDatepicker(datepickerSelector) {
+  if ($(datepickerSelector).length === 0) {
+    return;
+  }
+  var $datepicker = $(datepickerSelector);
+  $datepicker.datepicker();
+  $datepicker.datepicker("option", "showAnim", "");
 }

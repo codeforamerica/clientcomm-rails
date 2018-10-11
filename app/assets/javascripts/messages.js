@@ -122,12 +122,6 @@ $(document).ready(function(){
   initializeModal('#new-message-modal');
   initializeModal('#edit-message-modal');
 
-  function initializeDatepicker(datepickerSelector) {
-    var $datepicker = $(datepickerSelector);
-    $datepicker.datepicker();
-    $datepicker.datepicker("option", "showAnim", "");
-  }
-
   initializeDatepicker("#edit_message_send_at_date");
   initializeDatepicker("#new_message_send_at_date");
 
