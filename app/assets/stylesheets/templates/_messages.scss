@@ -249,6 +249,7 @@
 }
 
 div#flexbox--container {
+  display: -ms-flexbox;
   display: flex;
   max-width: $site-max-width;
   margin: auto;
@@ -275,7 +276,8 @@ div#flexbox--container {
       padding-top: 0px;
     }
     overflow: hidden;
-    flex: 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
     margin: 5px 10px 5px 10px;
   }
 

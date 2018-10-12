@@ -4,7 +4,9 @@ html, body {
 }
 
 body {
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-direction: column;
   flex-direction: column;
 }
 
@@ -83,10 +85,12 @@ loading-dots dot:nth-child(3) {
 }
 
 #main-nav {
+  -ms-flex: none;
   flex: none;
 }
 
 .page-wrapper {
+  -ms-flex: 1 0 auto;
   flex: 1 0 auto;
 }
 

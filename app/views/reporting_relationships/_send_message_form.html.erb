@@ -7,7 +7,8 @@
   <% end %>
 
   <div id="sendbar-container">
-    <%= form_for Message.new, authenticity_token: true, html: { :class => 'sendbar', :multipart => true }, remote: true do |f| %>
+    <%= form_for Message.new, authenticity_token: true, html: { :multipart => true }, remote: true do |f| %>
+      <div class="sendbar">
       <input name="client_id" type="hidden" value="<%= @client.id %>">
       <input name="positive_template_type" class='positive-template-type' type="hidden" value="">
 
@@ -32,6 +33,7 @@
         <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
         <button id="send_icon" type="submit"><i class="icon-send"></i></button>
 
+      </div>
       </div>
     <% end %>
 

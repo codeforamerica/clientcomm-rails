@@ -1,5 +1,6 @@
 .sendbar {
   border-collapse: separate;
+  display: -ms-flexbox;
   display: flex;
   margin: auto;
   max-width: $site-max-width;
@@ -14,16 +15,22 @@
     border-color: #018470;
     border-style: solid;
     border-width: 2px 0px 2px 2px;
+    -ms-flex: 0 0 60px;
     flex: 0 0 60px;
     text-align: center;
   }
   #sendbar-textarea {
     border: 2px solid #018470;
+    -ms-flex-positive: 1;
     flex-grow: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
     width: 100%;
   }
   #sendbar-buttons {
+    -ms-flex: 0 0 20px;
     flex: 0 0 20px;
+    -ms-flex-preferred-size: auto;
     flex-basis: auto;
     margin: 10px 20px;
     #send_icon {
@@ -44,6 +51,7 @@
       display: none;
     }
     @include media($tablet-up) {
+      -ms-flex: 0 0 250px;
       flex: 0 0 250px;
       margin: 0px 10px;
       #send_icon {
@@ -64,6 +72,7 @@
 
 #sendbar-like-options {
   border-collapse: separate;
+  display: -ms-flexbox;
   display: flex;
   margin: auto;
   max-width: $site-max-width;
@@ -107,6 +116,7 @@
 }
 
 .character-count {
+  display: -ms-flexbox;
   display: flex;
   font-size: 12px;
   line-height: 1em;
