@@ -44,7 +44,7 @@ namespace :utils do
 
     joined_comma = sids_not_found.join("', '")
     joined_space = sids_not_found.join(' ')
-    puts "#{pluralize(sids_not_found.count, 'sid')} not found"
+    puts "#{sids_not_found.count} SIDs not found"
     next unless sids_not_found.count.positive?
     puts '----------'
     puts "'#{joined_comma}'"
