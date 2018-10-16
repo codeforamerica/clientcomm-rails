@@ -1,9 +1,66 @@
 namespace :utils do
+  #
+  # run the tasks below remotely
+  #
+
+  task get_status: :environment do |_, args|
+    # usage: heroku run rake utils:get_status[twilio_sid_01,twilio_sid_02,...] -a clientcom-xxx
+    #   args:
+    #         twilio_sid_xx: Twilio SIDs
+
+    if args.extras.empty?
+      puts 'no Twilio SIDs passed; usage: heroku run rake utils:get_status[SM1a...,SM1b...,...]'
+    end
+
+    twilio_sids = args.extras
+
+    start_message = "getting statuses for #{twilio_sids.count} Twilio SIDs"
+    puts start_message
+    puts '=' * start_message.length
+
+    sids_not_found = []
+
+    twilio_sids.each do |sid|
+      message = Message.find_by(twilio_sid: sid)
+      if message.nil?
+        sids_not_found << sid
+        error_message = "SID #{sid} NOT FOUND"
+        puts Paint['!' * error_message.length, :black, :yellow]
+        puts Paint[error_message, :black, :red]
+        puts Paint['!' * error_message.length, :black, :yellow]
+        puts '----------'
+      else
+        puts "sid: #{sid}"
+        back = :green
+        status = message.twilio_status
+        status = 'blank' if status.blank?
+        back = :red if %w[blacklisted failed undelivered blank].include? status
+        back = :yellow if %w[accepted queued receiving sending sent maybe_undelivered].include? status
+        puts "status: #{Paint[status.upcase, :black, back]}"
+        puts "inbound: #{message.inbound}"
+        puts "read: #{message.read}"
+      end
+    end
+
+    joined_comma = sids_not_found.join("', '")
+    joined_space = sids_not_found.join(' ')
+    puts "#{pluralize(sids_not_found.count, 'sid')} not found"
+    next unless sids_not_found.count.positive?
+    puts '----------'
+    puts "'#{joined_comma}'"
+    puts '----------'
+    puts joined_space
+  end
+
+  #
+  # run the tasks below locally
+  #
+
   task get_carrier: :environment do |_, args|
     # usage: rake utils:get_carrier[app_name,phone_number_01,phone_number_02,...]
     #   args:
-    #        app_name: the app name of the heroku deploy
-    # phone_number_xx: phone numbers in the format +14155551212
+    #         app_name: the app name of the heroku deploy
+    #         phone_number_xx: phone numbers in the format +14155551212
 
     if args.extras.empty? || args.extras.first.blank?
       puts 'no app name passed; usage: rake utils:get_carrier[app-name-here,+13035551212,+13035551213,...]'
@@ -45,8 +102,8 @@ namespace :utils do
   task :get_alerts, %i[app_name days_past] => :environment do |_, args|
     # usage: rake utils:get_alerts[app_name,days_past]
     #   args:
-    #      app_name: the app name of the heroku deploy
-    #     days_past: the number of days in the past to look for alerts (defaults to 3)
+    #         app_name: the app name of the heroku deploy
+    #         days_past: the number of days in the past to look for alerts (defaults to 3)
 
     if args.app_name.blank?
       puts 'no app name passed; usage: rake utils:get_alerts[app-name-here]'
