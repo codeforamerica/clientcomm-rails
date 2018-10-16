@@ -5,13 +5,16 @@ feature 'sending messages', active_job: true do
   let(:another_message_body) { 'Actually your appointment is rescheduled to 10:30am' }
   let(:long_message_body) { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquam consequat mauris id sollicitudin. Aenean nisi nibh, ullamcorper non justo ac, egestas amet.' }
   let(:too_long_message_body) { 'abcd' * 401 }
-  let(:client_1) { create :client, users: [myuser] }
-  let(:client_2) { create :client, users: [myuser] }
-  let(:myuser) { create :user }
-  let(:rr) { myuser.reporting_relationships.find_by(client: client_1) }
+  let(:old_phone_number) { '+14155551111' }
+  let(:new_phone_number) { '+14155551112' }
+  let(:new_phone_number_display) { '(415) 555-1112' }
+  let(:client_one) { create :client, users: [user_one], phone_number: old_phone_number }
+  let(:client_two) { create :client, users: [user_one] }
+  let(:user_one) { create :user }
+  let(:rr) { user_one.reporting_relationships.find_by(client: client_one) }
 
   before do
-    login_as(myuser, scope: :user)
+    login_as(user_one, scope: :user)
   end
 
   scenario 'user sends message to client', :js, active_job: true do
@@ -48,8 +51,8 @@ feature 'sending messages', active_job: true do
       # post a message to the twilio endpoint from the user
       perform_enqueued_jobs do
         twilio_post_sms(twilio_new_message_params(
-                          from_number: client_1.phone_number,
-                          to_number: myuser.department.phone_number
+                          from_number: client_one.phone_number,
+                          to_number: user_one.department.phone_number
         ))
       end
 
@@ -65,7 +68,7 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when the user is added to the treatment group' do
-      myuser.update(treatment_group: 'ebp-liking-messages')
+      user_one.update(treatment_group: 'ebp-liking-messages')
       visit reporting_relationship_path(rr)
 
       expect(page).to have_css('like-options')
@@ -100,11 +103,27 @@ feature 'sending messages', active_job: true do
       expect(page).to have_css('like-options', visible: :hidden)
     end
 
-    step 'positive reinforcement messages reappear when messages come in' do
+    step 'positive reinforcements are not visible if the last message is a marker' do
+      click_on 'Manage client'
+      expect(page).to have_current_path(edit_client_path(client_one))
+      fill_in 'Phone number', with: new_phone_number
+      click_on 'Save changes'
+      expect(page).to have_current_path(reporting_relationship_path(rr))
+      expect(page).to have_css '.message--event', text:
+        I18n.t(
+          'messages.phone_number_edited_by_you',
+          new_phone_number: new_phone_number_display
+        )
+      expect(page).to have_css('like-options', visible: :hidden)
+    end
+
+    step 'positive reinforcement messages reappear when a message comes in' do
+      client_one.reload
       perform_enqueued_jobs do
         twilio_post_sms(twilio_new_message_params(
-                          from_number: client_1.phone_number,
-                          to_number: myuser.department.phone_number
+                          from_number: client_one.phone_number,
+                          to_number: user_one.department.phone_number,
+                          msg_txt: 'This message should trigger like options.'
         ))
       end
 
@@ -134,23 +153,8 @@ feature 'sending messages', active_job: true do
   end
 
   scenario 'user schedules a message to client', :js do
-    step 'when user logs in' do
-      login_as(myuser, scope: :user)
-    end
-
-    step 'when user creates a clients' do
-      travel_to 7.days.ago do
-        add_client(client_1)
-      end
-    end
-
-    step 'when user goes to messages page' do
-      client = Client.find_by(phone_number: client_1.phone_number).id
-      rr = myuser.reporting_relationships.find_by(client: client)
-      visit reporting_relationship_path(rr)
-    end
-
     step 'when user schedules a message' do
+      visit reporting_relationship_path(rr)
       incomplete_message = 'incomplete message'
       fill_in 'Send a text message', with: incomplete_message
       click_button 'Send later'
@@ -175,8 +179,6 @@ feature 'sending messages', active_job: true do
 
       future_date = (Time.zone.today + 1.month).beginning_of_month
 
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')

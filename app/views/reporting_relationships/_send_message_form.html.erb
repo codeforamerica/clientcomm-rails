@@ -39,7 +39,7 @@
 
     <div id="sendbar-like-options">
       <% if current_user.treatment_group == 'ebp-liking-messages' %>
-        <like-options class="hidden-xs <%= 'hidden' unless @messages.last&.inbound %>" >
+        <like-options class="hidden-xs <%= 'hidden' unless @messages.last&.inbound && @messages.last&.type == 'TextMessage' %>" >
           <% APP_CONFIG['like_text'].shuffle.each do |text| %>
             <like-option tabindex='0'><%= text %></like-option>
           <% end %>

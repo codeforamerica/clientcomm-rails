@@ -43,7 +43,7 @@ function validFileType(file) {
  }
 
 $(window).on('message-event', function toggleLikeOptions(e, message) {
-  if (message.inbound && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
+  if (message.inbound && message.type === 'TextMessage' && window.location.pathname == '/conversations/' + message.reporting_relationship.id) {
     $('like-options').removeClass('hidden');
     $('like-options like-option').shuffle();
   }
