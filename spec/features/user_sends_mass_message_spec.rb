@@ -116,7 +116,7 @@ feature 'sending mass messages', active_job: true do
       perform_enqueued_jobs do
         click_on 'Send'
         expect(page).to have_current_path(clients_path)
-        expect(page).to have_content I18n.t('flash.notices.mass_message.sent')
+        expect(page).to have_css '.flash__message', text: I18n.t('flash.notices.mass_message.sent'), visible: :all
       end
     end
 
@@ -179,7 +179,7 @@ feature 'sending mass messages', active_job: true do
       end
 
       expect(page).to have_current_path(clients_path)
-      expect(page).to have_content I18n.t('flash.notices.mass_message.scheduled')
+      expect(page).to have_css '.flash__message', text: I18n.t('flash.notices.mass_message.scheduled'), visible: :all
     end
   end
 end

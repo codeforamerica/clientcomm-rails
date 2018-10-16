@@ -94,7 +94,7 @@ feature 'Client status banner', active_job: true do
       end
 
       expect(page).to have_current_path(clients_path)
-      expect(page).to have_content I18n.t('flash.notices.mass_message.sent')
+      expect(page).to have_css '.flash__message', text: I18n.t('flash.notices.mass_message.sent')
       expect(page).to_not have_css '.status-banner-container', text: /You have \d+ active client[s|] due for follow up./
 
       expect(Message.where(body: message_body).count).to eq older_clients.count

@@ -48,7 +48,6 @@ feature 'sending messages', active_job: true do
     end
 
     step 'when the client responds' do
-      # post a message to the twilio endpoint from the user
       perform_enqueued_jobs do
         twilio_post_sms(twilio_new_message_params(
                           from_number: client_one.phone_number,
@@ -56,10 +55,8 @@ feature 'sending messages', active_job: true do
         ))
       end
 
-      # there's a message with the correct contents
       expect(page).to have_css '.message--inbound div', text: twilio_message_text
       wait_for_ajax
-      # there's no flash notification
       expect(page).to have_no_css '.flash'
     end
 
