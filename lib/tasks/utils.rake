@@ -25,18 +25,18 @@ namespace :utils do
       if message.nil?
         sids_not_found << sid
         error_message = "SID #{sid} NOT FOUND"
-        puts Paint['!' * error_message.length, :black, :yellow]
-        puts Paint[error_message, :black, :red]
-        puts Paint['!' * error_message.length, :black, :yellow]
+        puts '!' * error_message.length
+        puts error_message
+        puts '!' * error_message.length
         puts '----------'
       else
         puts "sid: #{sid}"
-        back = :green
+        emoji = '✅'
         status = message.twilio_status
         status = 'blank' if status.blank?
-        back = :red if %w[blacklisted failed undelivered blank].include? status
-        back = :yellow if %w[accepted queued receiving sending sent maybe_undelivered].include? status
-        puts "status: #{Paint[status.upcase, :black, back]}"
+        emoji = '❌' if %w[blacklisted failed undelivered blank].include? status
+        emoji = '🤔' if %w[accepted queued receiving sending sent maybe_undelivered].include? status
+        puts "status: #{status.upcase} #{emoji}"
         puts "inbound: #{message.inbound}"
         puts "read: #{message.read}"
       end
