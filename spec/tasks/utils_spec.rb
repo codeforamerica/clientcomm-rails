@@ -8,7 +8,10 @@ describe 'utils rake tasks' do
   end
 
   describe 'utils:get_status', type: :request do
-    subject { Rake::Task['utils:get_status'].invoke(*sids) }
+    subject {
+      Rake::Task['utils:get_status'].reenable
+      Rake::Task['utils:get_status'].invoke(*sids)
+    }
 
     context 'no sids are passed' do
       let(:sids) { [] }
