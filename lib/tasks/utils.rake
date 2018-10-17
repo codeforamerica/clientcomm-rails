@@ -26,10 +26,10 @@ namespace :utils do
       if message.nil?
         sids_not_found << sid
         error_emoji = '🔥'
-        error_message = "SID #{sid} NOT FOUND"
+        error_message = "#{sid} WAS NOT FOUND"
         if sid.start_with? 'CA'
           error_emoji = '📞'
-          error_message = "SID #{sid} IS A PHONE CALL"
+          error_message = "#{sid} IS PHONE CALL"
         end
         puts "#{error_emoji} #{'!' * error_message.length} #{error_emoji}"
         puts "#{error_emoji} #{error_message} #{error_emoji}"
@@ -42,10 +42,10 @@ namespace :utils do
         status_emoji = '❌' if %w[blacklisted failed undelivered blank].include? status
         status_emoji = '🤔' if %w[accepted queued receiving sending sent maybe_undelivered].include? status
         puts " status: #{status_emoji} #{status.upcase}"
-        inbound_emoji = message.inbound ? '↙️' : '↗️'
-        puts "inbound: #{inbound_emoji}  #{message.inbound}"
-        read_emoji = message.read ? '📭' : '📬'
-        puts "   read: #{read_emoji} #{message.read}"
+        inbound_text = message.inbound ? '📥 true' : '   false 📤'
+        puts "inbound: #{inbound_text}"
+        read_text = message.read ? '📭 true' : '   false 📬'
+        puts "   read: #{read_text}"
       end
       puts '----------'
     end
@@ -58,7 +58,7 @@ namespace :utils do
     puts '----------'
     puts "'#{joined_quoted_comma}'"
     puts '----------'
-    puts "'#{joined_comma}'"
+    puts joined_comma
     puts '----------'
     puts joined_space
   end
@@ -181,7 +181,7 @@ namespace :utils do
     puts '----------'
     puts "'#{joined_quoted_comma}'"
     puts '----------'
-    puts "'#{joined_comma}'"
+    puts joined_comma
     puts '----------'
     puts joined_space
   end
