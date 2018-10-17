@@ -10,6 +10,7 @@ namespace :utils do
 
     if args.extras.empty?
       puts 'no Twilio SIDs passed; usage: heroku run rake utils:get_status[SM1a...,SM1b...,...]'
+      next
     end
 
     twilio_sids = args.extras
@@ -28,7 +29,6 @@ namespace :utils do
         puts '!' * error_message.length
         puts error_message
         puts '!' * error_message.length
-        puts '----------'
       else
         puts "sid: #{sid}"
         emoji = '✅'
@@ -40,11 +40,12 @@ namespace :utils do
         puts "inbound: #{message.inbound}"
         puts "read: #{message.read}"
       end
+      puts '----------'
     end
 
     joined_comma = sids_not_found.join("', '")
     joined_space = sids_not_found.join(' ')
-    puts "#{sids_not_found.count} SIDs not found"
+    puts "\n#{sids_not_found.count} SIDs not found"
     next unless sids_not_found.count.positive?
     puts '----------'
     puts "'#{joined_comma}'"
