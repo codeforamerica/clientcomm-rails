@@ -1,7 +1,7 @@
 namespace :utils do
-  #
-  # run the tasks below remotely
-  #
+  ################################
+  # run the tasks below remotely #
+  ################################
 
   task get_status: :environment do |_, args|
     # usage: heroku run rake utils:get_status[twilio_sid_01,twilio_sid_02,...] -a clientcom-xxx
@@ -50,22 +50,22 @@ namespace :utils do
       puts '----------'
     end
 
-    joined_quoted_comma = sids_not_found.join("', '")
-    joined_comma = sids_not_found.join(', ')
+    joined_comma_quoted = sids_not_found.join("', '")
+    joined_comma = sids_not_found.join(',')
     joined_space = sids_not_found.join(' ')
     puts "\n#{sids_not_found.count} SIDs not found"
     next unless sids_not_found.count.positive?
     puts '----------'
-    puts "'#{joined_quoted_comma}'"
+    puts "'#{joined_comma_quoted}'"
     puts '----------'
     puts joined_comma
     puts '----------'
     puts joined_space
   end
 
-  #
-  # run the tasks below locally
-  #
+  ###############################
+  # run the tasks below locally #
+  ###############################
 
   task get_carrier: :environment do |_, args|
     # usage: rake utils:get_carrier[app_name,phone_number_01,phone_number_02,...]
@@ -173,13 +173,13 @@ namespace :utils do
     sids = sids.uniq
     messages_affected = sids.count
 
-    joined_quoted_comma = sids.join("', '")
+    joined_comma_quoted = sids.join("', '")
     joined_comma = sids.join(', ')
     joined_space = sids.join(' ')
     puts "\n#{alerts_found} alerts on #{messages_affected} messages found"
     next unless sids.count.positive?
     puts '----------'
-    puts "'#{joined_quoted_comma}'"
+    puts "'#{joined_comma_quoted}'"
     puts '----------'
     puts joined_comma
     puts '----------'
