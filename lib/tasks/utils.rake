@@ -25,10 +25,15 @@ namespace :utils do
       message = Message.find_by(twilio_sid: sid)
       if message.nil?
         sids_not_found << sid
+        error_emoji = '🔥'
         error_message = "SID #{sid} NOT FOUND"
-        puts "🔥 #{'!' * error_message.length} 🔥"
-        puts "🔥 #{error_message} 🔥"
-        puts "🔥 #{'!' * error_message.length} 🔥"
+        if sid.start_with? 'CA'
+          error_emoji = '📞'
+          error_message = "SID #{sid} IS A PHONE CALL"
+        end
+        puts "#{error_emoji} #{'!' * error_message.length} #{error_emoji}"
+        puts "#{error_emoji} #{error_message} #{error_emoji}"
+        puts "#{error_emoji} #{'!' * error_message.length} #{error_emoji}"
       else
         puts "    sid: #{sid}"
         status_emoji = '✅'
@@ -37,8 +42,8 @@ namespace :utils do
         status_emoji = '❌' if %w[blacklisted failed undelivered blank].include? status
         status_emoji = '🤔' if %w[accepted queued receiving sending sent maybe_undelivered].include? status
         puts " status: #{status_emoji} #{status.upcase}"
-        inbound_emoji = message.inbound ? '⬅️' : '➡️'
-        puts "inbound: #{inbound_emoji} #{message.inbound}"
+        inbound_emoji = message.inbound ? '↙️' : '↗️'
+        puts "inbound: #{inbound_emoji}  #{message.inbound}"
         read_emoji = message.read ? '📭' : '📬'
         puts "   read: #{read_emoji} #{message.read}"
       end
