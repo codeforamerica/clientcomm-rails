@@ -26,27 +26,32 @@ namespace :utils do
       if message.nil?
         sids_not_found << sid
         error_message = "SID #{sid} NOT FOUND"
-        puts '!' * error_message.length
-        puts error_message
-        puts '!' * error_message.length
+        puts "🔥 #{'!' * error_message.length} 🔥"
+        puts "🔥 #{error_message} 🔥"
+        puts "🔥 #{'!' * error_message.length} 🔥"
       else
-        puts "sid: #{sid}"
-        emoji = '✅'
+        puts "    sid: #{sid}"
+        status_emoji = '✅'
         status = message.twilio_status
         status = 'blank' if status.blank?
-        emoji = '❌' if %w[blacklisted failed undelivered blank].include? status
-        emoji = '🤔' if %w[accepted queued receiving sending sent maybe_undelivered].include? status
-        puts "status: #{status.upcase} #{emoji}"
-        puts "inbound: #{message.inbound}"
-        puts "read: #{message.read}"
+        status_emoji = '❌' if %w[blacklisted failed undelivered blank].include? status
+        status_emoji = '🤔' if %w[accepted queued receiving sending sent maybe_undelivered].include? status
+        puts " status: #{status_emoji} #{status.upcase}"
+        inbound_emoji = message.inbound ? '⬅️' : '➡️'
+        puts "inbound: #{inbound_emoji} #{message.inbound}"
+        read_emoji = message.read ? '📭' : '📬'
+        puts "   read: #{read_emoji} #{message.read}"
       end
       puts '----------'
     end
 
-    joined_comma = sids_not_found.join("', '")
+    joined_quoted_comma = sids_not_found.join("', '")
+    joined_comma = sids_not_found.join(', ')
     joined_space = sids_not_found.join(' ')
     puts "\n#{sids_not_found.count} SIDs not found"
     next unless sids_not_found.count.positive?
+    puts '----------'
+    puts "'#{joined_quoted_comma}'"
     puts '----------'
     puts "'#{joined_comma}'"
     puts '----------'
@@ -163,10 +168,13 @@ namespace :utils do
     sids = sids.uniq
     messages_affected = sids.count
 
-    joined_comma = sids.join("', '")
+    joined_quoted_comma = sids.join("', '")
+    joined_comma = sids.join(', ')
     joined_space = sids.join(' ')
-    puts "#{alerts_found} alerts on #{messages_affected} messages found"
+    puts "\n#{alerts_found} alerts on #{messages_affected} messages found"
     next unless sids.count.positive?
+    puts '----------'
+    puts "'#{joined_quoted_comma}'"
     puts '----------'
     puts "'#{joined_comma}'"
     puts '----------'
