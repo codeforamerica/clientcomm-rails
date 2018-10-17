@@ -77,23 +77,6 @@ describe SMSService do
     end
   end
 
-  describe '#status_lookup' do
-    let(:message) { create :text_message, twilio_status: 'sent', twilio_sid: message_sid }
-    let(:twilio_message) { double('twilio_message', status: 'delivered') }
-
-    subject { sms_service.status_lookup(message: message) }
-
-    before do
-      allow(twilio_client).to receive(:messages)
-        .with(message_sid)
-        .and_return(double('messages', fetch: twilio_message))
-    end
-
-    it 'updates the message status' do
-      expect(subject).to eq 'delivered'
-    end
-  end
-
   describe '#redact_message' do
     let(:message) { double('twilio_message', twilio_sid: message_sid, id: 22) }
     let(:media_one) { double('media') }

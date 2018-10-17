@@ -127,4 +127,65 @@ describe 'utils rake tasks' do
       end
     end
   end
+
+  describe 'utils:insert_message', type: :request do
+    let(:user) { create :user }
+    let!(:client) { create :client, user: user }
+    let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
+    let(:twilio_client) { FakeTwilioClient.new account_sid, auth_token }
+    let(:account_sid) { 'some_sid' }
+    let(:auth_token) { 'some_token' }
+    let(:message_sid) { SecureRandom.hex(17) }
+    let(:status) { nil }
+    let(:body) { Faker::Lorem.sentence }
+    let(:twilio_message) {
+      double(
+        'twilio_message',
+        from: client.phone_number,
+        to: user.department.phone_number,
+        sid: message_sid,
+        status: status,
+        body: body
+      )
+    }
+
+    subject {
+      Rake::Task['utils:insert_message'].reenable
+      Rake::Task['utils:insert_message'].invoke(sid, body)
+    }
+
+    before do
+      @account_sid = ENV['TWILIO_ACCOUNT_SID']
+      @auth_token = ENV['TWILIO_AUTH_TOKEN']
+
+      ENV['TWILIO_ACCOUNT_SID'] = account_sid
+      ENV['TWILIO_AUTH_TOKEN'] = auth_token
+
+      allow(Twilio::REST::Client).to receive(:new).with(account_sid, auth_token).and_return(twilio_client)
+
+      allow(twilio_client).to receive(:messages)
+        .with(message_sid)
+        .and_return(double('messages', fetch: twilio_message))
+    end
+
+    after do
+      ENV['TWILIO_ACCOUNT_SID'] = @account_sid
+      ENV['TWILIO_AUTH_TOKEN'] = @auth_token
+    end
+
+    context 'the message does not already exist' do
+      let(:sid) { SecureRandom.hex(17) }
+
+      it 'creates the message' do
+        subject
+
+        message = Message.find_by(twilio_sid: sid)
+        expect(message).to_not be_nil
+        expect(message.twilio_status).to eq status
+        expect(message.to_number).to eq user.department.phone_number
+        expect(message.from_number).to eq client.phone_number
+        expect(message.body).to eq body
+      end
+    end
+  end
 end

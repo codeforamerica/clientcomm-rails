@@ -16,8 +16,11 @@ class SMSService
   end
 
   def status_lookup(message:)
-    twilio_message = @client.api.account.messages(message.twilio_sid).fetch
-    twilio_message.status
+    message_lookup(twilio_sid: message.twilio_sid).status
+  end
+
+  def message_lookup(twilio_sid:)
+    @client.api.account.messages(twilio_sid).fetch
   end
 
   def send_message(args)
