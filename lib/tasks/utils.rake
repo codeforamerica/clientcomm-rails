@@ -205,13 +205,17 @@ namespace :utils do
   private
 
   def twilio_params(message:)
-    {
+    params = {
       From: message.from,
       To: message.to,
-      SmSSid: message.sid,
+      SmsSid: message.sid,
       SmsStatus: message.status,
       Body: message.body,
-      NumMedia: 0
+      NumMedia: message.num_media
     }
+    message.num_media.to_i.times.each do |i|
+      params["MediaUrl#{i}"] = message.media.list[i].uri
+    end
+    params
   end
 end
