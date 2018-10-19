@@ -74,8 +74,14 @@ namespace :utils do
       next
     end
 
+    unless Message.find_by(twilio_sid: args.message_sid).nil?
+      puts 'message with that sid already exists!'
+      next
+    end
+
     twilio_message = SMSService.instance.message_lookup(twilio_sid: args.message_sid)
-    Message.create_from_twilio! SMSService.instance.twilio_params(message: twilio_message)
+    new_message = Message.create_from_twilio! SMSService.instance.twilio_params(message: twilio_message)
+    MessageHandler.handle_new_message(message: new_message)
   end
 
   ###############################

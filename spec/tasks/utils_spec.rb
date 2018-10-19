@@ -128,7 +128,7 @@ describe 'utils rake tasks' do
     end
   end
 
-  describe 'utils:insert_message', type: :request do
+  describe 'utils:insert_message', type: :request, active_job: true do
     let(:user) { create :user }
     let!(:client) { create :client, user: user }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
@@ -138,6 +138,8 @@ describe 'utils rake tasks' do
     let(:message_sid) { SecureRandom.hex(17) }
     let(:status) { 'received' }
     let(:body) { Faker::Lorem.sentence }
+    let(:num_media) { 0 }
+    let(:media) { double('message_media', list: []) }
     let(:twilio_message) {
       double(
         'twilio_message',
@@ -145,7 +147,9 @@ describe 'utils rake tasks' do
         to: user.department.phone_number,
         sid: message_sid,
         status: status,
-        body: body
+        body: body,
+        num_media: num_media,
+        media: media
       )
     }
 
@@ -162,10 +166,6 @@ describe 'utils rake tasks' do
       ENV['TWILIO_AUTH_TOKEN'] = auth_token
 
       allow(Twilio::REST::Client).to receive(:new).with(account_sid, auth_token).and_return(twilio_client)
-
-      expect(twilio_client).to receive(:messages)
-        .with(message_sid)
-        .and_return(double('messages', fetch: twilio_message))
     end
 
     after do
@@ -174,15 +174,39 @@ describe 'utils rake tasks' do
     end
 
     context 'the message does not already exist' do
+      before do
+        allow(MessageHandler).to receive(:handle_new_message)
+
+        expect_any_instance_of(FakeTwilioClient).to receive(:messages)
+          .with(message_sid)
+          .and_return(double('messages', fetch: twilio_message))
+      end
+
       it 'creates the message' do
         subject
 
-        message = Message.find_by(twilio_sid: message_sid)
-        expect(message).to_not be_nil
-        expect(message.twilio_status).to eq status
-        expect(message.to_number).to eq user.department.phone_number
-        expect(message.from_number).to eq client.phone_number
-        expect(message.body).to eq body
+        new_message = Message.find_by(twilio_sid: message_sid)
+
+        expect(MessageHandler).to have_received(:handle_new_message)
+          .with(message: new_message)
+
+        expect(new_message).to_not be_nil
+        expect(new_message.twilio_status).to eq status
+        expect(new_message.number_to).to eq user.department.phone_number
+        expect(new_message.number_from).to eq client.phone_number
+        expect(new_message.body).to eq body
+        expect(new_message.inbound).to be_truthy
+        expect(new_message.send_at).to be_present
+      end
+    end
+
+    context 'the message already exists' do
+      let!(:message) { create :text_message, twilio_sid: message_sid }
+
+      it 'does not create a new message' do
+        expect { subject }.to output("message with that sid already exists!\n").to_stdout
+
+        expect(Message.where(twilio_sid: message_sid).length).to eq 1
       end
     end
   end
