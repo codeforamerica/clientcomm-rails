@@ -75,7 +75,7 @@ namespace :utils do
     end
 
     twilio_message = SMSService.instance.message_lookup(twilio_sid: args.message_sid)
-    Message.create_from_twilio! twilio_params(message: twilio_message)
+    Message.create_from_twilio! SMSService.instance.twilio_params(message: twilio_message)
   end
 
   ###############################
@@ -200,22 +200,5 @@ namespace :utils do
     puts joined_comma
     puts '----------'
     puts joined_space
-  end
-
-  private
-
-  def twilio_params(message:)
-    params = {
-      From: message.from,
-      To: message.to,
-      SmsSid: message.sid,
-      SmsStatus: message.status,
-      Body: message.body,
-      NumMedia: message.num_media
-    }
-    message.num_media.to_i.times.each do |i|
-      params["MediaUrl#{i}"] = message.media.list[i].uri
-    end
-    params
   end
 end

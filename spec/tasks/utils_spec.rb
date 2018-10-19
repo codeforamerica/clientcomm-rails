@@ -136,7 +136,7 @@ describe 'utils rake tasks' do
     let(:account_sid) { 'some_sid' }
     let(:auth_token) { 'some_token' }
     let(:message_sid) { SecureRandom.hex(17) }
-    let(:status) { nil }
+    let(:status) { 'received' }
     let(:body) { Faker::Lorem.sentence }
     let(:twilio_message) {
       double(
@@ -151,7 +151,7 @@ describe 'utils rake tasks' do
 
     subject {
       Rake::Task['utils:insert_message'].reenable
-      Rake::Task['utils:insert_message'].invoke(sid, body)
+      Rake::Task['utils:insert_message'].invoke(message_sid, body)
     }
 
     before do
@@ -163,7 +163,7 @@ describe 'utils rake tasks' do
 
       allow(Twilio::REST::Client).to receive(:new).with(account_sid, auth_token).and_return(twilio_client)
 
-      allow(twilio_client).to receive(:messages)
+      expect(twilio_client).to receive(:messages)
         .with(message_sid)
         .and_return(double('messages', fetch: twilio_message))
     end
@@ -174,12 +174,10 @@ describe 'utils rake tasks' do
     end
 
     context 'the message does not already exist' do
-      let(:sid) { SecureRandom.hex(17) }
-
       it 'creates the message' do
         subject
 
-        message = Message.find_by(twilio_sid: sid)
+        message = Message.find_by(twilio_sid: message_sid)
         expect(message).to_not be_nil
         expect(message.twilio_status).to eq status
         expect(message.to_number).to eq user.department.phone_number
