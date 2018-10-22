@@ -69,8 +69,9 @@ namespace :utils do
     #         message_sid: the Twilio SID of the message
     #                body: (optional) the message text
 
-    if args.message_sid.blank?
-      puts 'no message sid passed; usage: heroku run rake utils:insert_message[SM1a...,hello world]'
+    if args.message_sid.blank? || args.message_sid.length != 34 || args.message_sid.match(/\s/)
+      puts 'invalid message sid passed; must be non nil, 34 characters long, and contain no spaces'
+      puts 'usage: heroku run rake utils:insert_message[SM1a...,optional message text]'
       next
     end
 
@@ -79,7 +80,13 @@ namespace :utils do
       next
     end
 
-    twilio_message = SMSService.instance.message_lookup(twilio_sid: args.message_sid)
+    begin
+      twilio_message = SMSService.instance.message_lookup(twilio_sid: args.message_sid)
+    rescue Twilio::REST::RestError => e
+      puts "error #{e.code} for sid #{args.message_sid}"
+      next
+    end
+
     twilio_params = SMSService.instance.twilio_params(message: twilio_message)
     twilio_params[:Body] = args.body if args.body.present?
     new_message = Message.create_from_twilio! twilio_params

@@ -179,7 +179,32 @@ describe 'utils rake tasks' do
       let(:manual_body) { nil }
 
       it 'responds with an error' do
-        expect { subject }.to output(/no message sid passed/).to_stdout
+        expect { subject }.to output(/invalid message sid passed/).to_stdout
+
+        expect(Message.where(twilio_sid: message_sid).length).to eq 0
+      end
+    end
+
+    context 'invalid sid or body is passed to the task' do
+      let(:message_sid) { 'this is not a valid sid' }
+      let(:manual_body) { nil }
+
+      it 'responds with an error' do
+        expect { subject }.to output(/invalid message sid passed/).to_stdout
+
+        expect(Message.where(twilio_sid: message_sid).length).to eq 0
+      end
+    end
+
+    context 'a sid that Twilio cannot find is passed to the task' do
+      before do
+        expect(SMSService.instance).to receive(:message_lookup)
+          .with(twilio_sid: message_sid)
+          .and_raise(Twilio::REST::RestError.new('Unable to fetch record', 20404, 404))
+      end
+
+      it 'responds with an error' do
+        expect { subject }.to output(/error 20404 for sid #{message_sid}/).to_stdout
 
         expect(Message.where(twilio_sid: message_sid).length).to eq 0
       end
