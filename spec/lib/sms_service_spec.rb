@@ -230,7 +230,7 @@ describe SMSService do
       )
     }
 
-    subject { sms_service.twilio_params(message: message) }
+    subject { sms_service.twilio_params(twilio_message: message) }
 
     context 'message does not have media' do
       let(:num_media) { '0' }
