@@ -140,13 +140,14 @@ describe 'utils rake tasks' do
     let(:manual_body) { 'This is a message body sent to the task.' }
     let(:twilio_body) { 'This is the message body sent by Twilio.' }
     let(:date_sent) { Time.zone.now.change(sec: 0, usec: 0) - 30.minutes }
+    let(:number_to) { user.department.phone_number }
     let(:num_media) { 0 }
     let(:media) { double('message_media', list: []) }
     let(:twilio_message) {
       double(
         'twilio_message',
         from: client.phone_number,
-        to: user.department.phone_number,
+        to: number_to,
         sid: message_sid,
         status: status,
         body: twilio_body,
@@ -207,6 +208,22 @@ describe 'utils rake tasks' do
 
       it 'responds with an error' do
         expect { subject }.to output(/error 20404 for sid #{message_sid}/).to_stdout
+
+        expect(Message.where(twilio_sid: message_sid).length).to eq 0
+      end
+    end
+
+    context 'the sid for a message that was sent to a different deploy is passed to the task' do
+      let(:number_to) { "+#{user.department.phone_number.to_i + 1}" }
+
+      before do
+        expect_any_instance_of(FakeTwilioClient).to receive(:messages)
+          .with(message_sid)
+          .and_return(double('messages', fetch: twilio_message))
+      end
+
+      it 'responds with an error' do
+        expect { subject }.to output(/NoMethodError for sid #{message_sid}/).to_stdout
 
         expect(Message.where(twilio_sid: message_sid).length).to eq 0
       end

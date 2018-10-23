@@ -89,7 +89,14 @@ namespace :utils do
 
     twilio_params = SMSService.instance.twilio_params(twilio_message: twilio_message)
     twilio_params[:Body] = args.body if args.body.present?
-    new_message = Message.create_from_twilio! twilio_params
+
+    begin
+      new_message = Message.create_from_twilio! twilio_params
+    rescue StandardError => e
+      puts "#{e.class} for sid #{args.message_sid}: #{e.message}"
+      next
+    end
+
     new_message.update!(send_at: twilio_message.date_sent)
     MessageHandler.handle_new_message(message: new_message)
   end
