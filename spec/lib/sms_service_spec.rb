@@ -78,7 +78,7 @@ describe SMSService do
   end
 
   describe '#status_lookup' do
-    let(:message) { create :text_message, twilio_status: 'sent', twilio_sid: message_sid }
+    let(:message) { create :text_message, twilio_sid: message_sid }
     let(:twilio_message) { double('twilio_message', status: 'delivered') }
 
     subject { sms_service.status_lookup(message: message) }
@@ -89,8 +89,24 @@ describe SMSService do
         .and_return(double('messages', fetch: twilio_message))
     end
 
-    it 'updates the message status' do
+    it 'returns the message status' do
       expect(subject).to eq 'delivered'
+    end
+  end
+
+  describe '#message_lookup' do
+    let(:twilio_message) { double('twilio_message') }
+
+    subject { sms_service.message_lookup(twilio_sid: message_sid) }
+
+    before do
+      allow(twilio_client).to receive(:messages)
+        .with(message_sid)
+        .and_return(double('messages', fetch: twilio_message))
+    end
+
+    it 'returns the message object' do
+      expect(subject).to eq twilio_message
     end
   end
 
@@ -191,6 +207,62 @@ describe SMSService do
 
           expect { subject }.to raise_error(error)
         end
+      end
+    end
+  end
+
+  describe '#twilio_params' do
+    let(:number_from) { '+14155551111' }
+    let(:number_to) { '+14155551112' }
+    let(:twilio_sid) { Faker::Crypto.sha1 }
+    let(:twilio_status) { 'delivered' }
+    let(:body) { Faker::Lorem.sentence }
+    let(:message) {
+      double(
+        'twilio_message',
+        from: number_from,
+        to: number_to,
+        sid: twilio_sid,
+        status: twilio_status,
+        body: body,
+        num_media: num_media,
+        media: media
+      )
+    }
+
+    subject { sms_service.twilio_params(message: message) }
+
+    context 'message does not have media' do
+      let(:num_media) { '0' }
+      let(:media) { double('twilio_media', list: []) }
+
+      it 'returns the reformatted parameters' do
+        expect(subject).to include(
+          From: number_from,
+          To: number_to,
+          SmsSid: twilio_sid,
+          SmsStatus: twilio_status,
+          Body: body,
+          NumMedia: num_media
+        )
+      end
+    end
+
+    context 'message has media' do
+      let(:api_root) { 'https://api.twilio.com' }
+      let(:num_media) { '2' }
+      let(:uri_one) { '/uri_one' }
+      let(:uri_two) { '/uri_two' }
+      let(:media_one) { double('twilio_media_object', uri: uri_one) }
+      let(:media_two) { double('twilio_media_object', uri: uri_two) }
+      let(:media) { double('twilio_media', list: [media_one, media_two]) }
+
+      it 'returns properly formatted media parameters' do
+        expect(subject).to include(
+          NumMedia: num_media,
+          MediaUrl0: "#{api_root}#{uri_one}",
+          MediaUrl1: "#{api_root}#{uri_two}"
+        )
       end
     end
   end

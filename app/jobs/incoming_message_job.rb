@@ -5,45 +5,12 @@ class IncomingMessageJob < ApplicationJob
 
   def perform(params:)
     new_message = Message.create_from_twilio! params
-    client = new_message.client
-
-    rr = new_message.reporting_relationship
-
-    client_previously_active = rr.active
-
-    rr.update!(
-      last_contacted_at: new_message.send_at,
-      has_unread_messages: true,
-      has_message_error: false,
-      active: true
-    )
-
-    rr.user.update!(has_unread_messages: true)
-
-    MessageRedactionJob.perform_later(message: new_message)
-
-    MessageBroadcastJob.perform_later(message: new_message)
-
-    message_alert = MessageAlertBuilder.build_alert(
-      reporting_relationship: rr,
-      reporting_relationship_path: reporting_relationship_path(rr),
-      clients_path: clients_path
-    )
-
-    unless message_alert.nil?
-      NotificationBroadcastJob.perform_later(
-        channel_id: new_message.user.id,
-        text: message_alert[:text],
-        link_to: message_alert[:link_to],
-        properties: { client_id: client.id }
-      )
-    end
-
-    NotificationMailer.message_notification(new_message.user, new_message).deliver_later if new_message.user.message_notification_emails
+    client_previously_active = new_message.reporting_relationship.active
+    MessageHandler.handle_new_message(message: new_message)
 
     track(
       label: 'message_receive',
-      user_id: rr.user.id,
+      user_id: new_message.reporting_relationship.user.id,
       data: new_message.analytics_tracker_data.merge(client_active: client_previously_active)
     )
   end

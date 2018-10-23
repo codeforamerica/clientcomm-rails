@@ -16,8 +16,11 @@ class SMSService
   end
 
   def status_lookup(message:)
-    twilio_message = @client.api.account.messages(message.twilio_sid).fetch
-    twilio_message.status
+    message_lookup(twilio_sid: message.twilio_sid).status
+  end
+
+  def message_lookup(twilio_sid:)
+    @client.api.account.messages(twilio_sid).fetch
   end
 
   def send_message(args)
@@ -49,5 +52,21 @@ class SMSService
     else
       raise e
     end
+  end
+
+  def twilio_params(message:)
+    params = {
+      From: message.from,
+      To: message.to,
+      SmsSid: message.sid,
+      SmsStatus: message.status,
+      Body: message.body,
+      NumMedia: message.num_media
+    }
+    media_list = message.media.list
+    message.num_media.to_i.times.each do |i|
+      params["MediaUrl#{i}"] = "https://api.twilio.com#{media_list[i].uri.gsub(/\.json$/, '')}"
+    end
+    params.with_indifferent_access
   end
 end
