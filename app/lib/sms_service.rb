@@ -54,19 +54,23 @@ class SMSService
     end
   end
 
-  def twilio_params(message:)
+  def twilio_params(twilio_message:)
     params = {
-      From: message.from,
-      To: message.to,
-      SmsSid: message.sid,
-      SmsStatus: message.status,
-      Body: message.body,
-      NumMedia: message.num_media
+      From: twilio_message.from,
+      To: twilio_message.to,
+      SmsSid: twilio_message.sid,
+      SmsStatus: twilio_message.status,
+      Body: twilio_message.body,
+      NumMedia: twilio_message.num_media
     }
-    media_list = message.media.list
-    message.num_media.to_i.times.each do |i|
-      params["MediaUrl#{i}"] = "https://api.twilio.com#{media_list[i].uri.gsub(/\.json$/, '')}"
+
+    if twilio_message.num_media.to_i.positive?
+      media_list = twilio_message.media.list
+      twilio_message.num_media.to_i.times.each do |i|
+        params["MediaUrl#{i}"] = "https://api.twilio.com#{media_list[i].uri.gsub(/\.json$/, '')}"
+      end
     end
+
     params.with_indifferent_access
   end
 end

@@ -87,7 +87,7 @@ namespace :utils do
       next
     end
 
-    twilio_params = SMSService.instance.twilio_params(message: twilio_message)
+    twilio_params = SMSService.instance.twilio_params(twilio_message: twilio_message)
     twilio_params[:Body] = args.body if args.body.present?
     new_message = Message.create_from_twilio! twilio_params
     MessageHandler.handle_new_message(message: new_message)
