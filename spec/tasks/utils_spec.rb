@@ -128,7 +128,7 @@ describe 'utils rake tasks' do
     end
   end
 
-  describe 'utils:insert_message', type: :request, active_job: true do
+  describe 'utils:deliver_message', type: :request, active_job: true do
     let(:user) { create :user }
     let!(:client) { create :client, user: user }
     let(:rr) { ReportingRelationship.find_by(user: user, client: client) }
@@ -139,6 +139,7 @@ describe 'utils rake tasks' do
     let(:status) { 'received' }
     let(:manual_body) { 'This is a message body sent to the task.' }
     let(:twilio_body) { 'This is the message body sent by Twilio.' }
+    let(:date_sent) { Time.zone.now.change(sec: 0, usec: 0) - 30.minutes }
     let(:num_media) { 0 }
     let(:media) { double('message_media', list: []) }
     let(:twilio_message) {
@@ -149,14 +150,15 @@ describe 'utils rake tasks' do
         sid: message_sid,
         status: status,
         body: twilio_body,
+        date_sent: date_sent,
         num_media: num_media,
         media: media
       )
     }
 
     subject {
-      Rake::Task['utils:insert_message'].reenable
-      Rake::Task['utils:insert_message'].invoke(message_sid, manual_body)
+      Rake::Task['utils:deliver_message'].reenable
+      Rake::Task['utils:deliver_message'].invoke(message_sid, manual_body)
     }
 
     before do
@@ -233,8 +235,8 @@ describe 'utils rake tasks' do
           expect(new_message.number_to).to eq user.department.phone_number
           expect(new_message.number_from).to eq client.phone_number
           expect(new_message.body).to eq manual_body
+          expect(new_message.send_at).to eq date_sent
           expect(new_message.inbound).to be_truthy
-          expect(new_message.send_at).to be_present
         end
       end
 
@@ -254,8 +256,8 @@ describe 'utils rake tasks' do
           expect(new_message.number_to).to eq user.department.phone_number
           expect(new_message.number_from).to eq client.phone_number
           expect(new_message.body).to eq twilio_body
+          expect(new_message.send_at).to eq date_sent
           expect(new_message.inbound).to be_truthy
-          expect(new_message.send_at).to be_present
         end
       end
 
@@ -289,8 +291,8 @@ describe 'utils rake tasks' do
           expect(new_message.number_to).to eq user.department.phone_number
           expect(new_message.number_from).to eq client.phone_number
           expect(new_message.body).to eq manual_body
+          expect(new_message.send_at).to eq date_sent
           expect(new_message.inbound).to be_truthy
-          expect(new_message.send_at).to be_present
           expect(new_message.attachments.count).to eq(1)
           expect(new_message.attachments.first.media_content_type).to eq('image/jpeg')
         end

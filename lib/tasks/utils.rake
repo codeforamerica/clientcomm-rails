@@ -63,15 +63,15 @@ namespace :utils do
     puts joined_space
   end
 
-  task :insert_message, %i[message_sid body] => :environment do |_, args|
-    # usage: heroku run rake utils:insert_message[message_sid,body] -a clientcom-xxx
+  task :deliver_message, %i[message_sid body] => :environment do |_, args|
+    # usage: heroku run rake utils:deliver_message[message_sid,body] -a clientcom-xxx
     #   args:
     #         message_sid: the Twilio SID of the message
     #                body: (optional) the message text
 
     if args.message_sid.blank? || args.message_sid.length != 34 || args.message_sid.match(/\s/)
       puts 'invalid message sid passed; must be non nil, 34 characters long, and contain no spaces'
-      puts 'usage: heroku run rake utils:insert_message[SM1a...,optional message text]'
+      puts 'usage: heroku run rake utils:deliver_message[SM1a...,optional message text]'
       next
     end
 
@@ -90,6 +90,7 @@ namespace :utils do
     twilio_params = SMSService.instance.twilio_params(twilio_message: twilio_message)
     twilio_params[:Body] = args.body if args.body.present?
     new_message = Message.create_from_twilio! twilio_params
+    new_message.update!(send_at: twilio_message.date_sent)
     MessageHandler.handle_new_message(message: new_message)
   end
 
