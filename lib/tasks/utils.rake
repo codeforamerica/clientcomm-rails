@@ -213,7 +213,7 @@ namespace :utils do
     messages_affected = sids.count
 
     joined_comma_quoted = sids.join("', '")
-    joined_comma = sids.join(', ')
+    joined_comma = sids.join(',')
     joined_space = sids.join(' ')
     puts "\n#{alerts_found} alerts on #{messages_affected} messages found"
     next unless sids.count.positive?
