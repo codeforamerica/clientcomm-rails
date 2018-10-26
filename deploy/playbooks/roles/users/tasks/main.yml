@@ -1,0 +1,22 @@
+---
+- name: ensure that all members of sudo are nopasswd
+  lineinfile: dest=/etc/sudoers.d/30-sudo_group owner=root group=root mode=0440 line="%sudo ALL=(ALL) NOPASSWD:ALL" state=present create=yes validate='visudo -cf %s'
+- name: "ensure users have an account"
+  user:
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    groups: admin,sudo
+    update_password: on_create
+    shell: /bin/bash
+    remove: yes
+    state: "{{ item.state }}"
+  with_items:
+    - "{{ users }}"
+- name: "ensure users have an authorized key"
+  authorized_key:
+    user: "{{  item.name }}"
+    key: "{{ lookup('file', './pubkeys/' + item.name + '.pub') }}"
+    state: "{{ item.state }}"
+  when: item.state == "present"
+  with_items:
+    - "{{ users }}"

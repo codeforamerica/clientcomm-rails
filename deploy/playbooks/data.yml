@@ -1,0 +1,75 @@
+---
+- hosts: data
+  become: yes
+  become_method: sudo
+  gather_facts: False
+
+  roles:
+    - role: users
+
+  pre_tasks:
+    - raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    - setup: # aka gather_facts
+
+  tasks:
+    - name: Remove ubuntu user authorization key
+      file:
+        state: absent
+        path: "/home/ubuntu/.ssh/authorized_keys"
+
+    - name: Add an apt key by id from a keyserver
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: E084DAB9
+
+    - name: Add Rstudio Repo
+      apt_repository:
+        repo: deb http://cran.rstudio.com/bin/linux/ubuntu xenial/
+        filename: rstudio
+        state: present
+
+    - name: update apt cache
+      apt: update_cache=yes
+
+    - name: update all packages
+      apt: upgrade=yes
+
+    - name: ensure r-base is installed
+      apt: pkg=r-base state=latest
+
+    - name: ensure r-base-dev is installed
+      apt: pkg=r-base-dev state=latest
+
+    - name: Check if rserver is installed
+      command: dpkg-query -W rserver
+      register: rserver_check_deb
+      failed_when: rserver_check_deb.rc > 1
+      changed_when: rserver_check_deb.rc == 1
+
+    - name: Download Rserver db to tmp
+      get_url:
+        url: https://download2.rstudio.org/rstudio-server-1.1.456-amd64.deb
+        dest: /tmp/rserver.deb
+      when: rserver_check_deb.rc == 1
+
+    - name: Ensure rserver is installed
+      apt: deb="/tmp/rserver.deb"
+      sudo: true
+      when: rserver_check_deb.rc == 1
+
+    - name: Ensure to run at midnight
+      cron:
+        name: "Run at midnight"
+        user: "{{ primary_user }}"
+        minute: "0"
+        hour: "0"
+        job: "/home/{{ primary_user }}/run_at_midnight >> /home/{{ primary_user }}/run_at_midnight_log.txt 2>&1"
+
+    - name: Ensure run at midnight is executable
+      copy:
+        content: ""
+        dest: "/home/{{ primary_user }}/run_at_midnight"
+        force: no
+        group: sys
+        owner: "{{ primary_user }}"
+        mode: ug+x

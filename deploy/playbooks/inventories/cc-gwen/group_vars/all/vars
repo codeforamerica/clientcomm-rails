@@ -1,0 +1,7 @@
+primary_user:
+  gwen
+users:
+- { name: gwen, comment: "Gwen Rino primary user", state: "present" }
+- { name: tomas, comment: "Tomas", state: "present" }
+- { name: zak, comment: "Zak", state: "present" }
+- { name: mikela, comment: "Mikela Clemmons", state: "absent" }
