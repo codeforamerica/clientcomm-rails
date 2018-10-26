@@ -40,7 +40,7 @@ class SMSService
 
     true
   rescue Twilio::REST::RestError => e
-    raise e unless e.code == 20009
+    raise e unless [20009, 20404].include? e.code
     false
   end
 

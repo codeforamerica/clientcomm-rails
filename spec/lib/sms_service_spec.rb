@@ -163,6 +163,18 @@ describe SMSService do
       end
     end
 
+    context 'twilio cannot find the message' do
+      let(:error_message) { 'Unable to fetch record: The requested resource was not found' }
+
+      before do
+        expect_any_instance_of(FakeTwilioClient).to receive(:fetch).and_raise(Twilio::REST::RestError.new(error_message, 20404, 409))
+      end
+
+      it 'returns false' do
+        expect(subject).to eq false
+      end
+    end
+
     context 'an unknown twilio error occurs' do
       let(:error) { Twilio::REST::RestError.new('some other error', 20010, 500) }
 
