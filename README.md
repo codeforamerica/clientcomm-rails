@@ -25,16 +25,16 @@ Our internal results in Salt Lake County show lower Failure to Appear rates, and
 2. [Production Deploy](#production-deploy)
 3. [Restoring the DB](#restoring-the-db)
 
-# Development Setup
+# Development Setup/Run Locally
 ### Requirements
 1. Install Ruby with your ruby version manager of choice, like [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://github.com/codeforamerica/howto/blob/master/Ruby.md)
-2. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.0`
-3. [Install Postgres](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md). If setting up Postgres.app, you will also need to add the binary to your path. e.g. Add to your `~/.bashrc`:
+2. Check the ruby version in `.ruby-version` and ensure you have it installed locally e.g. `rbenv install 2.4.1`
+3. [Install Postgres](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md). If setting up [Postgres.app](https://postgresapp.com/), you will also need to add the binary to your path. e.g. Add to your `~/.bashrc`:
 `export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"`
 
-## Setup
+## Application Setup
 
-1. Install [bundler](https://bundler.io/) (the latest Heroku-compatible version): `gem install bundler -v 1.15.1`
+1. Install [bundler](https://bundler.io/) (the [latest Heroku-compatible version](https://devcenter.heroku.com/articles/ruby-support#libraries)): `gem install bundler -v 1.15.2`
 2. Install other requirements: `bundle install`
 
     If you installed Postgres.app, you may need to install the `pg` gem independently with this command:
@@ -52,12 +52,10 @@ rails db:schema:load RAILS_ENV=test
 
 ## Setting Up Twilio
 
-1. Buy an SMS-capable phone number on [Twilio](https://www.twilio.com/). You can use [the web interface](https://www.twilio.com/console/phone-numbers/search), or [this script](https://gist.github.com/cweems/e3fb8ab69c6e0776e492d88672a4ded9).
+1. Buy an SMS-capable phone number on [Twilio](https://www.twilio.com/).
 2. Install [ngrok](https://ngrok.com/). If you are running [npm](https://www.npmjs.com/), install with `npm install -g ngrok`. Otherwise [download the binary](https://ngrok.com/download) and [create a symlink](https://gist.github.com/wosephjeber/aa174fb851dfe87e644e#creating-a-symlink-to-ngrok).
-3. Start ngrok by entering `ngrok http 3000` in the terminal to start a tunnel (replace `3000` with the port your application is running on if necessary). You should see an ngrok url displayed, e.g. `https://e595b046.ngrok.io`.
-4. When your Twilio number receives an sms message, it needs to know where to send it. The application has an endpoint to receive Twilio webhooks at, for example, `https://e595b046.ngrok.io/incoming/sms/`. Click on your phone number in [the Twilio web interface](https://www.twilio.com/console/phone-numbers/incoming) and enter this URL (with your unique ngrok hostname) in the *A MESSAGE COMES IN* field, under *Messaging*.
-  
-   Alternately, you can use [this script](https://gist.github.com/cweems/83980eaec208941256da8823ebf71a5e) to find your phone number's SID, then use [this script](https://gist.github.com/cweems/88560859525ddd4b19e0eaf71f5bbd17) to update the Twilio callback with your ngrok url.
+3. Start ngrok by entering `ngrok http 3000` in the terminal to start a tunnel (replace `3000` with the port your application will run on if necessary). You should see an ngrok url displayed, e.g. `https://e595b046.ngrok.io`.
+4. When your Twilio number receives an sms message or phone call, it needs to know where to route it. ClientComm has endpoints to receive Twilio webhooks at, for example, `https://e595b046.ngrok.io/incoming/sms/` and `https://e595b046.ngrok.io/incoming/voice/`. Click on your phone number in [the Twilio web interface](https://www.twilio.com/console/phone-numbers/incoming) and enter the `incoming/sms/` URL (with your unique ngrok hostname) in the *A MESSAGE COMES IN* field, under *Messaging*, and the `incoming/voice/` URL (with your unique ngrok hostname) in the *A CALL COMES IN* field, under *Voice & Fax*.
 
 ## Testing
 
@@ -68,25 +66,58 @@ rails db:schema:load RAILS_ENV=test
 
 # Production Deploy
 
-1. Create a new lastpass note with this template:
+ClientComm uses a number of third-party services to operate.
+
+- [Heroku](https://www.heroku.com/) for hosting the application.
+- [Twilio](https://www.twilio.com/) for handling messages and phone calls.
+- [Mailgun](https://www.mailgun.com/) for sending notification and administrative emails.
+- [Amazon Web Services](https://aws.amazon.com/) for domain management, file storage, and monitoring.
+- [LastPass](https://www.lastpass.com/) for secrets management.
+- [Intercom](https://www.intercom.com/) for customer support.
+- [Mixpanel](https://mixpanel.com/) for analytics.
+- [Sentry](https://sentry.io/) for error tracking.
+- [Skylight](https://www.skylight.io/) for performance profiling.
+
+You will need to have credentials with all these services to run ClientComm in production.
+
+1. To start, create a new lastpass note with this template:
 
 ```
 mailgun_api_key = ""
 mailgun_domain = ""
 mailgun_smtp_password = ""
-aws_access_key = ""
-aws_secret_key = ""
-mailgun_require_dkim = ""
+mailgun_require_dkim = "false"
 
-route53_email_zone_id = ""
 route53_app_zone_id = ""
+route53_email_zone_id = ""
 
-heroku_email = ""
+app_domain = ""
 heroku_api_key = ""
 heroku_app_name = ""
-app_domain = ""
+heroku_email = ""
 heroku_pipeline_id = ""
 heroku_team = ""
+
+papertrail_plan = ""
+
+unclaimed_email = ""
+unclaimed_password = ""
+
+admin_email = ""
+admin_password = ""
+devise_secret_key_base = ""
+
+intercom_app_id = ""
+intercom_secret_key = ""
+mixpanel_token = ""
+sentry_endpoint = ""
+skylight_authentication = ""
+time_zone = "Pacific Time (US & Canada)"
+twilio_account_sid = ""
+twilio_auth_token = ""
+twilio_phone_number = ""
+
+report_day = ""
 ```
 
 Save the lastpass note as [INSTALL_NAME]-clientcomm-terraform (e.g. pima-clientcomm-terraform).
