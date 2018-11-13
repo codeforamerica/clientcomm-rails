@@ -105,6 +105,118 @@ namespace :utils do
   # run the tasks below locally #
   ###############################
 
+  task get_okr_stats: :environment do |_, args|
+    # usage: rake utils:get_okr_stats[weeks]
+    #   args:
+    #         weeks: the number of weeks ago for which to run the queries (defaults to 0, this week)
+
+    weeks = args.extras.first.blank? ? 0 : args.extras.first.to_i
+
+    span_start = "DATE_TRUNC('week', CURRENT_DATE) - INTERVAL '1 week'"
+    span_end = "DATE_TRUNC('week', CURRENT_DATE)"
+    message_start = 'Getting OKR stats for this week.'
+
+    if weeks.positive?
+      span_start = "DATE_TRUNC('week', CURRENT_DATE) - INTERVAL '#{weeks + 1} weeks'"
+      end_interval = weeks > 1 ? "#{weeks} weeks" : "#{weeks} week"
+      span_end = "DATE_TRUNC('week', CURRENT_DATE) - INTERVAL '#{end_interval}'"
+      message_start = "Getting OKR stats for #{end_interval} ago."
+    end
+
+    puts message_start
+
+    query_active_clients = 'SELECT COUNT(DISTINCT(cl.id)) '\
+                           'FROM clients cl '\
+                           'INNER JOIN reporting_relationships rr ON rr.client_id = cl.id '\
+                           'INNER JOIN users us ON us.id = rr.user_id '\
+                           "WHERE us.email NOT ILIKE '%codefor%' "\
+                           "AND cl.created_at < #{span_end} and rr.active = true;"
+
+    query_closed_prefix = 'SELECT COUNT(*) FROM surveys s '\
+                          'INNER JOIN survey_response_links srl ON srl.survey_id = s.id '\
+                          'INNER JOIN survey_responses sr ON sr.id = srl.survey_response_id '\
+                          'INNER JOIN survey_questions sq ON sq.id = sr.survey_question_id '\
+                          "WHERE s.created_at < #{span_end} "\
+                          "AND s.created_at > #{span_start} "\
+                          "AND sq.text ILIKE '%outcome%' AND"
+
+    query_closed_successful = "#{query_closed_prefix} sr.text ILIKE '%successful%';"
+
+    suffix_unsuccessful_a = "sr.text ILIKE '%unsuccessful%'"
+    suffix_unsuccessful_b = "(sr.text ILIKE '%revoked%' OR sr.text ILIKE '%absconded%')"
+    suffix_unsuccessful_c = "(sr.text ILIKE '%rescinded%' OR sr.text ILIKE '%fta%')"
+
+    suffix_unknown_a = "(sr.text ILIKE '%transferred%' OR sr.text ILIKE '%other%')"
+    suffix_unknown_b = "sr.text ILIKE '%open%'"
+
+    query_closed_all = 'SELECT COUNT(*) FROM reporting_relationships rr '\
+                       'WHERE rr.active = false '\
+                       'AND (SELECT COUNT(*) FROM reporting_relationships rb '\
+                            'WHERE rb.client_id = rr.client_id '\
+                            'AND rb.active = true) = 0 '\
+                       "AND rr.updated_at < #{span_end} "\
+                       "AND rr.updated_at > #{span_start};"
+
+    query_closed_successful_total = 'SELECT COUNT(*) FROM surveys s '\
+                                    'INNER JOIN survey_response_links srl ON srl.survey_id = s.id '\
+                                    'INNER JOIN survey_responses sr ON sr.id = srl.survey_response_id '\
+                                    'INNER JOIN survey_questions sq ON sq.id = sr.survey_question_id '\
+                                    "WHERE s.created_at < #{span_end} "\
+                                    "AND sq.text ILIKE '%outcome%' "\
+                                    "AND sr.text ILIKE '%successful%';"
+
+    deploys = %w[slco multco baltimore pima 5cbc danecrc georgiadcs cccounty]
+
+    stats = {
+      active_clients: [],
+      closed_successful: [],
+      closed_unsuccessful: [],
+      closed_unknown: [],
+      closed_all: [],
+      closed_successful_total: []
+    }
+
+    deploys.each do |deploy|
+      puts "...getting stats for #{deploy}"
+      suffix_unsuccessful = if %w[slco].include?(deploy)
+                              suffix_unsuccessful_a
+                            elsif %w[multco pima danecrc georgiadcs].include?(deploy)
+                              suffix_unsuccessful_b
+                            elsif %w[baltimore 5cbc cccounty].include?(deploy)
+                              suffix_unsuccessful_c
+                            end
+
+      suffix_unknown = if %w[slco multco pima danecrc georgiadcs].include?(deploy)
+                         suffix_unknown_a
+                       elsif %w[baltimore 5cbc cccounty].include?(deploy)
+                         suffix_unknown_b
+                       end
+
+      query_closed_unsuccessful = "#{query_closed_prefix} #{suffix_unsuccessful};"
+      query_closed_unknown = "#{query_closed_prefix} #{suffix_unknown};"
+
+      database_url = Bundler.with_clean_env { `heroku config:get DATABASE_URL -a clientcomm-#{deploy}`.strip }
+      stats[:active_clients] << Bundler.with_clean_env { `echo "#{query_active_clients}" | psql -t #{database_url}`.strip }
+      puts "   > active clients: #{stats[:active_clients].last}"
+      stats[:closed_successful] << Bundler.with_clean_env { `echo "#{query_closed_successful}" | psql -t #{database_url}`.strip }
+      puts "   > closed successful: #{stats[:closed_successful].last}"
+      stats[:closed_unsuccessful] << Bundler.with_clean_env { `echo "#{query_closed_unsuccessful}" | psql -t #{database_url}`.strip }
+      puts "   > closed unsuccessful: #{stats[:closed_unsuccessful].last}"
+      stats[:closed_unknown] << Bundler.with_clean_env { `echo "#{query_closed_unknown}" | psql -t #{database_url}`.strip }
+      puts "   > closed unknown: #{stats[:closed_unknown].last}"
+      stats[:closed_all] << Bundler.with_clean_env { `echo "#{query_closed_all}" | psql -t #{database_url}`.strip }
+      puts "   > closed all: #{stats[:closed_all].last}"
+      stats[:closed_successful_total] << Bundler.with_clean_env { `echo "#{query_closed_successful_total}" | psql -t #{database_url}`.strip }
+      puts "   > closed successful total: #{stats[:closed_successful_total].last}"
+    end
+
+    puts '----------'
+
+    stats.each_key do |key|
+      puts "#{key}: =#{stats[key].join('+')}"
+    end
+  end
+
   task get_carrier: :environment do |_, args|
     # usage: rake utils:get_carrier[app_name,phone_number_01,phone_number_02,...]
     #   args:
