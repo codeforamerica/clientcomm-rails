@@ -22,8 +22,8 @@ Our internal results in Salt Lake County show lower Failure to Appear rates, and
 
 # Contents
 1. [Development Setup](#development-setup)
-2. [Production Deploy](#production-deploy)
-3. [Restoring the DB](#restoring-the-db)
+2. [Production Deploy](deploy/terraform/README.md)
+3. [Contact](#contact)
 
 # Development Setup/Run Locally
 ### Requirements
@@ -68,6 +68,6 @@ rails db:schema:load RAILS_ENV=test
 
 See [the production deploy README.](deploy/terraform/README.md)
 
-## Contact
+# Contact
 
 Lou Moore ( @loumoore )
