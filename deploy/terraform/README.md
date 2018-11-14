@@ -23,7 +23,8 @@ and [Heroku pipeline](https://devcenter.heroku.com/articles/pipelines), as well 
 [staging app](https://devcenter.heroku.com/articles/multiple-environments#creating-and-linking-environments)
 in that pipeline from which to promote the initial deploy.
 
-NOTE: All command line examples assume *ZSH* as the default shell. If you are using *bash* use `<(command)` instead of `=(command)`.
+NOTE: All command line examples assume *zsh* as the default shell. If you are using *bash* use
+`<(command)` instead of `=(command)`.
 
 ## Install and configure Terraform
 
@@ -35,15 +36,14 @@ terraform backend provider](https://www.terraform.io/docs/backends/types/s3.html
 file in LastPass named `terraform-backend`:
 ```
 bucket     = "[THE NAME OF YOUR TERRAFORM STATE BUCKET]"
-region     = "[THE AWS REGION, i.e. us-west-1]"
 access_key = "[THE AWS ACCESS KEY OF AN ACCOUNT WITH READ/WRITE ACCESS TO THE BUCKET]"
 secret_key = "[THE AWS SECRET KEY OF AN ACCOUNT WITH READ/WRITE ACCESS TO THE BUCKET]"
 ```
 
 On the command line, use the `terraform init` command to point to this backend and specify the key,
 or environment name, of the deployment you're managing. We use a deployment name that corresponds
-with the subdomain of the deploy; so a 'demo' deployment name would correspond with an app deployed
-to demo.clientcomm.org:
+with the subdomain of the deploy; so a `demo` deployment name would correspond with an app deployed
+to `demo.clientcomm.org`:
 ```bash
 terraform init -backend-config =(lpass show --notes terraform-backend) -backend-config 'key=[DEPLOYMENT NAME]'
 ```
@@ -67,23 +67,24 @@ This will give you early warning if Twilio's having trouble delivering messages 
 
 We use [AWS CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html)
 to monitor our job queue and alert us if there's activity (or lack of activity) that requires human
-attention. You need to [set up an SNS topic](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/US_SetupSNS.html)
+attention. You will need to [set up an SNS topic](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/US_SetupSNS.html)
 to send events to. Create a SNS topic called `cc-alerts` if it doesn't already exist, and add your
-alerts email to it as a subscriber.
+alerts email to it as a subscriber. If you name it something other than `cc-alerts`, you must update
+[the corresponding line in the terraform file](https://github.com/codeforamerica/clientcomm-rails/blob/develop/deploy/terraform/app/app.tf#L179).
 
 ## Managing a ClientComm deployment
 
 Create a var file in LastPass called (for example) `clientcomm-personal-terraform-secrets` with the
-AWS access and secret keys of an account that has permission to create and destroy resources (like
-Route 53 DNS records, s3 buckets, CloudWatch alarms, etc.):
+AWS access and secret keys of an account that has permission to create and destroy resources (Route
+53 DNS records, s3 buckets, CloudWatch alarms). We use IAM credentials unique to each deployer:
 
 ```
-aws_access_key = "[YOUR PERSONAL ACCESS KEY]"
-aws_secret_key = "[YOUR PERSONAL SECRET ACCESS KEY]"
+aws_access_key = "[DEPLOYER AWS ACCESS KEY]"
+aws_secret_key = "[DEPLOYER AWS SECRET ACCESS KEY]"
 ```
 
 Now you're ready to manage a production deployment. We use a var file in lastpass to contain secrets
-and specific configuration for each deployment:
+and specific configuration for each deploy:
 ```
 mailgun_api_key = ""
 mailgun_domain = ""
@@ -130,15 +131,15 @@ record in your route53 zone that points at Heroku
 * `route53_email_zone_id`: this variable behaves largely the same as app zone ID but is used to create
 the proper mx and TXT (for SPIF and DKIM) records for sending email with Mailgun, as HSTS prevents
 us from sharing a domain across the app and Mailgun.
-* `app_domain`: the full domain of your deploy, i.e. `demo.example.com`
+* `app_domain`: the full domain of your deploy, i.e. `demo.clientcomm.org`
 * `heroku_email`: currently, due to the behavior of the [Terraform Heroku provider](https://www.terraform.io/docs/providers/heroku/index.html),
 you must provide an email associated with a Heroku account that has access to the pipeline you want
 to use.
 * `papertrail_plan`: [Papertrail](https://elements.heroku.com/addons/papertrail) is a Heroku add-on
 that manages application logs; `papertrail:choklad` is the free tier. 
-* `unclaimed_email`, `unclaimed_password`: Are used to set up the unclaimed client ClientComm account
+* `unclaimed_email`, `unclaimed_password`: used to set up the unclaimed client ClientComm account
 in the new deploy.
-* `admin_email`, `admin_password`: Are used to set up a ClientComm account with admin permissions in
+* `admin_email`, `admin_password`: used to set up a ClientComm account with admin permissions in
 the new deploy.
 * `devise_secret_key_base`: [Devise](https://github.com/plataformatec/devise) is the user account
 authentication system that ClientComm uses; run `rake secret` on the command line to generate a
@@ -152,13 +153,12 @@ deploys are: `mailgun_domain`, `app_domain`, `heroku_app_name`, `unclaimed_email
 `unclaimed_password`, `admin_email`, `admin_password`, `devise_secret_key_base`, `time_zone`,
 `twilio_account_sid`, `twilio_auth_token`, and `twilio_phone_number`.
 
-Once you have created and saved the var file in LastPass you are ready to deploy:
+Once you have created and saved the var file in LastPass you are ready to deploy. First get Terraform's plan for the deploy:
 ```bash
 terraform plan -var-file =(lpass show --notes [VAR FILE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
-If you believe the plan accurately reflects the changes or additions you wish to make you are ready
-to run apply:
+If you believe the plan accurately reflects the changes or additions you wish to make, run apply:
 ```bash
 terraform apply -var-file =(lpass show --notes [VAR FILE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
@@ -170,7 +170,7 @@ launch. Add two jobs; one for the Twilio status update rake task to run every 10
 rake messages:update_twilio_statuses
 ```
 
-And one for the usage report rake task to run every day:
+And one for the usage report rake task to run once a day:
 
 ```
 rake reports:generate_and_send_reports
@@ -200,7 +200,7 @@ If you have a help page for your deploy, you can add a link to it in the menu ba
 setting the `HELP_LINK` config variable like so:
 
 ```bash
-heroku set:config HELP_LINK='https://example.com/'
+heroku set:config HELP_LINK='https://example.com/' --app [APP-NAME]
 ```
 
 ### Add an exit survey and responses
