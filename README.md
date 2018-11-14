@@ -6,8 +6,9 @@
 
 # Development
 
-[set up and run ClientComm for development](#development-setup)
-[deploy ClientComm to production](deploy/terraform/README.md)
+#### [set up and run ClientComm for development](#development-setup)
+
+#### [deploy ClientComm to production](deploy/terraform/README.md)
 
 # Overview
 
