@@ -16,7 +16,9 @@ all these services to run ClientComm in production.
 
 *Heroku*, *Twilio*, *AWS*, and *Mailgun* are critical services; ClientComm cannot run without them.
 *LastPass*, *Pingdom*, *Sentry*, *Skylight*, *Mixpanel*, and *Intercom* are useful tools for developing,
-maintaining, and supporting ClientComm, but are not necessary for it to run.
+maintaining, and supporting ClientComm, but are not necessary for it to run. That said, the application
+as written expects to have all the services above available, so eliminating any of them will require
+editing application code.
 
 The deploy process assumes that you have an *existing* [Heroku team](https://devcenter.heroku.com/articles/heroku-teams)
 and [Heroku pipeline](https://devcenter.heroku.com/articles/pipelines), as well as a
@@ -28,14 +30,15 @@ NOTE: All command line examples assume *zsh* as the default shell. If you are us
 
 ## Install and configure Terraform
 
-Install Terraform with [Homebrew](https://brew.sh/) like this: `brew install terraform`; or by
-[downloading it from HashiCorp](https://www.terraform.io/downloads.html).
+We use [Terraform](https://www.terraform.io/) to manage ClientComm's infrastructure. Install Terraform
+with [Homebrew](https://brew.sh/): `brew install terraform`; or by [downloading the installer](https://www.terraform.io/downloads.html).
 
 For each production instance of ClientComm you must provide a backend that points to an [s3
-terraform backend provider](https://www.terraform.io/docs/backends/types/s3.html). We use a backend
-file in LastPass named `terraform-backend`:
+terraform backend provider](https://www.terraform.io/docs/backends/types/s3.html). We put our backend
+file in [a LastPass secure note](https://helpdesk.lastpass.com/secure-notes/) named `terraform-backend`:
 ```
 bucket     = "[THE NAME OF YOUR TERRAFORM STATE BUCKET]"
+region     = "[THE AWS REGION, i.e. us-west-1]"
 access_key = "[THE AWS ACCESS KEY OF AN ACCOUNT WITH READ/WRITE ACCESS TO THE BUCKET]"
 secret_key = "[THE AWS SECRET KEY OF AN ACCOUNT WITH READ/WRITE ACCESS TO THE BUCKET]"
 ```
@@ -53,15 +56,19 @@ terraform init -backend-config =(lpass show --notes terraform-backend) -backend-
 In Twilio, create a new subaccount (if you use them to manage your deploys), then buy an SMS-capable
 phone number in the appropriate area code. Configure the _A CALL COMES IN_ webhook
 to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/voice/` and the _A MESSAGE COMES IN_
-webhook to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/sms/`.
+webhook to point to `https://[DEPLOYMENT NAME].clientcomm.org/incoming/sms/` (see the image below).
 
-On the [Alert Triggers](https://www.twilio.com/console/runtime/triggers/alert/create) page, set up
-the following triggers to send email to an alerts address (we use `clientcomm-alerts@codeforamerica.org`):
+![Twilio's interface for entering endpoint URLs](/public/twilio_deploy.png)
+
+On the [Alert Triggers](https://www.twilio.com/console/runtime/triggers/alert/) page, set up the
+following triggers to send email to an alerts address (see image below):
 
 * Trigger on ANY alert, at value 1 (First alert of the day)
 * Trigger on ANY alert, at value 10 (Alert after 10 issues in a single day)
 
 This will give you early warning if Twilio's having trouble delivering messages to ClientComm.
+
+![Twilio's interface for creating an alert trigger](/public/twilio_alert.png)
 
 ## Set up an Alerts Topic
 
@@ -74,17 +81,18 @@ alerts email to it as a subscriber. If you name it something other than `cc-aler
 
 ## Managing a ClientComm deployment
 
-Create a var file in LastPass called (for example) `clientcomm-personal-terraform-secrets` with the
-AWS access and secret keys of an account that has permission to create and destroy resources (Route
-53 DNS records, s3 buckets, CloudWatch alarms). We use IAM credentials unique to each deployer:
+Create [a secure note in LastPass](https://helpdesk.lastpass.com/secure-notes/) called (for example)
+`clientcomm-personal-terraform-secrets` with the AWS access and secret keys of an account that has
+permission to create and destroy resources (Route 53 DNS records, s3 buckets, CloudWatch alarms).
+We use IAM credentials unique to each person who is authorized to deploy the application:
 
 ```
-aws_access_key = "[DEPLOYER AWS ACCESS KEY]"
-aws_secret_key = "[DEPLOYER AWS SECRET ACCESS KEY]"
+aws_access_key = "[DEPLOYER'S AWS ACCESS KEY]"
+aws_secret_key = "[DEPLOYER'S AWS SECRET ACCESS KEY]"
 ```
 
-Now you're ready to manage a production deployment. We use a var file in lastpass to contain secrets
-and specific configuration for each deploy:
+Now you're ready to manage a production deployment. We use [a secure note in LastPass](https://helpdesk.lastpass.com/secure-notes/)
+to contain secrets and specific configuration for each deploy:
 ```
 mailgun_api_key = ""
 mailgun_domain = ""
@@ -153,14 +161,14 @@ deploys are: `mailgun_domain`, `app_domain`, `heroku_app_name`, `unclaimed_email
 `unclaimed_password`, `admin_email`, `admin_password`, `devise_secret_key_base`, `time_zone`,
 `twilio_account_sid`, `twilio_auth_token`, and `twilio_phone_number`.
 
-Once you have created and saved the var file in LastPass you are ready to deploy. First get Terraform's plan for the deploy:
+Once you have created and saved the secure note in LastPass you are ready to deploy. First get Terraform's plan for the deploy:
 ```bash
-terraform plan -var-file =(lpass show --notes [VAR FILE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform plan -var-file =(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 If you believe the plan accurately reflects the changes or additions you wish to make, run apply:
 ```bash
-terraform apply -var-file =(lpass show --notes [VAR FILE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform apply -var-file =(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 There is a manual step during the deploy; the [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) interface will
