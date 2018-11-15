@@ -39,7 +39,9 @@ ActiveAdmin.register Client do
     end
   end
 
-  action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
+  action_item :bulk_import, only: :index do
+    link_to 'Bulk Import', new_admin_import_csv_path
+  end
 
   actions :all, except: [:destroy]
 

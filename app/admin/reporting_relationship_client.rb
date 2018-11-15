@@ -24,8 +24,13 @@ ActiveAdmin.register ReportingRelationship, as: 'Client Relationships' do
     end
   end
 
-  action_item :new_client, only: :index { link_to 'New Client', new_admin_client_path }
-  action_item :bulk_import, only: :index { link_to 'Bulk Import', new_admin_import_csv_path }
+  action_item :new_client, only: :index do
+    link_to 'New Client', new_admin_client_path
+  end
+
+  action_item :bulk_import, only: :index do
+    link_to 'Bulk Import', new_admin_import_csv_path
+  end
 
   actions :all, except: %i[destroy new]
 
