@@ -3,7 +3,7 @@ version: 2
 jobs:
   rspec:
     docker:
-      - image: circleci/ruby:2.4.5-node-browsers
+      - image: circleci/ruby:2.4.5-node-browsers-legacy
         environment:
           DEPLOYMENT: circleci
           PGHOST: 127.0.0.1
@@ -13,7 +13,6 @@ jobs:
           TWILIO_AUTH_TOKEN: TWILIOAUTHTOKENTWILIOAUTHTOKENTWIL
           MIXPANEL_TOKEN: MIXPANELTOKENMIXPANELTOKENMIXPANEL
           UNCLAIMED_EMAIL: unclaimed@example.com
-          TYPEFORM_LINK: example.com
           MASS_MESSAGES: 'true'
           DEPLOY_BASE_URL: 'https://test.example.org'
       - image: circleci/postgres:9.6.5-alpine
