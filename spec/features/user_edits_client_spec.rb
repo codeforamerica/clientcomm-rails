@@ -50,7 +50,7 @@ feature 'user edits client', :js do
       fill_in 'Notes', with: new_note
       fill_in 'Phone number', with: new_phone_number
 
-      fill_in 'Court date (optional)', with: ''
+      fill_in id: 'client_next_court_date_at', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')
 
@@ -220,7 +220,7 @@ feature 'user edits client', :js do
     end
 
     step 'submits badly formatted next court date' do
-      fill_in 'Court date (optional)', with: '111'
+      fill_in id: 'client_next_court_date_at', with: '111'
       find('input#client_next_court_date_at').send_keys(:escape)
       click_on 'Save changes'
       expect(page).to have_content 'Edit client'

@@ -27,8 +27,6 @@ feature 'User schedules a message for later and submits it', :js, active_job: tr
     end
 
     step 'when user creates a scheduled message' do
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')

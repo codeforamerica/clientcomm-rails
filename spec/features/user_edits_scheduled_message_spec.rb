@@ -29,8 +29,6 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user creates a scheduled message' do
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')
@@ -65,8 +63,6 @@ feature 'creating and editing scheduled messages', active_job: true do
     end
 
     step 'when user edits a message' do
-      # if we don't interact with the datepicker, it persists and
-      # covers other ui elements
       fill_in 'Date', with: ''
       click_on new_future_date.strftime('%-d')
 
