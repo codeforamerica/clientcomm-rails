@@ -3,7 +3,7 @@ version: 2
 jobs:
   rspec:
     docker:
-      - image: circleci/ruby:2.4.1-node-browsers
+      - image: circleci/ruby:2.4.5-node-browsers
         environment:
           DEPLOYMENT: circleci
           PGHOST: 127.0.0.1
@@ -68,7 +68,7 @@ jobs:
 
   brakeman:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.5
     steps:
       - checkout
       - run:
@@ -77,7 +77,7 @@ jobs:
 
   bundler-audit:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.5
     steps:
       - checkout
       - run:
@@ -86,7 +86,7 @@ jobs:
 
   merge_master:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.5
     steps:
       - checkout
       - add_ssh_keys:
