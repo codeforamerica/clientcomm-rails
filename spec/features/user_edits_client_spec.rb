@@ -50,7 +50,7 @@ feature 'user edits client', :js do
       fill_in 'Notes', with: new_note
       fill_in 'Phone number', with: new_phone_number
 
-      fill_in id: 'client_next_court_date_at', with: ''
+      fill_in id: 'client_next_court_date_at', with: ' '
       find('.ui-datepicker-next').click
       click_on future_date.strftime('%-d')
 

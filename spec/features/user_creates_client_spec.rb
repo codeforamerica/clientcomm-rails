@@ -35,7 +35,7 @@ feature 'User creates client' do
     fill_in 'Phone number', with: phone_number
     fill_in 'ID number', with: id_number
     fill_in 'Notes', with: notes
-    fill_in id: 'client_next_court_date_at', with: ''
+    fill_in id: 'client_next_court_date_at', with: ' '
     find('.ui-datepicker-next').click
     click_on future_date.strftime('%-d')
     click_on 'Save new client'
