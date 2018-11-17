@@ -3,7 +3,7 @@ version: 2
 jobs:
   rspec:
     docker:
-      - image: circleci/ruby:2.4.5-node-browsers-legacy
+      - image: circleci/ruby:2.4.5-node-browsers
         environment:
           DEPLOYMENT: circleci
           PGHOST: 127.0.0.1
