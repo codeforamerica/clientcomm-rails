@@ -41,7 +41,7 @@
       apt: pkg=r-base-dev state=latest
 
     - name: Check if rserver is installed
-      command: dpkg-query -W rserver
+      command: dpkg-query -W rstudio-server
       register: rserver_check_deb
       failed_when: rserver_check_deb.rc > 1
       changed_when: rserver_check_deb.rc == 1
