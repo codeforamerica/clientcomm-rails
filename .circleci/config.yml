@@ -15,7 +15,6 @@ jobs:
           UNCLAIMED_EMAIL: unclaimed@example.com
           MASS_MESSAGES: 'true'
           DEPLOY_BASE_URL: 'https://test.example.org'
-          BUNDLER_VERSION: 2.0.1
       - image: circleci/postgres:9.6.5-alpine
         environment:
           POSTGRES_USER: clientcomm
