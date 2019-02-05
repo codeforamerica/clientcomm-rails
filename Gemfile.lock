@@ -11,7 +11,7 @@ GEM
   specs:
     RubyInline (3.12.4)
       ZenTest (~> 4.3)
-    ZenTest (4.11.1)
+    ZenTest (4.11.2)
     action-cable-testing (0.1.2)
       actioncable (~> 5.0)
     actioncable (5.1.6.1)
