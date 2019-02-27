@@ -17,7 +17,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'validates_timeliness'
 
 gem 'autosize'
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'bourbon', '~> 4.2.0'
 gem 'es6-promise-rails', '~> 3.2'
 gem 'fuzzy-string-match'
