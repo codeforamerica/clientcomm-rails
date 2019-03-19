@@ -73,11 +73,11 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    domain: ENV['MAILGUN_DOMAIN'],
-    address: 'smtp.mailgun.org',
+    domain: ENV['EMAIL_DOMAIN'] || ENV['MAILGUN_DOMAIN'],
+    address: ENV['SMTP_ENDPOINT'] || 'smtp.mailgun.org',
     port: 587,
-    user_name: "postmaster@#{ENV['MAILGUN_DOMAIN']}",
-    password: ENV['MAILGUN_PASSWORD'],
+    user_name: ENV['SMTP_USER'] || "postmaster@#{ENV['MAILGUN_DOMAIN']}",
+    password: ENV['SMTP_PASSWORD'] || ENV['MAILGUN_PASSWORD'],
     authentication: 'plain',
     enable_starttls_auto: true
   }
