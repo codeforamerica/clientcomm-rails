@@ -6,7 +6,6 @@ variable "heroku_email" {}
 variable "heroku_api_key" {}
 variable "heroku_app_name" {}
 variable "heroku_database_plan" {}
-variable "slack_webhook_endpoint" {}
 
 variable "environment" {}
 
@@ -224,15 +223,6 @@ resource "heroku_addon" "logging" {
 resource "heroku_addon" "scheduler" {
   app  = "${heroku_app.clientcomm.name}"
   plan = "scheduler:standard"
-}
-
-resource "heroku_addon" "slack_webhook" {
-  app  = "${heroku_app.clientcomm.name}"
-  plan = "deployhooks:http"
-
-  config {
-    url = "${var.slack_webhook_endpoint}"
-  }
 }
 
 resource "heroku_build" "clientcomm" {
