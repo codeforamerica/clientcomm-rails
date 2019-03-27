@@ -53,9 +53,6 @@ resource "heroku_app" "clientcomm" {
   name = "${var.heroku_app_name}"
   acm = "true"
   region = "us"
-  organization = {
-    name = "${var.heroku_team}"
-  }
 
   config_vars {
     AWS_ACCESS_KEY_ID = "${aws_iam_access_key.paperclip.id}"
