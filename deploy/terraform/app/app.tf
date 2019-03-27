@@ -49,7 +49,7 @@ provider "aws" {
 
 resource "heroku_app" "clientcomm" {
   name = "${var.heroku_app_name}"
-  acm = "true"
+  acm = "false"
   region = "us"
 
   config_vars {
