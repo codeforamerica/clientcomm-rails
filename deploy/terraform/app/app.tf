@@ -240,6 +240,14 @@ resource "heroku_addon" "slack_webhook" {
   }
 }
 
+resource "heroku_build" "clientcomm" {
+  app        = "${heroku_app.clientcomm.name}"
+
+  source = {
+    url     = "https://github.com/codeforamerica/clientcomm-rails/archive/release-v1.tar.gz"
+    version = "release-v1"
+  }
+}
 
 resource "aws_s3_bucket" "logging_bucket" {
   count = "${var.enable_papertrail ? 1 : 0}"
@@ -279,18 +287,8 @@ resource "aws_s3_bucket_policy" "allow_papertrail" {
 POLICY
 }
 
-resource "heroku_pipeline_coupling" "coupling" {
-  app      = "${heroku_app.clientcomm.name}"
-  pipeline = "${var.heroku_pipeline_id}"
-  stage    = "${var.environment}"
-}
-
 resource "null_resource" "provision_app" {
-  depends_on = ["heroku_pipeline_coupling.coupling", "heroku_addon.database"]
-
-  provisioner "local-exec" {
-    command = "heroku pipelines:promote --app clientcomm-try --to ${heroku_app.clientcomm.name}"
-  }
+  depends_on = ["heroku_build.clientcomm", "heroku_addon.database"]
 
   provisioner "local-exec" {
     command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
