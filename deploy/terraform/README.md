@@ -163,12 +163,12 @@ deploys are: `mailgun_domain`, `app_domain`, `heroku_app_name`, `unclaimed_email
 
 Once you have created and saved the secure note in LastPass you are ready to deploy. First get Terraform's plan for the deploy:
 ```bash
-terraform plan -var-file <(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform plan -var-file -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 If you believe the plan accurately reflects the changes or additions you wish to make, run apply:
 ```bash
-terraform apply -var-file <(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform apply -var-file -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 There is a manual step during the deploy; the [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) interface will
