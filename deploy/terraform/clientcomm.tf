@@ -1,6 +1,7 @@
 # Shared Vars
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
+variable "aws_region" {}
 
 # App Vars
 variable "heroku_email" {}
@@ -76,6 +77,7 @@ module "app" {
 
   aws_access_key  = "${var.aws_access_key}"
   aws_secret_key  = "${var.aws_secret_key}"
+  aws_region      = "${var.aws_region}"
   route53_zone_id = "${var.route53_app_zone_id}"
 
   heroku_email          = "${var.heroku_email}"

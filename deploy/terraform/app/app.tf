@@ -1,5 +1,6 @@
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
+variable "aws_region" {}
 variable "route53_zone_id" {}
 
 variable "heroku_email" {}
@@ -43,7 +44,7 @@ provider "heroku" {
 provider "aws" {
   access_key = "${var.aws_access_key}"
   secret_key = "${var.aws_secret_key}"
-  region     = "us-east-1"
+  region     = "${var.aws_region}"
 }
 
 resource "heroku_app" "clientcomm" {
@@ -88,7 +89,7 @@ resource "aws_kms_key" "bucket_key" {
 
 resource "aws_s3_bucket" "paperclip" {
   bucket = "${var.heroku_app_name}-attachments"
-  region = "us-east-1"
+  region = "${var.aws_region}"
   versioning {
     enabled = true
   }
