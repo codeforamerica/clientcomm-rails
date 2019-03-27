@@ -5,8 +5,6 @@ variable "route53_zone_id" {}
 variable "heroku_email" {}
 variable "heroku_api_key" {}
 variable "heroku_app_name" {}
-variable "heroku_pipeline_id" {}
-variable "heroku_team" {}
 variable "heroku_database_plan" {}
 variable "slack_webhook_endpoint" {}
 
