@@ -26,7 +26,7 @@ and [Heroku pipeline](https://devcenter.heroku.com/articles/pipelines), as well 
 in that pipeline from which to promote the initial deploy.
 
 NOTE: All command line examples assume *zsh* as the default shell. If you are using *bash* use
-`<(command)` instead of `=(command)`.
+`<(command)` instead of `<(command)`.
 
 ## Install and configure Terraform
 
@@ -48,7 +48,7 @@ or environment name, of the deployment you're managing. We use a deployment name
 with the subdomain of the deploy; so a `demo` deployment name would correspond with an app deployed
 to `demo.clientcomm.org`:
 ```bash
-terraform init -backend-config =(lpass show --notes terraform-backend) -backend-config 'key=[DEPLOYMENT NAME]'
+terraform init -backend-config <(lpass show --notes terraform-backend) -backend-config 'key=[DEPLOYMENT NAME]'
 ```
 
 ## Prepping a Twilio account
@@ -163,12 +163,12 @@ deploys are: `mailgun_domain`, `app_domain`, `heroku_app_name`, `unclaimed_email
 
 Once you have created and saved the secure note in LastPass you are ready to deploy. First get Terraform's plan for the deploy:
 ```bash
-terraform plan -var-file =(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform plan -var-file <(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 If you believe the plan accurately reflects the changes or additions you wish to make, run apply:
 ```bash
-terraform apply -var-file =(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file =(lpass show --notes clientcomm-personal-terraform-secrets)
+terraform apply -var-file <(lpass show --notes [SECURE NOTE NAME IN LASTPASS]) -var-file <(lpass show --notes clientcomm-personal-terraform-secrets)
 ```
 
 There is a manual step during the deploy; the [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) interface will
