@@ -20,11 +20,6 @@ maintaining, and supporting ClientComm, but are not necessary for it to run. Tha
 as written expects to have all the services above available, so eliminating any of them will require
 editing application code.
 
-The deploy process assumes that you have an *existing* [Heroku team](https://devcenter.heroku.com/articles/heroku-teams)
-and [Heroku pipeline](https://devcenter.heroku.com/articles/pipelines), as well as a
-[staging app](https://devcenter.heroku.com/articles/multiple-environments#creating-and-linking-environments)
-in that pipeline from which to promote the initial deploy.
-
 NOTE: All command line examples assume *zsh* as the default shell. If you are using *bash* use
 `<(command)` instead of `<(command)`.
 
@@ -106,8 +101,6 @@ app_domain = ""
 heroku_api_key = ""
 heroku_app_name = ""
 heroku_email = ""
-heroku_pipeline_id = ""
-heroku_team = ""
 
 papertrail_plan = "papertrail:choklad"
 
@@ -143,6 +136,7 @@ us from sharing a domain across the app and Mailgun.
 * `heroku_email`: currently, due to the behavior of the [Terraform Heroku provider](https://www.terraform.io/docs/providers/heroku/index.html),
 you must provide an email associated with a Heroku account that has access to the pipeline you want
 to use.
+* `heroku_app_name`: This must begin with a letter. We recommend a name of the form "clientcomm-[your organizaion]", for example "clientcomm-cfa"
 * `papertrail_plan`: [Papertrail](https://elements.heroku.com/addons/papertrail) is a Heroku add-on
 that manages application logs; `papertrail:choklad` is the free tier. 
 * `unclaimed_email`, `unclaimed_password`: used to set up the unclaimed client ClientComm account

@@ -227,6 +227,8 @@ resource "heroku_addon" "scheduler" {
 }
 
 resource "heroku_build" "clientcomm" {
+  depends_on = ["heroku_addon.database"]
+
   app        = "${heroku_app.clientcomm.name}"
 
   source = {
@@ -274,7 +276,7 @@ POLICY
 }
 
 resource "null_resource" "provision_app" {
-  depends_on = ["heroku_build.clientcomm", "heroku_addon.database"]
+  depends_on = ["heroku_build.clientcomm"]
 
   provisioner "local-exec" {
     command = "heroku ps:scale web=1 worker=1 --app ${heroku_app.clientcomm.name}"
