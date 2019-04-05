@@ -123,5 +123,6 @@ class ReportingRelationshipsController < ApplicationController
     @rr.messages
        .where('send_at < ?', Time.zone.now)
        .order('send_at ASC')
+       .limit(1000)
   end
 end
