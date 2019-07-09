@@ -52,7 +52,7 @@ and is currently being piloted in eight jurisdictions across the country.
 
 # License
 
-This project is licensed under the terms of the ![MIT license](LICENSE).
+This project is licensed under the terms of the [MIT license](LICENSE).
 
 # Contact
 
