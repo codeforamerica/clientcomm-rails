@@ -1,8 +1,8 @@
 # ClientComm
-
 [![CircleCI](https://circleci.com/gh/codeforamerica/clientcomm-rails.svg?style=svg)](https://circleci.com/gh/codeforamerica/clientcomm-rails)
 [![Code Climate](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/gpa.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails)
 [![Test Coverage](https://codeclimate.com/github/codeforamerica/clientcomm-rails/badges/coverage.svg)](https://codeclimate.com/github/codeforamerica/clientcomm-rails/coverage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Development Links
 
@@ -49,6 +49,10 @@ often dealing with other things like unstable family, housing, transportation, a
 Our internal results show lower Failure to Appear rates, and time saved for case managers. ClientComm
 is a central part of Code for America's product work on [Criminal Justice](https://www.codeforamerica.org/what/criminal-justice),
 and is currently being piloted in eight jurisdictions across the country.
+
+# License
+
+This project is licensed under the terms of the ![MIT license](LICENSE).
 
 # Contact
 
