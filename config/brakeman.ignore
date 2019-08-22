@@ -7,7 +7,7 @@
       "check_name": "MassAssignment",
       "message": "Parameters should be whitelisted for mass assignment",
       "file": "app/controllers/tracking_events_controller.rb",
-      "line": 16,
+      "line": 17,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "params.require(:data).permit!",
       "render_path": null,
@@ -19,8 +19,24 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Only for passing to mixpanel"
+    },
+    {
+      "warning_type": "SSL Verification Bypass",
+      "warning_code": 71,
+      "fingerprint": "d722f7eb21d288aa47e82820a1d77c9927bc1b45199b5a4e6cec24077951991d",
+      "check_name": "SSLVerify",
+      "message": "SSL certificate verification was bypassed",
+      "file": "config/initializers/mixpanel.rb",
+      "line": 8,
+      "link": "https://brakemanscanner.org/docs/warning_types/ssl_verification_bypass/",
+      "code": "http.verify_mode = OpenSSL::SSL::VERIFY_NONE",
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
     }
   ],
-  "updated": "2018-05-09 11:26:30 -0700",
-  "brakeman_version": "4.2.1"
+  "updated": "2019-08-22 13:43:53 -0700",
+  "brakeman_version": "4.6.1"
 }
