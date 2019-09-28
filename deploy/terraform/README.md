@@ -20,8 +20,8 @@ maintaining, and supporting ClientComm, but are not necessary for it to run. Tha
 as written expects to have all the services above available, so eliminating any of them will require
 editing application code.
 
-NOTE: All command line examples assume *zsh* as the default shell. If you are using *bash* use
-`<(command)` instead of `<(command)`.
+NOTE: All command line examples assume *bash* as the default shell. If you are using *zsh* use
+`=(command)` instead of `<(command)`.
 
 ## Install and configure Terraform
 
